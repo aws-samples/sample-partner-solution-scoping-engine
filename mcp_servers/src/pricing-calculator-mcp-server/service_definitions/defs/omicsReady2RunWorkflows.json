@@ -1,0 +1,151 @@
+{
+  "version": "0.0.14",
+  "serviceName": "HealthOmics Ready2Run Workflows",
+  "serviceCode": "omicsReady2RunWorkflows",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "amazon HealthOmics",
+    "HealthOmics",
+    "HealthOmics Workflows"
+  ],
+  "serviceDescription": "With Amazon HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With Amazon HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. Amazon HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "omics-readytorun-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/omics/[currency]/current/omics-readytorun-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/omics/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/omics/"
+        }
+      },
+      "cards": [
+        {
+          "title": "HealthOmics Ready2Run Workflows",
+          "helpText": "Ready2Run workflows are pre-built workflows that have been packaged by industry third party software companies and open-source pipelines. You can simply use Ready2Run workflows to process your data with the most commonly used workflows like Germline and GATK-BP. Ready2Run workflows are pay-per-run which means you are charged the same price for every workflow.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/omics/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Omics Ready2Run Workflows cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "omics-readytorun-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Ready2Run Workflow Name": [
+                    "Publisher"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Ready2Run workflow",
+                    "type": "dropDown",
+                    "selectorId": "Ready2Run Workflow Name",
+                    "exportValueAs": "omicsDd"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Total_runs_per_month",
+                "label": "Total runs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter total runs per month.",
+                "description": ""
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total runs per month",
+                      "variableUnitLabel": "runs per month",
+                      "required": true,
+                      "variableId": "Total_runs_per_month"
+                    },
+                    {
+                      "variableLabel": "Omics Ready2Run Workflows cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Ready2Run Workflows)",
+                  "decimalPlaces": 2,
+                  "id": "Ready2Run_Workflows_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM",
+                    "omicsDd",
+                    "Total_runs_per_month",
+                    "Ready2Run_Workflows_cost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Ready2Run Workflows cost",
+                  "decimalPlaces": 2,
+                  "id": "total_omics_Ready2Run_Workflows_cost",
+                  "subTotalRefer": "Ready2Run_Workflows_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

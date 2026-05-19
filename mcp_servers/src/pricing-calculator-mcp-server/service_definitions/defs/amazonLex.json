@@ -1,0 +1,571 @@
+{
+  "version": "0.0.13",
+  "serviceName": "Amazon Lex",
+  "serviceCode": "amazonLex",
+  "type": "AWSService",
+  "slug": "lex",
+  "regions": [
+    "us-east-1",
+    "us-west-2",
+    "af-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-west-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "us-gov-west-1"
+  ],
+  "searchKeywords": [
+    "bot",
+    "chat",
+    "chatbot",
+    "conversation",
+    "conversational interfaces",
+    "response",
+    "speech",
+    "streaming conversation",
+    "text",
+    "transcripts",
+    "virtual agent",
+    "voice chat"
+  ],
+  "serviceDescription": "Amazon Lex is a service for building conversational interfaces into any application using voice and text. With Amazon Lex, you pay only for what you use.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lex/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lex",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lex/[currency]/current/lex.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Lex",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/lex/"
+        }
+      },
+      "id": "lex",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lex",
+                  "meteredUnit": "Speech to-Text Supported Mode Speech and Text"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lex",
+                  "meteredUnit": "Text to-Speech Supported Mode Speech and Text"
+                }
+              }
+            ]
+          },
+          "title": " Request and response interaction",
+          "helpText": "With the request and response interaction, each user input is processed as a separate API call. You are charged based on the number of speech or text API requests processed by your bot.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lex/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "bodyInteractions"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfSpeechInteractions",
+                "label": "Number of speech requests (Request and Response Interaction)",
+                "displayInConfigSummary": true,
+                "description": "",
+                "placeholder": "Enter amount",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lex",
+                    "meteredUnit": "Speech to-Text Supported Mode Speech and Text"
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "speechInteractionsPrice",
+                "label": "Price for speech requests per month",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lex",
+                "meteredUnit": {
+                  "allRegions": "Speech to-Text Supported Mode Speech and Text"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfTextInteractions",
+                "label": "Number of text requests (Request and Response Interaction)",
+                "displayInConfigSummary": true,
+                "description": "",
+                "placeholder": "Enter amount",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lex",
+                    "meteredUnit": "Text to-Speech Supported Mode Speech and Text"
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "textInteractionsPrice",
+                "label": "Price for text requests per month",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lex",
+                "meteredUnit": {
+                  "allRegions": "Text to-Speech Supported Mode Speech and Text"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of speech requests (Request and Response Interaction)",
+                      "variableUnitLabel": "speech requests per month",
+                      "required": true,
+                      "variableId": "numberOfSpeechInteractions"
+                    },
+                    {
+                      "variableLabel": "Price for speech requests per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "speechInteractionsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Speech requests per month cost)",
+                  "decimalPlaces": 2,
+                  "id": "costOfSpeechInteractions"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of text requests (Request and Response Interaction)",
+                      "variableUnitLabel": "text requests per month",
+                      "required": true,
+                      "variableId": "numberOfTextInteractions"
+                    },
+                    {
+                      "variableLabel": "Price for text requests per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "textInteractionsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Text requests per month cost)",
+                  "decimalPlaces": 2,
+                  "id": "costOfTextInteractions"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Speech requests per month cost)",
+                      "variableUnitLabel": "[currency] (Speech requests per month cost)",
+                      "required": false,
+                      "variableId": "costOfSpeechInteractions"
+                    },
+                    {
+                      "variableLabel": "[currency] (Text requests per month cost)",
+                      "variableUnitLabel": "[currency] (Text requests per month cost)",
+                      "required": false,
+                      "variableId": "costOfTextInteractions"
+                    }
+                  ],
+                  "outputUnitLabel": "Total Request and Response Interaction cost",
+                  "decimalPlaces": 2,
+                  "id": "totalInteractionsCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "bodyInteractions",
+                    "numberOfSpeechInteractions",
+                    "speechInteractionsPrice",
+                    "numberOfTextInteractions",
+                    "textInteractionsPrice",
+                    "costOfSpeechInteractions",
+                    "costOfTextInteractions",
+                    "totalInteractionsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Request and Response Interaction cost",
+                  "decimalPlaces": 2,
+                  "id": "totalMonthlyInteractionsCost",
+                  "subTotalRefer": "totalInteractionsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Streaming conversation",
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lex",
+                  "meteredUnit": "Speech to-Speech-Str Supported Mode Speech Text and DTMF"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lex",
+                  "meteredUnit": "Text to Text Supported Mode Speech Text and DTMF"
+                }
+              }
+            ]
+          },
+          "helpText": "With streaming conversation, the bot continuously listens and can be designed to respond proactively. You are charged based on the number of speech intervals or text requests that take place. Usage for streaming speech input, including any silence, is billed on a 15-second interval basis. Any input is rounded up to the nearest 15-second interval. Bot responses are not counted towards the usage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lex/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "bodyConversations"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfSpeechConversations",
+                "label": "Number of speech intervals",
+                "displayInConfigSummary": true,
+                "description": "*Every 15 seconds of input (including silence) is counted as one interval; any input is rounded up to the nearest 15-second interval.",
+                "placeholder": "Enter amount",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lex",
+                    "meteredUnit": "Speech to-Speech-Str Supported Mode Speech Text and DTMF"
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "speechConversationsPrice",
+                "label": "Price for speech intervals per month",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lex",
+                "meteredUnit": {
+                  "allRegions": "Speech to-Speech-Str Supported Mode Speech Text and DTMF"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfTextConversations",
+                "label": "Number of text requests (Streaming Conversation)",
+                "displayInConfigSummary": true,
+                "description": "",
+                "placeholder": "Enter amount",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lex",
+                    "meteredUnit": "Text to Text Supported Mode Speech Text and DTMF"
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "textConversationsPrice",
+                "label": "Price for text requests per month",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lex",
+                "meteredUnit": {
+                  "allRegions": "Text to Text Supported Mode Speech Text and DTMF"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "bodyConversations",
+                    "numberOfSpeechConversations",
+                    "speechConversationsPrice",
+                    "numberOfTextConversations",
+                    "textConversationsPrice"
+                  ],
+                  "subTotalRefer": "totalInteractionsCost",
+                  "id": "convertedValues"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of speech intervals",
+                      "variableUnitLabel": "speech intervals",
+                      "required": true,
+                      "variableId": "numberOfSpeechConversations"
+                    },
+                    {
+                      "variableLabel": "Price for speech intervals per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "speechConversationsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Speech intervals per month cost)",
+                  "decimalPlaces": 2,
+                  "id": "costOfSpeechConversations"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of text requests (Streaming Conversation)",
+                      "variableUnitLabel": "text requests per month",
+                      "required": true,
+                      "variableId": "numberOfTextConversations"
+                    },
+                    {
+                      "variableLabel": "Price for text requests per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "textConversationsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Text requests per month cost)",
+                  "decimalPlaces": 2,
+                  "id": "costOfTextConversations"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Speech intervals per month cost)",
+                      "variableUnitLabel": "[currency] (Speech intervals per month cost)",
+                      "required": false,
+                      "variableId": "costOfSpeechConversations"
+                    },
+                    {
+                      "variableLabel": "[currency] (Text requests per month cost)",
+                      "variableUnitLabel": "[currency] (Text requests per month cost)",
+                      "required": false,
+                      "variableId": "costOfTextConversations"
+                    }
+                  ],
+                  "outputUnitLabel": "Total Streaming Conversation cost",
+                  "decimalPlaces": 2,
+                  "id": "totalConversationsCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "costOfSpeechConversations",
+                    "costOfTextConversations",
+                    "totalConversationsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Streaming Conversation cost",
+                  "decimalPlaces": 2,
+                  "id": "totalMonthlyConversationsCost",
+                  "subTotalRefer": "totalConversationsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Automated chatbot designer",
+          "helpText": "The Amazon Lex automated chatbot designer helps you automatically create chatbots using conversation transcripts within hours. You are charged for the time it takes to analyze the transcripts and discover intents.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lex/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "bodyChatbot"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfTrainingMinutesChatbot",
+                "label": "Number of training minutes (Automated Chatbot)",
+                "displayInConfigSummary": true,
+                "description": "",
+                "placeholder": "Enter amount",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "trainingMinutesChatbotPrice",
+                "label": "Price for training minutes per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lex",
+                "meteredUnit": {
+                  "allRegions": "Automated chatbot"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of training minutes (Automated Chatbot)",
+                      "variableUnitLabel": "training minutes per month",
+                      "required": true,
+                      "variableId": "numberOfTrainingMinutesChatbot"
+                    },
+                    {
+                      "variableLabel": "Price for training minutes per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "trainingMinutesChatbotPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Training minutes per month cost)",
+                  "decimalPlaces": 2,
+                  "id": "costOfTrainingMinutesChatbot"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "bodyChatbot",
+                    "numberOfTrainingMinutesChatbot",
+                    "trainingMinutesChatbotPrice",
+                    "costOfTrainingMinutesChatbot"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Automated chatbot designer cost",
+                  "decimalPlaces": 2,
+                  "id": "totalMonthlyChatbotCost",
+                  "subTotalRefer": "costOfTrainingMinutesChatbot"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

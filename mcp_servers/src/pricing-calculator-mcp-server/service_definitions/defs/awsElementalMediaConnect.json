@@ -1,0 +1,1352 @@
+{
+  "version": "0.0.20",
+  "serviceName": "AWS Elemental MediaConnect",
+  "serviceCode": "awsElementalMediaConnect",
+  "type": "AWSService",
+  "slug": "ElementalMediaConnect",
+  "regions": [
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "transport",
+    "video",
+    "broadcast",
+    "live",
+    "flows",
+    "JPEG XS",
+    "CDI"
+  ],
+  "serviceDescription": "AWS Elemental MediaConnect is a high-quality transport service for live video.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/mediaconnect/"
+    }
+  },
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "mediaconnect",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/mediaconnect/[currency]/current/mediaconnect.json"
+    },
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/mediaconnect/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Transport stream flows",
+          "helpText": "With AWS Elemental MediaConnect, you are charged based on two dimensions: active resources and data transfer. An active resource in MediaConnect is called a flow, defined as a single input connected to one or more outputs. You are billed at an hourly rate for each running flow, plus either a per-gigabyte charge for data transferred using the flow or, with reserved outbound bandwidth pricing, a per-hour charge based on bandwidth for video sent to the internet. A flow that is in standby mode is not an active resource, and does not incur active resource costs even if it has outputs or entitlements configured. No long-term commitments or upfront payments are required and you can increase or decrease usage at any time, except for reserved outbound bandwidth, which requires a 12-month commitment at a set bandwidth tier.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediaconnect/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The total GB outbound (monthly) amount in the calculations section can be used to estimate data transfer costs in the section below for outbound data transfer to internet.",
+                "id": "activeFlows_bodyText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of running flows",
+                "id": "numberOfRunningFlowsTransport",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Flow utilization",
+                "id": "flowUtilization",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 730,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of outputs per flow",
+                "id": "numberOfOutputsTransport",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "throughput",
+                "label": "Bitrate (Mbit per second)",
+                "options": [
+                  {
+                    "label": "Mbps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.01,
+                  "maxValue": 1000000
+                },
+                "description": "Bitrate for each output",
+                "placeholder": "Enter the amount in Mbit/s",
+                "id": "bitratePerFlow"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "reservedBandwidth",
+                "label": "Outbound reserved bandwidth",
+                "mappingDefinitionName": "mediaconnect",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "0"
+                  },
+                  {
+                    "label": "50 Mbps",
+                    "id": "50"
+                  },
+                  {
+                    "label": "150 Mbps",
+                    "id": "150"
+                  },
+                  {
+                    "label": "500 Mbps",
+                    "id": "500"
+                  },
+                  {
+                    "label": "1500 Mbps",
+                    "id": "1500"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "Reserved outbound bandwidth is charged for every hour in the month, for each month of your commitment period.",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for outbound bandwidth",
+                "id": "outboundMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "DataProcessedReserved"
+                  },
+                  {
+                    "variableId": "reservedBandwidth"
+                  },
+                  {
+                    "constant": "Mbps1Yr"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "outbound bandwidth price",
+                "id": "outboundBandwidthPrice",
+                "mappingDefinitionName": "mediaconnect",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for outbound bandwidth",
+                    "variableId": "outboundMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mediaconnect",
+                "meteredUnit": {
+                  "allRegions": "RunningFlow Per Hour"
+                },
+                "label": "price per hour for active flow usage",
+                "id": "priceFlowPerHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "activeFlows_bodyText",
+                    "numberOfRunningFlowsTransport",
+                    "flowUtilization",
+                    "numberOfOutputsTransport",
+                    "bitratePerFlow",
+                    "reservedBandwidth",
+                    "outboundMeteredUnitName",
+                    "outboundBandwidthPrice",
+                    "priceFlowPerHour"
+                  ],
+                  "id": "flowUnitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Bitrate (Mbit per second)",
+                      "variableUnitLabel": "Mbit/s",
+                      "required": true,
+                      "variableId": "bitratePerFlow"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds per minute"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes per hour"
+                    },
+                    {
+                      "variableLabel": "Flow utilization",
+                      "variableUnitLabel": "hours utilized per month",
+                      "required": true,
+                      "variableId": "flowUtilization"
+                    }
+                  ],
+                  "outputUnitLabel": "Megabits (per output)",
+                  "decimalPlaces": 0,
+                  "id": "outboundMbitPerFlow"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of running flows",
+                      "variableUnitLabel": "flows",
+                      "required": true,
+                      "variableId": "numberOfRunningFlowsTransport"
+                    },
+                    {
+                      "variableLabel": "Number of outputs per flow",
+                      "variableUnitLabel": "outputs",
+                      "required": true,
+                      "variableId": "numberOfOutputsTransport"
+                    },
+                    {
+                      "variableLabel": "Megabits (per output)",
+                      "variableUnitLabel": "Megabits per output",
+                      "required": true,
+                      "variableId": "outboundMbitPerFlow"
+                    }
+                  ],
+                  "outputUnitLabel": "Megabits (per month)",
+                  "decimalPlaces": 0,
+                  "id": "outboundMbitPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Megabits (per month)",
+                      "variableUnitLabel": "Megabits",
+                      "required": true,
+                      "variableId": "outboundMbitPerMonth"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "Mbit per Gbit"
+                    }
+                  ],
+                  "outputUnitLabel": "Gigabit (Outbound monthly)",
+                  "decimalPlaces": 2,
+                  "id": "outboundGbitMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Gigabit (Outbound monthly)",
+                      "variableUnitLabel": "Gigabits",
+                      "required": true,
+                      "variableId": "outboundGbitMonthly"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "bits per byte"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Outbound monthly)",
+                  "decimalPlaces": 2,
+                  "id": "outboundGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total GB outbound (monthly)",
+                  "displayInCalculationString": true,
+                  "referLabel": "GB (Outbound monthly)",
+                  "id": "GBsubtotalOutboundMonthly",
+                  "refer": "outboundGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected reserved bandwidth",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Outbound reserved bandwidth",
+                  "id": "selectedReservedBandwidth",
+                  "refer": "reservedBandwidth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "selected reserved bandwidth",
+                      "variableUnitLabel": "Mbps",
+                      "required": true,
+                      "variableId": "selectedReservedBandwidth"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds per minute"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes per hour"
+                    },
+                    {
+                      "variableLabel": "Flow utilization",
+                      "variableUnitLabel": "hours utilized per month",
+                      "required": true,
+                      "variableId": "flowUtilization"
+                    }
+                  ],
+                  "outputUnitLabel": "Megabits (reserved per month)",
+                  "decimalPlaces": 0,
+                  "id": "outboundReservedMbitPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Megabits (reserved per month)",
+                      "variableUnitLabel": "Megabits",
+                      "required": true,
+                      "variableId": "outboundReservedMbitPerMonth"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "Mbit per Gbit"
+                    }
+                  ],
+                  "outputUnitLabel": "Gigabit (reserved per month)",
+                  "decimalPlaces": 2,
+                  "id": "outboundReservedGbitMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Gigabit (reserved per month)",
+                      "variableUnitLabel": "Gigabits",
+                      "required": true,
+                      "variableId": "outboundReservedGbitMonthly"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "bits per byte"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (reserved per month)",
+                  "decimalPlaces": 2,
+                  "id": "outboundReservedGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total GB reserved outbound (monthly)",
+                  "displayInCalculationString": true,
+                  "referLabel": "GB (reserved per month)",
+                  "id": "GBsubtotal",
+                  "refer": "outboundReservedGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (Outbound monthly)",
+                      "variableUnitLabel": "GB outbound (actual)",
+                      "required": true,
+                      "variableId": "outboundGBMonthly"
+                    },
+                    {
+                      "variableLabel": "GB (reserved per month)",
+                      "variableUnitLabel": "GB outbound (reserved)",
+                      "required": true,
+                      "variableId": "outboundReservedGBMonthly"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (excess bitrate above commited bandwith)",
+                  "decimalPlaces": 2,
+                  "id": "excessGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (excess bitrate above commited bandwith)",
+                      "variableUnitLabel": "GB (excess)",
+                      "required": true,
+                      "variableId": "excessGBMonthly"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "GB (minimum excess)"
+                    }
+                  ],
+                  "outputUnitLabel": "Data Transfer to internet GB (outbound monthly)",
+                  "decimalPlaces": 2,
+                  "id": "billableOutboundGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total GB to be used in inbound and outbound data transfer to internet in data transfer section below",
+                  "displayInCalculationString": true,
+                  "referLabel": "Data Transfer to internet GB (outbound monthly)",
+                  "id": "GBDTsubtotal",
+                  "refer": "billableOutboundGBMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of running flows",
+                      "variableUnitLabel": "flows",
+                      "required": true,
+                      "variableId": "numberOfRunningFlowsTransport"
+                    },
+                    {
+                      "variableLabel": "Flow utilization",
+                      "variableUnitLabel": "hours utilized per month",
+                      "required": true,
+                      "variableId": "flowUtilization"
+                    },
+                    {
+                      "variableLabel": "price per hour for active flow usage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceFlowPerHour"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Active flows)",
+                  "decimalPlaces": 2,
+                  "id": "activeFlowCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    },
+                    {
+                      "variableLabel": "outbound bandwidth price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "outboundBandwidthPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Outbound bandwidth)",
+                  "decimalPlaces": 2,
+                  "id": "outboundBandwidthCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Active flows)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "activeFlowCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Outbound bandwidth)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "outboundBandwidthCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total)",
+                  "decimalPlaces": 2,
+                  "id": "totalMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "outboundMbitPerFlow",
+                    "outboundMbitPerMonth",
+                    "outboundGbitMonthly",
+                    "outboundGBMonthly",
+                    "GBsubtotalOutboundMonthly",
+                    "selectedReservedBandwidth",
+                    "outboundReservedMbitPerMonth",
+                    "outboundReservedGbitMonthly",
+                    "outboundReservedGBMonthly",
+                    "GBsubtotal",
+                    "excessGBMonthly",
+                    "billableOutboundGBMonthly",
+                    "GBDTsubtotal",
+                    "activeFlowCost",
+                    "outboundBandwidthCost",
+                    "totalMonthly"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elemental MediaConnect active flow cost",
+                  "decimalPlaces": 2,
+                  "id": "activeFlowCostDisplay",
+                  "subTotalRefer": "totalMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "CDI and JPEG XS flows",
+          "helpText": "MediaConnect CDI and JPEG XS flows are billed at an hourly rate for each running flow, plus an hourly rate for each output. The rates are dependent on the flow's maximum video size, which you define at creation time. Reserved outbound bandwidth is not available with MediaConnect CDI and JPEG XS flows.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediaconnect/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Running flows",
+                "id": "runningFLows_headerText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of running flows",
+                "id": "numberOfRunningFlows",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Running flow utilization",
+                "id": "runningFlowUtilization",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 730,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "sourceType",
+                "label": "Source type",
+                "mappingDefinitionName": "mediaconnect",
+                "options": [
+                  {
+                    "label": "",
+                    "id": "0"
+                  },
+                  {
+                    "label": "CDI",
+                    "id": "CDI"
+                  },
+                  {
+                    "label": "JPEG XS",
+                    "id": "JPEG-XS"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "select CDI or JPEG XS",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "videoSize",
+                "label": "Video size",
+                "mappingDefinitionName": "mediaconnect",
+                "options": [
+                  {
+                    "label": "2160p (UHD)",
+                    "id": "2160p"
+                  },
+                  {
+                    "label": "1080p (FHD)",
+                    "id": "1080p"
+                  },
+                  {
+                    "label": "1080i (HD)",
+                    "id": "1080i"
+                  },
+                  {
+                    "label": "720p (HD)",
+                    "id": "720p"
+                  },
+                  {
+                    "label": "480p (SD)",
+                    "id": "480p"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1080p",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "replaceJPEG",
+                "label": "repalce JPEG with CDI",
+                "originalId": "sourceType",
+                "replacements": [
+                  {
+                    "originalString": "JPEG-XS",
+                    "replaceString": "CDI"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for running flow",
+                "id": "runningFlowMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "RunningFlow "
+                  },
+                  {
+                    "variableId": "replaceJPEG"
+                  },
+                  {
+                    "constant": "-"
+                  },
+                  {
+                    "variableId": "videoSize"
+                  },
+                  {
+                    "constant": " Per Hour"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "running flow price",
+                "id": "runningFlowPrice",
+                "mappingDefinitionName": "mediaconnect",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for running flow",
+                    "variableId": "runningFlowMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Running outputs",
+                "id": "runningOutputs_headerText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of running outputs",
+                "id": "numberOfRunningOutputs",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Running output utilization",
+                "id": "runningOutputUtilization",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 730,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "runningOutputType",
+                "label": "Running output type",
+                "mappingDefinitionName": "mediaconnect",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "0"
+                  },
+                  {
+                    "label": "CDI",
+                    "id": "CDI"
+                  },
+                  {
+                    "label": "JPEG XS",
+                    "id": "JPEG-XS"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "select CDI or JPEG XS",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "runningOutputType"
+                        },
+                        "CDI"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "runningOutputType"
+                        },
+                        "JPEG-XS"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "runningOutputSize",
+                "label": "Running output size",
+                "mappingDefinitionName": "mediaconnect",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "0"
+                  },
+                  {
+                    "label": "2160p (UHD)",
+                    "id": "2160p"
+                  },
+                  {
+                    "label": "1080p (FHD)",
+                    "id": "1080p"
+                  },
+                  {
+                    "label": "1080i (HD)",
+                    "id": "1080i"
+                  },
+                  {
+                    "label": "720p (HD)",
+                    "id": "720p"
+                  },
+                  {
+                    "label": "480p (SD)",
+                    "id": "480p"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1080i",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for running output",
+                "id": "runningOutputMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "RunningOutput "
+                  },
+                  {
+                    "variableId": "runningOutputType"
+                  },
+                  {
+                    "constant": "-"
+                  },
+                  {
+                    "variableId": "runningOutputSize"
+                  },
+                  {
+                    "constant": " Per Hour"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "running output price",
+                "id": "runningOutputPrice",
+                "mappingDefinitionName": "mediaconnect",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for running output",
+                    "variableId": "runningOutputMeteredUnitName"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "runningFLows_headerText",
+                    "numberOfRunningFlows",
+                    "runningFlowUtilization",
+                    "sourceType",
+                    "videoSize",
+                    "replaceJPEG",
+                    "runningFlowMeteredUnitName",
+                    "runningFlowPrice",
+                    "runningOutputs_headerText",
+                    "numberOfRunningOutputs",
+                    "runningOutputUtilization",
+                    "runningOutputType",
+                    "runningOutputSize",
+                    "runningOutputMeteredUnitName",
+                    "runningOutputPrice"
+                  ],
+                  "id": "runningUnitConvert",
+                  "subTotalRefer": "totalMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of running flows",
+                      "variableUnitLabel": "running flows",
+                      "required": true,
+                      "variableId": "numberOfRunningFlows"
+                    },
+                    {
+                      "variableLabel": "Running flow utilization",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "runningFlowUtilization"
+                    },
+                    {
+                      "variableLabel": "running flow price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "runningFlowPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Running flows)",
+                  "decimalPlaces": 2,
+                  "id": "runningFlowCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Running flow cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Running flows)",
+                  "id": "runningFlowCostSubtotalDisplay",
+                  "refer": "runningFlowCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of running outputs",
+                      "variableUnitLabel": "running outputs",
+                      "required": true,
+                      "variableId": "numberOfRunningOutputs"
+                    },
+                    {
+                      "variableLabel": "Running output utilization",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "runningOutputUtilization"
+                    },
+                    {
+                      "variableLabel": "running output price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "runningOutputPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Running outputs)",
+                  "decimalPlaces": 2,
+                  "id": "runningOutputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Running Output cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Running outputs)",
+                  "id": "runningOutputCostSubtotalDisplay",
+                  "refer": "runningOutputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Running flows)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "runningFlowCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Running outputs)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "runningOutputCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (CDI and JPEG XS flows)",
+                  "decimalPlaces": 2,
+                  "id": "totalCDIJPEG"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "runningFlowCost",
+                    "runningFlowCostSubtotalDisplay",
+                    "runningOutputCost",
+                    "runningOutputCostSubtotalDisplay",
+                    "totalCDIJPEG"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elemental MediaConnect CDI and JPEG XS flow cost",
+                  "decimalPlaces": 2,
+                  "id": "CDIJPEGCostDisplay",
+                  "subTotalRefer": "totalCDIJPEG"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "NDI flows",
+          "helpText": "NDI flows are billed at a flat hourly rate per running flow. NDI outputs are included at no additional data transfer cost within VPC. If transport stream outputs are added to NDI flows, standard MediaConnect data transfer charges apply through the data transfer card below.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediaconnect/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of running flows",
+                "id": "numberOfRunningFlowsNDI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Flow utilization",
+                "id": "flowUtilizationNDI",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 730,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mediaconnect",
+                "meteredUnit": {
+                  "allRegions": "-aDvxrYyy-EUFm4KQ1Osq0069s29nOjGRhPKR51t-Rs"
+                },
+                "label": "price per hour for NDI flow usage",
+                "id": "priceNDIFlowPerHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfRunningFlowsNDI",
+                    "flowUtilizationNDI",
+                    "priceNDIFlowPerHour"
+                  ],
+                  "id": "ndiFlowUnitConvert",
+                  "subTotalRefer": "totalCDIJPEG"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of running flows",
+                      "variableUnitLabel": "flows",
+                      "required": true,
+                      "variableId": "numberOfRunningFlowsNDI"
+                    },
+                    {
+                      "variableLabel": "Flow utilization",
+                      "variableUnitLabel": "hours utilized per month",
+                      "required": true,
+                      "variableId": "flowUtilizationNDI"
+                    },
+                    {
+                      "variableLabel": "price per hour for NDI flow usage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceNDIFlowPerHour"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (NDI flows)",
+                  "decimalPlaces": 2,
+                  "id": "ndiFlowCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ndiFlowCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elemental MediaConnect NDI flow cost",
+                  "decimalPlaces": 2,
+                  "id": "ndiFlowCostDisplay",
+                  "subTotalRefer": "ndiFlowCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data transfer",
+          "helpText": "Data transfer charges are incurred when MediaConnect transfers data to or from MediaConnect resources, AWS Elemental MediaLive, or other AWS services. You also incur additional charges when you serve content outside of AWS. If the live video output is delivered to a destination outside of AWS, then internet data transfer charges apply after the first 100 GB per month. The pricing below is based on data transferred using MediaConnect.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediaconnect/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The total GB outbound (monthly) amount in the calculations section of the Transport stream flows card can be used to estimate data transfer costs in the section below for outbound data transfer to internet.",
+                "id": "DTFlows_bodyText"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Intra-region data transfer",
+                "label": "info alert",
+                "content": "The intra-region data transfer price is $0.01/GB total for MediaConnect, not in each direction as reflected in the below calculations. For example, an intra-region data transfer for 20 GB/month is $0.20 [currency], not $0.40 [currency].",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "intraRegion_infoAlert"
+              },
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound data transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-region data transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound data transfer",
+                    "description": "Outbound data transfer to internet: If purchasing reserved outbound bandwidth, you are only charged for excess bitrate delivered above the bandwidth commitment."
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransferElementalMediaConnect"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "DTFlows_bodyText",
+                    "intraRegion_infoAlert",
+                    "dataTransferElementalMediaConnect"
+                  ],
+                  "id": "dataTransfer_unitConvert",
+                  "subTotalRefer": "ndiFlowCost"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_costElementalMediaConnect",
+                  "refer": "dataTransferElementalMediaConnect"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_priceDisplayElementalMediaConnect",
+                  "refer": [
+                    "dataTransfer_costElementalMediaConnect"
+                  ],
+                  "subTotalRefer": "dataTransfer_costElementalMediaConnect"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "elementalMediaConnect",
+      "notifications": [
+        {
+          "subType": "alert",
+          "header": "Intra-region data transfer",
+          "content": "If you included intra-region data transfer in your estimate, your actual estimate may be less than shown, as noted above.",
+          "alertType": "info",
+          "isDismissable": true,
+          "refers": []
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

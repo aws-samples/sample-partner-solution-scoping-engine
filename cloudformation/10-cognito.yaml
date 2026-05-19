@@ -1,0 +1,599 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for SERA Cognito User Pool with Advanced Security - V2 with Federation Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'demo-v2'
+  
+  PublicReachableDomainName:
+    Type: String
+    Description: 'Primary domain name for SERA (e.g., yourdomainname.com)'
+  
+  CognitoAuthDomainName:
+    Type: String
+    Description: 'Custom domain for Cognito auth (from stack export)'
+  
+  CognitoAuthCertificateArn:
+    Type: String
+    Description: 'ACM certificate ARN for Cognito custom domain (from stack export)'
+  
+  SecondDomainName:
+    Type: String
+    Description: 'Optional second domain name (leave empty if not used)'
+    Default: ''
+
+  ThirdDomainName:
+    Type: String
+    Description: 'Optional third domain name (leave empty if not used)'
+    Default: ''
+
+  # External Identity Provider Configuration
+  EnableExternalIdP:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+    Description: 'Enable external identity provider federation (Okta, Entra ID, Google, etc.)'
+  
+  IdPProviderName:
+    Type: String
+    Default: 'Corporate-IdP'
+    Description: 'Identity provider display name shown on login button (e.g., Okta, EntraID, Google)'
+  
+  IdPProviderType:
+    Type: String
+    Default: 'OIDC'
+    AllowedValues: ['OIDC', 'SAML']
+    Description: 'Identity provider protocol type'
+  
+  IdPClientId:
+    Type: String
+    Default: ''
+    Description: 'Client ID from your identity provider (required if EnableExternalIdP=true)'
+  
+  IdPClientSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: 'Client secret from your identity provider (required if EnableExternalIdP=true for OIDC)'
+  
+  IdPOIDCIssuer:
+    Type: String
+    Default: 'https://idp-integ.federate.amazon.com'
+    Description: 'OIDC issuer URL (e.g., https://idp.federate.amazon.com, https://dev-12345.okta.com) or SAML metadata URL'
+  
+  IdPAuthorizeScopes:
+    Type: String
+    Default: 'openid email profile groups'
+    Description: 'OAuth scopes to request from IdP (space-separated, e.g., "openid email profile groups")'
+
+Conditions:
+  HasSecondDomain: !Not [!Equals [!Ref SecondDomainName, '']]
+  HasThirdDomain: !Not [!Equals [!Ref ThirdDomainName, '']]
+  UseExternalIdP: !Equals [!Ref EnableExternalIdP, 'true']
+  NoExternalIdP: !Not [!Equals [!Ref EnableExternalIdP, 'true']]
+  UseOIDC: !And
+    - !Equals [!Ref EnableExternalIdP, 'true']
+    - !Equals [!Ref IdPProviderType, 'OIDC']
+  UseSAML: !And
+    - !Equals [!Ref EnableExternalIdP, 'true']
+    - !Equals [!Ref IdPProviderType, 'SAML']
+
+Resources:
+  # Cognito User Pool with Advanced Security and Custom Groups Attribute
+  SeraUserPool:
+    Type: AWS::Cognito::UserPool
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-COG2
+            reason: "MFA not required for PoC environment. Will be implemented in production deployment."
+    Properties:
+      UserPoolName: !Sub '${StackPrefix}-app-user-pool'
+      UserPoolTier: PLUS
+      AutoVerifiedAttributes:
+        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      UsernameConfiguration:
+        CaseSensitive: false
+      
+      # Schema - ONLY CHANGE: Added custom:groups attribute
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: given_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: family_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: zoneinfo
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: groups
+          AttributeDataType: String
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+      
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+      
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate: []
+      
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+          - Name: verified_phone_number
+            Priority: 2
+      
+      UserPoolAddOns:
+        AdvancedSecurityMode: AUDIT
+        AdvancedSecurityAdditionalFlows:
+          CustomAuthMode: AUDIT
+      
+      UserPoolTags:
+        Application: !Sub 'SERA-${StackPrefix}'
+        Name: !Sub '${StackPrefix}-app-user-pool'
+        StackPrefix: !Ref StackPrefix
+
+  # Cognito User Groups
+  SeraSalesPersonGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: sera_sales_person
+      Description: 'Sales team members with customer engagement and opportunity management access'
+      UserPoolId: !Ref SeraUserPool
+      Precedence: 1
+  
+  SeraSolutionsArchitectGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: sera_solutions_architect
+      Description: 'Solutions architects with technical design and customer solution review capabilities'
+      UserPoolId: !Ref SeraUserPool
+      Precedence: 2
+
+  # External Identity Provider Client Secret Storage
+  IdPClientSecretStore:
+    Type: AWS::SecretsManager::Secret
+    Condition: UseExternalIdP
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-SMG4
+            reason: "IdP client secrets require coordinated rotation with identity provider to prevent OAuth flow disruption."
+    Properties:
+      Name: !Sub '${StackPrefix}-idp-client-secret'
+      Description: !Sub 'Client secret for ${IdPProviderName} identity provider'
+      SecretString: !Ref IdPClientSecret
+      KmsKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # External OIDC Identity Provider (Federate, Okta, Google, etc.)
+  ExternalOIDCProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseOIDC
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: OIDC
+      ProviderDetails:
+        client_id: !Ref IdPClientId
+        client_secret: !Ref IdPClientSecret
+        authorize_scopes: !Ref IdPAuthorizeScopes
+        attributes_request_method: GET
+        oidc_issuer: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: EMAIL
+        username: sub
+        given_name: GIVEN_NAME
+        family_name: FAMILY_NAME
+        zoneinfo: zoneinfo
+        custom:groups: groups
+
+  # External SAML Identity Provider (for SAML-based IdPs)
+  ExternalSAMLProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseSAML
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: SAML
+      ProviderDetails:
+        MetadataURL: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+        username: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
+        given_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
+        family_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
+
+  # User Pool Client
+  # User Pool Client - Without External IdP
+  SeraUserPoolClientNoIdP:
+    Type: AWS::Cognito::UserPoolClient
+    Condition: NoExternalIdP
+    Properties:
+      ClientName: !Sub '${StackPrefix}-application'
+      UserPoolId: !Ref SeraUserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_AUTH
+        - ALLOW_USER_SRP_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      CallbackURLs:
+        - !Sub 'https://${PublicReachableDomainName}/oauth2/idpresponse'
+        - !Sub 'https://${PublicReachableDomainName}/api/callback'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/oauth2/idpresponse'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/api/callback'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/oauth2/idpresponse'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/api/callback'
+          - !Ref 'AWS::NoValue'
+      LogoutURLs:
+        - !Sub 'https://${PublicReachableDomainName}/logged-out'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/logged-out'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/logged-out'
+          - !Ref 'AWS::NoValue'
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      RefreshTokenValidity: 10
+      AccessTokenValidity: 10
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: hours
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      AuthSessionValidity: 3
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - zoneinfo
+        - custom:groups
+
+  # User Pool Client - With External IdP
+  SeraUserPoolClientWithIdP:
+    Type: AWS::Cognito::UserPoolClient
+    Condition: UseExternalIdP
+    DependsOn: ExternalOIDCProvider
+    Properties:
+      ClientName: !Sub '${StackPrefix}-application'
+      UserPoolId: !Ref SeraUserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_AUTH
+        - ALLOW_USER_SRP_AUTH
+      SupportedIdentityProviders:
+        - !Ref IdPProviderName
+        - COGNITO
+      CallbackURLs:
+        - !Sub 'https://${PublicReachableDomainName}/oauth2/idpresponse'
+        - !Sub 'https://${PublicReachableDomainName}/api/callback'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/oauth2/idpresponse'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/api/callback'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/oauth2/idpresponse'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/api/callback'
+          - !Ref 'AWS::NoValue'
+      LogoutURLs:
+        - !Sub 'https://${PublicReachableDomainName}/logged-out'
+        - !If
+          - HasSecondDomain
+          - !Sub 'https://${SecondDomainName}/logged-out'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - !Sub 'https://${ThirdDomainName}/logged-out'
+          - !Ref 'AWS::NoValue'
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      RefreshTokenValidity: 10
+      AccessTokenValidity: 10
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: hours
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      AuthSessionValidity: 3
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - zoneinfo
+        - custom:groups
+
+  # Risk Configuration for Advanced Security
+  SeraUserPoolRiskConfiguration:
+    Type: AWS::Cognito::UserPoolRiskConfigurationAttachment
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+      
+      CompromisedCredentialsRiskConfiguration:
+        Actions:
+          EventAction: BLOCK
+        EventFilter:
+          - SIGN_IN
+          - PASSWORD_CHANGE
+      
+      AccountTakeoverRiskConfiguration:
+        Actions:
+          LowAction:
+            EventAction: NO_ACTION
+            Notify: false
+          MediumAction:
+            EventAction: MFA_IF_CONFIGURED
+            Notify: false
+          HighAction:
+            EventAction: BLOCK
+            Notify: false
+
+  # Custom Domain for Managed Login
+  SeraUserPoolCustomDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref CognitoAuthDomainName
+      UserPoolId: !Ref SeraUserPool
+      ManagedLoginVersion: "2"
+      CustomDomainConfig:
+        CertificateArn: !Ref CognitoAuthCertificateArn
+
+  # Route53 record for custom domain
+  CognitoAuthDomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+          Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !ImportValue
+          Fn::Sub: '${StackPrefix}-cognito-auth-domain-name'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraUserPoolCustomDomain.CloudFrontDistribution
+        HostedZoneId: Z2FDTNDATAQYW2
+        EvaluateTargetHealth: false
+
+  # Managed Login Branding
+  SeraManagedLoginBranding:
+    Type: AWS::Cognito::ManagedLoginBranding
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+      UseCognitoProvidedValues: true
+
+  CognitoClientSecret:
+    Type: AWS::SecretsManager::Secret
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-SMG4
+            reason: "Cognito client secrets require coordinated rotation with application deployment to prevent OAuth flow disruption."
+    Properties:
+      Name: !Sub '${StackPrefix}-cognito-client-secret'
+      Description: !Sub '${StackPrefix} Cognito User Pool Client Secret'
+      SecretString: !If 
+        - UseExternalIdP
+        - !GetAtt SeraUserPoolClientWithIdP.ClientSecret
+        - !GetAtt SeraUserPoolClientNoIdP.ClientSecret
+      KmsKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+  
+  IdPClientSecretStore:
+    Type: AWS::SecretsManager::Secret
+    Condition: UseExternalIdP
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-SMG4
+            reason: "IdP client secrets require coordinated rotation with identity provider to prevent OAuth flow disruption."
+    Properties:
+      Name: !Sub '${StackPrefix}-idp-client-secret'
+      Description: !Sub 'Client secret for ${IdPProviderName} identity provider'
+      SecretString: !Ref IdPClientSecret
+      KmsKeyId: !ImportValue
+        Fn::Sub: 'demo-kms-key-arn'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  ExternalOIDCProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseOIDC
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: OIDC
+      ProviderDetails:
+        client_id: !Ref IdPClientId
+        client_secret: !Ref IdPClientSecret
+        authorize_scopes: !Ref IdPAuthorizeScopes
+        attributes_request_method: GET
+        oidc_issuer: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: EMAIL
+        username: sub
+        given_name: GIVEN_NAME
+        family_name: FAMILY_NAME
+        zoneinfo: zoneinfo
+        custom:groups: groups
+
+  ExternalSAMLProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseSAML
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: SAML
+      ProviderDetails:
+        MetadataURL: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+        username: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
+        given_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
+        family_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
+
+  CognitoWebAclAssociation: 
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties: 
+      WebACLArn: !ImportValue
+          Fn::Sub: '${StackPrefix}-cognito-waf-arn'
+      ResourceArn: !GetAtt SeraUserPool.Arn
+
+Outputs:
+  UserPoolId:
+    Description: 'ID of the SERA Cognito User Pool'
+    Value: !Ref SeraUserPool
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-user-pool-id'
+
+  UserPoolArn:
+    Description: 'ARN of the SERA Cognito User Pool'
+    Value: !GetAtt SeraUserPool.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-user-pool-arn'
+
+  UserPoolClientId:
+    Description: 'ID of the SERA Cognito User Pool Client'
+    Value: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-client-id'
+
+  CognitoClientSecretArn:
+    Description: 'ARN of the Cognito Client Secret in Secrets Manager'
+    Value: !Ref CognitoClientSecret
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-client-secret-arn'
+
+  IdPClientSecretArn:
+    Description: 'ARN of the External IdP Client Secret in Secrets Manager (if enabled)'
+    Condition: UseExternalIdP
+    Value: !Ref IdPClientSecretStore
+    Export:
+      Name: !Sub '${StackPrefix}-idp-client-secret-arn'
+
+  IdPProviderName:
+    Description: 'External identity provider name (if enabled)'
+    Condition: UseExternalIdP
+    Value: !Ref IdPProviderName
+    Export:
+      Name: !Sub '${StackPrefix}-idp-provider-name'
+
+  CognitoDomainName:
+    Description: 'Custom domain name for Cognito authentication'
+    Value: !ImportValue
+          Fn::Sub: '${StackPrefix}-cognito-auth-domain-name'
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-domain'
+
+  CognitoCustomAuthURL:
+    Description: 'Cognito authentication URL with custom domain'
+    Value: !Sub 
+      - 'https://${AuthDomain}/login'
+      - AuthDomain: !ImportValue
+          Fn::Sub: '${StackPrefix}-cognito-auth-domain-name'
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-custom-auth-url'
+
+  CognitoRegion:
+    Description: 'AWS Region where Cognito resources are deployed'
+    Value: !Ref AWS::Region
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-region'
+
+  UserPoolCustomDomainCloudFrontDistribution:
+    Description: 'CloudFront distribution created by Cognito custom domain'
+    Value: !GetAtt SeraUserPoolCustomDomain.CloudFrontDistribution
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-cloudfront-distribution'

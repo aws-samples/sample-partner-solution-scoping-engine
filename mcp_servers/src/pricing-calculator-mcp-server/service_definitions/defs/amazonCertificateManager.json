@@ -1,0 +1,416 @@
+{
+  "version": "0.0.114",
+  "serviceName": {
+    "aws": "AWS Certificate Manager",
+    "aws-cn": "Amazon Certificate Manager"
+  },
+  "serviceCode": "amazonCertificateManager",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Certificate",
+    "Manager",
+    "ACM"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Certificate Manager (ACM) makes it easy for you to centrally manage your SSL/TLS certificates from the AWS Management Console, AWS CLI, or ACM APIs. You can also audit the use of each certificate by reviewing your AWS CloudTrail logs.",
+    "aws-cn": "Amazon Certificate Manager (ACM) makes it easy for you to centrally manage your SSL/TLS certificates from the Amazon Management Console, Amaozn CLI, or ACM APIs. You can also audit the use of each certificate by reviewing your Amazon CloudTrail logs."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/certificate-manager/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "acm",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/acm/[currency]/current/acm.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/athena/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Exportable Public Certificate",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/certificate-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "You pay only once for the exportable public certificates you issue each month and when those certificates renew.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "oneTimeCostAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of fully qualified domain names (FQDNs)",
+                "id": "numberOfFQDN",
+                "description": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "pricing",
+                "label": "price for FQDN domain",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "acm",
+                "meteredUnit": {
+                  "allRegions": "GxG6Ybs6pEumies98iPjwwdnC89YV3FNO4Sn86kBo18"
+                },
+                "id": "FQDN_domain_price"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of wildcard domain names",
+                "id": "numberOfWildcardDomain",
+                "description": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "pricing",
+                "label": "price for wildcard domain",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "acm",
+                "meteredUnit": {
+                  "allRegions": "zY1NJfnggLi9UZ7d0NCmMA7NrUBkvv1n4rJO8t5lqWQ"
+                },
+                "id": "wildcard_domain_price"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "domainCount"
+                    },
+                    100
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "The total number of domains must be between 1 and 100.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "domainCountAlert"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "_generated_1",
+                  "refer": [
+                    "oneTimeCostAlert",
+                    "numberOfFQDN",
+                    "FQDN_domain_price",
+                    "numberOfWildcardDomain",
+                    "wildcard_domain_price",
+                    "domainCountAlert"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of fully qualified domain names (FQDNs)",
+                      "variableUnitLabel": "domain(s)",
+                      "required": true,
+                      "variableId": "numberOfFQDN"
+                    },
+                    {
+                      "variableLabel": "Number of wildcard domain names",
+                      "variableUnitLabel": "domain(s)",
+                      "required": true,
+                      "variableId": "numberOfWildcardDomain"
+                    }
+                  ],
+                  "outputUnitLabel": "total domains",
+                  "decimalPlaces": "",
+                  "id": "domainCount"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of fully qualified domain names (FQDNs)",
+                      "variableUnitLabel": "domain(s)",
+                      "required": true,
+                      "variableId": "numberOfFQDN"
+                    },
+                    {
+                      "variableLabel": "price for FQDN domain",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FQDN_domain_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (FQDN Domain cost)",
+                  "decimalPlaces": 2,
+                  "id": "FQDN_domain_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of wildcard domain names",
+                      "variableUnitLabel": "domain(s)",
+                      "required": true,
+                      "variableId": "numberOfWildcardDomain"
+                    },
+                    {
+                      "variableLabel": "price for wildcard domain",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "wildcard_domain_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Wildcard Domain cost)",
+                  "decimalPlaces": 2,
+                  "id": "wildcard_domain_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (FQDN Domain cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "FQDN_domain_cost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Wildcard Domain cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "wildcard_domain_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "total_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "domainCount",
+                    "FQDN_domain_cost",
+                    "wildcard_domain_cost",
+                    "total_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Total Exportable Public Certificate cost",
+                  "decimalPlaces": 2,
+                  "id": "ExportablePublicCertificate_total_cost",
+                  "subTotalRefer": "total_cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "API Calls to Export Public Certificate",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/certificate-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "The first 10,000 API calls are free.",
+                "id": "APICallsFreeTierBanner"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of API calls",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "hundred thousand per month",
+                    "id": "hundredThousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "API calls per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfAPICalls"
+              },
+              {
+                "type": "pricing",
+                "label": "price for API calls",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "acm",
+                "meteredUnit": {
+                  "allRegions": "kP1tCsqxkzAwp8GlXykVtd_G6gco7uW2We6MB_8jws0"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "API_call_price"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "acm",
+                "label": "API call tiered pricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000,
+                      "meteredUnit": "-VSpzeYEDVnZJ0IBtNwVbYpzI_hGoxzDKc9lw6-R994"
+                    },
+                    {
+                      "startOfTier": 10000,
+                      "endOfTier": -1,
+                      "meteredUnit": "kP1tCsqxkzAwp8GlXykVtd_G6gco7uW2We6MB_8jws0"
+                    }
+                  ]
+                },
+                "id": "APIcall_tierPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "_generated_2",
+                  "refer": [
+                    "APICallsFreeTierBanner",
+                    "numberOfAPICalls",
+                    "API_call_price",
+                    "APIcall_tierPrice"
+                  ],
+                  "subTotalRefer": "total_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "API call tiered pricing",
+                  "inputReferLabel": "Number of API calls",
+                  "outputUnitLabel": "[currency] (User Pool MAUs)",
+                  "inputUnitLabel": "API calls",
+                  "decimalPlaces": 5,
+                  "id": "cognitoUserPool_MAUCost",
+                  "inputRefer": "numberOfAPICalls",
+                  "tieredPricingRefer": "APIcall_tierPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "cognitoUserPool_MAUCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total API Call cost",
+                  "decimalPlaces": 2,
+                  "id": "APICallsTotalCost",
+                  "subTotalRefer": "cognitoUserPool_MAUCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "Certificate_Manager"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ],
+  "slug": "CertificateManager"
+}

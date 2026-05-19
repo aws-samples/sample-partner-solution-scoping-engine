@@ -1,0 +1,685 @@
+{
+  "version": "0.0.16",
+  "serviceName": "Amazon EMR Serverless",
+  "serviceCode": "amazonEmrServerless",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elasticmapreduce-serverless",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elasticmapreduce/[currency]/current/elasticmapreduce-serverless.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/emr/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "x86",
+      "description": "This architecture uses x86 processors and is compatible with most third-party tools and libraries.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/emr/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/emr/pricing/#Amazon_EMR_Serverless"
+            }
+          },
+          "helpText": "With EMR Serverless, there are no upfront costs, and you pay for only the resources you use. You pay for the amount of vCPU, memory, and storage resources consumed by your applications.",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of vCPUs per job run",
+                "id": "totalvCPUHours",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter number of vCPUs per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per vCPU hour",
+                "id": "EMRServerless_vCPU_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-vCPUHours"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Amount of memory per job run (GB)",
+                "id": "totalMemoryHours",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter memory (GB) per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per memory hour",
+                "id": "EMRServerless_memory_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-MemoryGBHours"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total ephemeral storage per job run (GB)",
+                "id": "totalStorageGB",
+                "description": "20 GB of ephemeral storage is available for all workers by default—you pay only for any additional storage that you configure per worker.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter ephemeral storage (GB) per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "EMR_Serverless_jobRuntime",
+                "label": "Job runtime",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per storage hour",
+                "id": "EMRServerless_storage_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-StorageMemoryGBHours"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "EMRServerless_conversion",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "totalvCPUHours",
+                    "EMRServerless_vCPU_price",
+                    "totalMemoryHours",
+                    "EMRServerless_memory_price",
+                    "totalStorageGB",
+                    "EMR_Serverless_jobRuntime",
+                    "EMRServerless_storage_price"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_vCPUCost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of vCPUs per job run",
+                      "variableId": "totalvCPUHours",
+                      "variableUnitLabel": "vCPU hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per vCPU hour",
+                      "variableId": "EMRServerless_vCPU_price",
+                      "variableUnitLabel": "[currency] per vCPU-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total vCPU monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_MemoryCost",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory per job run (GB)",
+                      "variableId": "totalMemoryHours",
+                      "variableUnitLabel": "memory hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per memory hour",
+                      "variableId": "EMRServerless_memory_price",
+                      "variableUnitLabel": "[currency] per memory GB-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total memory monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "EMRServerless_billableStorage_cal",
+                  "operands": [
+                    {
+                      "variableLabel": "Total ephemeral storage per job run (GB)",
+                      "variableId": "totalStorageGB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": "20",
+                      "constantUnitLabel": "GB free tier"
+                    }
+                  ],
+                  "outputUnitLabel": "additional storage GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "additional storage GB",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "EMRServerless_billableStorage_cal"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "billable storage GB",
+                  "decimalPlaces": 2,
+                  "id": "EMRServerless_billableStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_StorageCost",
+                  "operands": [
+                    {
+                      "variableLabel": "billable storage GB",
+                      "variableId": "EMRServerless_billableStorage",
+                      "variableUnitLabel": "storage hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per storage hour",
+                      "variableId": "EMRServerless_storage_price",
+                      "variableUnitLabel": "[currency] per storage GB-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total storage monthly cost",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "EMRServerless_TotalCost",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] total vCPU monthly cost",
+                      "variableId": "EMRServerless_vCPUCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] total memory monthly cost",
+                      "variableId": "EMRServerless_MemoryCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] total storage monthly cost",
+                      "variableId": "EMRServerless_StorageCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "EMR Serverless cost",
+                  "decimalPlaces": 4,
+                  "refer": [
+                    "EMRServerless_vCPUCost",
+                    "EMRServerless_MemoryCost",
+                    "EMRServerless_billableStorage_cal",
+                    "EMRServerless_billableStorage",
+                    "EMRServerless_StorageCost",
+                    "EMRServerless_TotalCost"
+                  ],
+                  "subTotalRefer": "EMRServerless_TotalCost",
+                  "id": "EMR_Serverless_total"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    },
+    {
+      "title": "ARM",
+      "description": "This architecture uses AWS Graviton2 processors that provide better price-performance. You might have to recompile some third-party tools and libraries.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/emr/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "elasticmapreduce-serverless",
+                  "meteredUnit": "EMR-Serverless-ARMvCPUHours"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "elasticmapreduce-serverless",
+                  "meteredUnit": "EMR-Serverless-ARMMemoryGBHours"
+                }
+              }
+            ]
+          },
+          "title": "Service settings",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/emr/pricing/#Amazon_EMR_Serverless"
+            }
+          },
+          "helpText": "With EMR Serverless, there are no upfront costs, and you pay for only the resources you use. You pay for the amount of vCPU, memory, and storage resources consumed by your applications.",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of vCPUs per job run",
+                "id": "totalvCPUHours_arm",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter number of vCPUs per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per vCPU hour",
+                "id": "EMRServerless_vCPU_price_arm",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-ARMvCPUHours"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Amount of memory per job run (GB)",
+                "id": "totalMemoryHours_arm",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter memory (GB) per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per memory hour",
+                "id": "EMRServerless_memory_price_arm",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-ARMMemoryGBHours"
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total ephemeral storage per job run (GB)",
+                "id": "totalStorageGB_arm",
+                "description": "20 GB of ephemeral storage is available for all workers by default—you pay only for any additional storage that you configure per worker.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter ephemeral storage (GB) per job run",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "EMR_Serverless_jobRuntime_arm",
+                "label": "Job runtime",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per storage hour",
+                "id": "EMRServerless_storage_price_arm",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce-serverless",
+                "meteredUnit": {
+                  "allRegions": "EMR-Serverless-StorageMemoryGBHours"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "EMRServerless_conversion_arm",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "totalvCPUHours_arm",
+                    "EMRServerless_vCPU_price_arm",
+                    "totalMemoryHours_arm",
+                    "EMRServerless_memory_price_arm",
+                    "totalStorageGB_arm",
+                    "EMR_Serverless_jobRuntime_arm",
+                    "EMRServerless_storage_price_arm"
+                  ],
+                  "subTotalRefer": "EMRServerless_TotalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_vCPUCost_arm",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of vCPUs per job run",
+                      "variableId": "totalvCPUHours_arm",
+                      "variableUnitLabel": "vCPU hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime_arm",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per vCPU hour",
+                      "variableId": "EMRServerless_vCPU_price_arm",
+                      "variableUnitLabel": "[currency] per vCPU-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total vCPU monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_MemoryCost_arm",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory per job run (GB)",
+                      "variableId": "totalMemoryHours_arm",
+                      "variableUnitLabel": "memory hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime_arm",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per memory hour",
+                      "variableId": "EMRServerless_memory_price_arm",
+                      "variableUnitLabel": "[currency] per memory GB-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total memory monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "EMRServerless_billableStorage_cal_arm",
+                  "operands": [
+                    {
+                      "variableLabel": "Total ephemeral storage per job run (GB)",
+                      "variableId": "totalStorageGB_arm",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": "20",
+                      "constantUnitLabel": "GB free tier"
+                    }
+                  ],
+                  "outputUnitLabel": "additional storage GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "additional storage GB",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "EMRServerless_billableStorage_cal_arm"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "billable storage GB",
+                  "decimalPlaces": 2,
+                  "id": "EMRServerless_billableStorage_arm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "EMRServerless_StorageCost_arm",
+                  "operands": [
+                    {
+                      "variableLabel": "billable storage GB",
+                      "variableId": "EMRServerless_billableStorage_arm",
+                      "variableUnitLabel": "storage hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "EMR_Serverless_jobRuntime_arm",
+                      "variableUnitLabel": "hours job runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per storage hour",
+                      "variableId": "EMRServerless_storage_price_arm",
+                      "variableUnitLabel": "[currency] per storage GB-hours rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total storage monthly cost",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "EMRServerless_TotalCost_arm",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] total vCPU monthly cost",
+                      "variableId": "EMRServerless_vCPUCost_arm",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] total memory monthly cost",
+                      "variableId": "EMRServerless_MemoryCost_arm",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] total storage monthly cost",
+                      "variableId": "EMRServerless_StorageCost_arm",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "EMR Serverless cost",
+                  "decimalPlaces": 4,
+                  "refer": [
+                    "EMRServerless_vCPUCost_arm",
+                    "EMRServerless_MemoryCost_arm",
+                    "EMRServerless_billableStorage_cal_arm",
+                    "EMRServerless_billableStorage_arm",
+                    "EMRServerless_StorageCost_arm",
+                    "EMRServerless_TotalCost_arm"
+                  ],
+                  "subTotalRefer": "EMRServerless_TotalCost_arm",
+                  "id": "EMR_Serverless_total_arm"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_1"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

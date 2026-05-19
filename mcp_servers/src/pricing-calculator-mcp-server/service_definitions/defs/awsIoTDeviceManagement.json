@@ -1,0 +1,672 @@
+{
+  "version": "0.0.18",
+  "serviceName": {
+    "aws": "AWS IoT Device Management",
+    "aws-cn": "Amazon IoT Device Management"
+  },
+  "serviceCode": "awsIoTDeviceManagement",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-gov-east-1",
+    "us-gov-west-1"
+  ],
+  "searchKeywords": [
+    "device management",
+    "fleet indexing",
+    "index updates",
+    "device query",
+    "device queries",
+    "jobs",
+    "remote actions",
+    "secure tunneling",
+    "tunnels"
+  ],
+  "serviceDescription": {
+    "aws": "AWS IoT Device Management makes it easy for you to manage your fleets of connected devices at any scale.",
+    "aws-cn": "Amazon IoT Device Management makes it easy for you to manage your fleets of connected devices at any scale."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/iot-device-management/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iotdevicemanagement",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iotdevicemanagement/[currency]/current/iotdevicemanagement.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/iot-device-management/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Fleet Indexing - Updates",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "indexUpdates",
+                "label": "Number of Fleet Index updates",
+                "description": "Enter the average number of index updates a device makes per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "deviceUpdates",
+                "label": "Number of devices",
+                "description": "Enter the number of devices that execute an index update per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each index update",
+                "id": "dataPerIndexUpdate",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                },
+                "placeholder": "Enter amount",
+                "description": "Index updates are metered in 1 KB increments; an 1.5 KB index update is metered as two index updates."
+              },
+              {
+                "type": "pricing",
+                "id": "indexUpdatePricing",
+                "label": "Price per index update",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "meteredUnit": {
+                  "allRegions": "Index Updates"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "indexUpdateSizeDiv",
+                  "operation": "division",
+                  "outputUnitLabel": "update(s)",
+                  "decimalPlaces": 0,
+                  "operands": [
+                    {
+                      "variableId": "dataPerIndexUpdate",
+                      "variableLabel": "Average size of each index update",
+                      "variableUnitLabel": "KB per index update",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "KB update increment"
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Round Up",
+                  "operands": [
+                    {
+                      "variableId": "indexUpdateSizeDiv",
+                      "variableLabel": "update(s)",
+                      "variableUnitLabel": "update(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "index update(s)",
+                  "id": "indexUpdateRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "indexUpdateMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "indexUpdates",
+                      "variableLabel": "Number of Fleet Index updates",
+                      "variableUnitLabel": "index updates per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "indexUpdateRounded",
+                      "variableLabel": "index update(s)",
+                      "variableUnitLabel": "index update(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "deviceUpdates",
+                      "variableLabel": "Number of devices",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "indexUpdatePricing",
+                      "variableLabel": "Price per index update",
+                      "variableUnitLabel": "[currency] per index update",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "indexUpdates",
+                    "deviceUpdates",
+                    "dataPerIndexUpdate",
+                    "indexUpdatePricing",
+                    "indexUpdateSizeDiv",
+                    "indexUpdateRounded",
+                    "indexUpdateMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Fleet Index update cost",
+                  "decimalPlaces": 2,
+                  "id": "indexUpdateTotalPrice",
+                  "subTotalRefer": "indexUpdateMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Fleet Indexing - Queries",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "indexQueries",
+                "label": "Number of Fleet Index queries",
+                "description": "Enter the average number of queries made per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "indexQueryPricing",
+                "label": "Price per Fleet Index query",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "meteredUnit": {
+                  "allRegions": "Queries per Queries"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "indexQueriesMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "indexQueries",
+                      "variableLabel": "Number of Fleet Index queries",
+                      "variableUnitLabel": "queries per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "indexQueryPricing",
+                      "variableLabel": "Price per Fleet Index query",
+                      "variableUnitLabel": "[currency] per query",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "indexQueries",
+                    "indexQueryPricing",
+                    "indexQueriesMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Fleet Index query cost",
+                  "decimalPlaces": 2,
+                  "id": "indexQueryTotalPrice",
+                  "subTotalRefer": "indexQueriesMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicemanagement",
+                  "meteredUnit": "Remote Actions 0 to 250000"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicemanagement",
+                  "meteredUnit": "Remote Actions over 250000"
+                }
+              }
+            ]
+          },
+          "title": "Device Jobs",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "remoteActions",
+                "label": "Number of remote actions",
+                "description": "Enter the number of remote actions per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price per remote action per month",
+                "id": "tieredRemoteActionPricing",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 250000,
+                      "meteredUnit": "Remote Actions 0 to 250000"
+                    },
+                    {
+                      "startOfTier": 250001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Remote Actions over 250000"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredRemoteActionMonthlyCost",
+                  "tieredPricingRefer": "tieredRemoteActionPricing",
+                  "tieredPricingReferLabel": "Price per remote action per month",
+                  "inputRefer": "remoteActions",
+                  "inputReferLabel": "Number of remote actions",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "remote actions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "remoteActions",
+                    "tieredRemoteActionPricing",
+                    "tieredRemoteActionMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Remote actions cost",
+                  "decimalPlaces": 2,
+                  "id": "remoteActionTotalPrice",
+                  "subTotalRefer": "tieredRemoteActionMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Secure Tunneling",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "secureTunnels",
+                "label": "Number of secure tunnels created",
+                "description": "Enter the number of secure tunnels created per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "secureTunnelPricing",
+                "label": "Price per secure tunnel",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "meteredUnit": {
+                  "allRegions": "Tunnels per Count"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "secureTunnelsMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "secureTunnels",
+                      "variableLabel": "Number of secure tunnels created",
+                      "variableUnitLabel": "tunnels per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "secureTunnelPricing",
+                      "variableLabel": "Price per secure tunnel",
+                      "variableUnitLabel": "[currency] per tunnel",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "secureTunnels",
+                    "secureTunnelPricing",
+                    "secureTunnelsMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Secure tunneling cost",
+                  "decimalPlaces": 2,
+                  "id": "secureTunnelsTotalPrice",
+                  "subTotalRefer": "secureTunnelsMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Bulk Registration",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "To estimate your monthly costs, enter the number of devices that utilize our registration workflows in a month.  The registration of a device is a one-time charge.  If the registration workflow is utilized for non-registration tasks, i.e. adding a set of new device attributes or rotating device certificates, these tasks will incur the same registration cost.",
+                "id": "bulkRegistrationText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "thingsRegistration",
+                "label": "Number of Things registered",
+                "description": "Enter the number of new Things registered or modified in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "registrationPricing",
+                "label": "Price per Thing registered",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "meteredUnit": {
+                  "allRegions": "Things Registered"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "regMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "thingsRegistration",
+                      "variableLabel": "Number of Things registered",
+                      "variableUnitLabel": "device(s) per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "registrationPricing",
+                      "variableLabel": "Price per Thing registered",
+                      "variableUnitLabel": "[currency] per device",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "bulkRegistrationText",
+                    "thingsRegistration",
+                    "registrationPricing",
+                    "regMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Bulk Registration cost",
+                  "decimalPlaces": 2,
+                  "id": "regTotalPrice",
+                  "subTotalRefer": "regMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Commands",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "To estimate your monthly costs, enter the number of command executions in a month. The messaging cost will be charged independently from command executions.",
+                "id": "commandsText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "commandExecutions",
+                "label": "Number of Commands Executed",
+                "description": "Enter the number of commands executed in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "commandPricing",
+                "label": "Price per Command Executed",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotdevicemanagement",
+                "meteredUnit": {
+                  "allRegions": "I8jzhJ5OC3a8SSuzvov3lP4fPNvIhAatWdukPQh7nOQ"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "comMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "commandExecutions",
+                      "variableLabel": "Number of Commands Executed",
+                      "variableUnitLabel": "executions(s) per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commandPricing",
+                      "variableLabel": "Price per Command Executed",
+                      "variableUnitLabel": "[currency] per command",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "commandsText",
+                    "commandExecutions",
+                    "commandPricing",
+                    "comMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Command Executions cost",
+                  "decimalPlaces": 2,
+                  "id": "comTotalPrice",
+                  "subTotalRefer": "comMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "IotDeviceManagementSimple"
+    }
+  ],
+  "slug": "IoTDeviceManagement",
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

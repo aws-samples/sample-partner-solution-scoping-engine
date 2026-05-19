@@ -1,0 +1,154 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Amazon Elastic VMware Service",
+  "serviceCode": "amazonElasticVMwareService",
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "evs"
+  ],
+  "serviceDescription": "Amazon Elastic VMware Service (EVS) allows you to run VMware Cloud Foundation (VCF) directly within your Amazon Virtual Private Cloud (Amazon VPC). Leverage the scale, resilience, and performance of AWS together with familiar VCF software and tools. Amazon EVS simplifies deployment of a ready-to-use VCF environment. Choose from self-managed or managed options for control and customization of your VMware architecture. Embrace AWS native and managed services to drive business agility, innovation, and transformation.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/evs/"
+    }
+  },
+  "slug": "evs",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "evs-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/evs/[currency]/current/evs-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "Amazon Elastic VMware Service (EVS) allows you to run VMware Cloud Foundation (VCF) directly within your Amazon Virtual Private Cloud (Amazon VPC). Leverage the scale, resilience, and performance of AWS together with familiar VCF software and tools. Amazon EVS simplifies deployment of a ready-to-use VCF environment. Choose from self-managed or managed options for control and customization of your VMware architecture. Embrace AWS native and managed services to drive business agility, innovation, and transformation.",
+      "id": "amazonEVS",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/evs/pricing"
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon Elastic VMware Service (Amazon EVS)",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "label": "Instances Cost",
+                "mappingDefinitionName": "evs-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": "Instance Type",
+                "prioritizedKey": {
+                  "Instance Type": 100
+                },
+                "secondaryKey": [
+                  "Subscription Model"
+                ],
+                "row": [
+                  {
+                    "label": "Number of Instances",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 4,
+                      "maxValue": 10000000000,
+                      "required": true
+                    },
+                    "defaultValue": "4",
+                    "exportValueAs": "count",
+                    "description": "Please specify the number of EC2 bare-metal instances you need each month in an EVS environment."
+                  },
+                  {
+                    "label": "Instance Type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Type",
+                    "exportValueAs": "it"
+                  },
+                  {
+                    "label": "VMware Cloud Foundation (VCF) license options",
+                    "type": "dropDown",
+                    "selectorId": "Subscription Model",
+                    "exportValueAs": "subscriptionModel",
+                    "description": "Specify the VCF license option you need for running VMware workloads in the EVS environment."
+                  }
+                ],
+                "id": "columnFormIPM"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": false,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableLabel": "Instances Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6,
+                  "id": "billeD_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM",
+                    "count",
+                    "it",
+                    "subscriptionModel",
+                    "billeD_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Amazon EVS cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "billeD_cost",
+                  "id": "tot_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "version": "0.0.8",
+  "serviceName": "IPAM",
+  "serviceCode": "ipamVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ],
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "IPAM",
+      "id": "template_IPAM",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "You pay an hourly rate for each active IP address that you manage using IP Address Manager (IPAM). An active IP address is defined as an IP address assigned to a resource such as an EC2 instance or an Elastic Network Interface (ENI). You only need to create a single IPAM for your organization since IPAM manages all the addresses across your AWS Organization and Regions. If you no longer wish to be charged for IPAM, simply delete your IPAM using the AWS Management Console, AWS Command Line Interface, or API.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/vpc/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of active IP addresses",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of IP addresses used on EC2 instance.",
+                "placeholder": "Enter the number of IP addresses used on EC2 instance.",
+                "displayInConfigSummary": true,
+                "id": "numberOfActiveIPaddress"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for Active IP Addresses per hours"
+                },
+                "label": "pricing for active IP addresses per hours",
+                "id": "activeIPAddressHourlyCharge"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of active IP addresses",
+                      "variableUnitLabel": "active IPs",
+                      "required": true,
+                      "variableId": "numberOfActiveIPaddress"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "pricing for active IP addresses per hours",
+                      "variableUnitLabel": "[currency] hourly charge",
+                      "required": true,
+                      "variableId": "activeIPAddressHourlyCharge"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "monthlyIPAMcost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total Active IP Addesses charge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "numberOfActiveIPaddress",
+                    "activeIPAddressHourlyCharge",
+                    "monthlyIPAMcost"
+                  ],
+                  "id": "totalIPAMmonthlyCharge",
+                  "subTotalRefer": "monthlyIPAMcost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

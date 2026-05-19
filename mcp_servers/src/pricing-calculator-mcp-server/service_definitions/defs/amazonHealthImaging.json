@@ -1,0 +1,515 @@
+{
+  "version": "0.0.12",
+  "serviceName": "AWS HealthImaging",
+  "serviceCode": "amazonHealthImaging",
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [],
+  "serviceDescription": "AWS HealthImaging is a HIPAA-eligible service that empowers healthcare providers and their software partners to store, analyze, and share medical images at petabyte scale.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/healthimaging/"
+    }
+  },
+  "slug": "healthimaging",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "medicalimaging",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/medicalimaging/[currency]/current/medicalimaging.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "amazonMedicalImaging",
+      "cards": [
+        {
+          "title": "AWS HealthImaging",
+          "helpText": "With HealthImaging, you only pay for what you use. You are charged based on the amount of data you store and access. There are three HealthImaging cost components to consider when managing your data—storage pricing, request pricing, and data transfer pricing. You are billed for all the information in your data store, which helps you index medical images stored in the Digital Imaging and Communications in Medicine (DICOM) format for easy querying. You can import DICOM data and stream your images to clinical applications anywhere in the world.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/healthimaging/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Data Storage</b>",
+                "id": "dataStorageTextH",
+                "style": "bold"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "When you import data into AWS HealthImaging data stores, you pay for storage per gigabyte per month in two tiers: a Frequent Access tier for regularly accessed data and an Archive Instant Access tier for low-cost, rarely-accessed archive storage. The storage rate charged depends on the size and number of Image Sets, the duration of storage, and the storage tier. Because AWS HealthImaging uses lossless compression for image data and storage rates are billed based upon data sizes after ingestion, you may see a difference in the sizes of data ingested and billed. There are no data retrieval charges with HealthImaging. No additional charges apply when objects are moved between access tiers.",
+                "id": "dataStorageText"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per Month",
+                "id": "Storage_per_Month",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "The total amount stored each month"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percentage of Storage in Frequent Access Tier",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "defaultValue": 5,
+                "id": "Percentage_of_Storage_in_Frequent_Access_Tier",
+                "description": "Percentage of data touched in the past 30 days, such as new data and clinical priors."
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percentage of Storage in Archive Instant Access Tier",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "defaultValue": 95,
+                "id": "Percentage_of_Storage_in_Archive_Instant_Access_Tier",
+                "description": "Percent of all storage not accessed in the last 30 days."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "totalPagePercent"
+                        },
+                        "1.00"
+                      ]
+                    },
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "totalPagePercent"
+                        },
+                        "1.00"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage split of Storage in Frequent Access Tier and Storage in Archive Instant Access Tier must sum to 100%",
+                "label": "Percent alert2",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert2",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Data Access</b>",
+                "id": "dataAccessTextH",
+                "style": "bold"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average DICOM Study Size",
+                "id": "Average_DICOM_Study_Size",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Used to calculate number of DICOM studies and instances, which affects retrieval costs."
+              },
+              {
+                "type": "pricing",
+                "label": "price for frequent access",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "medicalimaging",
+                "meteredUnit": {
+                  "allRegions": "Storage Frequent Access per GB-month"
+                },
+                "id": "price_for_frequent_access"
+              },
+              {
+                "type": "pricing",
+                "label": "price for archive access",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "medicalimaging",
+                "meteredUnit": {
+                  "allRegions": "Storage Archive Instant Access per GB-month"
+                },
+                "id": "price_for_archive_access"
+              },
+              {
+                "type": "pricing",
+                "label": "price for api request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "medicalimaging",
+                "meteredUnit": {
+                  "allRegions": "API Request Core API per Requests"
+                },
+                "id": "price_for_api_request"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "FLUnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "dataStorageTextH",
+                    "dataStorageText",
+                    "Storage_per_Month",
+                    "Percentage_of_Storage_in_Frequent_Access_Tier",
+                    "Percentage_of_Storage_in_Archive_Instant_Access_Tier",
+                    "percentageAlert2",
+                    "dataAccessTextH",
+                    "Average_DICOM_Study_Size",
+                    "price_for_frequent_access",
+                    "price_for_archive_access",
+                    "price_for_api_request"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in Frequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "Percentage_of_Storage_in_Frequent_Access_Tier"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in Archive Instant Access Tier",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "Percentage_of_Storage_in_Archive_Instant_Access_Tier"
+                    }
+                  ],
+                  "outputUnitLabel": "total percentage",
+                  "decimalPlaces": 2,
+                  "id": "totalPagePercent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "frequest_access_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Storage_per_Month",
+                      "variableLabel": "Storage per Month",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in Frequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Percentage_of_Storage_in_Frequent_Access_Tier"
+                    },
+                    {
+                      "variableLabel": "price for frequent access",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_frequent_access"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Frequent Access Tier Storage",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "archive_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Storage_per_Month",
+                      "variableLabel": "Storage per Month",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in Archive Instant Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Percentage_of_Storage_in_Archive_Instant_Access_Tier"
+                    },
+                    {
+                      "variableLabel": "price for archive access",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_archive_access"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Archive Instant Access Tier Storage",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_studies_in_migration",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "Storage_per_Month",
+                      "variableLabel": "Storage per Month",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Average DICOM Study Size",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "Average_DICOM_Study_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "total image sets in migration",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "number_of_instances_in_migration",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 250,
+                      "constantUnitLabel": "instances per study"
+                    },
+                    {
+                      "variableLabel": "total image sets in migration",
+                      "variableUnitLabel": "image sets in migration",
+                      "required": true,
+                      "variableId": "total_studies_in_migration"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instances in migration",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "number_of_instances_in_frequent_access",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Percentage_of_Storage_in_Frequent_Access_Tier",
+                      "variableLabel": "Percentage of Storage in Frequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "number of instances in migration",
+                      "variableUnitLabel": "instances in migration",
+                      "required": true,
+                      "variableId": "number_of_instances_in_migration"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instances in Frequent Access Tier",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "number_of_API_calls_per_month_to_frequent_access",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 4,
+                      "constantUnitLabel": "reads of each study per month"
+                    },
+                    {
+                      "variableLabel": "number of instances in Frequent Access Tier",
+                      "variableUnitLabel": "instances in Frequent Access Tier",
+                      "required": true,
+                      "variableId": "number_of_instances_in_frequent_access"
+                    }
+                  ],
+                  "outputUnitLabel": "number of API calls per month to Frequent Access Tier",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "api_calls_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "number_of_API_calls_per_month_to_frequent_access",
+                      "variableLabel": "number of API calls per month to Frequent Access Tier",
+                      "variableUnitLabel": "API calls",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price_for_api_request",
+                      "variableLabel": "price for api request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for API calls",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "frequest_access_cost",
+                      "variableLabel": "[currency] for Frequent Access Tier Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "archive_cost",
+                      "variableLabel": "[currency] for Archive Instant Access Tier Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "api_calls_cost",
+                      "variableLabel": "[currency] for API calls",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] ",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "display",
+                  "id": "tot_cost",
+                  "label": "AWS HealthImaging Cost",
+                  "refer": [
+                    "totalPagePercent",
+                    "frequest_access_cost",
+                    "archive_cost",
+                    "total_studies_in_migration",
+                    "number_of_instances_in_migration",
+                    "number_of_instances_in_frequent_access",
+                    "number_of_API_calls_per_month_to_frequent_access",
+                    "api_calls_cost",
+                    "total_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "total_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

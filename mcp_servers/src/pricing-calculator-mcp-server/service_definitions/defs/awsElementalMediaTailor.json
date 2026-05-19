@@ -1,0 +1,399 @@
+{
+  "version": "0.0.10",
+  "serviceName": "AWS Elemental Media Tailor",
+  "serviceCode": "awsElementalMediaTailor",
+  "type": "AWSService",
+  "slug": "ElementalMediaTailor",
+  "regions": [
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-central-1",
+    "eu-west-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "elemental",
+    "tailor",
+    "mediatailor"
+  ],
+  "serviceDescription": "AWS Elemental MediaTailor is a channel assembly and personalized ad insertion service for video providers to create linear OTT (internet delivered) channels using existing video content and monetize those channels, or other live streams and VOD content, with personalized advertising.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/mediatailor/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elementalmediatailor",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmediatailor/[currency]/current/elementalmediatailor.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "mediaTailor",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/mediatailor/"
+        }
+      },
+      "volumeDiscountEligibility": false,
+      "cards": [
+        {
+          "title": "Ad Insertion",
+          "helpText": "For AWS Elemental MediaTailor Ad Insertion, you are charged based on the number of ads inserted into your video streams. If you use the integrated ad transcoding capabilities at a rate of more than 10 transcodes per 1000 ad insertions, there will be charges for the additional Ad Transcodes.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediatailor/pricing/#Ad_Insertion_Pricing"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of viewers",
+                "id": "numberOfViewers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 100,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of ads",
+                "id": "numberOfAds",
+                "options": [
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perHour",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 28
+              },
+              {
+                "type": "pricing",
+                "id": "adInsertionRate",
+                "label": "Price for Ad insertion",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "elementalmediatailor",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 5000000,
+                      "meteredUnit": "Ad Insertion 0 to 5000000 per month"
+                    },
+                    {
+                      "startOfTier": 5000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Ad Insertion over 5000000 per month"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "mediaTailorDispConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfViewers",
+                    "numberOfAds",
+                    "adInsertionRate"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAdInsertions",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfViewers",
+                      "variableLabel": "Average number of viewers",
+                      "variableUnitLabel": "viewers",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfAds",
+                      "variableLabel": "Number of ads",
+                      "variableUnitLabel": "ads",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "ad insertions",
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalAdInsertionsCost",
+                  "inputRefer": "totalAdInsertions",
+                  "inputReferLabel": "ad insertions",
+                  "inputUnitLabel": "ad insertions",
+                  "tieredPricingRefer": "adInsertionRate",
+                  "tieredPricingReferLabel": "Price for Ad insertion",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "id": "adInsertionDisp",
+                  "label": "Ad insertion cost",
+                  "refer": [
+                    "totalAdInsertions",
+                    "totalAdInsertionsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalAdInsertionsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Channel Assembly",
+          "helpText": "For MediaTailor Channel Assembly, you pay an hourly rate for a running linear channel. The duration of each running channel is rounded up to the nearest minute. You will incur Additional Charges if Channel Assembly manifests, ad segments, or personalized manifests from MediaTailor are delivered over the internet or via a CDN other than Amazon CloudFront. You will incur Additional Charges if Channel Assembly manifests, ad segments, or personalized manifests from MediaTailor are delivered over the internet or via a CDN other than Amazon CloudFront.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediatailor/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "elementalmediatailor",
+                    "meteredUnit": "Running Channel per hours"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Basic tier channel hours per month",
+                "id": "channelAssembly",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "defaultValue": 730,
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "elementalmediatailor",
+                    "meteredUnit": "Running Channel per hours Standard"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Standard tier channel hours per month",
+                "id": "channelAssemblyStandard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "defaultValue": 730,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "id": "channelAssemblyRate",
+                "label": "Price for channel assembly per hour",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "elementalmediatailor",
+                "meteredUnit": {
+                  "allRegions": "Running Channel per hours"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "channelAssemblyRateStandard",
+                "label": "Price for channel assembly per hour standard",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "elementalmediatailor",
+                "meteredUnit": {
+                  "allRegions": "Running Channel per hours Standard"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "mediaTailorDispConv2",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "channelAssembly",
+                    "channelAssemblyStandard",
+                    "channelAssemblyRate",
+                    "channelAssemblyRateStandard"
+                  ],
+                  "subTotalRefer": "totalAdInsertionsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "channelAssemblyCostBasic",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "channelAssembly",
+                      "variableLabel": "Basic tier channel hours per month",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "channelAssemblyRate",
+                      "variableLabel": "Price for channel assembly per hour",
+                      "variableUnitLabel": "[currency] for running channel per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Basic tier channel hours)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "channelAssemblyCostStandard",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "channelAssemblyStandard",
+                      "variableLabel": "Standard tier channel hours per month",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "channelAssemblyRateStandard",
+                      "variableLabel": "Price for channel assembly per hour standard",
+                      "variableUnitLabel": "[currency] for running channel per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Standard tier channel hours)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "channelAssemblyCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "channelAssemblyCostBasic",
+                      "variableLabel": "[currency] (Basic tier channel hours)",
+                      "variableUnitLabel": "[currency] (Basic tier channel hours)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "channelAssemblyCostStandard",
+                      "variableLabel": "[currency] (Standard tier channel hours)",
+                      "variableUnitLabel": "[currency] (Standard tier channel hours)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "id": "channelAssemblyDisp",
+                  "label": "Channel assembly cost",
+                  "refer": [
+                    "channelAssemblyCostBasic",
+                    "channelAssemblyCostStandard",
+                    "channelAssemblyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "channelAssemblyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Ad Transcode",
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "In order to match the video quality of the ad content to the main program, AWS Elemental MediaTailor provides on-the-fly transcoding of the ad content using AWS Elemental MediaConvert. 10 unique ads can be transcoded per thousand ad insertions without incurring additional cost. Additional ad transcodes are charged at the on-demand basic tier rates for MediaConvert usage. Use the <a href='https://aws.amazon.com/mediaconvert/pricing/'>MediaConvert Pricing</a> to estimate the charges.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "adTranscode_infoAlert"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

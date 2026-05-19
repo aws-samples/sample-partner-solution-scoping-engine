@@ -1,0 +1,939 @@
+{
+  "version": "0.0.26",
+  "serviceName": {
+    "aws": "AWS IoT Device Defender",
+    "aws-cn": "Amazon IoT Device Defender"
+  },
+  "serviceCode": "awsIoTDeviceDefender",
+  "type": "AWSService",
+  "slug": "IoTDeviceDefender",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "cn-northwest-1",
+    "cn-north-1"
+  ],
+  "searchKeywords": [
+    "device",
+    "iot",
+    "iot device defender",
+    "defender",
+    "audit",
+    "detect",
+    "metric",
+    "fleet"
+  ],
+  "serviceDescription": {
+    "aws": "AWS IoT Device Defender is a fully managed service that helps you secure your fleet of IoT devices.",
+    "aws-cn": "Amazon IoT Device Defender is a fully managed service that helps you secure your fleet of IoT devices.",
+    "aws-us-gov": "AWS IoT Device Defender is a fully managed service that helps you secure your fleet of IoT devices."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/iot-device-defender/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iotdevicedefender",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iotdevicedefender/[currency]/current/iotdevicedefender.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/iot-device-defender/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Audit",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "auditDevices",
+                "label": "Number of devices",
+                "description": {
+                  "aws": "Enter the number of devices that connect to AWS IoT per month when you turn on audit.",
+                  "aws-cn": "Enter the number of devices that connect to Amazon IoT per month when you turn on audit."
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price per device",
+                "id": "tieredAuditPricing",
+                "mappingDefinitionName": "iotdevicedefender",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "Audit upto 100000 per Devices"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Audit over 100000 per Devices"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredAuditMonthlyCost",
+                  "tieredPricingRefer": "tieredAuditPricing",
+                  "tieredPricingReferLabel": "Price per device",
+                  "inputRefer": "auditDevices",
+                  "inputReferLabel": "Number of devices",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "devices",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auditDevices",
+                    "tieredAuditPricing",
+                    "tieredAuditMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Audit cost",
+                  "decimalPlaces": 2,
+                  "id": "auditTotalPrice",
+                  "subTotalRefer": "tieredAuditMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Rules Detect",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": {
+            "aws": "Rule-based Detect lets you define rules and thresholds to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to AWS IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device.",
+            "aws-cn": "Rule-based Detect lets you define rules and thresholds to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to Amazon IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device.",
+            "aws-us-gov": "Rule-based Detect lets you define rules and thresholds to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to AWS IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/iot-device-defender/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "detectDevices",
+                "label": "Number of devices (Rules)",
+                "description": "Enter the number of devices for monitoring per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "detectMetrics",
+                "label": "Number of metrics (Rules)",
+                "description": "Enter the number of metrics used for monitoring.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Disconnect Duration",
+                "id": "disconnectduration",
+                "options": [
+                  {
+                    "label": "Not Included",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Included",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "description": "If Disconnect Duration is one of the metrics included, please select below:",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "disconnectduration"
+                    },
+                    "0"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Note",
+                "label": "info alert",
+                "content": "For Disconnect Duration, we derive one metric datapoint every 60 min when device is connected or disconnected.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "Notealert"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "datapointFrequency",
+                "label": "Metric reporting frequency (Rules)",
+                "description": "Choose the frequency that metric datapoint(s) are reported or enter your custom daily reporting frequency.",
+                "options": [
+                  {
+                    "label": "Every 5 minutes",
+                    "id": "8760"
+                  },
+                  {
+                    "label": "Every 10 minutes",
+                    "id": "4380"
+                  },
+                  {
+                    "label": "Every 15 minutes",
+                    "id": "2920"
+                  },
+                  {
+                    "label": "Every 30 minutes",
+                    "id": "1460"
+                  },
+                  {
+                    "label": "Every hour",
+                    "id": "730"
+                  },
+                  {
+                    "label": "Custom",
+                    "id": "0"
+                  }
+                ],
+                "defaultDropDownItem": "8760"
+              },
+              {
+                "type": "input",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "datapointFrequency"
+                    },
+                    "0"
+                  ]
+                },
+                "subType": "numericInput",
+                "id": "frequencyMetricsReported",
+                "label": "Number of times metric datapoint(s) are reported daily (Rules)",
+                "description": "Enter the number of times metric datapoint(s) are reported daily by a device.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1440
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price per metric datapoint",
+                "id": "tieredDetectPricing",
+                "mappingDefinitionName": "iotdevicedefender",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000000,
+                      "meteredUnit": "Detect Upto 10B per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 10000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Detect Over 10B per Metric Datapoints"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "datapoints",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Metric reporting frequency (Rules)",
+                  "id": "datapointFreqVariable",
+                  "refer": "datapointFrequency"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "frequencyMonthlyReported",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "frequencyMetricsReported",
+                      "variableLabel": "Number of times metric datapoint(s) are reported daily (Rules)",
+                      "variableUnitLabel": "frequency reported",
+                      "required": false
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days in month"
+                    }
+                  ],
+                  "outputUnitLabel": "monthly frequency",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "frequencyReportedTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "datapointFreqVariable",
+                      "variableLabel": "datapoints",
+                      "variableUnitLabel": "datapoints",
+                      "required": false
+                    },
+                    {
+                      "variableId": "frequencyMonthlyReported",
+                      "variableLabel": "monthly frequency",
+                      "variableUnitLabel": "monthly frequency",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "frequency reported",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricDatapointsTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "detectDevices",
+                      "variableLabel": "Number of devices (Rules)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "detectMetrics",
+                      "variableLabel": "Number of metrics (Rules)",
+                      "variableUnitLabel": "metric(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "frequencyReportedTotal",
+                      "variableLabel": "frequency reported",
+                      "variableUnitLabel": "monthly frequency",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredDetectMonthlyCost",
+                  "tieredPricingRefer": "tieredDetectPricing",
+                  "tieredPricingReferLabel": "Price per metric datapoint",
+                  "inputRefer": "metricDatapointsTotal",
+                  "inputReferLabel": "metric datapoints per month",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "metric datapoints",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricDatapointsTotal_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "detectDevices",
+                      "variableLabel": "Number of devices (Rules)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "metric"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "monthly frequency"
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month for Disconnect Duration",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricDatapointsinter",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "detectMetrics",
+                      "variableLabel": "Number of metrics (Rules)",
+                      "variableUnitLabel": "total metric(s)",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "for disconnect duration"
+                    }
+                  ],
+                  "outputUnitLabel": "metric(s)",
+                  "displayInConfigSummary": false,
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricDatapointsTotal_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "detectDevices",
+                      "variableLabel": "Number of devices (Rules)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "metricDatapointsinter",
+                      "variableLabel": "metric(s)",
+                      "variableUnitLabel": "metric(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "frequencyReportedTotal",
+                      "variableLabel": "frequency reported",
+                      "variableUnitLabel": "monthly frequency",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricDatapointsTotal_3",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "metricDatapointsTotal_1",
+                      "variableLabel": "metric datapoints per month",
+                      "variableUnitLabel": "metric data points",
+                      "required": false
+                    },
+                    {
+                      "variableId": "metricDatapointsTotal_2",
+                      "variableLabel": "metric datapoints per month for Disconnect Duration",
+                      "variableUnitLabel": "metric data points ",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month  ",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "disconnectduration"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredDetectMonthlyCost_2",
+                  "tieredPricingRefer": "tieredDetectPricing",
+                  "tieredPricingReferLabel": "Price per metric datapoint",
+                  "inputRefer": "metricDatapointsTotal_3",
+                  "inputReferLabel": "metric datapoints per month  ",
+                  "outputUnitLabel": "[currency] ",
+                  "inputUnitLabel": "metric datapoints",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "tieredDetectMonthlyCost_3",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "tieredDetectMonthlyCost_2",
+                      "variableLabel": "[currency] ",
+                      "variableUnitLabel": "[currency] ",
+                      "required": false
+                    },
+                    {
+                      "variableId": "tieredDetectMonthlyCost",
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month  ",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "detectDevices",
+                    "detectMetrics",
+                    "disconnectduration",
+                    "Notealert",
+                    "datapointFrequency",
+                    "frequencyMetricsReported",
+                    "tieredDetectPricing",
+                    "datapointFreqVariable",
+                    "frequencyMonthlyReported",
+                    "frequencyReportedTotal",
+                    "metricDatapointsTotal",
+                    "tieredDetectMonthlyCost",
+                    "metricDatapointsTotal_2",
+                    "metricDatapointsinter",
+                    "metricDatapointsTotal_1",
+                    "metricDatapointsTotal_3",
+                    "tieredDetectMonthlyCost_2",
+                    "tieredDetectMonthlyCost_3"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Rules Detect cost",
+                  "decimalPlaces": 2,
+                  "id": "detectTotalPrice_2",
+                  "subTotalRefer": "tieredDetectMonthlyCost_3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicedefender",
+                  "meteredUnit": "ML Detect 0 upto 300000 per Metric Datapoints"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicedefender",
+                  "meteredUnit": "ML Detect 300000 upto 10000000 per Metric Datapoints"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicedefender",
+                  "meteredUnit": "ML Detect 10000000 upto 100000000 per Metric Datapoints"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "iotdevicedefender",
+                  "meteredUnit": "ML Detect 100000000 upto Inf per Metric Datapoints"
+                }
+              }
+            ]
+          },
+          "title": "ML Detect",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": {
+            "aws": "ML Detect provides an easy way to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to AWS IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device.",
+            "aws-cn": "ML Detect provides an easy way to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to Amazon IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device.",
+            "aws-us-gov": "ML Detect provides an easy way to monitor devices in your fleet for operational and security issues across metrics like messages sent and connection attempts. You can also take built-in actions to respond to detected issues like quarantining a device. You are charged based on the number of metric datapoints reported to AWS IoT Device Defender for monitoring. A metric datapoint, for example, is the number of messages sent by your device."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/iot-device-defender/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "detectMLDevices",
+                "label": "Number of devices (ML)",
+                "description": "Enter the number of devices for monitoring per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "detectMLMetrics",
+                "label": "Number of metrics (ML)",
+                "description": "Enter the number of metrics used for monitoring.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "datapointMLFrequency",
+                "label": "Metric reporting frequency (ML)",
+                "description": "Choose the frequency that metric datapoint(s) are reported or enter your custom daily reporting frequency.",
+                "options": [
+                  {
+                    "label": "Every 5 minutes",
+                    "id": "8760"
+                  },
+                  {
+                    "label": "Every 10 minutes",
+                    "id": "4380"
+                  },
+                  {
+                    "label": "Every 15 minutes",
+                    "id": "2920"
+                  },
+                  {
+                    "label": "Every 30 minutes",
+                    "id": "1460"
+                  },
+                  {
+                    "label": "Every hour",
+                    "id": "730"
+                  },
+                  {
+                    "label": "Custom",
+                    "id": "0"
+                  }
+                ],
+                "defaultDropDownItem": "8760"
+              },
+              {
+                "type": "input",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "datapointMLFrequency"
+                    },
+                    "0"
+                  ]
+                },
+                "subType": "numericInput",
+                "id": "frequencyMLMetricsReported",
+                "label": "Number of times metric datapoint(s) are reported daily (ML)",
+                "description": "Enter the number of times metric datapoint(s) are reported daily by a device.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1440
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price per metric datapoint (ML)",
+                "id": "tieredMLDetectPricing",
+                "mappingDefinitionName": "iotdevicedefender",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 300000,
+                      "meteredUnit": "ML Detect 0 upto 300000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 300001,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "ML Detect 300000 upto 10000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "ML Detect 10000000 upto 100000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ML Detect 100000000 upto Inf per Metric Datapoints"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "datapoints",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Metric reporting frequency (ML)",
+                  "id": "datapointMLFreqVariable",
+                  "refer": "datapointMLFrequency"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "frequencyMLMonthlyReported",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "frequencyMLMetricsReported",
+                      "variableLabel": "Number of times metric datapoint(s) are reported daily (ML)",
+                      "variableUnitLabel": "frequency reported",
+                      "required": false
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days in month"
+                    }
+                  ],
+                  "outputUnitLabel": "monthly frequency",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "frequencyMLReportedTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "datapointMLFreqVariable",
+                      "variableLabel": "datapoints",
+                      "variableUnitLabel": "datapoints",
+                      "required": false
+                    },
+                    {
+                      "variableId": "frequencyMLMonthlyReported",
+                      "variableLabel": "monthly frequency",
+                      "variableUnitLabel": "monthly frequency",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "frequency reported",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "metricMLDatapointsTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "detectMLDevices",
+                      "variableLabel": "Number of devices (ML)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "detectMLMetrics",
+                      "variableLabel": "Number of metrics (ML)",
+                      "variableUnitLabel": "metric(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "frequencyMLReportedTotal",
+                      "variableLabel": "frequency reported",
+                      "variableUnitLabel": "monthly frequency",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "metric datapoints per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredMLDetectMonthlyCost",
+                  "tieredPricingRefer": "tieredMLDetectPricing",
+                  "tieredPricingReferLabel": "Price per metric datapoint (ML)",
+                  "inputRefer": "metricMLDatapointsTotal",
+                  "inputReferLabel": "metric datapoints per month",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "metric datapoints",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "detectMLDevices",
+                    "detectMLMetrics",
+                    "datapointMLFrequency",
+                    "frequencyMLMetricsReported",
+                    "tieredMLDetectPricing",
+                    "datapointMLFreqVariable",
+                    "frequencyMLMonthlyReported",
+                    "frequencyMLReportedTotal",
+                    "metricMLDatapointsTotal",
+                    "tieredMLDetectMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "ML Detect cost",
+                  "decimalPlaces": 2,
+                  "id": "detectMLTotalPrice",
+                  "subTotalRefer": "tieredMLDetectMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "deviceDefenderTemplate"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,863 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for SERA VPC infrastructure with subnets, gateways, and routing - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  SeraVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.33.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-app-vpc'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Internet Gateway
+  SeraInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-internet-gateway'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref SeraVPC
+      InternetGatewayId: !Ref SeraInternetGateway
+
+  # Public Subnets (for load balancers only - no instances will be launched)
+  SeraPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.0.0/22
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-public-subnet-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Public
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.4.0/22
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-public-subnet-2'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Public
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraPublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.8.0/22
+      AvailabilityZone: !Select [2, !GetAZs '']
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-public-subnet-3'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Public
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Instance Subnets (Private)
+  SeraInstancesSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.20.0/22
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-instances-subnet-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Private
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraInstancesSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.24.0/22
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-instances-subnet-2'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Private
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraInstancesSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.28.0/22
+      AvailabilityZone: !Select [2, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-instances-subnet-3'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: Private
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Session Database Subnets (Private)
+  SeraSessionDBSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.60.0/22
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-session-db-subnet-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: SessionDatabase
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraSessionDBSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.64.0/22
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-session-db-subnet-2'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: SessionDatabase
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraSessionDBSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref SeraVPC
+      CidrBlock: 10.33.68.0/22
+      AvailabilityZone: !Select [2, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-session-db-subnet-3'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Type
+          Value: SessionDatabase
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+  # NAT Gateway (in first public subnet)
+  SeraNATGatewayEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: SeraVPCGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-nat-gateway-eip'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraNATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt SeraNATGatewayEIP.AllocationId
+      SubnetId: !Ref SeraPublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-nat-gateway'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Route Tables
+  SeraPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SeraVPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-public-route-table'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SeraVPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-private-route-table'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Routes
+  SeraPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: SeraVPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref SeraPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref SeraInternetGateway
+
+  SeraPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref SeraPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref SeraNATGateway
+
+  # Route Table Associations - Public Subnets
+  SeraPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraPublicSubnet1
+      RouteTableId: !Ref SeraPublicRouteTable
+
+  SeraPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraPublicSubnet2
+      RouteTableId: !Ref SeraPublicRouteTable
+
+  SeraPublicSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraPublicSubnet3
+      RouteTableId: !Ref SeraPublicRouteTable
+
+  # Route Table Associations - Private Subnets (Instances)
+  SeraInstancesSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraInstancesSubnet1
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  SeraInstancesSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraInstancesSubnet2
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  SeraInstancesSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraInstancesSubnet3
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  # Route Table Associations - Session Database Subnets
+  SeraSessionDBSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraSessionDBSubnet1
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  SeraSessionDBSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraSessionDBSubnet2
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  SeraSessionDBSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SeraSessionDBSubnet3
+      RouteTableId: !Ref SeraPrivateRouteTable
+
+  # VPC Endpoints
+  SeraS3VPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref SeraVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref SeraPrivateRouteTable
+        - !Ref SeraPublicRouteTable
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:PutObject
+              - s3:DeleteObject
+              - s3:ListBucket
+              - s3:GetBucketVersioning
+              - s3:GetBucketLocation
+              - s3:PutObjectTagging
+              - s3:ListBucketVersions
+            Resource:
+              - '*'
+
+  SeraDynamoDBVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref SeraVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.dynamodb'
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref SeraPrivateRouteTable
+        - !Ref SeraPublicRouteTable
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:DescribeTable
+            Resource:
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${StackPrefix}-*'
+            Condition:
+              StringEquals:
+                'aws:PrincipalAccount': !Ref 'AWS::AccountId'
+
+  # Security Group for VPC Interface Endpoints (Bedrock, Secrets Manager, etc.)
+  SeraVPCEndpointSG:
+    Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W5
+            reason: "VPC Endpoints require outbound DNS (port 53) and HTTPS (port 443) access to AWS service infrastructure. Restricting to specific AWS IP ranges is not practical as they change frequently and are not published for all services."
+          - id: W9
+            reason: "VPC Endpoint security group allows access from entire VPC CIDR (10.33.0.0/16) which is appropriate for a shared service that any resource in the VPC should be able to access. Restricting to /32 would require hardcoding specific EC2 instance IPs."
+    Properties:
+      GroupDescription: !Sub 'Security group for ${StackPrefix} VPC Interface Endpoints (Bedrock, Secrets Manager, etc.)'
+      VpcId: !Ref SeraVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 10.33.0.0/16
+          Description: 'HTTPS access from VPC'
+      SecurityGroupEgress:
+        - IpProtocol: udp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: 'DNS resolution'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTPS to AWS Bedrock infrastructure'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-bedrock-vpc-endpoint-sg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraBedrockRuntimeVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref SeraVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.bedrock-runtime'
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref SeraInstancesSubnet1
+        - !Ref SeraInstancesSubnet2
+        - !Ref SeraInstancesSubnet3
+      SecurityGroupIds:
+        - !Ref SeraVPCEndpointSG
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+              - bedrock:ApplyGuardrail
+            Resource:
+              - 'arn:aws:bedrock:*::foundation-model/*'
+              - !Sub 'arn:aws:bedrock:*:${AWS::AccountId}:*'
+            Condition:
+              StringEquals:
+                'aws:PrincipalAccount': !Ref 'AWS::AccountId'
+      PrivateDnsEnabled: true
+
+  # Secrets Manager VPC Endpoint
+  SeraSecretsManagerVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref SeraVPC
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.secretsmanager'
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref SeraInstancesSubnet1
+        - !Ref SeraInstancesSubnet2
+        - !Ref SeraInstancesSubnet3
+      SecurityGroupIds:
+        - !Ref SeraVPCEndpointSG
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+            Resource:
+              - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${StackPrefix}-*'
+              - !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${StackPrefix}/*'
+            Condition:
+              StringEquals:
+                'aws:PrincipalAccount': !Ref 'AWS::AccountId'
+      PrivateDnsEnabled: true
+  # Security Groups
+  SeraRedisSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub 'Security group for ${StackPrefix} Redis cluster - allows Redis traffic from EC2 instances'
+      VpcId: !Ref SeraVPC
+      SecurityGroupEgress:
+        # Explicit deny-all egress rule - Redis only responds to requests, doesn't initiate connections
+        - IpProtocol: -1
+          CidrIp: 127.0.0.1/32
+          Description: 'No outbound access required - Redis only responds to requests'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-redis-sg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraALBSG:
+    Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-EC23
+            reason: "ALB security group intentionally allows public access on ports 80 and 443 for web traffic. Load balancer requires internet access to serve application users."
+      checkov:
+        skip:
+          - id: CKV_AWS_260
+            comment: "ALB security group intentionally allows public HTTP access for web application. Load balancer requires internet access to serve users."
+      cfn_nag:
+        rules_to_suppress:
+          - id: W5
+            reason: "ALB requires outbound DNS access for name resolution and health checks. Restricting DNS to specific IPs would break load balancer functionality."
+          - id: W9
+            reason: "ALB security group intentionally allows public internet access (0.0.0.0/0) on ports 80 and 443 for web traffic. This is the correct configuration for a public-facing web application load balancer."
+          - id: W2
+            reason: "ALB security group correctly allows ingress from 0.0.0.0/0 for public web traffic. As noted in the cfn-nag warning itself, this is 'Permissible on ELB' and ALB is a type of ELB. This is not an EC2 instance security group."
+    Properties:
+      GroupDescription: !Sub 'Security group for ${StackPrefix} Application Load Balancer'
+      VpcId: !Ref SeraVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTP access from anywhere'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTPS access from anywhere'
+      SecurityGroupEgress:
+        # HTTPS for Cognito authentication endpoints (token and userinfo)
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTPS access to Cognito endpoints for ALB authentication'
+        # DNS resolution (UDP)
+        - IpProtocol: udp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: 'DNS resolution (UDP)'
+        # DNS resolution (TCP)
+        - IpProtocol: tcp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: 'DNS resolution (TCP)'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb-sg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraEC2SG:
+    Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W5
+            reason: "EC2 instances require outbound internet access for essential services: HTTPS for AWS APIs (Secrets Manager, Bedrock), HTTP for package updates (DNF), DNS for name resolution, and NTP for time synchronization. DynamoDB and S3 access is restricted to AWS prefix lists for better security. These are necessary for basic system functionality."
+    Properties:
+      GroupDescription: !Sub 'Security group for ${StackPrefix} EC2 instances - allows application traffic from ALB'
+      VpcId: !Ref SeraVPC
+      SecurityGroupEgress:
+        # Redis access within VPC (using CIDR to avoid circular reference)
+        - IpProtocol: tcp
+          FromPort: 19703
+          ToPort: 19703
+          CidrIp: 10.33.0.0/16
+          Description: 'Redis access within VPC'
+        # DynamoDB access via prefix list
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          DestinationPrefixListId: pl-02cd2c6b
+          Description: 'DynamoDB access via prefix list'
+        # S3 access via prefix list
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          DestinationPrefixListId: pl-63a5400a
+          Description: 'S3 access via prefix list'
+        # HTTPS for other AWS APIs (Secrets Manager, Bedrock, etc.) and external services
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTPS for other AWS APIs (Secrets Manager, Bedrock, etc.) and external services'
+        # HTTP for package repositories
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: 'HTTP for package repositories'
+        # DNS resolution
+        - IpProtocol: udp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: 'DNS resolution (UDP)'
+        - IpProtocol: tcp
+          FromPort: 53
+          ToPort: 53
+          CidrIp: 0.0.0.0/0
+          Description: 'DNS resolution (TCP)'
+        # NTP to AWS time service
+        - IpProtocol: tcp
+          FromPort: 123
+          ToPort: 123
+          CidrIp: 169.254.169.123/32
+          Description: 'NTP to AWS time service'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-ec2-sg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # VPC Flow Log
+  SeraVPCFlowLog:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      ResourceType: VPC
+      ResourceId: !Ref SeraVPC
+      TrafficType: ALL
+      LogDestinationType: cloud-watch-logs
+      LogGroupName: !Ref SeraVPCFlowLogGroup
+      DeliverLogsPermissionArn: !GetAtt SeraVPCFlowLogRole.Arn
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-vpc-flow-log'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # CloudWatch Log Group for Flow Logs
+  SeraVPCFlowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '${StackPrefix}-vpc-flowlogs'
+      RetentionInDays: 3653
+      KmsKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+
+  # IAM Role for Flow Logs
+  SeraVPCFlowLogRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-IAM5
+            reason: "VPC Flow Logs service requires wildcard permissions to create log streams with dynamic names and timestamps. AWS-managed service creates unpredictable log stream names that cannot be predetermined."
+            appliesTo:
+              - 'Resource::arn:aws:logs:<AWS::Region>:<AWS::AccountId>:*'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: vpc-flow-logs.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub '${StackPrefix}VPCFlowLogPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+
+  # Separate Security Group Rules to Break Circular Dependencies
+  # These rules are created after all security groups exist to avoid circular references
+  
+  # Redis ingress rule - allows EC2 instances to connect to Redis
+  SeraRedisIngressFromEC2:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SeraRedisSG
+      IpProtocol: tcp
+      FromPort: 19703
+      ToPort: 19703
+      SourceSecurityGroupId: !Ref SeraEC2SG
+      Description: 'Redis access from EC2 instances'
+
+  # ALB egress rules - allows ALB to connect to EC2 instances
+  SeraALBEgressToEC2Backend:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref SeraALBSG
+      IpProtocol: tcp
+      FromPort: 5001
+      ToPort: 5001
+      DestinationSecurityGroupId: !Ref SeraEC2SG
+      Description: 'Backend API access to EC2 instances'
+
+  SeraALBEgressToEC2Frontend:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref SeraALBSG
+      IpProtocol: tcp
+      FromPort: 7001
+      ToPort: 7001
+      DestinationSecurityGroupId: !Ref SeraEC2SG
+      Description: 'Frontend access to EC2 instances'
+
+  # EC2 ingress rules - allows ALB to connect to EC2 instances
+  SeraEC2IngressFromALBBackend:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SeraEC2SG
+      IpProtocol: tcp
+      FromPort: 5001
+      ToPort: 5001
+      SourceSecurityGroupId: !Ref SeraALBSG
+      Description: 'Backend API access from ALB'
+
+  SeraEC2IngressFromALBFrontend:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SeraEC2SG
+      IpProtocol: tcp
+      FromPort: 7001
+      ToPort: 7001
+      SourceSecurityGroupId: !Ref SeraALBSG
+      Description: 'Frontend access from ALB'
+# Outputs start here
+Outputs:
+  VPCId:
+    Description: 'ID of the SERA VPC'
+    Value: !Ref SeraVPC
+    Export:
+      Name: !Sub '${StackPrefix}-vpc-id'
+
+  # Public Subnet Outputs
+  PublicSubnet1Id:
+    Description: 'ID of public subnet 1'
+    Value: !Ref SeraPublicSubnet1
+    Export:
+      Name: !Sub '${StackPrefix}-public-subnet-1-id'
+
+  PublicSubnet2Id:
+    Description: 'ID of public subnet 2'
+    Value: !Ref SeraPublicSubnet2
+    Export:
+      Name: !Sub '${StackPrefix}-public-subnet-2-id'
+
+  PublicSubnet3Id:
+    Description: 'ID of public subnet 3'
+    Value: !Ref SeraPublicSubnet3
+    Export:
+      Name: !Sub '${StackPrefix}-public-subnet-3-id'
+
+  # Instance Subnet Outputs
+  InstancesSubnet1Id:
+    Description: 'ID of instances subnet 1'
+    Value: !Ref SeraInstancesSubnet1
+    Export:
+      Name: !Sub '${StackPrefix}-instances-subnet-1-id'
+
+  InstancesSubnet2Id:
+    Description: 'ID of instances subnet 2'
+    Value: !Ref SeraInstancesSubnet2
+    Export:
+      Name: !Sub '${StackPrefix}-instances-subnet-2-id'
+
+  InstancesSubnet3Id:
+    Description: 'ID of instances subnet 3'
+    Value: !Ref SeraInstancesSubnet3
+    Export:
+      Name: !Sub '${StackPrefix}-instances-subnet-3-id'
+
+  # Session Database Subnet Outputs
+  SessionDBSubnet1Id:
+    Description: 'ID of session database subnet 1'
+    Value: !Ref SeraSessionDBSubnet1
+    Export:
+      Name: !Sub '${StackPrefix}-session-db-subnet-1-id'
+
+  SessionDBSubnet2Id:
+    Description: 'ID of session database subnet 2'
+    Value: !Ref SeraSessionDBSubnet2
+    Export:
+      Name: !Sub '${StackPrefix}-session-db-subnet-2-id'
+
+  SessionDBSubnet3Id:
+    Description: 'ID of session database subnet 3'
+    Value: !Ref SeraSessionDBSubnet3
+    Export:
+      Name: !Sub '${StackPrefix}-session-db-subnet-3-id'
+
+  # Additional Infrastructure Outputs
+  InternetGatewayId:
+    Description: 'ID of the Internet Gateway'
+    Value: !Ref SeraInternetGateway
+    Export:
+      Name: !Sub '${StackPrefix}-internet-gateway-id'
+
+  NATGatewayId:
+    Description: 'ID of the NAT Gateway'
+    Value: !Ref SeraNATGateway
+    Export:
+      Name: !Sub '${StackPrefix}-nat-gateway-id'
+
+  PublicRouteTableId:
+    Description: 'ID of the public route table'
+    Value: !Ref SeraPublicRouteTable
+    Export:
+      Name: !Sub '${StackPrefix}-public-route-table-id'
+
+  PrivateRouteTableId:
+    Description: 'ID of the private route table'
+    Value: !Ref SeraPrivateRouteTable
+    Export:
+      Name: !Sub '${StackPrefix}-private-route-table-id'
+
+  # VPC Endpoints Outputs
+  S3VPCEndpointId:
+    Description: 'ID of the S3 VPC Endpoint'
+    Value: !Ref SeraS3VPCEndpoint
+    Export:
+      Name: !Sub '${StackPrefix}-s3-vpc-endpoint-id'
+
+  DynamoDBVPCEndpointId:
+    Description: 'ID of the DynamoDB VPC Endpoint'
+    Value: !Ref SeraDynamoDBVPCEndpoint
+    Export:
+      Name: !Sub '${StackPrefix}-dynamodb-vpc-endpoint-id'
+
+  BedrockRuntimeVPCEndpointId:
+    Description: 'ID of the Bedrock Runtime VPC Endpoint'
+    Value: !Ref SeraBedrockRuntimeVPCEndpoint
+    Export:
+      Name: !Sub '${StackPrefix}-bedrock-vpc-endpoint-id'
+
+  VPCEndpointSGId:
+    Description: 'ID of the VPC Interface Endpoints Security Group'
+    Value: !Ref SeraVPCEndpointSG
+    Export:
+      Name: !Sub '${StackPrefix}-vpc-endpoint-sg-id'
+
+  # Security Groups Outputs
+  SeraRedisSGId:
+    Description: 'ID of the SERA Redis security group'
+    Value: !Ref SeraRedisSG
+    Export:
+      Name: !Sub '${StackPrefix}-redis-sg-id'
+
+  SeraALBSGId:
+    Description: 'ID of the SERA ALB security group'
+    Value: !Ref SeraALBSG
+    Export:
+      Name: !Sub '${StackPrefix}-alb-sg-id'
+
+  SeraEC2SGId:
+    Description: 'ID of the SERA EC2 security group'
+    Value: !Ref SeraEC2SG
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-sg-id'

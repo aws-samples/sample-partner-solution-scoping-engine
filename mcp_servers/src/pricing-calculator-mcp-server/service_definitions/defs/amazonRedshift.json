@@ -1,0 +1,1565 @@
+{
+  "version": "0.0.83",
+  "serviceName": "Amazon Redshift",
+  "serviceCode": "amazonRedshift",
+  "displayAutomation": true,
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "Database",
+    "data warehouse",
+    "data warehouse solution",
+    "MySQL",
+    "SQL",
+    "data analysis",
+    "business intelligence",
+    "dw",
+    "datawarehouse"
+  ],
+  "serviceDescription": "Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. Amazon Redshift also extends data warehouse queries to your data lake, with no loading required. You can run analytic queries against petabytes of data stored locally in Redshift, and directly against exabytes of data stored in Amazon S3.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "redshift-calc-new",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/redshift/[currency]/current/redshift-calc-new/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "redshift-storage",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/redshift/[currency]/current/redshift-storage.json"
+    },
+    {
+      "mappingDefinitionName": "redshift",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/redshift/[currency]/current/redshift.json"
+    },
+    {
+      "mappingDefinitionName": "s3",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/redshift/"
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Redshift",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/redshift/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Select Redshift instances",
+          "inputSection": {
+            "components": [
+              {
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "redshift-calc-new",
+                "calculationId": {
+                  "monthly": "monthly_ipm",
+                  "upfront": "upfront_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "TermType",
+                  "LeaseContractLength",
+                  "PurchaseOption"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000000000,
+                      "required": true
+                    },
+                    "defaultValue": 1,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption"
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "dependent": "PurchaseOption",
+                    "selectorId": "LeaseContractLength"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Redshift instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "RedshiftInstanceMonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Redshift instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm",
+                  "id": "RedshiftInstanceUpfrontCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Additional backup storage",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Backup_Storage"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "sizeForAdditionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "redshift_generated_4"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeForAdditionalBackupStorage",
+                    "redshift_generated_4"
+                  ],
+                  "id": "redshift_generated_5",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "Additional backup storage",
+                  "outputUnitLabel": "[currency] (Additional backup storage cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 2,
+                  "inputRefer": "sizeForAdditionalBackupStorage",
+                  "id": "redshift_generated_6",
+                  "tieredPricingRefer": "redshift_generated_4"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "redshift_generated_6"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "redshift_generated_7",
+                  "subTotalRefer": "redshift_generated_6"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Redshift Spectrum",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Redshift_Spectrum_Pricing"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned",
+                "id": "sizeOfDataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "NA"
+                },
+                "outputSize": "tb",
+                "outputSizeLabel": "TB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for data scanned",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift-storage",
+                "meteredUnit": {
+                  "allRegions": "Redshift Data Scan Data scanned per query for each successful or cancelled query per Terabytes"
+                },
+                "id": "redshift_generated_8"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeOfDataScanned",
+                    "redshift_generated_8"
+                  ],
+                  "id": "redshift_generated_9",
+                  "subTotalRefer": "redshift_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned",
+                      "variableUnitLabel": "TB",
+                      "required": true,
+                      "variableId": "sizeOfDataScanned"
+                    },
+                    {
+                      "variableLabel": "price for data scanned",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "redshift_generated_8"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Redshift Spectrum cost)",
+                  "decimalPlaces": 2,
+                  "id": "redshift_generated_10"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "redshift_generated_10"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Redshift Spectrum cost",
+                  "decimalPlaces": 2,
+                  "id": "redshift_generated_11",
+                  "subTotalRefer": "redshift_generated_10"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Redshift Managed Storage",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Redshift_managed_storage_pricing"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Managed storage size",
+                "id": "sizeOfManagedStorage",
+                "description": "Currently managed storage is only offered on ra3 instances",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for managed storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift-storage",
+                "meteredUnit": {
+                  "allRegions": "Redshift Managed Storage ra3.16xlarge"
+                },
+                "id": "redshift_generated_12"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeOfManagedStorage",
+                    "redshift_generated_12"
+                  ],
+                  "id": "redshift_generated_13",
+                  "subTotalRefer": "redshift_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Managed storage size",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfManagedStorage"
+                    },
+                    {
+                      "variableLabel": "price for managed storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "redshift_generated_12"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Redshift managed storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "redshift_generated_14"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "redshift_generated_14"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Redshift Managed Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "redshift_generated_15",
+                  "subTotalRefer": "redshift_generated_14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Redshift Data Transfer",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Data_transfer_pricing",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/redshift/pricing/nc2=type_a#Data_transfer_pricing"
+              }
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "title": "Data Transfer",
+                "id": "dataTransferInTo",
+                "label": "Data Transfer In To",
+                "displayInConfigSummary": true,
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for data transfers in to",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift",
+                "meteredUnit": {
+                  "allRegions": "Redshift Inter Region Data Transfer Charges In To"
+                },
+                "id": "dataTransferInToPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "title": "region to direct connect transfer size in GB",
+                  "refer": [
+                    "dataTransferInTo",
+                    "dataTransferInToPrice"
+                  ],
+                  "subTotalRefer": "redshift_generated_14",
+                  "id": "convertedValues"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferInTo"
+                    },
+                    {
+                      "variableUnitLabel": "Price for data transfers in to",
+                      "required": true,
+                      "variableId": "dataTransferInToPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Redshift Data Transfer In To cost)",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferInToCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "dataTransferInToCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data transfer cost",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferCost",
+                  "subTotalRefer": "dataTransferInToCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "redshift"
+    },
+    {
+      "title": "Redshift Serverless",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/redshift/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Redshift Serverless",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Based on your workload size to get the best price-performance, AWS recommend the following:",
+                "content": "<table style='border-collapse: collapse;text-align: center;'><thead><tr style='background-color: #cccccc;'><th rowspan='2' style='border: 1px solid black; padding:10px;'> Workload size </th><th rowspan='2' style='border: 1px solid black; padding:10px;'>Base RPU</th></tr></thead><tbody><tr><td style='border: 1px solid black;'>Small</td><td style='border: 1px solid black;'>4-64</td></tr><tr><td style='border: 1px solid black;'>Medium</td><td style='border: 1px solid black;'>64-128</td></tr><tr><td style='border: 1px solid black;'>Large</td><td style='border: 1px solid black;'>128-256</td></tr></th></tr></thead><tbody><tr><td style='border: 1px solid black;'>Extra Large</td><td style='border: 1px solid black;'>256-1024</td></tr></tbody></table>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "rs_alert"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Workload size",
+                "id": "select_Workload_size",
+                "options": [
+                  {
+                    "label": "Small",
+                    "id": "small"
+                  },
+                  {
+                    "label": "Medium",
+                    "id": "medium"
+                  },
+                  {
+                    "label": "Large",
+                    "id": "large"
+                  },
+                  {
+                    "label": "Extra Large",
+                    "id": "extra_large"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "medium",
+                "validations": {
+                  "required": false
+                },
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Base RPU",
+                "id": "RPU_Size",
+                "options": [
+                  {
+                    "label": "4",
+                    "id": "4"
+                  },
+                  {
+                    "label": "8",
+                    "id": "8"
+                  },
+                  {
+                    "label": "16",
+                    "id": "16"
+                  },
+                  {
+                    "label": "24",
+                    "id": "24"
+                  },
+                  {
+                    "label": "32",
+                    "id": "32"
+                  },
+                  {
+                    "label": "40",
+                    "id": "40"
+                  },
+                  {
+                    "label": "48",
+                    "id": "48"
+                  },
+                  {
+                    "label": "56",
+                    "id": "56"
+                  },
+                  {
+                    "label": "64",
+                    "id": "64"
+                  },
+                  {
+                    "label": "72",
+                    "id": "72"
+                  },
+                  {
+                    "label": "80",
+                    "id": "80"
+                  },
+                  {
+                    "label": "88",
+                    "id": "88"
+                  },
+                  {
+                    "label": "96",
+                    "id": "96"
+                  },
+                  {
+                    "label": "104",
+                    "id": "104"
+                  },
+                  {
+                    "label": "112",
+                    "id": "112"
+                  },
+                  {
+                    "label": "120",
+                    "id": "120"
+                  },
+                  {
+                    "label": "128",
+                    "id": "128"
+                  },
+                  {
+                    "label": "136",
+                    "id": "136"
+                  },
+                  {
+                    "label": "144",
+                    "id": "144"
+                  },
+                  {
+                    "label": "152",
+                    "id": "152"
+                  },
+                  {
+                    "label": "160",
+                    "id": "160"
+                  },
+                  {
+                    "label": "168",
+                    "id": "168"
+                  },
+                  {
+                    "label": "176",
+                    "id": "176"
+                  },
+                  {
+                    "label": "184",
+                    "id": "184"
+                  },
+                  {
+                    "label": "192",
+                    "id": "192"
+                  },
+                  {
+                    "label": "200",
+                    "id": "200"
+                  },
+                  {
+                    "label": "208",
+                    "id": "208"
+                  },
+                  {
+                    "label": "216",
+                    "id": "216"
+                  },
+                  {
+                    "label": "224",
+                    "id": "224"
+                  },
+                  {
+                    "label": "232",
+                    "id": "232"
+                  },
+                  {
+                    "label": "240",
+                    "id": "240"
+                  },
+                  {
+                    "label": "248",
+                    "id": "248"
+                  },
+                  {
+                    "label": "256",
+                    "id": "256"
+                  },
+                  {
+                    "label": "264",
+                    "id": "264"
+                  },
+                  {
+                    "label": "272",
+                    "id": "272"
+                  },
+                  {
+                    "label": "280",
+                    "id": "280"
+                  },
+                  {
+                    "label": "288",
+                    "id": "288"
+                  },
+                  {
+                    "label": "296",
+                    "id": "296"
+                  },
+                  {
+                    "label": "304",
+                    "id": "304"
+                  },
+                  {
+                    "label": "312",
+                    "id": "312"
+                  },
+                  {
+                    "label": "320",
+                    "id": "320"
+                  },
+                  {
+                    "label": "328",
+                    "id": "328"
+                  },
+                  {
+                    "label": "336",
+                    "id": "336"
+                  },
+                  {
+                    "label": "344",
+                    "id": "344"
+                  },
+                  {
+                    "label": "352",
+                    "id": "352"
+                  },
+                  {
+                    "label": "360",
+                    "id": "360"
+                  },
+                  {
+                    "label": "368",
+                    "id": "368"
+                  },
+                  {
+                    "label": "376",
+                    "id": "376"
+                  },
+                  {
+                    "label": "384",
+                    "id": "384"
+                  },
+                  {
+                    "label": "392",
+                    "id": "392"
+                  },
+                  {
+                    "label": "400",
+                    "id": "400"
+                  },
+                  {
+                    "label": "408",
+                    "id": "408"
+                  },
+                  {
+                    "label": "416",
+                    "id": "416"
+                  },
+                  {
+                    "label": "424",
+                    "id": "424"
+                  },
+                  {
+                    "label": "432",
+                    "id": "432"
+                  },
+                  {
+                    "label": "440",
+                    "id": "440"
+                  },
+                  {
+                    "label": "448",
+                    "id": "448"
+                  },
+                  {
+                    "label": "456",
+                    "id": "456"
+                  },
+                  {
+                    "label": "464",
+                    "id": "464"
+                  },
+                  {
+                    "label": "472",
+                    "id": "472"
+                  },
+                  {
+                    "label": "480",
+                    "id": "480"
+                  },
+                  {
+                    "label": "488",
+                    "id": "488"
+                  },
+                  {
+                    "label": "496",
+                    "id": "496"
+                  },
+                  {
+                    "label": "504",
+                    "id": "504"
+                  },
+                  {
+                    "label": "512",
+                    "id": "512"
+                  },
+                  {
+                    "label": "544",
+                    "id": "544"
+                  },
+                  {
+                    "label": "576",
+                    "id": "496"
+                  },
+                  {
+                    "label": "608",
+                    "id": "608"
+                  },
+                  {
+                    "label": "640",
+                    "id": "640"
+                  },
+                  {
+                    "label": "672",
+                    "id": "672"
+                  },
+                  {
+                    "label": "704",
+                    "id": "704"
+                  },
+                  {
+                    "label": "736",
+                    "id": "736"
+                  },
+                  {
+                    "label": "768",
+                    "id": "768"
+                  },
+                  {
+                    "label": "800",
+                    "id": "800"
+                  },
+                  {
+                    "label": "832",
+                    "id": "832"
+                  },
+                  {
+                    "label": "864",
+                    "id": "864"
+                  },
+                  {
+                    "label": "928",
+                    "id": "928"
+                  },
+                  {
+                    "label": "960",
+                    "id": "960"
+                  },
+                  {
+                    "label": "992",
+                    "id": "992"
+                  },
+                  {
+                    "label": "1024",
+                    "id": "1024"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "128",
+                "description": "Amazon Redshift Serverless processing units (RPUs) ranging from 4 to 1,024 are available in select AWS Regions.",
+                "validations": {
+                  "required": true
+                },
+                "delegate": [
+                  {
+                    "==": [
+                      {
+                        "id": "select_Workload_size",
+                        "type": "component"
+                      },
+                      "small"
+                    ],
+                    "defaults": {
+                      "defaultDropDownItem": "64"
+                    }
+                  },
+                  {
+                    "==": [
+                      {
+                        "id": "select_Workload_size",
+                        "type": "component"
+                      },
+                      "medium"
+                    ],
+                    "defaults": {
+                      "defaultDropDownItem": "128"
+                    }
+                  },
+                  {
+                    "==": [
+                      {
+                        "id": "select_Workload_size",
+                        "type": "component"
+                      },
+                      "large"
+                    ],
+                    "defaults": {
+                      "defaultDropDownItem": "256"
+                    }
+                  },
+                  {
+                    "==": [
+                      {
+                        "id": "select_Workload_size",
+                        "type": "component"
+                      },
+                      "extra_large"
+                    ],
+                    "defaults": {
+                      "defaultDropDownItem": "1024"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Query_period",
+                "label": "Expected daily runtime (hours)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "defaultValue": 1,
+                "placeholder": "Enter number of hours",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_rpu",
+                "label": "Price for rpu",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift",
+                "meteredUnit": {
+                  "allRegions": "Redshift Serverless compute charges per RPU-Hr"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected RPU size",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Base RPU",
+                  "refer": "RPU_Size",
+                  "id": "selected_RPU_size"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "selected RPU size",
+                      "variableUnitLabel": "RPUs ",
+                      "required": true,
+                      "variableId": "selected_RPU_size"
+                    },
+                    {
+                      "variableLabel": "Expected daily runtime (hours)",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "Query_period"
+                    },
+                    {
+                      "variableLabel": "Price for rpu",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Price_for_rpu"
+                    },
+                    {
+                      "constant": 30.5,
+                      "constantUnitLabel": "days in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "serverlessCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "rs_alert",
+                    "select_Workload_size",
+                    "RPU_Size",
+                    "Query_period",
+                    "Price_for_rpu",
+                    "selected_RPU_size",
+                    "serverlessCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Redshift Serverless cost",
+                  "decimalPlaces": 2,
+                  "id": "serverlessCost_final",
+                  "subTotalRefer": "serverlessCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Additional backup storage",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Backup_Storage"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "sizeForAdditionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "redshiftServerless_generated_0"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeForAdditionalBackupStorage",
+                    "redshiftServerless_generated_0"
+                  ],
+                  "id": "redshiftServerless_generated_1",
+                  "subTotalRefer": "serverlessCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "Additional backup storage",
+                  "outputUnitLabel": "[currency] (Additional backup storage cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 2,
+                  "inputRefer": "sizeForAdditionalBackupStorage",
+                  "id": "redshiftServerless_generated_2",
+                  "tieredPricingRefer": "redshiftServerless_generated_0"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "redshiftServerless_generated_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "redshiftServerless_generated_3",
+                  "subTotalRefer": "redshiftServerless_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Redshift Managed Storage",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Redshift_managed_storage_pricing"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Managed storage size",
+                "id": "sizeOfManagedStorage",
+                "description": "Currently managed storage is only offered on ra3 instances",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for managed storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift-storage",
+                "meteredUnit": {
+                  "allRegions": "Redshift Managed Storage ra3.16xlarge"
+                },
+                "id": "redshiftServerless_generated_4"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeOfManagedStorage",
+                    "redshiftServerless_generated_4"
+                  ],
+                  "id": "redshiftServerless_generated_5",
+                  "subTotalRefer": "redshiftServerless_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Managed storage size",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfManagedStorage"
+                    },
+                    {
+                      "variableLabel": "price for managed storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "redshiftServerless_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Redshift managed storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "redshiftServerless_generated_6"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "redshiftServerless_generated_6"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Redshift Managed Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "redshiftServerless_generated_7",
+                  "subTotalRefer": "redshiftServerless_generated_6"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Redshift Data Transfer",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/redshift/pricing/#Data_transfer_pricing",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/redshift/pricing/nc2=type_a#Data_transfer_pricing"
+              }
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "title": "Data Transfer",
+                "id": "dataTransferInTo",
+                "label": "Data Transfer In To",
+                "displayInConfigSummary": true,
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for data transfers in to",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "redshift",
+                "meteredUnit": {
+                  "allRegions": "Redshift Inter Region Data Transfer Charges In To"
+                },
+                "id": "dataTransferInToPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "title": "region to direct connect transfer size in GB",
+                  "refer": [
+                    "dataTransferInTo",
+                    "dataTransferInToPrice"
+                  ],
+                  "subTotalRefer": "redshiftServerless_generated_6",
+                  "id": "convertedValues"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferInTo"
+                    },
+                    {
+                      "variableUnitLabel": "Price for data transfers in to",
+                      "required": true,
+                      "variableId": "dataTransferInToPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Redshift Data Transfer In To cost)",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferInToCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "dataTransferInToCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data transfer cost",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferCost",
+                  "subTotalRefer": "dataTransferInToCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "redshift_serverless"
+    }
+  ],
+  "slug": "Redshift",
+  "partitions": [
+    "aws"
+  ]
+}

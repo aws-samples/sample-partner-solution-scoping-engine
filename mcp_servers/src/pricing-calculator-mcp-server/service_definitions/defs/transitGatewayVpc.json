@@ -1,0 +1,380 @@
+{
+  "version": "0.0.21",
+  "serviceName": "Transit Gateway",
+  "serviceCode": "transitGatewayVpc",
+  "slug": "transitgatewayvpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "excludeZeroSubTotals": false,
+  "searchKeywords": [
+    "Transit Gateway"
+  ],
+  "serviceDescription": "AWS Transit Gateway connects VPCs and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Transit Gateway",
+      "id": "transitGateway",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/transit-gateway/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": "AWS Transit Gateway is a service that enables customers to connect their Amazon Virtual Private Clouds (VPCs) and their on-premises networks to a single gateway. Transit Gateway per hour and the amount of traffic that flows through AWS Transit Gateway are charged. You can create a Transit Gateway to connect to multiple Amazon Virtual Private Clouds (Amazon VPCs), Direct Connect and VPNs, and that Transit Gateway can work across accounts. The VPC account owner is billed hourly for each hour that their Amazon VPCs attached to an AWS Transit Gateway.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Transit Gateway attachments",
+                "id": "numberOfTransitGatewayAttachments",
+                "description": "Transit Gateway can connect to multiple attachment types such as Amazon Virtual Private Clouds (Amazon VPCs), Direct Connect and VPNs",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Ingress data processed per TGW attachment",
+                "id": "dataProcessedPerTransitGatewayAttachment",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Transit Gateway attachments",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "k8oA2bG_x4Vd_eSFxmpc6LjDAcCFv1JR1__EyAxaonA"
+                },
+                "id": "transitGateway_generated_12"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Transit Gateway data processing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "VU8HJ3uS475UL_hC8_hjywMIipBE1cdlBRzxAmx3G_s"
+                },
+                "id": "transitGateway_generated_13"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "transitGateway_generated_14",
+                  "refer": [
+                    "numberOfTransitGatewayAttachments",
+                    "dataProcessedPerTransitGatewayAttachment",
+                    "transitGateway_generated_12",
+                    "transitGateway_generated_13"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for Transit Gateway attachments",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "transitGateway_generated_12"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Transit Gateway attachment hourly cost)",
+                  "decimalPlaces": 2,
+                  "id": "transitGateway_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Ingress data processed per TGW attachment",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "dataProcessedPerTransitGatewayAttachment"
+                    },
+                    {
+                      "variableLabel": "price for Transit Gateway data processing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "transitGateway_generated_13"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Transit Gateway data processing cost)",
+                  "decimalPlaces": 2,
+                  "id": "transitGateway_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Transit Gateway attachment hourly cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "transitGateway_generated_15"
+                    },
+                    {
+                      "variableLabel": "[currency] (Transit Gateway data processing cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "transitGateway_generated_16"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Transit Gateway processing and monthly cost per attachment)",
+                  "decimalPlaces": 2,
+                  "id": "transitGateway_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "transitGateway_generated_18",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Transit Gateway attachments",
+                      "variableUnitLabel": "attachments",
+                      "required": true,
+                      "variableId": "numberOfTransitGatewayAttachments"
+                    },
+                    {
+                      "variableLabel": "[currency] (Transit Gateway processing and monthly cost per attachment)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "transitGateway_generated_17"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Transit Gateway per attachment usage and data processing cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "transitGateway_generated_15",
+                    "transitGateway_generated_16",
+                    "transitGateway_generated_17",
+                    "transitGateway_generated_18"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Transit Gateway per attachment usage and data processing cost",
+                  "decimalPlaces": 2,
+                  "id": "transitGateway_generated_19",
+                  "subTotalRefer": "transitGateway_generated_18"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "vpc",
+              "meteredUnit": "9e222B4X1Cck41p3EfNSwGHf-vbR_nov1T2aSubsEYA"
+            }
+          },
+          "title": "Multicast",
+          "helpText": "AWS Transit Gateway is a service that enables customers to connect their Amazon Virtual Private Clouds (VPCs) and their on-premises networks to a single gateway. Transit Gateway per hour and the amount of traffic that flows through AWS Transit Gateway are charged. You can create a Transit Gateway to connect to multiple Amazon Virtual Private Clouds (Amazon VPCs), Direct Connect and VPNs, and that Transit Gateway can work across accounts. The VPC account owner is billed hourly for each hour that their Amazon VPCs attached to an AWS Transit Gateway.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Multicast Receivers",
+                "id": "Number_of_multicast_receivers",
+                "description": "",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Multicast data processed per Transit Gateway Receiver",
+                "id": "Multicast_data_processed_per_Transit_Gateway_receiver",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Transit Gateway multicast data processing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "9e222B4X1Cck41p3EfNSwGHf-vbR_nov1T2aSubsEYA"
+                },
+                "id": "multi_cast_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "transitGateway_generated_new",
+                  "refer": [
+                    "Number_of_multicast_receivers",
+                    "Multicast_data_processed_per_Transit_Gateway_receiver",
+                    "multi_cast_price"
+                  ],
+                  "subTotalRefer": "transitGateway_generated_18"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Multicast Receivers",
+                      "variableUnitLabel": "Multicast Receivers",
+                      "required": true,
+                      "variableId": "Number_of_multicast_receivers"
+                    },
+                    {
+                      "variableLabel": "Multicast data processed per Transit Gateway Receiver",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "Multicast_data_processed_per_Transit_Gateway_receiver"
+                    },
+                    {
+                      "variableLabel": "price for Transit Gateway multicast data processing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "multi_cast_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Transit Gateway data processing cost for Multicast)",
+                  "decimalPlaces": 2,
+                  "id": "multi_cast_final_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "multi_cast_final_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Multicast data processing cost",
+                  "decimalPlaces": 2,
+                  "id": "multi_cast_final",
+                  "subTotalRefer": "multi_cast_final_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

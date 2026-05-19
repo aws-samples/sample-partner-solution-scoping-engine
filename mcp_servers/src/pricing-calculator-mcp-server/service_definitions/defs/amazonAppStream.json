@@ -1,0 +1,4527 @@
+{
+  "version": "0.0.23",
+  "serviceName": "Amazon AppStream 2.0",
+  "serviceCode": "amazonAppStream",
+  "type": "AWSService",
+  "slug": "amazonAppStream",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "streaming",
+    "app"
+  ],
+  "serviceDescription": "Amazon AppStream 2.0 is a fully managed service that provides secure, reliable, and scalable access to applications and non-persistent desktops from any location.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appstream2/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "appstream",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appstream/[currency]/current/appstream.json"
+    },
+    {
+      "mappingDefinitionName": "appstream-instances-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appstream/[currency]/current/appstream-instances-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "appstream-elastic-instances-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appstream/[currency]/current/appstream-elastic-instances-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "appStream2",
+      "cards": [
+        {
+          "title": "Service Settings",
+          "helpText": "Click following link to learn more Always-On, On-Demand, and Elastic fleet instances on the Amazon AppStream 2.0 pricing page.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appstream2/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Fleet type",
+                "id": "appStreamFleet_instancePriceModel",
+                "options": [
+                  {
+                    "label": "Always-On fleet",
+                    "id": "730"
+                  },
+                  {
+                    "label": "On-Demand fleet",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Elastic fleet",
+                    "id": "elastic"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "0",
+                "description": "Choose the fleet type."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "appStreamFleet_instancePriceModel"
+                        },
+                        "0"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "appStreamFleet_instancePriceModel"
+                        },
+                        "730"
+                      ]
+                    }
+                  ]
+                },
+                "label": "Fleet instances",
+                "id": "columnFormIPM",
+                "description": "description text",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "appstream-instances-calc",
+                "calculationId": {
+                  "hourly": "appStreamFleet_ipmPrice"
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory (GiB)",
+                    "Video Memory (GiB)"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System",
+                  "Multi Session"
+                ],
+                "prioritizedKey": {
+                  "Instance Type": 100,
+                  "Operating system": 50,
+                  "Multi Session": 25
+                },
+                "remap": {
+                  "keyValue": {
+                    "true": "True",
+                    "false": "False"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "displayLabel": "Instance type",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "stream.compute.2xlarge",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)",
+                      "Video Memory (GiB)"
+                    ]
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "Windows",
+                    "dependent": "Instance Type",
+                    "exportValueAs": "os"
+                  },
+                  {
+                    "label": "Multi Session Required?",
+                    "type": "dropDown",
+                    "selectorId": "Multi Session",
+                    "defaultValue": "False",
+                    "dependent": "Operating System",
+                    "exportValueAs": "Multi Session"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "appStreamFleet_instancePriceModel"
+                    },
+                    "elastic"
+                  ]
+                },
+                "label": "Elastic Fleet instances",
+                "id": "columnFormIPM_ElasticFleet",
+                "description": "description text",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "appstream-elastic-instances-calc",
+                "calculationId": {
+                  "hourly": "appStreamFleet_ipmPrice_Elastic"
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory (GiB)",
+                    "Video Memory (GiB)"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System",
+                  "Multi Session"
+                ],
+                "prioritizedKey": {
+                  "Instance Type": 100,
+                  "Operating System": 50,
+                  "Multi Session": 25
+                },
+                "remap": {
+                  "keyValue": {
+                    "true": "True",
+                    "false": "False"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "displayLabel": "Instance type",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "stream.standard.medium",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)",
+                      "Video Memory (GiB)"
+                    ]
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "Windows",
+                    "exportValueAs": "operatingsystem"
+                  },
+                  {
+                    "label": "Multi Session Required?",
+                    "type": "dropDown",
+                    "selectorId": "Multi Session",
+                    "dependent": "Operating System",
+                    "exportValueAs": "multisession"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "replaceOS",
+                "label": "replace os",
+                "originalId": "os",
+                "replacements": [
+                  {
+                    "originalString": "Amazon Linux",
+                    "replaceString": "linux"
+                  },
+                  {
+                    "originalString": "Windows",
+                    "replaceString": "win"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "appStreamFleet_instancePriceModel"
+                            },
+                            "0"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "appStreamFleet_instancePriceModel"
+                            },
+                            "730"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "replaceOS"
+                        },
+                        "win"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Multi Session"
+                        },
+                        "True"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Maximum sessions per instance",
+                "id": "appStream_numberofsession",
+                "displayInConfigSummary": false,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "replaceOS"
+                    },
+                    "win"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "License model",
+                "id": "appStream_licenseModel",
+                "mappingDefinitionName": "appstream",
+                "options": [
+                  {
+                    "label": "Commercial license included",
+                    "id": "User Fees Windows AppStream provided per users"
+                  },
+                  {
+                    "label": "Bring your own license",
+                    "id": "User Fees Windows Bring Your Own License per Month"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "concat lm",
+                "id": "concatLm",
+                "operands": [
+                  {
+                    "variableId": "replaceOS"
+                  },
+                  {
+                    "variableId": "appStream_licenseModel"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "lmMeteredUnitName",
+                "label": "lm metered unit name",
+                "originalId": "concatLm",
+                "replacements": [
+                  {
+                    "originalString": "linux",
+                    "replaceString": "[ZERO_COST]"
+                  },
+                  {
+                    "originalString": "winUser Fees Windows AppStream provided per users",
+                    "replaceString": "User Fees Windows AppStream provided per users"
+                  },
+                  {
+                    "originalString": "winUser Fees Windows Bring Your Own License per Month",
+                    "replaceString": "User Fees Windows Bring Your Own License per Month"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of users per month",
+                "id": "appStream_numberOfUsers",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "Total number of unique users launching AppStream 2.0 in a month."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of working hours per day",
+                "id": "appStream_numberOfWorkingHours",
+                "displayInConfigSummary": false,
+                "defaultValue": 24,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": "",
+                "description": "The maximum number of hours per day that AppStream 2.0 may be used."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "appStreamFleet_instancePriceModel"
+                        },
+                        "0"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "appStreamFleet_instancePriceModel"
+                        },
+                        "730"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentBuffer",
+                "label": "Buffer capacity as % of concurrency",
+                "description": "Specify the percent of concurrency to maintain as buffer capacity. Buffer capacity ensures new users have an instance available.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": "10",
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price per user",
+                "id": "appStream_userPrice",
+                "mappingDefinitionName": "appstream",
+                "refers": [
+                  {
+                    "variableLabel": "lm metered unit name",
+                    "variableId": "lmMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price stop instance",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "StoppedInstance per hour"
+                },
+                "id": "appStream_stopPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for multi session user",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "User Fees Windows AS2 Provided per Month"
+                },
+                "id": "appStream_userlicenseExtra"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "appStreamFleet_instancePriceModel"
+                            },
+                            "730"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "replaceOS"
+                            },
+                            "win"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "appStreamFleet_instancePriceModel"
+                            },
+                            "0"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "replaceOS"
+                            },
+                            "win"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "numberPicker",
+                "label": "Do you need License included Applications?",
+                "description": "",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "defaultDropDownItem": "0"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "officeLTSCStandard2021",
+                "label": "Number of users for Microsoft Office LTSC Standard 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "officeLTSCStandard2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersLTSCStandardCountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "projectPro2024",
+                "label": "Number of users for Microsoft Project Professional 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "projectPro2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersProjectPro2024CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "officeLTSCStandard2024",
+                "label": "Number of users for Microsoft Office LTSC Standard 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "officeLTSCStandard2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersLTSCStandard2024CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visioLTSCPro2024",
+                "label": "Number of users for Microsoft Visio LTSC Professional 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "visioLTSCPro2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersVisioLTSCPro2024CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "officeLTSCProPlus2024",
+                "label": "Number of users for Microsoft Office LTSC Professional Plus 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "officeLTSCProPlus2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersLTSCProPlus2024CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visioLTSCPro2021",
+                "label": "Number of users for Microsoft Visio LTSC Professional 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "visioLTSCPro2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersVisioLTSCPro2021CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "projectPro2021",
+                "label": "Number of users for Microsoft Project Professional 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "projectPro2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersProjectPro2021CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "projectStandard2021",
+                "label": "Number of users for Microsoft Project Standard 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "projectStandard2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersProjectStandard2021CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visioLTSCStandard2021",
+                "label": "Number of users for Microsoft Visio LTSC Standard 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "visioLTSCStandard2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersVisioLTSCStandard2021CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "projectStandard2024",
+                "label": "Number of users for Microsoft Project Standard 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "projectStandard2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersProjectStandard2024CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "officeLTSCProPlus2021",
+                "label": "Number of users for Microsoft Office LTSC Professional Plus 2021",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "officeLTSCProPlus2021"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersLTSCProPlus2021CountAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visioLTSCStandard2024",
+                "label": "Number of users for Microsoft Visio LTSC Standard 2024",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "visioLTSCStandard2024"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Number of users can not be greater than total unique users.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "usersVisioLTSCStandard2024CountAlert"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Office LTSC Standard 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "ECzqdDyGTw_t9ZmmDNxUgGLVf2t3meAc9ruoe5XDT8A"
+                },
+                "id": "microsoftOffice_LTSC_Standard_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Project Professional 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "EaJipnxqXLyh49X8-TMRXEKUvGyHeM5a-4C6G6rPxGE"
+                },
+                "id": "microsoftOffice_Project_Professional_2024_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Office LTSC Standard 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "kXG629SvgA8y6gzHwKBn5zrFxhnHfmkKIawHb8IZD4A"
+                },
+                "id": "microsoftOffice_LTSC_Standard_2024_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Visio LTSC Professional 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "z61akGKm4TkImmRB75HaQCqGLzFZk5QvKHGjHHMZOYA"
+                },
+                "id": "microsoftOffice_Visio_LTSC_Professional_2024_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Office LTSC Professional Plus 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "qi3TnBEI-cLDAimtaUTj0FqJJ3ODSld2G5l_0eVhP70"
+                },
+                "id": "microsoftOffice_LTSC_Professional_Plus_2024_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Visio LTSC Professional 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "NFrnpLcz4T5cv9CvE9V3m-UjkIAZbKop-3tA2KPVhN8"
+                },
+                "id": "microsoftOffice_Visio_LTSC_Professional_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Project Professional 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "UPk5AmMZ8xcIqBz4LiMNLpyAjZGCKqlOsb2T_M0_EDo"
+                },
+                "id": "microsoftOffice_Project_Professional_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Project Standard 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "30DcA3KC3DLKlNLMbohF20buP9x4gOFBhMaa6VsFGUI"
+                },
+                "id": "microsoftOffice_Project_Standard_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Visio LTSC Standard 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "A6j0VP_3GY6Pk0CiebeMNoFPFFwRBeIJqgP7Whpw-bk"
+                },
+                "id": "microsoftOffice_Visio_LTSC_Standard_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Project Standard 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "jN588QJsyRqZJw9Warf829dgF4O-TnjFiSuORsqn0F0"
+                },
+                "id": "microsoftOffice_Project_Standard_2024_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Office LTSC Professional Plus 2021",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "r5pw2HkpIxwDE9LGuaqg1ttv9DMmtIcKjjCefyXeYyg"
+                },
+                "id": "microsoftOffice_LTSC_Professional_Plus_2021_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price Microsoft Visio LTSC Standard 2024",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appstream",
+                "meteredUnit": {
+                  "allRegions": "Mw8uCCBZaiW-nO4bt2gyNeQSj_it42DkqAjZ_WsYYcA"
+                },
+                "id": "microsoftOffice_Visio_LTSC_Standard_2024_Price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": []
+            }
+          ]
+        },
+        {
+          "title": "Usage Pattern",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appstream2/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Weekday usage",
+                "id": "usageWDheaderText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Days in week",
+                "description": "Number of working days in a week.",
+                "id": "daysInWD",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 7
+                },
+                "defaultValue": 0,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Peak duration (hours) per day",
+                "id": "appStreamFleet_utilization1",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": " ",
+                "description": "Number of peak hours in a day."
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "'Peak duration (hours) per day' can't exceed 'Number of working hours per day'.",
+                "label": "Peak duration exceed working hours alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "PeakDurationAlertWD",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "peak duration alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "difference between working hours and peak duration (weekday)",
+                        "variableId": "DiffWorkingPeakHoursWD"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Peak duration exceed working hours alert",
+                        "variableId": "PeakDurationAlertWD"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplayPeakWD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average off-peak concurrent users per hour",
+                "description": "Number of concurrent users during off-peak hours.",
+                "id": "baselineUsersPerHourWD",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorBase"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average peak concurrent users per hour",
+                "id": "peakUsersPerHourWD",
+                "description": "Number of concurrent users during peak hours.",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "peakUsersPerHourWD"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of peak concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorPeak"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Weekend usage",
+                "id": "usageWEheaderText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Days in weekend",
+                "description": "Number of working days in a weekend.",
+                "id": "daysInWE",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 7
+                },
+                "defaultValue": 0,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Total days in a week can not exceed 7 days.",
+                "label": "total days alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "totalDaysAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "total days alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total days in a week",
+                        "variableId": "TotalDaysInWeek"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "7"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "total days alert",
+                        "variableId": "totalDaysAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Peak duration (hours) per day ",
+                "id": "appStreamFleet_utilization2",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": " ",
+                "description": "Number of peak hours in a weekend."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average off-peak concurrent users per hour ",
+                "description": "Number of concurrent users during off-peak hours in a weekend.",
+                "id": "baselineUsersPerHourWE",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorBaseWE"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average peak concurrent users per hour ",
+                "id": "peakUsersPerHourWE",
+                "description": "Number of concurrent users during peak hours in a weekend.",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "peakUsersPerHourWE"
+                    },
+                    {
+                      "type": "component",
+                      "id": "appStream_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorPeakWE"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "'Peak duration (hours) per day' can't exceed 'Number of working hours per day'.",
+                "label": "Peak duration exceed working hours alert ",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "PeakDurationAlertWE",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "peak duration alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "difference between working hours and peak duration (weekend)",
+                        "variableId": "DiffWorkingPeakHoursWE"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Peak duration exceed working hours alert ",
+                        "variableId": "PeakDurationAlertWE"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplayPeakWE"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "usageWDheaderText",
+                    "daysInWD",
+                    "appStreamFleet_utilization1",
+                    "PeakDurationAlertWD",
+                    "alertDisplayPeakWD",
+                    "baselineUsersPerHourWD",
+                    "usersErrorBase",
+                    "peakUsersPerHourWD",
+                    "usersErrorPeak",
+                    "usageWEheaderText",
+                    "daysInWE",
+                    "totalDaysAlert",
+                    "alertDisplay",
+                    "appStreamFleet_utilization2",
+                    "baselineUsersPerHourWE",
+                    "usersErrorBaseWE",
+                    "peakUsersPerHourWE",
+                    "usersErrorPeakWE",
+                    "PeakDurationAlertWE",
+                    "alertDisplayPeakWE"
+                  ],
+                  "id": "appStreamFleet_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "elastic"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "user licences fee for commercial",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users per month",
+                      "variableUnitLabel": "User(s)",
+                      "required": true,
+                      "variableId": "appStream_numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "Price per user",
+                      "variableUnitLabel": "[currency] per user",
+                      "required": true,
+                      "variableId": "appStream_userPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (user licences per month)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_userLicenseCost"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "True"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStream_licenseModel"
+                          },
+                          "User Fees Windows AppStream provided per users"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "user licences fee for multi session",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users per month",
+                      "variableUnitLabel": "User(s)",
+                      "required": true,
+                      "variableId": "appStream_numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "price for multi session user",
+                      "variableUnitLabel": "[currency] per user",
+                      "required": true,
+                      "variableId": "appStream_userlicenseExtra"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (user licences per month)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_userLicenseMultiSessionCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "final user license cost",
+                  "operands": [
+                    {
+                      "variableLabel": "user licences fee for commercial",
+                      "variableUnitLabel": "[currency] per user",
+                      "required": false,
+                      "variableId": "appStream_userLicenseCost"
+                    },
+                    {
+                      "variableLabel": "user licences fee for multi session",
+                      "variableUnitLabel": "[currency] per user",
+                      "required": false,
+                      "variableId": "appStream_userLicenseMultiSessionCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (user licences per month) ",
+                  "decimalPlaces": 2,
+                  "id": "userLicense_Final"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "User license cost (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "final user license cost",
+                  "id": "appStream_userLicenseCostDisplay",
+                  "refer": "userLicense_Final"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour",
+                      "variableUnitLabel": "peak concurrent user(s)",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during peak hours",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakHourInstnaces"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "instances during peak hours",
+                      "variableUnitLabel": "peak hour instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakHourInstnaces"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instance required during peak hours",
+                  "id": "appStream_roundupInstancePeakHour"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour",
+                      "variableUnitLabel": "off-peak concurrent User(s)",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during off-peak hours",
+                  "decimalPlaces": 2,
+                  "id": "appStream_offpeakHourInstnaces"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "instances during off-peak hours",
+                      "variableUnitLabel": "off-peak hour instance(s)",
+                      "required": true,
+                      "variableId": "appStream_offpeakHourInstnaces"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instance required during off peak hours",
+                  "id": "appStream_roundupInstanceoffPeakHour"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "daysInWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total days in a week",
+                  "decimalPlaces": 2,
+                  "id": "TotalDaysInWeek"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "appStream_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Peak duration (hours) per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "appStreamFleet_utilization1"
+                    }
+                  ],
+                  "outputUnitLabel": "difference between working hours and peak duration (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "DiffWorkingPeakHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "appStream_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Peak duration (hours) per day ",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "appStreamFleet_utilization2"
+                    }
+                  ],
+                  "outputUnitLabel": "difference between working hours and peak duration (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "DiffWorkingPeakHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "variableName": "Peak duration (weekday)",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak duration (hours) per day",
+                      "variableUnitLabel": "hours peak duration per day",
+                      "required": true,
+                      "variableId": "appStreamFleet_utilization1"
+                    },
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "peak hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyPeakHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "monthly working hours (weekday)",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "working hours per day",
+                      "required": true,
+                      "variableId": "appStream_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "working hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyWorkingHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "monthly working hours (weekday)",
+                      "variableUnitLabel": "working hours per month (weekday)",
+                      "required": true,
+                      "variableId": "MonthlyWorkingHoursWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month (weekday)",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineHoursPerMonthWD"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month (weekday)",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineInstanceHoursWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "number of instance required during off peak hours",
+                      "variableUnitLabel": "off-peak instance(s) per hour",
+                      "required": true,
+                      "variableId": "appStream_roundupInstanceoffPeakHour"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month (weekday)",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineInstanceHoursWD_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakInstanceHoursWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "number of instance required during peak hours",
+                      "variableUnitLabel": "peak instance(s) per hour",
+                      "required": true,
+                      "variableId": "appStream_roundupInstancePeakHour"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakInstanceHoursWD_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak instance hours (weekday)",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_baselineInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "off-peak instance hours (weekday) ",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_baselineInstanceHoursWD_session"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekday)",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_peakInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekday) ",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_peakInstanceHoursWD_session"
+                    }
+                  ],
+                  "outputUnitLabel": "total weekday hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "appStream_totalUserHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekday hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total weekday hours utilized per month",
+                  "id": "appStream_totalUserHoursWDDisplay",
+                  "refer": "appStream_totalUserHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per peak hour (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstancesWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekday)",
+                      "variableUnitLabel": "buffer instance(s) per peak hours",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesWD"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per peak hour (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstancesWD_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekday)",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s)",
+                  "id": "appStream_peakBufferInstancesRoundedWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekday) ",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesWD_session"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s) ",
+                  "id": "appStream_peakBufferInstancesRoundedWD_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesRoundedWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstanceHoursWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instance(s) ",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesRoundedWD_session"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstanceHoursWD_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per off-peak hour (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstancesWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekday)",
+                      "variableUnitLabel": "buffer instance(s) per off-peak hours",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesWD"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per off-peak hour (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_offpeakBufferInstancesWD_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekday)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s)",
+                  "id": "appStream_baselineBufferInstancesRoundedWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekday) ",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_offpeakBufferInstancesWD_session"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s) ",
+                  "id": "appStream_baselineBufferInstancesRoundedWD_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesRoundedWD"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstanceHoursWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s) ",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesRoundedWD_session"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekday) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstanceHoursWD_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekday)",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "appStream_baselineBufferInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekday)",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "appStream_peakBufferInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekday) ",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "appStream_peakBufferInstanceHoursWD_session"
+                    },
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekday) ",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "appStream_baselineBufferInstanceHoursWD_session"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_bufferHoursPerMonthWD"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "730"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekday buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month (weekday)",
+                  "id": "appStream_bufferHoursPerMonth_WD_Display",
+                  "refer": "appStream_bufferHoursPerMonthWD"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour ",
+                      "variableUnitLabel": "peak concurrent user(s)",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during peak hours",
+                  "decimalPlaces": 2,
+                  "variableName": "weekend peak hour instnace(s)",
+                  "id": "appStream_peakHourInstnacesWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "weekend peak hour instnace(s)",
+                      "variableUnitLabel": "peak hour instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakHourInstnacesWE"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instance required during peak hours",
+                  "variableName": "peak hour weekend roundup",
+                  "id": "appStream_roundupInstancePeakHourWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour ",
+                      "variableUnitLabel": "peak concurrent user(s)",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during off-peak hours",
+                  "decimalPlaces": 2,
+                  "variableName": "weekend off-peak hour instnace(s)",
+                  "id": "appStream_offpeakHourInstnacesWE_session"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "weekend off-peak hour instnace(s)",
+                      "variableUnitLabel": "off-peak hour instance(s)",
+                      "required": true,
+                      "variableId": "appStream_offpeakHourInstnacesWE_session"
+                    }
+                  ],
+                  "outputUnitLabel": "number of instance required during off-peak hours",
+                  "variableName": "off-peak hour weekend roundup",
+                  "id": "appStream_roundupInstanceoffPeakHourWE_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "variableName": "Peak duration (weekend)",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak duration (hours) per day ",
+                      "variableUnitLabel": "hours peak duration per day",
+                      "required": true,
+                      "variableId": "appStreamFleet_utilization2"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWE"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks(730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "peak hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyPeakHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "monthly working hours (weekend)",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "working hours per day",
+                      "required": true,
+                      "variableId": "appStream_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWE"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "working hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyWorkingHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "monthly working hours (weekend)",
+                      "variableUnitLabel": "working hours per month (weekend)",
+                      "required": true,
+                      "variableId": "MonthlyWorkingHoursWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month (weekend)",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineHoursPerMonthWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour ",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month (weekend)",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineInstanceHoursWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour ",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakInstanceHoursWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "peak hour weekend roundup",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "appStream_roundupInstancePeakHourWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekend) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineInstanceHoursWE_session"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak hour weekend roundup",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "appStream_roundupInstanceoffPeakHourWE_session"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month (weekend)",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekend) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_offpeakInstanceHoursWE_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak instance hours (weekend)",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_baselineInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekend)",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_peakInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekend) ",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_baselineInstanceHoursWE_session"
+                    },
+                    {
+                      "variableLabel": "off-peak instance hours (weekend) ",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "appStream_offpeakInstanceHoursWE_session"
+                    }
+                  ],
+                  "outputUnitLabel": "total weekend hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "appStream_totalUserHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekend hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total weekend hours utilized per month",
+                  "id": "appStream_totalUserHoursWEDisplay",
+                  "refer": "appStream_totalUserHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour ",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per peak hour (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstancesWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekend)",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s) ",
+                  "id": "appStream_peakBufferInstancesRoundedWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekend)",
+                      "variableUnitLabel": "peak buffer instnace(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesWE"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during peak hours ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakHourInstnacesWE_session"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "instances during peak hours ",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakHourInstnacesWE_session"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s) ",
+                  "variableName": "peak buffer instsnce(s) per session",
+                  "id": "appStream_peakBufferInstancesRoundedWE_session"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instance(s) ",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesRoundedWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstanceHoursWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instsnce(s) per session",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_peakBufferInstancesRoundedWE_session"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekend) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_peakBufferInstanceHoursWE_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour ",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per off-peak hour (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstancesWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          "False"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "Multi Session"
+                          },
+                          ""
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "replaceOS"
+                          },
+                          "linux"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "operatingsystem"
+                          },
+                          "Amazon Linux"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekend)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s)",
+                  "id": "appStream_baselineBufferInstancesRoundedWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekend)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesWE"
+                    },
+                    {
+                      "variableLabel": "Maximum sessions per instance",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "appStream_numberofsession"
+                    }
+                  ],
+                  "outputUnitLabel": "instances during off-peak hours",
+                  "decimalPlaces": 2,
+                  "variableName": "weekend off-peak hour instnace(s)",
+                  "id": "appStream_offpeakHourInstnacesdivWE_session"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "weekend off-peak hour instnace(s)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "appStream_offpeakHourInstnacesdivWE_session"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s) ",
+                  "id": "appStream_baselineBufferInstancesRoundedWE_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesRoundedWE"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstanceHoursWE"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Multi Session"
+                      },
+                      "True"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s) ",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "appStream_baselineBufferInstancesRoundedWE_session"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "appStream_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekend) ",
+                  "decimalPlaces": 2,
+                  "id": "appStream_baselineBufferInstanceHoursWE_session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekend)",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "appStream_baselineBufferInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekend)",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "appStream_peakBufferInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekend) ",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "appStream_baselineBufferInstanceHoursWE_session"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekend) ",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "appStream_peakBufferInstanceHoursWE_session"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "appStream_bufferHoursPerMonthWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "730"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekend buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month (weekend)",
+                  "id": "appStream_bufferHoursPerMonth_WE_Display",
+                  "refer": "appStream_bufferHoursPerMonthWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total weekday hours utilized per month",
+                      "variableUnitLabel": "total hours utilized (weekday)",
+                      "required": false,
+                      "variableId": "appStream_totalUserHoursWD"
+                    },
+                    {
+                      "variableLabel": "total weekend hours utilized per month",
+                      "variableUnitLabel": "total hours utilized (weekend)",
+                      "required": false,
+                      "variableId": "appStream_totalUserHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "appStream_totalUserHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total hours utilized per month",
+                  "id": "appStream_totalUserHoursDisplay",
+                  "refer": "appStream_totalUserHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total buffer hours per month (weekday)",
+                      "variableUnitLabel": "total buffer hours (weekday)",
+                      "required": false,
+                      "variableId": "appStream_bufferHoursPerMonthWD"
+                    },
+                    {
+                      "variableLabel": "total buffer hours per month (weekend)",
+                      "variableUnitLabel": "total buffer hours (weekend)",
+                      "required": false,
+                      "variableId": "appStream_bufferHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month",
+                  "decimalPlaces": 2,
+                  "id": "appStream_bufferHoursPerMonth"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "appStreamFleet_instancePriceModel"
+                          },
+                          "730"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month",
+                  "id": "appStream_bufferHoursPerMonthDisplay",
+                  "refer": "appStream_bufferHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total hours utilized per month",
+                      "variableUnitLabel": "utilized instance hours",
+                      "required": false,
+                      "variableId": "appStream_totalUserHours"
+                    },
+                    {
+                      "variableLabel": "total buffer hours per month",
+                      "variableUnitLabel": "buffer hours",
+                      "required": false,
+                      "variableId": "appStream_bufferHoursPerMonth"
+                    }
+                  ],
+                  "outputUnitLabel": "total instance hours per month",
+                  "decimalPlaces": 2,
+                  "id": "appStream_totalInstanceHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total instance hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total instance hours per month",
+                  "id": "appStream_totalInstanceHoursPerMonthDisplay",
+                  "refer": "appStream_totalInstanceHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "selected fleet instance price",
+                  "id": "fleet_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "appStreamFleet_ipmPrice"
+                  ],
+                  "subTotalRefer": "appStreamFleet_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "selected elastic fleet instance price",
+                  "id": "elasticfleet_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "appStreamFleet_ipmPrice_Elastic"
+                  ],
+                  "subTotalRefer": "appStreamFleet_ipmPrice_Elastic"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "appStreamFleet_instancePriceModel"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "On-Demand fleet instances cost",
+                  "operands": [
+                    {
+                      "variableId": "appStream_totalUserHours",
+                      "variableLabel": "total hours utilized per month",
+                      "variableUnitLabel": "active streaming hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "selected fleet instance price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "appStreamFleet_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for active On-Demand fleet instance streaming",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_activeOnDemandFleetCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "appStreamFleet_instancePriceModel"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Stopped On-Demand fleet instances cost",
+                  "operands": [
+                    {
+                      "variableId": "appStream_bufferHoursPerMonth",
+                      "variableLabel": "total buffer hours per month",
+                      "variableUnitLabel": "Stopped (buffer) hours per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price stop instance",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "appStream_stopPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for stopped On-Demand fleet instances",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_stoppedOnDemandFleetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total On-Demand fleet instance cost per month",
+                  "operands": [
+                    {
+                      "variableId": "appStreamFleet_activeOnDemandFleetCost",
+                      "variableLabel": "On-Demand fleet instances cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "appStreamFleet_stoppedOnDemandFleetCost",
+                      "variableLabel": "Stopped On-Demand fleet instances cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_OnDemandFleetCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "appStreamFleet_instancePriceModel"
+                      },
+                      "730"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Always-On fleet instances cost",
+                  "operands": [
+                    {
+                      "variableLabel": "total instance hours per month",
+                      "variableId": "appStream_totalInstanceHoursPerMonth",
+                      "variableUnitLabel": "Hours per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "selected fleet instance price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "appStreamFleet_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Always-On fleet instance streaming",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_alwaysOnFleetCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "appStreamFleet_instancePriceModel"
+                      },
+                      "elastic"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Elastic fleet instances cost",
+                  "operands": [
+                    {
+                      "variableLabel": "total instance hours per month",
+                      "variableId": "appStream_totalInstanceHoursPerMonth",
+                      "variableUnitLabel": "Hours per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "selected elastic fleet instance price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "appStreamFleet_ipmPrice_Elastic",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Elastic fleet instance streaming",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_ElasticFleetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total fleet instance cost per month",
+                  "operands": [
+                    {
+                      "variableId": "userLicense_Final",
+                      "variableLabel": "final user license cost",
+                      "variableUnitLabel": "[currency] (user licences per month) ",
+                      "required": false
+                    },
+                    {
+                      "variableId": "appStreamFleet_alwaysOnFleetCost",
+                      "variableLabel": "Always-On fleet instances cost",
+                      "variableUnitLabel": "[currency] (Always-On fleet instances)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "appStreamFleet_OnDemandFleetCost",
+                      "variableLabel": "Total On-Demand fleet instance cost per month",
+                      "variableUnitLabel": "[currency] (On-Demand fleet instances)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "appStreamFleet_ElasticFleetCost",
+                      "variableLabel": "Elastic fleet instances cost",
+                      "variableUnitLabel": "[currency] (Elastic fleet instances)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "appStreamFleet_totalFleetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Office LTSC Standard 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "officeLTSCStandard2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Office LTSC Standard 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_LTSC_Standard_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office LTSC Standard 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalOfficeLTSCStandard2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Project Professional 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "projectPro2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Project Professional 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_Project_Professional_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project Professional 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalProjectPro2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Office LTSC Standard 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "officeLTSCStandard2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Office LTSC Standard 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_LTSC_Standard_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office LTSC Standard 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalOfficeLTSCStandard2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Visio LTSC Professional 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "visioLTSCPro2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Visio LTSC Professional 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_Visio_LTSC_Professional_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio LTSC Professional 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalVisioLTSCPro2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Office LTSC Professional Plus 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "officeLTSCProPlus2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Office LTSC Professional Plus 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_LTSC_Professional_Plus_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office LTSC Professional Plus 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalOfficeLTSCProPlus2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Visio LTSC Professional 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "visioLTSCPro2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Visio LTSC Professional 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_Visio_LTSC_Professional_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio LTSC Professional 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalVisioLTSCPro2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Project Professional 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "projectPro2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Project Professional 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_Project_Professional_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project Professional 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalProjectPro2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Project Standard 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "projectStandard2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Project Standard 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_Project_Standard_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project Standard 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalProjectStandard2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Visio LTSC Standard 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "visioLTSCStandard2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Visio LTSC Standard 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_Visio_LTSC_Standard_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio LTSC Standard 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalVisioLTSCStandard2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Project Standard 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "projectStandard2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Project Standard 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_Project_Standard_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project Standard 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalProjectStandard2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Office LTSC Professional Plus 2021",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "officeLTSCProPlus2021"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Office LTSC Professional Plus 2021",
+                      "required": true,
+                      "variableId": "microsoftOffice_LTSC_Professional_Plus_2021_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office LTSC Professional Plus 2021",
+                  "decimalPlaces": 2,
+                  "id": "totalOfficeLTSCProPlus2021Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users for Microsoft Visio LTSC Standard 2024",
+                      "variableUnitLabel": "Users",
+                      "required": true,
+                      "variableId": "visioLTSCStandard2024"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price Microsoft Visio LTSC Standard 2024",
+                      "required": true,
+                      "variableId": "microsoftOffice_Visio_LTSC_Standard_2024_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio LTSC Standard 2024",
+                  "decimalPlaces": 2,
+                  "id": "totalVisioLTSCStandard2024Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for Microsoft Office LTSC Standard 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalOfficeLTSCStandard2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Project Professional 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalProjectPro2024Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Office LTSC Standard 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalOfficeLTSCStandard2024Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio LTSC Professional 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalVisioLTSCPro2024Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Office LTSC Professional Plus 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalOfficeLTSCProPlus2024Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio LTSC Professional 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalVisioLTSCPro2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Project Professional 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalProjectPro2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Project Standard 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalProjectStandard2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio LTSC Standard 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalVisioLTSCStandard2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Project Standard 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalProjectStandard2024Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Office LTSC Professional Plus 2021",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalOfficeLTSCProPlus2021Cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio LTSC Standard 2024",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalVisioLTSCStandard2024Cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for total Applications",
+                  "decimalPlaces": 2,
+                  "id": "totalMicrosoftApplicationsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for total Applications",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalMicrosoftApplicationsCost"
+                    },
+                    {
+                      "variableLabel": "Total fleet instance cost per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "appStreamFleet_totalFleetCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total Fleet instance and Application cost ",
+                  "decimalPlaces": 2,
+                  "id": "totalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "appStream_userLicenseCost",
+                    "appStream_userLicenseMultiSessionCost",
+                    "userLicense_Final",
+                    "appStream_userLicenseCostDisplay",
+                    "appStream_peakHourInstnaces",
+                    "appStream_roundupInstancePeakHour",
+                    "appStream_offpeakHourInstnaces",
+                    "appStream_roundupInstanceoffPeakHour",
+                    "TotalDaysInWeek",
+                    "DiffWorkingPeakHoursWD",
+                    "DiffWorkingPeakHoursWE",
+                    "MonthlyPeakHoursWD",
+                    "MonthlyWorkingHoursWD",
+                    "appStream_baselineHoursPerMonthWD",
+                    "appStream_baselineInstanceHoursWD",
+                    "appStream_baselineInstanceHoursWD_session",
+                    "appStream_peakInstanceHoursWD",
+                    "appStream_peakInstanceHoursWD_session",
+                    "appStream_totalUserHoursWD",
+                    "appStream_totalUserHoursWDDisplay",
+                    "appStream_peakBufferInstancesWD",
+                    "appStream_peakBufferInstancesWD_session",
+                    "appStream_peakBufferInstancesRoundedWD",
+                    "appStream_peakBufferInstancesRoundedWD_session",
+                    "appStream_peakBufferInstanceHoursWD",
+                    "appStream_peakBufferInstanceHoursWD_session",
+                    "appStream_baselineBufferInstancesWD",
+                    "appStream_offpeakBufferInstancesWD_session",
+                    "appStream_baselineBufferInstancesRoundedWD",
+                    "appStream_baselineBufferInstancesRoundedWD_session",
+                    "appStream_baselineBufferInstanceHoursWD",
+                    "appStream_baselineBufferInstanceHoursWD_session",
+                    "appStream_bufferHoursPerMonthWD",
+                    "appStream_bufferHoursPerMonth_WD_Display",
+                    "appStream_peakHourInstnacesWE",
+                    "appStream_roundupInstancePeakHourWE",
+                    "appStream_offpeakHourInstnacesWE_session",
+                    "appStream_roundupInstanceoffPeakHourWE_session",
+                    "MonthlyPeakHoursWE",
+                    "MonthlyWorkingHoursWE",
+                    "appStream_baselineHoursPerMonthWE",
+                    "appStream_baselineInstanceHoursWE",
+                    "appStream_peakInstanceHoursWE",
+                    "appStream_baselineInstanceHoursWE_session",
+                    "appStream_offpeakInstanceHoursWE_session",
+                    "appStream_totalUserHoursWE",
+                    "appStream_totalUserHoursWEDisplay",
+                    "appStream_peakBufferInstancesWE",
+                    "appStream_peakBufferInstancesRoundedWE",
+                    "appStream_peakHourInstnacesWE_session",
+                    "appStream_peakBufferInstancesRoundedWE_session",
+                    "appStream_peakBufferInstanceHoursWE",
+                    "appStream_peakBufferInstanceHoursWE_session",
+                    "appStream_baselineBufferInstancesWE",
+                    "appStream_baselineBufferInstancesRoundedWE",
+                    "appStream_offpeakHourInstnacesdivWE_session",
+                    "appStream_baselineBufferInstancesRoundedWE_session",
+                    "appStream_baselineBufferInstanceHoursWE",
+                    "appStream_baselineBufferInstanceHoursWE_session",
+                    "appStream_bufferHoursPerMonthWE",
+                    "appStream_bufferHoursPerMonth_WE_Display",
+                    "appStream_totalUserHours",
+                    "appStream_totalUserHoursDisplay",
+                    "appStream_bufferHoursPerMonth",
+                    "appStream_bufferHoursPerMonthDisplay",
+                    "appStream_totalInstanceHoursPerMonth",
+                    "appStream_totalInstanceHoursPerMonthDisplay",
+                    "fleet_priceVariable",
+                    "elasticfleet_priceVariable",
+                    "appStreamFleet_activeOnDemandFleetCost",
+                    "appStreamFleet_stoppedOnDemandFleetCost",
+                    "appStreamFleet_OnDemandFleetCost",
+                    "appStreamFleet_alwaysOnFleetCost",
+                    "appStreamFleet_ElasticFleetCost",
+                    "appStreamFleet_totalFleetCost",
+                    "totalOfficeLTSCStandard2021Cost",
+                    "totalProjectPro2024Cost",
+                    "totalOfficeLTSCStandard2024Cost",
+                    "totalVisioLTSCPro2024Cost",
+                    "totalOfficeLTSCProPlus2024Cost",
+                    "totalVisioLTSCPro2021Cost",
+                    "totalProjectPro2021Cost",
+                    "totalProjectStandard2021Cost",
+                    "totalVisioLTSCStandard2021Cost",
+                    "totalProjectStandard2024Cost",
+                    "totalOfficeLTSCProPlus2021Cost",
+                    "totalVisioLTSCStandard2024Cost",
+                    "totalMicrosoftApplicationsCost",
+                    "totalCost"
+                  ],
+                  "IPMSupported": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "label": "Fleet instance and Application cost",
+                  "id": "appStream_fleetCostDisplay",
+                  "decimalPlaces": 4,
+                  "subTotalRefer": "totalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

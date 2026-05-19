@@ -1,0 +1,676 @@
+{
+  "version": "0.0.11",
+  "serviceName": "SageMaker Asynchronous Inference",
+  "serviceCode": "sageMakerAsynchronousInference",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-inference-async-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-inference-async-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "sagemaker-storage",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-storage.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Asynchronous Inference Instances",
+      "description": "",
+      "id": "asyncInferenceInstances",
+      "helpText": "Amazon SageMaker Asynchronous Inference is a near-real time inference option that queues incoming requests and processes them asynchronously. Use this option when you need to process large payloads as the data arrives or run models that have long inference processing times and do not have sub-second latency requirements. You are charged for the type of instance you choose.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Asynchronous Inference Instances",
+          "helpText": "Amazon SageMaker Asynchronous Inference is a near-real time inference option that queues incoming requests and processes them asynchronously. Use this option when you need to process large payloads as the data arrives or run models that have long inference processing times and do not have sub-second latency requirements. You are charged for the type of instance you choose.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "modelsDeployed",
+                "label": "Number of models deployed",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of models deployed",
+                "description": "Number of models deployed"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "SageMaker Asynchronous Inference endpoints allow only a single model per endpoint.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "AsyncAl"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "modelsPerEndPoint",
+                "label": "Number of models per endpoint",
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1
+                },
+                "placeholder": "Enter the number of models per endpoint"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "instancesPerEndPoint",
+                "label": "Number of instances per endpoint",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of instances per endpoint",
+                "description": "Number of instances per endpoint"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "endpointHrsPerDay",
+                "label": "Endpoint hour(s) per day",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.01,
+                  "maxValue": 24
+                },
+                "placeholder": "Enter the number of hours endpoint is active per day including cool down periods for autoscaling",
+                "description": "Number of hours endpoint is active per day including cool down periods for autoscaling"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "EndPointDaysPerMonth",
+                "label": "Endpoint day(s) per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 31
+                },
+                "placeholder": "Enter the number of days endpoint is active per month",
+                "description": "Number of days endpoint is active per month"
+              },
+              {
+                "label": "SageMaker async Instances",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "sagemaker-inference-async-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "Compute Type",
+                    "V CPU",
+                    "Memory",
+                    "Clock Speed",
+                    "GPU",
+                    "Network Performance",
+                    "Storage",
+                    "GPU Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Instance name",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "Compute Type",
+                      "V CPU",
+                      "Memory",
+                      "Clock Speed",
+                      "GPU",
+                      "Network Performance",
+                      "Storage",
+                      "GPU Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "modelsDeployed",
+                      "variableLabel": "Number of models deployed",
+                      "variableUnitLabel": "models",
+                      "required": true
+                    },
+                    {
+                      "variableId": "modelsPerEndPoint",
+                      "variableLabel": "Number of models per endpoint",
+                      "variableUnitLabel": "models per endpoint",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "endpoint(s)",
+                  "decimalPlaces": 6,
+                  "id": "asyncdiv0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "endpoints rounded up by 1",
+                  "id": "modelsRounded",
+                  "minValue": 0,
+                  "operands": [
+                    {
+                      "variableId": "asyncdiv0",
+                      "variableLabel": "endpoint(s)",
+                      "variableUnitLabel": "models rounded up to nearest 1",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "endpoint(s) (rounded up)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "endpoint(s) (rounded up)",
+                      "variableUnitLabel": "endpoint(s)",
+                      "required": true,
+                      "variableId": "modelsRounded"
+                    },
+                    {
+                      "variableId": "instancesPerEndPoint",
+                      "variableLabel": "Number of instances per endpoint",
+                      "required": true,
+                      "variableUnitLabel": "instances per endpoint"
+                    },
+                    {
+                      "variableId": "endpointHrsPerDay",
+                      "variableLabel": "Endpoint hour(s) per day",
+                      "required": true,
+                      "variableUnitLabel": "hours per day"
+                    },
+                    {
+                      "variableId": "EndPointDaysPerMonth",
+                      "variableLabel": "Endpoint day(s) per month",
+                      "required": true,
+                      "variableUnitLabel": "day per month"
+                    }
+                  ],
+                  "outputUnitLabel": "instance hours per month",
+                  "decimalPlaces": 2,
+                  "id": "asynchrsMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "instance hours per month",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "asynchrsMonth"
+                    },
+                    {
+                      "variableLabel": "SageMaker async Instances",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly On-Demand cost)",
+                  "decimalPlaces": 2,
+                  "id": "asynondemandCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "modelsDeployed",
+                    "AsyncAl",
+                    "modelsPerEndPoint",
+                    "instancesPerEndPoint",
+                    "endpointHrsPerDay",
+                    "EndPointDaysPerMonth",
+                    "columnFormIPM",
+                    "asyncdiv0",
+                    "modelsRounded",
+                    "asynchrsMonth",
+                    "asynondemandCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Asynchronous Inference",
+                  "decimalPlaces": 2,
+                  "id": "asyncTotCost",
+                  "subTotalRefer": "asynondemandCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "ML Storage",
+          "description": "Optional. Enter the amount of additional storage you would like to add.",
+          "helpText": "SageMaker attaches an ML storage volume to the ML compute instance.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage",
+                "id": "SM_storageType",
+                "options": [
+                  {
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "General Purpose"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "General Purpose",
+                "validations": {
+                  "required": false
+                },
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "SM_storageAmount",
+                "label": "Storage amount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": " "
+              },
+              {
+                "type": "pricing",
+                "label": "price for async Storage",
+                "id": "price_for_async_Storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-storage",
+                "meteredUnit": {
+                  "allRegions": "03F5iCsvDAfP5jtHGJje3lh3lNAlHxoYkC_Y-7FIuDw"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "SM_unitConvert2",
+                  "refer": [
+                    "SM_storageType",
+                    "SM_storageAmount",
+                    "price_for_async_Storage"
+                  ],
+                  "subTotalRefer": "asynondemandCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SM_StorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "SM_storageAmount",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for async Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_async_Storage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "SM_StorageDisplayType",
+                  "refer": [
+                    "SM_StorageCost"
+                  ],
+                  "subTotalRefer": "SM_StorageCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage pricing",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Processing",
+          "description": "Optional. Enter the amount of data you would like to process.",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataProcessedIn",
+                "label": "Data Processed IN",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "placeholder": "Enter Data Processed IN",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataProcessedOut",
+                "label": "Data Processed OUT",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "placeholder": "Enter Data Processed OUT",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Data In Async",
+                "id": "price_for_Data_In_Async",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-storage",
+                "meteredUnit": {
+                  "allRegions": "jbbH5x-b2emSCGj6MC9wSMk6qtgheK-QbrvHXUa08xE"
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for Data Out Async",
+                "id": "price_for_Data_Out_Async",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-storage",
+                "meteredUnit": {
+                  "allRegions": "vMi89LFj_RRWhGmnjV24p2fL9UaN9iBNn4lRqyQllHA"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "SM_unitConvert1",
+                  "refer": [
+                    "dataProcessedIn",
+                    "dataProcessedOut",
+                    "price_for_Data_In_Async",
+                    "price_for_Data_Out_Async"
+                  ],
+                  "subTotalRefer": "SM_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SM_StorageCost2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Processed IN",
+                      "variableId": "dataProcessedIn",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for Data In Async",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_Data_In_Async"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (data processed in)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SM_StorageCost3",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Processed OUT",
+                      "variableId": "dataProcessedOut",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for Data Out Async",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_Data_Out_Async"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (data processed out)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "addStorage",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (data processed in)",
+                      "variableUnitLabel": "[currency] (data processed in)",
+                      "required": false,
+                      "variableId": "SM_StorageCost2"
+                    },
+                    {
+                      "variableLabel": "[currency] (data processed out)",
+                      "variableId": "SM_StorageCost3",
+                      "variableUnitLabel": "[currency] (data processed out)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for data processing",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "SM_StorageDisplayType1",
+                  "refer": [
+                    "SM_StorageCost2",
+                    "SM_StorageCost3",
+                    "addStorage"
+                  ],
+                  "subTotalRefer": "addStorage",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data processing pricing",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

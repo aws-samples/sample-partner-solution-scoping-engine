@@ -1,0 +1,343 @@
+{
+  "redundancy": {
+    "weight": 0.35,
+    "description": "High availability and fault tolerance through redundancy",
+    "pillar": "reliability",
+    "services": {
+      "Multi_AZ": {
+        "provides": "availability_zones",
+        "coverage_factor": 0.35,
+        "detection_patterns": [
+          "Multi-AZ",
+          "multi AZ",
+          "multiple availability zones",
+          "availability zone redundancy",
+          "cross-AZ"
+        ],
+        "configuration_checks": [
+          {
+            "check": "multi_az_enabled",
+            "description": "Resources deployed across multiple availability zones",
+            "weight": 0.6
+          },
+          {
+            "check": "az_distribution",
+            "description": "Even distribution across availability zones",
+            "weight": 0.4
+          }
+        ]
+      },
+      "ELB": {
+        "provides": "load_balancing",
+        "coverage_factor": 0.25,
+        "detection_patterns": [
+          "Elastic Load Balancing",
+          "ELB",
+          "Application Load Balancer",
+          "ALB",
+          "Network Load Balancer",
+          "NLB",
+          "load balancer"
+        ],
+        "configuration_checks": [
+          {
+            "check": "cross_zone_enabled",
+            "description": "Cross-zone load balancing enabled",
+            "weight": 0.4
+          },
+          {
+            "check": "health_checks",
+            "description": "Health checks configured for targets",
+            "weight": 0.6
+          }
+        ]
+      },
+      "Route53": {
+        "provides": "dns_failover",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "Route 53",
+          "Route53",
+          "DNS failover",
+          "health check routing",
+          "failover routing"
+        ],
+        "configuration_checks": [
+          {
+            "check": "health_checks",
+            "description": "Health checks configured for endpoints",
+            "weight": 0.5
+          },
+          {
+            "check": "failover_policy",
+            "description": "Failover routing policy configured",
+            "weight": 0.5
+          }
+        ]
+      },
+      "RDS_Multi_AZ": {
+        "provides": "database_redundancy",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "RDS Multi-AZ",
+          "RDS multi AZ",
+          "Aurora Multi-AZ",
+          "database redundancy"
+        ],
+        "configuration_checks": [
+          {
+            "check": "multi_az_deployment",
+            "description": "RDS deployed in Multi-AZ configuration",
+            "weight": 0.7
+          },
+          {
+            "check": "automated_backups",
+            "description": "Automated backups enabled",
+            "weight": 0.3
+          }
+        ]
+      }
+    }
+  },
+  "monitoring_alerting": {
+    "weight": 0.25,
+    "description": "Proactive monitoring and alerting for system health",
+    "pillar": "reliability",
+    "services": {
+      "CloudWatch": {
+        "provides": "metrics_monitoring",
+        "coverage_factor": 0.5,
+        "detection_patterns": [
+          "CloudWatch",
+          "CloudWatch metrics",
+          "CloudWatch alarms",
+          "metric monitoring"
+        ],
+        "configuration_checks": [
+          {
+            "check": "alarms_configured",
+            "description": "CloudWatch alarms configured for critical metrics",
+            "weight": 0.5
+          },
+          {
+            "check": "custom_metrics",
+            "description": "Custom metrics for application health",
+            "weight": 0.3
+          },
+          {
+            "check": "alarm_actions",
+            "description": "Alarm actions configured (SNS, Auto Scaling)",
+            "weight": 0.2
+          }
+        ]
+      },
+      "SNS": {
+        "provides": "notification",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "SNS",
+          "Simple Notification Service",
+          "notification topic",
+          "alert notification"
+        ],
+        "configuration_checks": [
+          {
+            "check": "topics_configured",
+            "description": "SNS topics configured for alerts",
+            "weight": 0.5
+          },
+          {
+            "check": "subscriptions",
+            "description": "Subscriptions configured for notifications",
+            "weight": 0.5
+          }
+        ]
+      },
+      "X_Ray": {
+        "provides": "distributed_tracing",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "X-Ray",
+          "AWS X-Ray",
+          "distributed tracing",
+          "trace analysis"
+        ],
+        "configuration_checks": [
+          {
+            "check": "tracing_enabled",
+            "description": "X-Ray tracing enabled for services",
+            "weight": 0.6
+          },
+          {
+            "check": "sampling_rules",
+            "description": "Sampling rules configured",
+            "weight": 0.4
+          }
+        ]
+      }
+    }
+  },
+  "backup_recovery": {
+    "weight": 0.25,
+    "description": "Data backup and disaster recovery capabilities",
+    "pillar": "reliability",
+    "services": {
+      "AWS_Backup": {
+        "provides": "centralized_backup",
+        "coverage_factor": 0.4,
+        "detection_patterns": [
+          "AWS Backup",
+          "backup plan",
+          "backup vault",
+          "centralized backup"
+        ],
+        "configuration_checks": [
+          {
+            "check": "backup_plan",
+            "description": "Backup plan configured for resources",
+            "weight": 0.5
+          },
+          {
+            "check": "retention_policy",
+            "description": "Retention policy defined",
+            "weight": 0.3
+          },
+          {
+            "check": "cross_region_copy",
+            "description": "Cross-region backup copy enabled",
+            "weight": 0.2
+          }
+        ]
+      },
+      "RDS_Snapshots": {
+        "provides": "database_backup",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "RDS snapshot",
+          "database snapshot",
+          "automated snapshot",
+          "manual snapshot"
+        ],
+        "configuration_checks": [
+          {
+            "check": "automated_snapshots",
+            "description": "Automated snapshots enabled",
+            "weight": 0.6
+          },
+          {
+            "check": "snapshot_retention",
+            "description": "Snapshot retention period configured",
+            "weight": 0.4
+          }
+        ]
+      },
+      "S3_Replication": {
+        "provides": "data_replication",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "S3 replication",
+          "cross-region replication",
+          "CRR",
+          "same-region replication",
+          "SRR"
+        ],
+        "configuration_checks": [
+          {
+            "check": "replication_enabled",
+            "description": "S3 replication enabled for critical buckets",
+            "weight": 0.6
+          },
+          {
+            "check": "replication_destination",
+            "description": "Replication destination in different region",
+            "weight": 0.4
+          }
+        ]
+      }
+    }
+  },
+  "scaling": {
+    "weight": 0.15,
+    "description": "Automatic scaling to handle load variations",
+    "pillar": "reliability",
+    "services": {
+      "Auto_Scaling": {
+        "provides": "compute_scaling",
+        "coverage_factor": 0.5,
+        "detection_patterns": [
+          "Auto Scaling",
+          "Auto Scaling group",
+          "ASG",
+          "automatic scaling",
+          "EC2 Auto Scaling"
+        ],
+        "configuration_checks": [
+          {
+            "check": "scaling_policies",
+            "description": "Scaling policies configured (target tracking, step)",
+            "weight": 0.5
+          },
+          {
+            "check": "health_checks",
+            "description": "Health checks configured for instances",
+            "weight": 0.3
+          },
+          {
+            "check": "multiple_azs",
+            "description": "Auto Scaling group spans multiple AZs",
+            "weight": 0.2
+          }
+        ]
+      },
+      "Lambda": {
+        "provides": "serverless_scaling",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "Lambda",
+          "AWS Lambda",
+          "serverless function",
+          "Lambda function"
+        ],
+        "configuration_checks": [
+          {
+            "check": "concurrency_limits",
+            "description": "Reserved or provisioned concurrency configured",
+            "weight": 0.5
+          },
+          {
+            "check": "timeout_configured",
+            "description": "Appropriate timeout configured",
+            "weight": 0.3
+          },
+          {
+            "check": "error_handling",
+            "description": "Error handling and retries configured",
+            "weight": 0.2
+          }
+        ]
+      },
+      "DynamoDB_Auto_Scaling": {
+        "provides": "database_scaling",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "DynamoDB auto scaling",
+          "DynamoDB on-demand",
+          "DynamoDB capacity",
+          "adaptive capacity"
+        ],
+        "configuration_checks": [
+          {
+            "check": "auto_scaling_enabled",
+            "description": "Auto scaling or on-demand mode enabled",
+            "weight": 0.7
+          },
+          {
+            "check": "scaling_targets",
+            "description": "Scaling targets configured appropriately",
+            "weight": 0.3
+          }
+        ]
+      }
+    }
+  }
+}

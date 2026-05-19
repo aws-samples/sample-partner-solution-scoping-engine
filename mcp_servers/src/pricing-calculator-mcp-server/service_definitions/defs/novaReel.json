@@ -1,0 +1,136 @@
+{
+  "version": "0.0.5",
+  "serviceName": "Nova Reel",
+  "serviceCode": "novaReel",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "bedrock",
+    "AI",
+    "genAI"
+  ],
+  "serviceDescription": "",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/bedrock/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrock",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrock/[currency]/current/bedrock.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Nova Reel - On Demand",
+          "helpText": {
+            "aws": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_videos_generated_in_a_month",
+                "label": "Number of videos generated in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of videos generated",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price per video",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "pJrCc-lx6xI0ridvFUc2PyIDJiSJpw1UBo1_ySetZaA"
+                },
+                "id": "Price_per_video"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_videos_generated_in_a_month",
+                    "Price_per_video"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "vidConv"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "video_tot_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_videos_generated_in_a_month",
+                      "variableLabel": "Number of videos generated in a month",
+                      "variableUnitLabel": "videos",
+                      "required": true
+                    },
+                    {
+                      "constant": 6,
+                      "constantUnitLabel": "seconds per video"
+                    },
+                    {
+                      "variableId": "Price_per_video",
+                      "variableLabel": "Price per video",
+                      "variableUnitLabel": "[currency] per second of video",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "video_tot_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total On demand Cost for Nova Reel",
+                  "decimalPlaces": 2,
+                  "id": "video_tot_fin",
+                  "subTotalRefer": "video_tot_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_bedrock"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "version": "0.0.3",
+  "serviceName": "Amazon WorkMail",
+  "serviceCode": "amazonWorkmail",
+  "type": "AWSService",
+  "slug": "WorkMail",
+  "regions": [
+    "eu-west-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "workmail",
+    "business email",
+    "managed email",
+    "calendar service",
+    "managed service",
+    "outlook",
+    "iOS",
+    "andriod",
+    "email applications",
+    "exchange server",
+    "IMAP"
+  ],
+  "serviceDescription": {
+    "aws": "Amazon WorkMail is a secure, managed business email and calendar service with support for existing desktop and mobile email client applications. Amazon WorkMail gives users the ability to seamlessly access their email, contacts, and calendars using the client application of their choice, including Microsoft Outlook, native iOS and Android email applications, any client application supporting the IMAP protocol, or directly through a web browser. You can integrate Amazon WorkMail with your existing corporate directory, use email journaling to meet compliance requirements, and control both the keys that encrypt your data and the location in which your data is stored. You can also set up interoperability with Microsoft Exchange Server, and programmatically manage users, groups, and resources using the Amazon WorkMail SDK."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/workmail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "workmail",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workmail/[currency]/current/workmail.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "Amazon WorkMail is a secure, managed business email and calendar service with support for existing desktop and mobile email client applications. Amazon WorkMail gives users the ability to seamlessly access their email, contacts, and calendars using the client application of their choice, including Microsoft Outlook, native iOS and Android email applications, any client application supporting the IMAP protocol, or directly through a web browser. You can integrate Amazon WorkMail with your existing corporate directory, use email journaling to meet compliance requirements, and control both the keys that encrypt your data and the location in which your data is stored. You can also set up interoperability with Microsoft Exchange Server, and programmatically manage users, groups, and resources using the Amazon WorkMail SDK.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/workmail/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Settings",
+          "helpText": "With Amazon WorkMail, there are no upfront fees, no required minimum commitments, and no long-term contracts.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/workmail/pricing/"
+            }
+          },
+          "bodyText": "Amazon WorkMail costs $4.00 per user per month and includes 50 GB of mailbox storage for each user. You can get started with a 30-day free trial for up to 25 users.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "If a user is created after the first of a month, then the monthly fee for that mailbox will be adjusted on a pro rata basis from the first day it was active to the end of that month. If a user is terminated or deleted before the end of a month, then the monthly fee for that user will still apply through the end of the month.",
+                "id": "settingText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of enabled users in the calendar month",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of enabled user in the calendar month",
+                "id": "numberOfEnabledUsers"
+              },
+              {
+                "type": "pricing",
+                "id": "workMailPrice",
+                "label": "Price for workmail per user per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workmail",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "WorkMail per User Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "settingText",
+                    "numberOfEnabledUsers",
+                    "workMailPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "unitConv"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total monthly charge",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of enabled users in the calendar month",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfEnabledUsers"
+                    },
+                    {
+                      "variableLabel": "Price for workmail per user per month",
+                      "variableUnitLabel": "per user per month",
+                      "required": true,
+                      "variableId": "workMailPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly charge",
+                  "decimalPlaces": 2,
+                  "id": "TotalMonthlyFee"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Total mailbox cost",
+                  "displayInConfigSummary": true,
+                  "id": "totalMailboxChargeDisplay",
+                  "refer": [
+                    "TotalMonthlyFee"
+                  ],
+                  "subTotalRefer": "TotalMonthlyFee"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

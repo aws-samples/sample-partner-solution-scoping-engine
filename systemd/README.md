@@ -1,0 +1,1 @@
+These are the service files to run SERA on an EC2 Instance. Not to be used for local laptop development.

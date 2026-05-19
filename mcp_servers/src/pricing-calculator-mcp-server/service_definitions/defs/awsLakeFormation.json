@@ -1,0 +1,757 @@
+{
+  "version": "0.0.16",
+  "serviceName": "AWS Lake Formation",
+  "serviceCode": "awsLakeFormation",
+  "type": "AWSService",
+  "excludeZeroSubTotals": false,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-central-1",
+    "eu-north-1",
+    "ca-central-1"
+  ],
+  "searchKeywords": [
+    "Lake Formation",
+    "LF",
+    "If",
+    "Formation",
+    "lakeformation",
+    "Lake"
+  ],
+  "serviceDescription": "AWS Lake Formation provides database, table, column and tag-based access controls, and cross-account sharing at no charge. Governed Tables provide ACID transactions as a fully managed service that enable you to reliably update multiple tables, while maintaining a consistent view for all users. Managing concurrent transactions and being able to travel back to previous version of the table requires storing metadata about each transaction. Lake Formation charges a fee for transaction requests and for metadata storage. In addition, to providing a consistent view of data and enforce row and cell-level security the Lake Formation Storage API scans data in Amazon S3 and applies row and cell filters before returning results to applications. There is a fee for this filtering.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lake-formation/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lakeformation",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lakeformation/[currency]/current/lakeformation.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "AWS Lake Formation",
+      "id": "template",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/lake-formation/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "lakeformation",
+              "meteredUnit": "Filtering"
+            }
+          },
+          "title": "Data filtering",
+          "bodyText": "",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lake-formation/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned",
+                "id": "dataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter data scanned",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "dataScannedPrice",
+                "label": "Price for filtering",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lakeformation",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Filtering"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "dataScanned",
+                    "dataScannedPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalDataFilteringCharge",
+                  "variableName": "Total Data filtering charge",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned",
+                      "variableId": "dataScanned",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Price for filtering",
+                      "variableId": "dataScannedPrice",
+                      "variableUnitLabel": "[currency]/GB",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalDataFilteringCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total data filtering cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "totalDataFilteringCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Transaction metadata storage and request",
+          "bodyText": "You can store the first million objects and make one million requests per month for free.",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lake-formation/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lakeformation",
+                    "meteredUnit": "LF MetadataObjects"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Storage",
+                "label": "Storage usage in a month (in millions)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "First million objects for storage per month is free.",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "storagePrice",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lakeformation",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "LF MetadataObjects"
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lakeformation",
+                    "meteredUnit": "LF API-Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Request",
+                "label": "Requests in a month (in millions)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "First million requests per month is free.",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "requestPrice",
+                "label": "Price for request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lakeformation",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "LF API-Requests"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Storage",
+                    "storagePrice",
+                    "Request",
+                    "requestPrice"
+                  ],
+                  "subTotalRefer": "totalDataFilteringCharge",
+                  "id": "serviceSettingUnitConversion2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billiableStorage",
+                  "variableName": "billable storage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage usage in a month (in millions)",
+                      "variableId": "Storage",
+                      "variableUnitLabel": "million(s) objects",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "million objects for free"
+                    }
+                  ],
+                  "outputUnitLabel": " million(s) billable objects for storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable storage",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "billiableStorage"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "million(s) billable objects for storage per month",
+                  "decimalPlaces": 2,
+                  "id": "billableStorageMilPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageForChargeObj",
+                  "variableName": "Total objects for storage",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "million(s) billable objects for storage per month",
+                      "variableId": "billableStorageMilPerMonth",
+                      "variableUnitLabel": "million(s) billable objects for storage",
+                      "required": false
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "(1 million multiplier)"
+                    }
+                  ],
+                  "outputUnitLabel": "billable objects for storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalStorageCost",
+                  "variableName": "Total storage cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total objects for storage",
+                      "variableId": "storageForChargeObj",
+                      "variableUnitLabel": "objects",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Price for storage",
+                      "variableId": "storagePrice",
+                      "variableUnitLabel": "[currency] per object",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total objects for storage cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Total storage cost",
+                  "id": "totalStorageCostVar",
+                  "refer": "totalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableRequestMillion",
+                  "variableName": "Billable request in millions",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests in a month (in millions)",
+                      "variableId": "Request",
+                      "variableUnitLabel": "million(s) API requests",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "million API requests for free"
+                    }
+                  ],
+                  "outputUnitLabel": "million(s) billable API requests",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Billable request in millions",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "billableRequestMillion"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "million(s) billable API requests per month",
+                  "decimalPlaces": 2,
+                  "id": "billableRequestMilPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableAPIrequest",
+                  "variableName": "Total billable API request",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "million(s) billable API requests per month",
+                      "variableId": "billableRequestMilPerMonth",
+                      "variableUnitLabel": "million(s) billable API requests",
+                      "required": false
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "(1 million multiplier)"
+                    }
+                  ],
+                  "outputUnitLabel": "billable API requests",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalRequestCost",
+                  "variableName": "Total request cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total billable API request",
+                      "variableId": "billableAPIrequest",
+                      "variableUnitLabel": "billable API requests",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Price for request",
+                      "variableId": "requestPrice",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total API requests cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Total request cost",
+                  "id": "totalRequestCostVar",
+                  "refer": "totalRequestCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalTransactionCost",
+                  "variableName": "Total transaction cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total storage cost",
+                      "variableId": "totalStorageCost",
+                      "variableUnitLabel": "[currency] objects for storage",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total request cost",
+                      "variableId": "totalRequestCost",
+                      "variableUnitLabel": "[currency] API requests",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "billiableStorage",
+                    "billableStorageMilPerMonth",
+                    "storageForChargeObj",
+                    "totalStorageCost",
+                    "totalStorageCostVar",
+                    "billableRequestMillion",
+                    "billableRequestMilPerMonth",
+                    "billableAPIrequest",
+                    "totalRequestCost",
+                    "totalRequestCostVar",
+                    "totalTransactionCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total transaction metadata storage and requests cost",
+                  "decimalPlaces": 2,
+                  "id": "totalTransactionCostDisplay",
+                  "subTotalRefer": "totalTransactionCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "lakeformation",
+              "meteredUnit": "LF Storage-Optimizer"
+            }
+          },
+          "title": "Storage optimizer",
+          "bodyText": "",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lake-formation/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfTables",
+                "label": "Number of tables",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfSmallFiles",
+                "label": "Number of small files ingested per table per day",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of small files (less than 64MB)",
+                "id": "sizeOfSmallFile",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 64
+                },
+                "placeholder": "",
+                "description": "Data is compacted on ingestion of small files, so the total amount of data you ingest into your data lake in small files is the amount that will be compacted."
+              },
+              {
+                "type": "pricing",
+                "id": "dataProcessedPrice",
+                "label": "Price for processed",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lakeformation",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "LF Storage-Optimizer"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfTables",
+                    "numberOfSmallFiles",
+                    "sizeOfSmallFile",
+                    "dataProcessedPrice"
+                  ],
+                  "subTotalRefer": "totalTransactionCost",
+                  "id": "serviceSettingUnitConversion3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataScannedPerTablePerDay",
+                  "variableName": "Data scanned per table per day",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfSmallFiles",
+                      "variableLabel": "Number of small files ingested per table per day",
+                      "variableUnitLabel": "files",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Size of small files (less than 64MB)",
+                      "variableId": "sizeOfSmallFile",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MB (data scanned per table per day)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataSannedPerDay",
+                  "variableName": "Data scanned per day",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned per table per day",
+                      "variableId": "dataScannedPerTablePerDay",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Number of tables",
+                      "variableId": "numberOfTables",
+                      "variableUnitLabel": "tables",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MB (data scanned per day)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataSannedPerMonth",
+                  "variableName": "Data scanned per month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned per day",
+                      "variableId": "dataSannedPerDay",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days per month"
+                    }
+                  ],
+                  "outputUnitLabel": "MB (total data scanned per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalDataScannedCost",
+                  "variableName": "Total data scanned cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned per month",
+                      "variableId": "dataSannedPerMonth",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "GB/MB"
+                    },
+                    {
+                      "variableLabel": "Price for processed",
+                      "variableId": "dataProcessedPrice",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total data process cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "dataScannedPerTablePerDay",
+                    "dataSannedPerDay",
+                    "dataSannedPerMonth",
+                    "totalDataScannedCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total data process cost",
+                  "decimalPlaces": 2,
+                  "id": "totalDataScannedCostDisplay",
+                  "subTotalRefer": "totalDataScannedCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "LakeFormation",
+  "partitions": [
+    "aws"
+  ]
+}

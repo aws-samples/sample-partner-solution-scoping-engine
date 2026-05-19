@@ -1,0 +1,1041 @@
+{
+  "version": "0.0.76",
+  "serviceName": "S3 Glacier Deep Archive",
+  "serviceCode": "amazonS3GlacierDeepArhive",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    },
+    {
+      "mappingDefinitionName": "s3glacierdeeparchive",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3glacierdeeparchive/[currency]/current/s3glacierdeeparchive.json"
+    }
+  ],
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "S3 Glacier Deep Archive",
+      "description": "S3 Glacier Deep Archive is lowest-cost storage class and supports long-term retention and digital preservation for data that may be accessed once or twice in a year.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "id": "s3GlacierDeepArhive",
+      "cards": [
+        {
+          "title": "S3 Glacier Deep Archive",
+          "description": "S3 Glacier Deep Archive is lowest-cost storage class and supports long-term retention and digital preservation for data that may be accessed once or twice in a year.",
+          "helpText": "S3 Glacier Deep Archive is lowest-cost storage class and supports long-term retention and digital preservation for data that may be accessed once or twice in a year.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glacier/",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/s3/pricing/"
+              }
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Storage Settings",
+                "id": "s3GlacierDeepArchive_generated_0"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "Glacier Deep Archive GB Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Deep Archive storage",
+                "id": "s3GlacierDeepArchiveStorageSize",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Deep Archive Average Object Size",
+                "id": "S3_Glacier_Deep_Archive_Average_Object_Size",
+                "defaultValue": 16,
+                "description": "Used to calculate number of objects which affects metadata overhead and cost of moving data into S3 Glacier Deep Archive. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9e-10,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 Glacier Deep Archive?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 Glacier Deep Archive",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3glacierdeeparchive",
+                        "meteredUnit": "PUT to Glacier Deep Archive Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST, Lifecycle requests to S3 Glacier Deep Archive",
+                    "id": "PUT to Glacier Deep Archive Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 Glacier Deep Archive initially."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "PUT to Glacier Deep Archive Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 Glacier Deep Archive",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "id": "s3GlacierDeepArchivePutRequests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "Lifecycle to Glacier Deep Archive Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transitions into S3 Glacier Deep Archive",
+                "description": "Ongoing monthly number of Lifecycle requests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "id": "s3GlacierDeepArchiveLifecycleTransitions"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "GDA Standard Restore Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Restore requests (Standard)",
+                "description": "Ongoing monthly number of Standard Restore requests",
+                "id": "s3GlacierDeepArchiveRestoreRequestsStandard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "Glacier Deep Archive Bulk Restore Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Restore requests (Bulk)",
+                "description": "Ongoing monthly number of Bulk Restore requests",
+                "id": "s3GlacierDeepArchiveRestoreRequestsBulk",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "S3 Standard-Retrieval GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals (Standard)",
+                "description": "Ongoing monthly volume of Standard Restore retrieval data",
+                "id": "s3GlacierDeepArchiveDataRetrievalsStandard",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3glacierdeeparchive",
+                    "meteredUnit": "S3 Bulk-Retrieval GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals (Bulk)",
+                "id": "s3GlacierDeepArchiveDataRetrievalsBulk",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of Bulk Restore retrieval data"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "meteredUnit": {
+                  "allRegions": "Glacier Deep Archive GB Mo"
+                },
+                "label": "pricing for glacier deep archive storage",
+                "id": "s3GlacierDeepArchive_generated_1"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "S3 Standard-Retrieval GB"
+                },
+                "label": "pricing for S3 Glacier Deep Archive Standard-Retrieval",
+                "id": "s3GlacierDeepArchive_generated_2"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "S3 Bulk-Retrieval GB"
+                },
+                "label": "pricing for S3 Glacier Deep Archive Bulk-Retrieval",
+                "id": "s3GlacierDeepArchive_generated_3"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "GDA Standard Restore Requests"
+                },
+                "label": "pricing for S3 Glacier Deep Archive request retrieval (Standard)",
+                "id": "s3GlacierDeepArchive_generated_4"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Glacier Deep Archive Bulk Restore Requests"
+                },
+                "label": "pricing for S3 Glacier Deep Archive request retrieval (Bulk)",
+                "id": "s3GlacierDeepArchive_generated_5"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "PUT to Glacier Deep Archive Requests"
+                },
+                "label": "pricing for PUT requests to S3 Glacier Deep Archive",
+                "id": "s3GlacierDeepArchive_generated_6"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3glacierdeeparchive",
+                "volumeDiscountEligibility": false,
+                "meteredUnit": {
+                  "allRegions": "Lifecycle to Glacier Deep Archive Requests"
+                },
+                "label": "pricing for Lifecycle transitions to Glacier Deep Archive Requests",
+                "id": "s3GlacierDeepArchive_generated_7"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "volumeDiscountEligibility": false,
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "amazonS3Standard_t_p"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "s3GlacierDeepArchive_generated_0",
+                    "s3GlacierDeepArchiveStorageSize",
+                    "S3_Glacier_Deep_Archive_Average_Object_Size",
+                    "moveToStorageClassMethod",
+                    "s3GlacierDeepArchivePutRequests",
+                    "s3GlacierDeepArchiveLifecycleTransitions",
+                    "s3GlacierDeepArchiveRestoreRequestsStandard",
+                    "s3GlacierDeepArchiveRestoreRequestsBulk",
+                    "s3GlacierDeepArchiveDataRetrievalsStandard",
+                    "s3GlacierDeepArchiveDataRetrievalsBulk",
+                    "s3GlacierDeepArchive_generated_1",
+                    "s3GlacierDeepArchive_generated_2",
+                    "s3GlacierDeepArchive_generated_3",
+                    "s3GlacierDeepArchive_generated_4",
+                    "s3GlacierDeepArchive_generated_5",
+                    "s3GlacierDeepArchive_generated_6",
+                    "s3GlacierDeepArchive_generated_7",
+                    "amazonS3Standard_t_p"
+                  ],
+                  "id": "s3GlacierDeepArchive_generated_8",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Deep Archive storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveStorageSize"
+                    },
+                    {
+                      "variableLabel": "S3 Glacier Deep Archive Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Glacier_Deep_Archive_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSize"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSize"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGB"
+                    },
+                    {
+                      "variableLabel": "pricing for glacier deep archive storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Glacier Deep Archive storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "GDAOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Glacier Deep Archive storage overhead cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Glacier Deep Archive storage overhead cost for metadata)",
+                  "id": "GDAOCVar",
+                  "refer": "GDAOC",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSize1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSize1"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGB1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC",
+                  "inputRefer": "overHeadSizeGB1",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "S3 Standard storage overhead cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 Standard storage overhead cost)",
+                  "id": "SOVCVar",
+                  "refer": "SOVC",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Deep Archive storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveStorageSize"
+                    },
+                    {
+                      "variableLabel": "pricing for glacier deep archive storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Glacier Deep Archive storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "GDASC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Glacier Deep Archive storage cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Glacier Deep Archive storage cost)",
+                  "id": "GDASCVar",
+                  "refer": "GDASC",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Glacier Deep Archive storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GDAOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "SOVC"
+                    },
+                    {
+                      "variableLabel": "[currency] (Glacier Deep Archive storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GDASC"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Glacier Deep Archive storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "s3GlacierDeepArchive_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 Glacier Deep Archive",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchivePutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT requests to S3 Glacier Deep Archive",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST, LIST requests)",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transitions into S3 Glacier Deep Archive",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveLifecycleTransitions"
+                    },
+                    {
+                      "variableLabel": "pricing for Lifecycle transitions to Glacier Deep Archive Requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Lifecycle transitions)",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Restore requests (Standard)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveRestoreRequestsStandard"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Glacier Deep Archive request retrieval (Standard)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Restore requests (Standard))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Restore requests (Bulk)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveRestoreRequestsBulk"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Glacier Deep Archive request retrieval (Bulk)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Restore requests (Bulk))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals (Standard)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveDataRetrievalsStandard"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Glacier Deep Archive Standard-Retrieval",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Glacier Deep Archive Data Retrieval (Standard))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals (Bulk)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchiveDataRetrievalsBulk"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Glacier Deep Archive Bulk-Retrieval",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Glacier Deep Archive Data Retrieval (Bulk))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierDeepArchive_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "outputUnitLabel": "[currency] (S3 Glacier Deep Archive cost)",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Total Glacier Deep Archive storage cost)",
+                      "variableId": "s3GlacierDeepArchive_generated_9"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for PUT, COPY, POST, LIST requests)",
+                      "variableId": "s3GlacierDeepArchive_generated_10"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Lifecycle transitions)",
+                      "variableId": "s3GlacierDeepArchive_generated_11"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Restore requests (Standard))",
+                      "variableId": "s3GlacierDeepArchive_generated_12"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Restore requests (Bulk))",
+                      "variableId": "s3GlacierDeepArchive_generated_13"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Glacier Deep Archive Data Retrieval (Standard))",
+                      "variableId": "s3GlacierDeepArchive_generated_14"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Glacier Deep Archive Data Retrieval (Bulk))",
+                      "variableId": "s3GlacierDeepArchive_generated_15"
+                    }
+                  ],
+                  "decimalPlaces": 2,
+                  "id": "s3GlacierDeepArchive_generated_16"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "overHeadSize",
+                    "overHeadSizeGB",
+                    "GDAOC",
+                    "GDAOCVar",
+                    "overHeadSize1",
+                    "overHeadSizeGB1",
+                    "SOVC",
+                    "SOVCVar",
+                    "GDASC",
+                    "GDASCVar",
+                    "s3GlacierDeepArchive_generated_9",
+                    "s3GlacierDeepArchive_generated_10",
+                    "s3GlacierDeepArchive_generated_11",
+                    "s3GlacierDeepArchive_generated_12",
+                    "s3GlacierDeepArchive_generated_13",
+                    "s3GlacierDeepArchive_generated_14",
+                    "s3GlacierDeepArchive_generated_15",
+                    "s3GlacierDeepArchive_generated_16"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": false,
+                  "label": "S3 Glacier Deep Archive cost",
+                  "decimalPlaces": 2,
+                  "id": "s3GlacierDeepArchive_generated_17",
+                  "subTotalRefer": "s3GlacierDeepArchive_generated_16"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "PUT to Glacier Deep Archive Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT requests to S3 Glacier Deep Archive",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierDeepArchive_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "GDARCPCP_WithoutParts",
+                  "variableName": "GDARCPCP without parts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "GDARCPCP_WithoutParts"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 Glacier Deep Archive cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontGDACostDisplay",
+                  "subTotalRefer": "GDARCPCP_WithoutParts"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

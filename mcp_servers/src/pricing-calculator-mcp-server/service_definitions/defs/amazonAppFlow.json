@@ -1,0 +1,546 @@
+{
+  "version": "0.0.15",
+  "serviceName": "Amazon AppFlow",
+  "serviceCode": "amazonAppFlow",
+  "type": "AWSService",
+  "regions": [
+    "ap-south-1",
+    "af-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "appflow",
+    "Amazon AppFlow",
+    "App Flow",
+    "AWS appflow"
+  ],
+  "serviceDescription": "Amazon AppFlow offers significant cost-savings advantage compared to building connectors in-house or using other application integration services. There are no upfront charges or fees to use AppFlow, and customers only pay for the number of flows they run and the volume of data processed.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appflow/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "appflow",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appflow/[currency]/current/appflow.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/appflow/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Flow run costs",
+          "helpText": "You pay for every successful flow run. A flow run is a call to the source application to transfer data to a destination. Flow runs to check for new data will count towards your flow run costs, even if no new data is available in the source system for transfer.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appflow/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of flows",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "flow per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter a number",
+                "id": "numberOfFlow"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "numberOfFlow"
+                    },
+                    10000000
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Maximum number of flow runs per AWS account per month is 10 Million.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "alert"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for AppFlow per flow",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appflow",
+                "meteredUnit": {
+                  "allRegions": "ExecuteFlow per Flow runs"
+                },
+                "id": "priceFlow"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitconversion",
+                  "refer": [
+                    "numberOfFlow",
+                    "alert",
+                    "priceFlow"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberFlowCalc",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of flows",
+                      "variableUnitLabel": "flow per month",
+                      "required": true,
+                      "variableId": "numberOfFlow"
+                    },
+                    {
+                      "variableLabel": "Price for AppFlow per flow",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceFlow"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 3
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberFlowCalc"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Flow pricing",
+                  "decimalPlaces": 3,
+                  "id": "SolutionDisplay",
+                  "subTotalRefer": "numberFlowCalc"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data processing costs",
+          "helpText": "Volume of data processed in a month by Amazon AppFlow is billed per GB aggregated across all flows in an AWS account. You pay for data processing (schema mapping, field validation, filtering, masking fields, and field transformation).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appflow/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing within AWS per Processing-Bytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "PrivateLinkDataProcessing per Processing-Bytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing outside AWS First GB per Processing-Bytes"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Destination for flow",
+                "id": "DestinationFlow",
+                "mappingDefinitionName": "appflow",
+                "options": [
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing within AWS per Processing-Bytes"
+                      }
+                    },
+                    "label": "destinations are hosted on AWS",
+                    "id": "Data processing within AWS per Processing-Bytes"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "PrivateLinkDataProcessing per Processing-Bytes"
+                      }
+                    },
+                    "label": "destinations are integrated with AWS PrivateLink (hosted on AWS or externally)",
+                    "id": "PrivateLinkDataProcessing per Processing-Bytes"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing outside AWS First GB per Processing-Bytes"
+                      }
+                    },
+                    "label": "destinations are not hosted on AWS and are not integrated with AWS PrivateLink",
+                    "id": "Data processing outside AWS First GB per Processing-Bytes"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "Data processing within AWS per Processing-Bytes",
+                "description": "Choose destinations of flow"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing within AWS per Processing-Bytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "PrivateLinkDataProcessing per Processing-Bytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing outside AWS First GB per Processing-Bytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "Data processing outside AWS per Processing-Bytes"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Volume of data per flow",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "VolumeDataFlow"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for data processing",
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "appflow",
+                "refers": [
+                  {
+                    "variableLabel": "Destination for flow",
+                    "variableId": "DestinationFlow"
+                  }
+                ],
+                "id": "priceDataFlow"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing example",
+                "id": "tierPrice",
+                "mappingDefinitionName": "appflow",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1,
+                      "meteredUnit": "Data processing outside AWS First GB per Processing-Bytes"
+                    },
+                    {
+                      "startOfTier": 1,
+                      "endOfTier": -1,
+                      "meteredUnit": "Data processing outside AWS per Processing-Bytes"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConversion",
+                  "refer": [
+                    "DestinationFlow",
+                    "VolumeDataFlow",
+                    "priceDataFlow",
+                    "tierPrice"
+                  ],
+                  "subTotalRefer": "numberFlowCalc"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "DestinationFlow"
+                          },
+                          "Data processing within AWS per Processing-Bytes"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "DestinationFlow"
+                          },
+                          "PrivateLinkDataProcessing per Processing-Bytes"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "DataFlowCalcAWS",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of flows",
+                      "variableUnitLabel": "flow per month",
+                      "required": true,
+                      "variableId": "numberOfFlow"
+                    },
+                    {
+                      "variableLabel": "Volume of data per flow",
+                      "variableUnitLabel": "GB data per flow",
+                      "required": true,
+                      "variableId": "VolumeDataFlow"
+                    },
+                    {
+                      "variableLabel": "Price for data processing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceDataFlow"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "[currency] for flow"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "DestinationFlow"
+                          },
+                          "Data processing outside AWS First GB per Processing-Bytes"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "DataFlowCalcAWS1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of flows",
+                      "variableUnitLabel": "flow per month",
+                      "required": true,
+                      "variableId": "numberOfFlow"
+                    },
+                    {
+                      "variableLabel": "Volume of data per flow",
+                      "variableUnitLabel": "GB data per flow",
+                      "required": true,
+                      "variableId": "VolumeDataFlow"
+                    }
+                  ],
+                  "outputUnitLabel": "GB accross all flows",
+                  "variableName": "GB accross all flows"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "DestinationFlow"
+                      },
+                      "Data processing outside AWS First GB per Processing-Bytes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing example",
+                  "tieredPricingRefer": "tierPrice",
+                  "inputReferLabel": "GB accross all flows",
+                  "inputRefer": "DataFlowCalcAWS1",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "monthlyTierPrice",
+                  "id": "tieredMath2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "FinalCalc",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for flow",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "DataFlowCalcAWS"
+                    },
+                    {
+                      "variableLabel": "monthlyTierPrice",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tieredMath2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DataFlowCalcAWS",
+                    "DataFlowCalcAWS1",
+                    "tieredMath2",
+                    "FinalCalc"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data process pricing",
+                  "decimalPlaces": 3,
+                  "id": "SolutionDisplay2",
+                  "subTotalRefer": "FinalCalc"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "Appflow"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ],
+  "slug": "Appflow"
+}

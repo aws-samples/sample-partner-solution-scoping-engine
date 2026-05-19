@@ -1,0 +1,334 @@
+{
+  "version": "0.0.28",
+  "serviceName": "Lightsail Object Storage",
+  "serviceCode": "lightsailObjectStorage",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "us-east-2",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail-object-storage-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail-object-storage-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "lightsail",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail.json"
+    },
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Object Storage",
+      "id": "lightsailObjectStorage",
+      "cards": [
+        {
+          "title": "Object Storage",
+          "helpText": "Amazon Lightsail offers both block and object storage. You can scale your storage quickly and easily with highly available SSD-backed storage for your Linux or Windows virtual server. For Lightsail Object Storage, you can easily host static content on the cloud.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price estimation below does not include free tier offerings.",
+                "id": "objectStorageText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Bundles",
+                "id": "numberOfBundles",
+                "placeholder": "Enter number of bundles",
+                "description": "",
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "label": "Object Storage bundle configuration",
+                "id": "columnFormIPM",
+                "type": "input",
+                "disableCalculation": true,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "lightsail-object-storage-calc",
+                "calculationId": {
+                  "hourly": "objectStorage_ipmPrice"
+                },
+                "primaryKey": {
+                  "operation": [
+                    "Storage Capacity Quota"
+                  ]
+                },
+                "secondaryKey": [
+                  "Data Transfer Quota"
+                ],
+                "row": [
+                  {
+                    "label": "Storage Capacity Quota",
+                    "type": "dropDown",
+                    "selectorId": "operation"
+                  },
+                  {
+                    "label": "Data Transfer Quota",
+                    "type": "dropDown",
+                    "selectorId": "Data Transfer Quota"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "objectStorageText",
+                    "numberOfBundles",
+                    "columnFormIPM"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "bundles",
+                      "required": true,
+                      "variableId": "numberOfBundles"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "objectStorage_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Object Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "objectStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM_objectStorage",
+                    "objectStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "IPMSupported": true,
+                  "label": "Lightsail Object Storage cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "objectStorageCost",
+                  "id": "objectStorageCostDisplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Additional Data Storage",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional storage amount",
+                "id": "additionalStorageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 8,
+                  "maxValue": 256000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter Additional Storage Amount"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tiered additional Storage Price",
+                "id": "storageTieredPrice",
+                "mappingDefinitionName": "lightsail",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 5,
+                      "meteredUnit": "Lightsail Overages Storage5GB-Storage-Overage per GB-Mo"
+                    },
+                    {
+                      "startOfTier": 6,
+                      "endOfTier": 100,
+                      "meteredUnit": "Lightsail Overages Storage100GB-Storage-Overage per GB-Mo"
+                    },
+                    {
+                      "startOfTier": 101,
+                      "endOfTier": 250,
+                      "meteredUnit": "Lightsail Overages Storage250GB-Storage-Overage per GB-Mo"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalStorageAmount",
+                    "storageTieredPrice"
+                  ],
+                  "subTotalRefer": "objectStorageCost",
+                  "id": "serviceSettingUnitConversion_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "additionalStorageAmount",
+                  "inputReferLabel": "Additional storage amount",
+                  "tieredPricingRefer": "storageTieredPrice",
+                  "tieredPricingReferLabel": "Tiered additional Storage Price",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 6,
+                  "id": "additionalStorageCost",
+                  "outputUnitLabel": "[currency] per GB-Month for Additional Data Storage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] per GB-Month for Additional Data Storage",
+                      "variableUnitLabel": "[currency] for overage storage",
+                      "required": true,
+                      "variableId": "additionalStorageCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total Overage",
+                  "decimalPlaces": 2,
+                  "id": "overageTotCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "additionalStorageCost",
+                    "overageTotCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "label": "Lightsail Object Storage cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "overageTotCost",
+                  "id": "objectStorageCostDisplay_2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

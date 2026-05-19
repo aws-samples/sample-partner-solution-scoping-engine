@@ -1,0 +1,339 @@
+{
+  "version": "0.0.5",
+  "serviceName": "S3 Data Transfer",
+  "serviceCode": "dataTransfer",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "data transfer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedInbound",
+                "label": "Inbound Data Transfer",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the data you expect to transfer in"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedIntra",
+                "label": "Intra-Region Data Transfer",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the data you expect to transfer"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedOutbound",
+                "label": "Outbound Data Transfer",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the data you expect to transfer out "
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datatransfer-calc",
+                "meteredUnit": {
+                  "allRegions": "DataTransfer External Inbound"
+                },
+                "label": "pricing for DataTransfer External Inbound",
+                "id": "inDataVar"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datatransfer-calc",
+                "meteredUnit": {
+                  "allRegions": "DataTransfer External Outbound for 0 to Inf"
+                },
+                "label": "pricing for DataTransfer External Outbound",
+                "id": "OutDataVar"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datatransfer-calc",
+                "meteredUnit": {
+                  "allRegions": "DataTransfer IntraRegion"
+                },
+                "label": "pricing for DataTransfer Intra Outbound",
+                "id": "OutDataVarInt"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertdataTran",
+                  "refer": [
+                    "dataTransferedInbound",
+                    "dataTransferedIntra",
+                    "dataTransferedOutbound",
+                    "inDataVar",
+                    "OutDataVar",
+                    "OutDataVarInt"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Inbound Data Transfer",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "dataTransferedInbound"
+                    },
+                    {
+                      "variableLabel": "pricing for DataTransfer External Inbound",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "inDataVar"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Inbound Data Transfer",
+                  "decimalPlaces": 6,
+                  "id": "inbonCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Intra-Region Data Transfer",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "dataTransferedIntra"
+                    },
+                    {
+                      "variableLabel": "pricing for DataTransfer Intra Outbound",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "OutDataVarInt"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Intra-Region Outbound Data Transfer",
+                  "decimalPlaces": 6,
+                  "id": "outbonIntraCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Outbound Data Transfer",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "dataTransferedOutbound"
+                    },
+                    {
+                      "variableLabel": "pricing for DataTransfer External Outbound",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "OutDataVar"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Outbound Data Transfer",
+                  "decimalPlaces": 6,
+                  "id": "outbonCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for Inbound Data Transfer",
+                      "variableUnitLabel": "[currency] for Inbound Data Transfer",
+                      "required": false,
+                      "variableId": "inbonCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Intra-Region Outbound Data Transfer",
+                      "variableUnitLabel": "[currency] for Intra-Region Outbound Data Transfer",
+                      "required": false,
+                      "variableId": "outbonIntraCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for Outbound Data Transfer",
+                      "variableUnitLabel": "[currency] for Outbound Data Transfer",
+                      "required": false,
+                      "variableId": "outbonCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6,
+                  "id": "totCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "inbonCost",
+                    "outbonIntraCost",
+                    "outbonCost",
+                    "totCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data Transfer price",
+                  "decimalPlaces": 2,
+                  "id": "DTPriceDisplay",
+                  "subTotalRefer": "totCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "dataTransfer"
+    }
+  ],
+  "partitions": [
+    "aws-iso-b"
+  ],
+  "slug": "datatransfer"
+}

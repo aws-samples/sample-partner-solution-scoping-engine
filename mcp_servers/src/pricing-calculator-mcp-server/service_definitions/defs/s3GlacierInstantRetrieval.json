@@ -1,0 +1,847 @@
+{
+  "version": "0.0.36",
+  "serviceName": "S3 Glacier Instant Retrieval",
+  "serviceCode": "s3GlacierInstantRetrieval",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3-glacier-instantretrieval",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3-glacier-instantretrieval.json"
+    }
+  ],
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "S3 Glacier Instant Retrieval",
+      "description": "The Amazon S3 Glacier Instant Retrieval storage class delivers the lowest cost storage for long-lived data that is rarely accessed and requires milliseconds retrieval. S3 Glacier Instant Retrieval delivers the fastest access to archive storage, with the same throughput and milliseconds access as the S3 Standard and S3 Standard-IA storage classes.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "id": "s3GlacierInstantRetrieval",
+      "cards": [
+        {
+          "title": "S3 Glacier Instant Retrieval",
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "The Amazon S3 Glacier Instant Retrieval storage class delivers the lowest cost storage for long-lived data that is rarely accessed and requires milliseconds retrieval. S3 Glacier Instant Retrieval delivers the fastest access to archive storage, with the same throughput and milliseconds access as the S3 Standard and S3 Standard-IA storage classes.",
+          "helpText": "The Amazon S3 Glacier Instant Retrieval storage class delivers the lowest cost storage for long-lived data that is rarely accessed and requires milliseconds retrieval. S3 Glacier Instant Retrieval delivers the fastest access to archive storage, with the same throughput and milliseconds access as the S3 Standard and S3 Standard-IA storage classes.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "Glacier Instant Retrieval Storage"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Instant Retrieval storage",
+                "id": "s3GIRStorageSize",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 Glacier Instant Retrieval?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 Glacier Instant Retrieval",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-glacier-instantretrieval",
+                        "meteredUnit": "PUT COPY/POST or LIST requests to Glacier Instant Retrieval per Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST, Lifecycle requests to S3 Glacier Instant Retrieval",
+                    "id": "PUT to Glacier Instant Retrieval Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 Glacier Instant Retrieval initially. To compare the cost of current storage in S3 Glacier Instant Retrieval to lifecycling this data to another storage class, you can specify that your storage is already stored in S3 Glacier Instant Retrieval while selecting Lifecycle under the new storage class to capture the upfront cost of moving your data."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "moveToStorageClassMethod"
+                        },
+                        "PUT to Glacier Instant Retrieval Requests"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Instant Retrieval Average Object Size",
+                "id": "S3_Glacier_Instant_Retrieval_Average_Object_Size",
+                "defaultValue": 16,
+                "description": "Used to calculate number of objects which affects cost of moving data into S3 Glacier Instant Retrieval. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9e-10,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "PUT COPY/POST or LIST requests to Glacier Instant Retrieval per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 Glacier Instant Retrieval",
+                "id": "s3GIRPutRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "GET and all other requests to Glacier Instant Retrieval per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "GET, SELECT, and all other requests from S3 Glacier Instant Retrieval",
+                "id": "s3GIRGetRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of GET, SELECT and other requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "Lifecycle Transition Requests into Glacier Instant Retrieval per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transition requests",
+                "id": "s3GIRLifecycleTransitionRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of Lifecycle requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "Object Retrieval in Glacier Instant Retrieval per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data Retrievals",
+                "id": "s3GIRDataRetrievals",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of Standard Restore retrieval data"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "Data Returned by S3 Select in Glacier Instant Retrieval per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data returned by S3 Select",
+                "id": "s3GIRSelectDataReturned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data returned by S3 Select requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-instantretrieval",
+                    "meteredUnit": "Data Scanned by S3 Select in Glacier Instant Retrieval per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned by S3 Select",
+                "id": "s3GIRSelectDataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data scanned by S3 Select requests"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Glacier Instant Retrieval Storage"
+                },
+                "label": "pricing for S3 Glacier Instant Retrieval storage",
+                "id": "s3GIR_Storage"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "PUT COPY/POST or LIST requests to Glacier Instant Retrieval per Requests"
+                },
+                "label": "pricing for PUT/COPY/POST/LIST request to S3 Glacier Instant Retrieval per request",
+                "id": "s3GIR_PutCopyPostListRequest"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "GET and all other requests to Glacier Instant Retrieval per Requests"
+                },
+                "label": "pricing for GET/Select and similar S3 Glacier Instant Retrieval per request",
+                "id": "s3GIR_GetOtherRequest"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Glacier Instant Retrieval per Requests"
+                },
+                "label": "pricing for lifecycle transition requests",
+                "id": "s3GIR_LifeTranRequest"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Object Retrieval in Glacier Instant Retrieval per GB"
+                },
+                "label": "pricing for data retrievals",
+                "id": "s3GIR_ObjectRetrieval"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Data Returned by S3 Select in Glacier Instant Retrieval per GB"
+                },
+                "label": "pricing for data returned by S3 select",
+                "id": "s3GIR_DataReturnS3slect"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-instantretrieval",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Data Scanned by S3 Select in Glacier Instant Retrieval per GB"
+                },
+                "label": "pricing for data scanned by S3 select",
+                "id": "s3GIR_DataScanS3slect"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3GlacierInstantRetrieval_conversionDisplay",
+                  "refer": [
+                    "s3GIRStorageSize",
+                    "moveToStorageClassMethod",
+                    "S3_Glacier_Instant_Retrieval_Average_Object_Size",
+                    "s3GIRPutRequests",
+                    "s3GIRGetRequests",
+                    "s3GIRLifecycleTransitionRequests",
+                    "s3GIRDataRetrievals",
+                    "s3GIRSelectDataReturned",
+                    "s3GIRSelectDataScanned",
+                    "s3GIR_Storage",
+                    "s3GIR_PutCopyPostListRequest",
+                    "s3GIR_GetOtherRequest",
+                    "s3GIR_LifeTranRequest",
+                    "s3GIR_ObjectRetrieval",
+                    "s3GIR_DataReturnS3slect",
+                    "s3GIR_DataScanS3slect"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Instant Retrieval storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GIRStorageSize"
+                    },
+                    {
+                      "variableLabel": "S3 Glacier Instant Retrieval Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Glacier_Instant_Retrieval_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Instant Retrieval storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3GIRStorageSize"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Glacier Instant Retrieval storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GIR_Storage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Glacier Instant Retrieval storage cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 Glacier Instant Retrieval",
+                      "variableUnitLabel": "PUT requests for S3 Glacier Instant Retrieval Storage",
+                      "required": true,
+                      "variableId": "s3GIRPutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 Glacier Instant Retrieval per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3GIR_PutCopyPostListRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Glacier Instant Retrieval PUT requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_PutCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET, SELECT, and all other requests from S3 Glacier Instant Retrieval",
+                      "variableUnitLabel": "GET requests for S3 Glacier Instant Retrieval Storage",
+                      "required": true,
+                      "variableId": "s3GIRGetRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for GET/Select and similar S3 Glacier Instant Retrieval per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3GIR_GetOtherRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Glacier Instant Retrieval GET requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_GetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transition requests",
+                      "variableUnitLabel": "lifecycle request count for S3 Glacier Instant Retrieval",
+                      "required": true,
+                      "variableId": "s3GIRLifecycleTransitionRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3GIR_LifeTranRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Glacier Instant Retrieval lifecycle requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3_LifecycleCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Retrievals",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3GIRDataRetrievals"
+                    },
+                    {
+                      "variableLabel": "pricing for data retrievals",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GIR_ObjectRetrieval"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Glacier Instant Retrieval data retrievals cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_DataRetrievalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data returned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3GIRSelectDataReturned"
+                    },
+                    {
+                      "variableLabel": "pricing for data returned by S3 select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GIR_DataReturnS3slect"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data returned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_DataReturnedCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3GIRSelectDataScanned"
+                    },
+                    {
+                      "variableLabel": "pricing for data scanned by S3 select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GIR_DataScanS3slect"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data scanned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_DataScannedCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Glacier Instant Retrieval storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_StorageCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Glacier Instant Retrieval PUT requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_PutCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Glacier Instant Retrieval GET requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_GetCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Glacier Instant Retrieval lifecycle requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3_LifecycleCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Glacier Instant Retrieval data retrievals cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_DataRetrievalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data returned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_DataReturnedCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data scanned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GIR_DataScannedCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total S3 Glacier Instant Retrieval Storage and other costs)",
+                  "decimalPlaces": 4,
+                  "id": "s3GIR_TotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "s3GIR_StorageCost",
+                    "s3GIR_PutCost",
+                    "s3GIR_GetCost",
+                    "s3_LifecycleCost",
+                    "s3GIR_DataRetrievalCost",
+                    "s3GIR_DataReturnedCost",
+                    "s3GIR_DataScannedCost",
+                    "s3GIR_TotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "S3 Glacier Instant Retrieval cost",
+                  "decimalPlaces": 2,
+                  "id": "s3GIR_TotalCost_Display",
+                  "subTotalRefer": "s3GIR_TotalCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "PUT to Glacier Instant Retrieval Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 Glacier Instant Retrieval per request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GIR_PutCopyPostListRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "GIRRCPCP_WithoutParts",
+                  "variableName": "GIRRCPCP without parts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "GIRRCPCP_WithoutParts"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 Glacier Instant Retrieval cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontGDACostDisplay",
+                  "subTotalRefer": "GIRRCPCP_WithoutParts"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

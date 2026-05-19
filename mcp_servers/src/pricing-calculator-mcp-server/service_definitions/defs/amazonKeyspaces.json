@@ -1,0 +1,2248 @@
+{
+  "version": "0.0.43",
+  "serviceName": "Amazon Keyspaces",
+  "serviceCode": "amazonKeyspaces",
+  "type": "AWSService",
+  "slug": "keyspaces",
+  "displayAutomation": true,
+  "serviceDescription": {
+    "aws": " Amazon Keyspaces (for Apache Cassandra) is a scalable, highly available, and managed Apache Cassandra–compatible database service. With Amazon Keyspaces, you can run your Cassandra workloads of any scale on AWS using the same Cassandra application code and developer tools that you use today.",
+    "aws-us-gov": " Amazon Keyspaces (for Apache Cassandra) is a scalable, highly available, and managed Apache Cassandra–compatible database service. With Amazon Keyspaces, you can run your Cassandra workloads of any scale on AWS using the same Cassandra application code and developer tools that you use today.",
+    "aws-cn": "Amazon Keyspaces (for Apache Cassandra) is a scalable, highly available, and managed Apache Cassandra–compatible database service. With Amazon Keyspaces, you can run your Cassandra workloads on Amazon Web Services by using the same Cassandra application code and developer tools that you use today. You don’t have to provision, patch, or manage servers, and you don’t have to install, maintain, or operate software."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/keyspaces/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "mcs",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/mcs/[currency]/current/mcs.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Keyspaces on-demand capacity",
+      "id": "keyspacesOnDemandCapacity",
+      "description": "With on-demand capacity mode, you do not need to specify how many reads and writes your application needs when you create your table. Amazon Keyspaces accommodates workloads instantly as they ramp up or down, making it a good option for applications with unpredictable traffic. With on-demand capacity you only pay for the reads and writes you use.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/keyspaces/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "storagepermonth",
+                "label": "Storage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Amount of storage",
+                "description": "Enter the amount of storage for your keyspace in a given month. Note, unlike Cassandra. Amazon Keyspaces only charges for one copy of your data"
+              },
+              {
+                "type": "pricing",
+                "id": "storagepricecost",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "4YUJMFETquzG8T_E9zm52SlQht8tG3VmqOADLnR19eM"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Storage_Cost_Per_Month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storagepermonth",
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storagepricecost",
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storagepermonth",
+                    "storagepricecost",
+                    "Storage_Cost_Per_Month"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "Storage Monthly Cost",
+                  "subTotalRefer": "Storage_Cost_Per_Month"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "On demand writes",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of writes",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of writes",
+                "description": "Write operations include INSERT, UPDATE, and DELETE operations. Each write request can write upto 1KB of data",
+                "id": "numberofwritespermonth"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "U05kobEnUrQuudwKl1ofdLkMAj4Duk8FVdxNVcApyvM"
+                },
+                "label": "cost for write requests",
+                "id": "priceforondemandwriterequests"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofwritespermonth",
+                    "priceforondemandwriterequests"
+                  ],
+                  "subTotalRefer": "Storage_Cost_Per_Month",
+                  "id": "ondemandwriterequests_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of writes",
+                      "variableUnitLabel": "number of writes",
+                      "required": true,
+                      "variableId": "numberofwritespermonth"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "write request units for each write"
+                    }
+                  ],
+                  "outputUnitLabel": "write request units for writes",
+                  "decimalPlaces": 2,
+                  "id": "ondemand_write_requests_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "write request units for writes",
+                      "variableUnitLabel": "total write request units",
+                      "required": true,
+                      "variableId": "ondemand_write_requests_2"
+                    },
+                    {
+                      "variableLabel": "cost for write requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceforondemandwriterequests"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] write request cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_ondemand_write_requests_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ondemand_write_requests_2",
+                    "price_for_ondemand_write_requests_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Monthly write cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_ondemand_write_requests_3",
+                  "subTotalRefer": "price_for_ondemand_write_requests_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "On demand reads ",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "localonereads",
+                "label": "LOCAL_ONE reads",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 100,
+                "displayInConfigSummary": true,
+                "description": "LOCAL_ONE consistency optimizes for performance and availability by returning the first returned value from any storage replica. Enter the percentage of your reads that will use LOCAL_ONE consistency"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "localquorumreads",
+                "label": "LOCAL_QUORUM reads",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "description": "LOCAL_QUORUM consistency optimizes for data correctness by requiring at least two storage replicas to return a value before it is returned to your application. Enter the percentage of your reads that will use LOCAL_QUORUM consistency"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is more than 100%",
+                "label": "Percent alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is less than 100%",
+                "label": "Percent alert2",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert2",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalPagePercent"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert",
+                        "variableId": "percentageAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component2",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalPagePercent"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert2",
+                        "variableId": "percentageAlert2"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay2"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of reads",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "read requests per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of reads",
+                "description": "Each read request can read upto 4KB of data",
+                "id": "numberofreadspermonth"
+              },
+              {
+                "type": "pricing",
+                "id": "readrequestprice",
+                "label": "cost for each read request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "OsZKikLw1E_H7HWmTfSqqCSETu0-ZuDKEksEVpv4yJc"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "localonereads",
+                    "localquorumreads",
+                    "percentageAlert",
+                    "percentageAlert2",
+                    "alertDisplay1",
+                    "alertDisplay2",
+                    "numberofreadspermonth",
+                    "readrequestprice"
+                  ],
+                  "subTotalRefer": "price_for_ondemand_write_requests_2",
+                  "id": "ondemandreadrequests_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "LOCAL_ONE reads",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "localonereads"
+                    },
+                    {
+                      "variableLabel": "LOCAL_QUORUM reads",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "localquorumreads"
+                    }
+                  ],
+                  "outputUnitLabel": "total percentage",
+                  "decimalPlaces": 2,
+                  "id": "totalPagePercent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "readrequestcost_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadspermonth",
+                      "variableLabel": "Number of reads",
+                      "variableUnitLabel": "number of reads",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localonereads",
+                      "variableLabel": "LOCAL_ONE reads",
+                      "variableUnitLabel": "LOCAL_ONE portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "read request units for LOCAL_ONE reads"
+                    }
+                  ],
+                  "outputUnitLabel": "read request units for LOCAL_ONE reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "readrequestcost_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadspermonth",
+                      "variableLabel": "Number of reads",
+                      "variableUnitLabel": "number of reads",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localquorumreads",
+                      "variableLabel": "LOCAL_QUORUM reads",
+                      "variableUnitLabel": "LOCAL_QUORUM portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "read request units for LOCAL_QUORUM reads"
+                    }
+                  ],
+                  "outputUnitLabel": "read request units for LOCAL_QUORUM reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalMonthlyCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "readrequestcost_1",
+                      "variableLabel": "read request units for LOCAL_ONE reads",
+                      "variableUnitLabel": "read request units for LOCAL_ONE reads",
+                      "required": false
+                    },
+                    {
+                      "variableId": "readrequestcost_2",
+                      "variableLabel": "read request units for LOCAL_QUORUM reads",
+                      "variableUnitLabel": "read request units for LOCAL_QUORUM reads",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total read request units",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalMonthlyCost_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalMonthlyCost",
+                      "variableLabel": "total read request units",
+                      "variableUnitLabel": "total read request units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "readrequestprice",
+                      "variableLabel": "cost for each read request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] read request cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalPagePercent",
+                    "readrequestcost_1",
+                    "readrequestcost_2",
+                    "totalMonthlyCost",
+                    "TotalMonthlyCost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly read cost",
+                  "decimalPlaces": 2,
+                  "id": "serviceTotalPrice",
+                  "subTotalRefer": "TotalMonthlyCost_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Time-to-live (TTL) deletes",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of TTL delete operations",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of TTL delete operations",
+                "description": "DELETE operations triggered by the TTL process which deletes expired data. If you do not plan to enable TTL, use zero for number of delete operations",
+                "id": "numberofttldeletes"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "doNNks3z9Rc5OZOtA-Zoke63he5hJspWigjyUs3l_EQ"
+                },
+                "label": "deletes cost",
+                "id": "priceforttldeletes"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofttldeletes",
+                    "priceforttldeletes"
+                  ],
+                  "subTotalRefer": "TotalMonthlyCost_2",
+                  "id": "ttldeletes_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of TTL delete operations",
+                      "variableUnitLabel": "number of TTL deletes",
+                      "required": true,
+                      "variableId": "numberofttldeletes"
+                    },
+                    {
+                      "variableLabel": "deletes cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceforttldeletes"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] TTL deletes cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_TTL_deletes"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "price_for_TTL_deletes"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Monthly TTL deletes cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_TTL_deletes_2",
+                  "subTotalRefer": "price_for_TTL_deletes"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backup and restore",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "PITR Storage",
+                "id": "PITRstoragepermonth2",
+                "options": [
+                  {
+                    "label": "Disabled",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Enabled",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "Point-in-time recovery (PITR) helps protect your Amazon Keyspaces tables from accidental write or delete operations by providing you continuous backups of your table data. If you enable it, the amount of PITR storage is exactly the same as your total storage.",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "pitrpricecost",
+                "label": "Price for PITR data storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "VLHIxZf58P65zKm6vTa0WnRfXfZvMQOzZnYL8MVewbY"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "Point-In-Time Recovery (PITR) data storage",
+                  "displayInConfigSummary": false,
+                  "referLabel": "PITR Storage",
+                  "refer": "PITRstoragepermonth2",
+                  "id": "pointintimerecoverystorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "pointintimerecoverystorage_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "pointintimerecoverystorage",
+                      "variableLabel": "Point-In-Time Recovery (PITR) data storage",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storagepermonth",
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pitrpricecost",
+                      "variableLabel": "Price for PITR data storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Continuous backup (PITR) Storage Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PITRstoragepermonth2",
+                    "pitrpricecost",
+                    "pointintimerecoverystorage",
+                    "pointintimerecoverystorage_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Keyspaces backup and restore cost",
+                  "decimalPlaces": 2,
+                  "id": "PITR Storage Monthly Cost",
+                  "subTotalRefer": "pointintimerecoverystorage_2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Keyspaces provisioned capacity",
+      "id": "keyspacesprovisionedCapacity",
+      "description": "With provisioned capacity mode, you specify the number of reads and writes per second that you expect your application to perform. You can increase and decrease the provisioned capacity for your table automatically in response to actual application traffic by enabling auto scaling. Provisioned capacity is a good option for applications with steady traffic. With provisioned capacity you only pay for the reads and write capacity you provision.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/keyspaces/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "storagepermonth",
+                "label": "Storage",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Amount of storage",
+                "description": "Enter the amount of storage for your keyspace in a given month. Note, unlike Cassandra. Amazon Keyspaces only charges for one copy of your data"
+              },
+              {
+                "type": "pricing",
+                "id": "storagepricecost",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "4YUJMFETquzG8T_E9zm52SlQht8tG3VmqOADLnR19eM"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Storage_Cost_Per_Month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storagepermonth",
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storagepricecost",
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storagepermonth",
+                    "storagepricecost",
+                    "Storage_Cost_Per_Month"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "Storage Monthly Cost",
+                  "subTotalRefer": "Storage_Cost_Per_Month"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Provisioned writes",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "numberofwritespermonth_2",
+                "label": "Baseline write rate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "baseline write rate",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of writes",
+                "description": "Enter number of writes per second that your workload needs during off-peak periods. Write operations include INSERT, UPDATE, and DELETE operations Each write request can write upto 1KB of data"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Peak write rate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "peak write rate",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of writes",
+                "description": "Enter maximum number of writes per second that your workload needs during peak periods. Write operations include INSERT, UPDATE, and DELETE operations. Each write request can write upto 1KB of data",
+                "id": "numberofwritespermonth_3"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Duration of peak write activity",
+                "options": [
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter the number of hours",
+                "description": "Enter the number of hours per month that your write workload operates at peak",
+                "id": "numberofreadsspermonth_4"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "SR76UhxiTX-LUb7eh6Zt2IRZMfFXBlSzCjY_yCJdWFI"
+                },
+                "label": "cost for write requests",
+                "id": "priceforprovisionedwriterequests"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofwritespermonth_2",
+                    "numberofwritespermonth_3",
+                    "numberofreadsspermonth_4",
+                    "priceforprovisionedwriterequests"
+                  ],
+                  "subTotalRefer": "Storage_Cost_Per_Month",
+                  "id": "provisionedwriterequests_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Baseline write rate",
+                      "variableUnitLabel": "baseline write rate",
+                      "required": true,
+                      "variableId": "numberofwritespermonth_2"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "WCU's needed per write"
+                    }
+                  ],
+                  "outputUnitLabel": "total WCUs for baseline writes",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "provisioned_write_requests_3",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Duration of peak write activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "numberofreadsspermonth_4"
+                    }
+                  ],
+                  "outputUnitLabel": "baseline hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "baseline hours",
+                      "variableUnitLabel": "baseline hours",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_3"
+                    },
+                    {
+                      "variableLabel": "total WCUs for baseline writes",
+                      "variableUnitLabel": "total WCUs for baseline writes",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_2"
+                    }
+                  ],
+                  "outputUnitLabel": "total WCU-hours per month for baseline writes",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak write rate",
+                      "variableUnitLabel": "peak write rate",
+                      "required": true,
+                      "variableId": "numberofwritespermonth_3"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "WCU's needed per write"
+                    }
+                  ],
+                  "outputUnitLabel": "total WCUs for peak writes",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total WCUs for peak writes",
+                      "variableUnitLabel": "total WCUs for peak writes",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_5"
+                    },
+                    {
+                      "variableLabel": "Duration of peak write activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "numberofreadsspermonth_4"
+                    }
+                  ],
+                  "outputUnitLabel": "total WCU-hours per month for peak writes",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total WCU-hours per month for baseline writes",
+                      "variableUnitLabel": "total WCU-hours per month for baseline writes",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_4"
+                    },
+                    {
+                      "variableLabel": "total WCU-hours per month for peak writes",
+                      "variableUnitLabel": "total WCU-hours per month for peak writes",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_6"
+                    }
+                  ],
+                  "outputUnitLabel": "total WCU-hours per month",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total WCU-hours per month",
+                      "variableUnitLabel": "total WCU-hours",
+                      "required": true,
+                      "variableId": "provisioned_write_requests_7"
+                    },
+                    {
+                      "variableId": "priceforprovisionedwriterequests",
+                      "variableLabel": "cost for write requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] monthly cost of WCU-hours",
+                  "decimalPlaces": 2,
+                  "id": "provisioned_write_requests_8"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "provisioned_write_requests_2",
+                    "provisioned_write_requests_3",
+                    "provisioned_write_requests_4",
+                    "provisioned_write_requests_5",
+                    "provisioned_write_requests_6",
+                    "provisioned_write_requests_7",
+                    "provisioned_write_requests_8"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Monthly write cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_provisioned_write_requests_5",
+                  "subTotalRefer": "provisioned_write_requests_8"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Provisioned reads",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "localonereads",
+                "label": "LOCAL_ONE reads",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 100,
+                "displayInConfigSummary": false,
+                "description": "LOCAL_ONE consistency optimizes for performance and availability by returning the first returned value from any storage replica. Enter the percentage of your reads that will use LOCAL_ONE consistency"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "localquorumreads",
+                "label": "LOCAL_QUORUM reads",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": false,
+                "description": "LOCAL_QUORUM consistency optimizes for data correctness by requiring at least two storage replicas to return a value before it is returned to your application. Enter the percentage of your reads that will use LOCAL_QUORUM consistency"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is more than 100%",
+                "label": "Percent alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is less than 100%",
+                "label": "Percent alert2",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert2",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalPagePercent"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert",
+                        "variableId": "percentageAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component2",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalPagePercent"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert2",
+                        "variableId": "percentageAlert2"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay2"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "numberofreadsspermonth_2",
+                "label": "Baseline read rate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "baseline read rate",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of reads",
+                "description": "Enter number of reads per second that your workload needs during off-peak periods. Each read request can read upto 4KB of data"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Peak read rate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "peak read rate",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of reads",
+                "description": "Enter maximum number of reads per second that your workload needs during peak periods. Each read request can read upto 4KB of data",
+                "id": "numberofreadspermonth_3"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Duration of peak read activity",
+                "id": "numberofwritespermonth_4",
+                "options": [
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter the number of hours",
+                "description": "Enter the number of hours per month that your write workload operates at peak"
+              },
+              {
+                "type": "pricing",
+                "id": "readrequestprice",
+                "label": "cost for each read request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "0kAmqliq80g--kQIdQMHL4huRK7t8g45ZiugZ4dU0As"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "localonereads",
+                    "localquorumreads",
+                    "percentageAlert",
+                    "percentageAlert2",
+                    "alertDisplay1",
+                    "alertDisplay2",
+                    "numberofreadsspermonth_2",
+                    "numberofreadspermonth_3",
+                    "numberofwritespermonth_4",
+                    "readrequestprice"
+                  ],
+                  "subTotalRefer": "provisioned_write_requests_8",
+                  "id": "provisionedreadrequests_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "LOCAL_ONE reads",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "localonereads"
+                    },
+                    {
+                      "variableLabel": "LOCAL_QUORUM reads",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "localquorumreads"
+                    }
+                  ],
+                  "outputUnitLabel": "total percentage",
+                  "decimalPlaces": 2,
+                  "id": "totalPagePercent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "provisionedreadrequestcost_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadsspermonth_2",
+                      "variableLabel": "Baseline read rate",
+                      "variableUnitLabel": "baseline read rate",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localonereads",
+                      "variableLabel": "LOCAL_ONE reads",
+                      "variableUnitLabel": "LOCAL_ONE portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "RCUs for LOCAL_ONE reads"
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs for baseline LOCAL_ONE reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "readrequestcost_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadsspermonth_2",
+                      "variableLabel": "Baseline read rate",
+                      "variableUnitLabel": "baseline read rate",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localquorumreads",
+                      "variableLabel": "LOCAL_QUORUM reads",
+                      "variableUnitLabel": "LOCAL_QUORUM portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "RCU for LOCAL_QUORUM reads"
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs for baseline LOCAL_QUORUM reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalRCU_forbaselinereads",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "provisionedreadrequestcost_1",
+                      "variableLabel": "RCUs for baseline LOCAL_ONE reads",
+                      "variableUnitLabel": "RCUs for baseline LOCAL_ONE reads",
+                      "required": false
+                    },
+                    {
+                      "variableId": "readrequestcost_2",
+                      "variableLabel": "RCUs for baseline LOCAL_QUORUM reads",
+                      "variableUnitLabel": "RCUs for baseline LOCAL_QUORUM reads",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total RCUs for baseline reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "provisioned_read_requests_3",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Duration of peak read activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "numberofwritespermonth_4"
+                    }
+                  ],
+                  "outputUnitLabel": "baseline hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RCUpermonth_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "provisioned_read_requests_3",
+                      "variableLabel": "baseline hours",
+                      "variableUnitLabel": "total read request units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "totalRCU_forbaselinereads",
+                      "variableLabel": "total RCUs for baseline reads",
+                      "variableUnitLabel": "total RCUs for baseline reads",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total RCU-hours per month for baseline reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "readrequestcost_3",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadspermonth_3",
+                      "variableLabel": "Peak read rate",
+                      "variableUnitLabel": "peak read rate",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localonereads",
+                      "variableLabel": "LOCAL_ONE reads",
+                      "variableUnitLabel": "LOCAL_ONE portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "RCUs for LOCAL_ONE reads"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "RCUs needed per read"
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs for peak LOCAL_ONE reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "readrequestcost_4",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofreadspermonth_3",
+                      "variableLabel": "Peak read rate",
+                      "variableUnitLabel": "peak read rate",
+                      "required": true
+                    },
+                    {
+                      "variableId": "localquorumreads",
+                      "variableLabel": "LOCAL_QUORUM reads",
+                      "variableUnitLabel": "LOCAL_QUORUM portion",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "RCU for LOCAL_QUORUM reads"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "RCUs needed per read"
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs for peak LOCAL_QUORUM reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalRCU_forpeaklinereads",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "readrequestcost_3",
+                      "variableLabel": "RCUs for peak LOCAL_ONE reads",
+                      "variableUnitLabel": "RCUs for baseline LOCAL_ONE reads",
+                      "required": false
+                    },
+                    {
+                      "variableId": "readrequestcost_4",
+                      "variableLabel": "RCUs for peak LOCAL_QUORUM reads",
+                      "variableUnitLabel": "RCUs for baseline LOCAL_QUORUM reads",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total RCUs for peak reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RCUpermonth_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalRCU_forpeaklinereads",
+                      "variableLabel": "total RCUs for peak reads",
+                      "variableUnitLabel": "total RCUs for peak reads",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Duration of peak read activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "numberofwritespermonth_4"
+                    }
+                  ],
+                  "outputUnitLabel": "total RCU-hours per month for peak reads",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RCUpermonth_3",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "RCUpermonth_1",
+                      "variableLabel": "total RCU-hours per month for baseline reads",
+                      "variableUnitLabel": "total RCU-hours for baseline reads per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "RCUpermonth_2",
+                      "variableLabel": "total RCU-hours per month for peak reads",
+                      "variableUnitLabel": "total RCU-hours for peak reads per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total RCUs-hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RCUpermonth_4",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "RCUpermonth_3",
+                      "variableLabel": "total RCUs-hours",
+                      "variableUnitLabel": "total RCUs-hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "readrequestprice",
+                      "variableLabel": "cost for each read request",
+                      "variableUnitLabel": "[currency] provisioned RCU-hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] monthly cost of RCU hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalPagePercent",
+                    "provisionedreadrequestcost_1",
+                    "readrequestcost_2",
+                    "totalRCU_forbaselinereads",
+                    "provisioned_read_requests_3",
+                    "RCUpermonth_1",
+                    "readrequestcost_3",
+                    "readrequestcost_4",
+                    "totalRCU_forpeaklinereads",
+                    "RCUpermonth_2",
+                    "RCUpermonth_3",
+                    "RCUpermonth_4"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly read cost",
+                  "decimalPlaces": 2,
+                  "id": "serviceTotalPrice_2",
+                  "subTotalRefer": "RCUpermonth_4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Time-to-live (TTL) deletes",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of TTL delete operations",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of TTL delete operations",
+                "description": "DELETE operations triggered by the TTL process which deletes expired data. If you do not plan to enable TTL, use zero for number of delete operations",
+                "id": "numberofttldeletes"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "doNNks3z9Rc5OZOtA-Zoke63he5hJspWigjyUs3l_EQ"
+                },
+                "label": "deletes cost",
+                "id": "priceforttldeletes"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofttldeletes",
+                    "priceforttldeletes"
+                  ],
+                  "subTotalRefer": "RCUpermonth_4",
+                  "id": "ttldeletes_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of TTL delete operations",
+                      "variableUnitLabel": "number of TTL deletes",
+                      "required": true,
+                      "variableId": "numberofttldeletes"
+                    },
+                    {
+                      "variableLabel": "deletes cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceforttldeletes"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] TTL deletes cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_TTL_deletes"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "price_for_TTL_deletes"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Monthly TTL deletes cost",
+                  "decimalPlaces": 2,
+                  "id": "price_for_TTL_deletes_2",
+                  "subTotalRefer": "price_for_TTL_deletes"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backup and restore",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "PITR Storage",
+                "id": "PITRstoragepermonth2",
+                "options": [
+                  {
+                    "label": "Enabled",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Disabled",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "Point-in-time recovery (PITR) helps protect your Amazon Keyspaces tables from accidental write or delete operations by providing you continuous backups of your table data. If you enable it, the amount of PITR storage is exactly the same as your total storage.",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "pitrpricecost",
+                "label": "Price for PITR data storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "VLHIxZf58P65zKm6vTa0WnRfXfZvMQOzZnYL8MVewbY"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "Point-In-Time Recovery (PITR) data storage",
+                  "displayInConfigSummary": false,
+                  "referLabel": "PITR Storage",
+                  "refer": "PITRstoragepermonth2",
+                  "id": "pointintimerecoverystorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "pointintimerecoverystorage_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "pointintimerecoverystorage",
+                      "variableLabel": "Point-In-Time Recovery (PITR) data storage",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storagepermonth",
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pitrpricecost",
+                      "variableLabel": "Price for PITR data storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Continuous backup (PITR) Storage Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PITRstoragepermonth2",
+                    "pitrpricecost",
+                    "pointintimerecoverystorage",
+                    "pointintimerecoverystorage_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Keyspaces backup and restore cost",
+                  "decimalPlaces": 2,
+                  "id": "PITR Storage Monthly Cost",
+                  "subTotalRefer": "pointintimerecoverystorage_2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Keyspaces Change Data Capture (CDC) Streams",
+      "id": "KeyspacesChangeDataCaptureStreams",
+      "description": {
+        "aws": "Amazon Keyspaces Change Data Capture (CDC) allows customers to capture a time-ordered sequence of change events on Amazon Keyspaces tables in near-real time with sub-second latency. You are charged based on the GetRecord API requests per month."
+      },
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/keyspaces/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "mcs",
+              "meteredUnit": "cr0hBHYvvo1L5btS5c4Y3n4UE7K86O3B4fz9opdCV4c"
+            }
+          },
+          "title": "Keyspaces CDC",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/keyspaces/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "mcs",
+                    "meteredUnit": "cr0hBHYvvo1L5btS5c4Y3n4UE7K86O3B4fz9opdCV4c"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of Keyspaces CDC GetRecord API requests",
+                "id": "numberOfAPIrequests",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "hundred thousand per month",
+                    "id": "hundredThousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "hundredThousandPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "API requests per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "placeholder": "Enter a number",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "storagepricecost",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mcs",
+                "meteredUnit": {
+                  "allRegions": "cr0hBHYvvo1L5btS5c4Y3n4UE7K86O3B4fz9opdCV4c"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "keyspacesChangeDataCaptureCdcStreams_generated_0",
+                  "refer": [
+                    "numberOfAPIrequests",
+                    "storagepricecost"
+                  ],
+                  "subTotalRefer": "pointintimerecoverystorage_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Storage_Cost_Per_Month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAPIrequests",
+                      "variableLabel": "Total number of Keyspaces CDC GetRecord API requests",
+                      "variableUnitLabel": "GetRecord API requests",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storagepricecost",
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Keyspaces CDC cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Storage_Cost_Per_Month"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Keyspaces CDC cost",
+                  "decimalPlaces": 2,
+                  "id": "Storage_Monthly_Cost",
+                  "subTotalRefer": "Storage_Cost_Per_Month"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov",
+    "aws-cn"
+  ]
+}

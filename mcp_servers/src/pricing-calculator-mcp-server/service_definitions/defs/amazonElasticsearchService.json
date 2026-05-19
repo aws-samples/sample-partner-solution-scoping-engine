@@ -1,0 +1,2556 @@
+{
+  "version": "0.0.160",
+  "serviceName": "Amazon OpenSearch Service",
+  "serviceCode": "amazonElasticsearchService",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Analytics",
+    "ES",
+    "Kibana",
+    "Logstash",
+    "Search",
+    "Text search",
+    "Time series",
+    "Log analytics",
+    "Analytics",
+    "Real time analytics",
+    "Streaming data analytics",
+    "CloudSearch",
+    "search",
+    "ultraWarm",
+    "ultrawarm",
+    "opensearch",
+    "open search"
+  ],
+  "serviceDescription": "Amazon OpenSearch Service is a fully managed service that makes it easy for you to deploy, secure, and operate OpenSearch clusters at scale.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "es-instance-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-instance-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "es",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es.json"
+    },
+    {
+      "mappingDefinitionName": "es-storage",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-storage.json"
+    },
+    {
+      "mappingDefinitionName": "s3",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    },
+    {
+      "mappingDefinitionName": "es-ultrawarm",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-ultrawarm.json"
+    },
+    {
+      "mappingDefinitionName": "es-ultrawarm-calc-new",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-ultrawarm-calc-new/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "es-serverless",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-serverless.json"
+    },
+    {
+      "mappingDefinitionName": "es-data-instance-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/es/[currency]/current/es-data-instance-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/opensearch-service/"
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Configure Amazon OpenSearch Service domain",
+      "description": "",
+      "id": "elasticSearchService",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/opensearch-service/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Data instances",
+          "inputSection": {
+            "components": [
+              {
+                "id": "columnFormIPM_1",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "Amazon OpenSearch Service data instance cost",
+                "mappingDefinitionName": "es-data-instance-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm_instance",
+                  "upfront": "upfront_ipm_instance"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory (GiB)"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "Storage",
+                  "PurchaseOption",
+                  "LeaseContractLength"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes Data instance",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000000000,
+                      "required": true
+                    },
+                    "defaultValue": 1,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "count_1"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)"
+                    ],
+                    "defaultValue": "r5.2xlarge.search",
+                    "exportValueAs": "instanceType_1"
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut1",
+                    "description": "Data Instances will be always at 100% utilization dedicated for your Amazon Opensearch Service domain, to stop incurring charges you must Delete the domain."
+                  },
+                  {
+                    "label": "Instance Node Type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Family",
+                    "exportValueAs": "instanceFamily_1"
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel_1",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Storage Type",
+                    "type": "dropDown",
+                    "selectorId": "Storage",
+                    "exportValueAs": "storage_1"
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption_1"
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "dependent": "PurchaseOption",
+                    "exportValueAs": "term_1"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm_instance"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Service data instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm_instance",
+                  "id": "ESInstanceMonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm_instance"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Amazon OpenSearch Service data instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm_instance",
+                  "id": "ESInstanceUpfrontCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Dedicated master instances",
+          "inputSection": {
+            "components": [
+              {
+                "id": "columnFormIPM_2",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "Amazon OpenSearch Service dedicated master instance cost",
+                "mappingDefinitionName": "es-instance-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm_dedicated",
+                  "upfront": "upfront_ipm_dedicated"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory (GiB)"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "Storage",
+                  "PurchaseOption",
+                  "LeaseContractLength"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes Dedicated master",
+                    "description": "Valid values are 0,3, and 5.",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 5,
+                      "required": true,
+                      "allowedValues": [
+                        0,
+                        3,
+                        5
+                      ]
+                    },
+                    "defaultValue": 3,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "count_2"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)"
+                    ],
+                    "defaultValue": "r5.2xlarge.search",
+                    "exportValueAs": "instanceType_2"
+                  },
+                  {
+                    "label": "Utilization (On-Demand only) ",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut2",
+                    "description": "Dedicated Master Instances will be always at 100% utilization dedicated for your Amazon Opensearch Service domain, to stop incurring charges you can either reduce or remove the number of Dedicated Master Instances from the domain or Delete the domain."
+                  },
+                  {
+                    "label": "Instance Node Type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Family",
+                    "exportValueAs": "instanceFamily_2"
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel_2",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Storage Type",
+                    "type": "dropDown",
+                    "selectorId": "Storage",
+                    "exportValueAs": "storage_2"
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption_2"
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "dependent": "PurchaseOption",
+                    "exportValueAs": "term_2"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm_dedicated"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Service dedicated master instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm_dedicated",
+                  "id": "ES_Dedicated_Master_MonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm_dedicated"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Amazon OpenSearch Service dedicated master instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm_dedicated",
+                  "id": "ES_Dedicated_Master_UpfrontCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "description": "Enter the amount of storage you'd like for each data instance. If you choose the EBS storage type, the calculation below multiplies EBS storage size per instance by the number of data instances in your cluster to calculate the total storage cost for the cluster. Storage settings do not apply to any dedicated master instances in the cluster.",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/opensearch-service/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfInstances",
+                "label": "Number of instances",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the total number of data instances using EBS",
+                "defaultValue": 1
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage for each Amazon OpenSearch Service instance",
+                "id": "storageType",
+                "options": [
+                  {
+                    "label": "General Purpose SSD (gp3)",
+                    "id": "GP3",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "es-storage",
+                        "meteredUnit": "GP3"
+                      }
+                    }
+                  },
+                  {
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "GP2"
+                  },
+                  {
+                    "label": "Provisioned IOPS SSD (io1)",
+                    "id": "PIOPS Storage"
+                  },
+                  {
+                    "label": "Magnetic (previous generation)",
+                    "id": "Magnetic"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "GP3",
+                "validations": {
+                  "required": true
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "instanceFamily_1"
+                    },
+                    "OR1"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "OR1 instances are provisioned with EBS and managed storage. Data written to EBS is also synchronously written to the managed storage. So for example if you write 100 GB to the EBS volume you will have 100 GB also written to the Managed Storage. If you configure 1 Primary and 1 replica then total local storage will be 200 GB and 100 GB in managed storage.",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "managedStorageforOR1Alert"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageType"
+                        },
+                        "GP2"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageType"
+                        },
+                        "PIOPS Storage"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageType"
+                        },
+                        "Magnetic"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 30,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 65536
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Volume type selected supports storage amounts 10 GB - 24,000 GB per volume, IOPS 3,000 - 16,000 per volume, and throughput 125 MB/s - 1000 MB/s per volume",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "GP3InfoAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount per volume (gp3)",
+                "id": "gp3StorageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 10,
+                  "maxValue": 24000
+                },
+                "placeholder": "Enter amount",
+                "description": "gp3 supports a minimum of 10 GB and a maximum of 24000 GB per volume. "
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "gp3ProvisioningIOPS",
+                "label": "Provisioning IOPS per volume (gp3)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 3000,
+                  "maxValue": 16000
+                },
+                "defaultValue": "",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "gp3 supports a maximum of 16,000 IOPS per volume."
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "minGp3IOPSCapped"
+                    },
+                    {
+                      "type": "component",
+                      "id": "gp3ProvisioningIOPS"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Provision IOPs per volume should exceed the minimum IOPs which is up to 16,000 IOPS for free:",
+                "label": "info alert",
+                "alertType": "error",
+                "content": "<p style='margin:0; padding:0'> For gp3 storage amount per volume entered between 10 GB and 1000 GB , the minimum is 3000 IOPS. </p> For gp3 storage amount per volume entered greater than 1000 GB, the minimum IOPS is equal to 3 * gp3 storage amount per volume and up to 16,000 IOPS.",
+                "isDismissable": false,
+                "id": "minimumIOPsAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "gp3StorageRatioChecker"
+                        },
+                        500
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageType"
+                        },
+                        "GP3"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid IOPS to GB ratio",
+                "label": "info alert",
+                "content": "The maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GB.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "ebsGp3RatioAlert"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "throughput",
+                "label": "Provisioning throughput (MB/s) per volume (gp3)",
+                "options": [
+                  {
+                    "label": "MBps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "defaultValue": "",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 125,
+                  "maxValue": 1000
+                },
+                "description": "gp3 supports a maximum of 1000 MBps per volume.",
+                "infoText": "info text display here",
+                "id": "gp3Throughput"
+              },
+              {
+                "displayIf": {
+                  "<": [
+                    {
+                      "type": "component",
+                      "id": "gp3Throughput"
+                    },
+                    {
+                      "type": "component",
+                      "id": "minimumThroughputCapped"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Provision throughput per volume should exceed the minimum throughput which is up to 1000 MB/s:",
+                "label": "info alert",
+                "alertType": "error",
+                "content": "<p style='margin:0; padding:0'> For gp3 storage amount per volume entered less than or equal to 170 GB , the minimum throughput for free is 125 MB/s. </p> For gp3 storage amount per volume entered greater than 170 GB, every 3000 GB volumes will get incremental 250 MB/s as minimum for free and it is up to 1000 MB/s.",
+                "isDismissable": false,
+                "id": "minimumThroughputAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Elasticsearch instance storage price",
+                "id": "esInstanceStoragePrice",
+                "mappingDefinitionName": "es-storage",
+                "refers": [
+                  {
+                    "variableLabel": "Storage for each Amazon OpenSearch Service instance",
+                    "variableId": "storageType"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "gp3ThroughputRatioChecker"
+                    },
+                    0.25
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid IOPS to Provisioned Throughput ratio",
+                "label": "info alert",
+                "content": "The provisioned Throughput to provisioned IOPS ratio should not exceed 0.25 MBs/IOPS.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "ebsThroughputRatioAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "iops",
+                "label": "Provisioning IOPS",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 80000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "iops conditional component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "Storage for each Amazon OpenSearch Service instance",
+                        "variableId": "storageType"
+                      },
+                      "trigger": "equal",
+                      "triggerValue": "PIOPS Storage"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableId": "iops",
+                        "variableLabel": "Provisioning IOPS"
+                      }
+                    ]
+                  }
+                },
+                "id": "configureAmazonOpenSearchServiceDomain_generated_8"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Iops",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-storage",
+                "meteredUnit": {
+                  "allRegions": "PIOPS"
+                },
+                "id": "configureAmazonOpenSearchServiceDomain_generated_9"
+              },
+              {
+                "type": "pricing",
+                "label": "price for GP3 PIOPS-Storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-storage",
+                "meteredUnit": {
+                  "allRegions": "GP3 PIOPS-Storage"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "gp3PIOPs_pricing"
+              },
+              {
+                "type": "pricing",
+                "label": "price for GP3 Throughput-Storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-storage",
+                "meteredUnit": {
+                  "allRegions": "GP3 ThroughPut-Storage"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "gp3Throughput_pricing"
+              },
+              {
+                "type": "pricing",
+                "label": "price for managed storage OR1",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-ultrawarm",
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Volume Managed-Storage per GigaBytes"
+                },
+                "id": "managedStoragePriceOR1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "numberOfInstances",
+                    "storageType",
+                    "managedStorageforOR1Alert",
+                    "storageAmount",
+                    "GP3InfoAlert",
+                    "gp3StorageAmount",
+                    "gp3ProvisioningIOPS",
+                    "minimumIOPsAlert",
+                    "ebsGp3RatioAlert",
+                    "gp3Throughput",
+                    "minimumThroughputAlert",
+                    "esInstanceStoragePrice",
+                    "ebsThroughputRatioAlert",
+                    "iops",
+                    "configureAmazonOpenSearchServiceDomain_generated_8",
+                    "configureAmazonOpenSearchServiceDomain_generated_9",
+                    "gp3PIOPs_pricing",
+                    "gp3Throughput_pricing",
+                    "managedStoragePriceOR1"
+                  ],
+                  "id": "configureAmazonOpenSearchServiceDomain_generated_10",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "storageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Storage amount per volume (gp3)",
+                      "variableId": "gp3StorageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "managed storage amount",
+                  "decimalPlaces": 2,
+                  "id": "managedStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "storageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Elasticsearch instance storage price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "esInstanceStoragePrice"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "configureAmazonOpenSearchServiceDomain_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS",
+                      "variableUnitLabel": "Provisioned IOPS",
+                      "required": true,
+                      "variableId": "iops"
+                    },
+                    {
+                      "variableLabel": "price for Iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "configureAmazonOpenSearchServiceDomain_generated_9"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS IOPS Cost)",
+                  "decimalPlaces": 2,
+                  "id": "configureAmazonOpenSearchServiceDomain_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "EBS Storage cost (gp3)",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount per volume (gp3)",
+                      "variableId": "gp3StorageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Elasticsearch instance storage price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "esInstanceStoragePrice"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] EBS Storage Cost (gp3)",
+                  "decimalPlaces": 2,
+                  "id": "gp3StorageCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageType"
+                      },
+                      "GP3"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "General Purpose SSD (gp3) - EBS Storage monthly cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "EBS Storage cost (gp3)",
+                  "refer": "gp3StorageCost",
+                  "id": "gp3StorageCostVar"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "instanceFamily_1"
+                      },
+                      "OR1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "managed storage amount",
+                      "variableId": "managedStorage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for managed storage OR1",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "managedStoragePriceOR1"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Managed Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "configureAmazonOpenSearchServiceDomain_managedStorage"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "instanceFamily_1"
+                      },
+                      "OR1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Managed Storage - monthly cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Managed Storage Cost)",
+                  "refer": "configureAmazonOpenSearchServiceDomain_managedStorage",
+                  "id": "managedStorageCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS per volume (gp3)",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "gp3ProvisioningIOPS"
+                    },
+                    {
+                      "variableLabel": "Storage amount per volume (gp3)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gp3StorageAmount"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to GB ratio (gp3)",
+                  "decimalPlaces": 4,
+                  "id": "gp3StorageRatioChecker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "displayInCalculationString": false,
+                  "variableName": "calculated gp3 IOPS",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount per volume (gp3)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gp3StorageAmount"
+                    },
+                    {
+                      "constant": 3,
+                      "constantUnitLabel": "IOPS"
+                    }
+                  ],
+                  "outputUnitLabel": "calculated gp3 IOPs",
+                  "decimalPlaces": 2,
+                  "id": "gp3IOPSCalculated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "IOPS"
+                    },
+                    {
+                      "variableLabel": "calculated gp3 IOPS",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "gp3IOPSCalculated"
+                    }
+                  ],
+                  "outputUnitLabel": "minimum gp3 IOPS",
+                  "decimalPlaces": 2,
+                  "id": "minGp3IOPS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "operands": [
+                    {
+                      "constant": 16000,
+                      "constantUnitLabel": "IOPS"
+                    },
+                    {
+                      "variableLabel": "minimum gp3 IOPS",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "minGp3IOPS"
+                    }
+                  ],
+                  "outputUnitLabel": "minimum IOPS for free",
+                  "decimalPlaces": 2,
+                  "id": "minGp3IOPSCapped"
+                },
+                {
+                  "displayIf": {
+                    "<=": [
+                      {
+                        "type": "component",
+                        "id": "minGp3IOPS"
+                      },
+                      {
+                        "type": "component",
+                        "id": "gp3ProvisioningIOPS"
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "displayInCalculationString": false,
+                  "variableName": "billable gp3 IOPS",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS per volume (gp3)",
+                      "variableUnitLabel": "Provisioning IOPS per volume",
+                      "required": true,
+                      "variableId": "gp3ProvisioningIOPS"
+                    },
+                    {
+                      "variableLabel": "minimum IOPS for free",
+                      "variableUnitLabel": "minimum gp3 IOPS for free",
+                      "required": true,
+                      "variableId": "minGp3IOPSCapped"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 IOPS",
+                  "decimalPlaces": 2,
+                  "id": "billableGp3IOPs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "gp3 PIOPs cost",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 IOPS",
+                      "variableUnitLabel": "billable gp3 IOPS per volume",
+                      "required": true,
+                      "variableId": "billableGp3IOPs"
+                    },
+                    {
+                      "variableLabel": "price for GP3 PIOPS-Storage",
+                      "variableUnitLabel": "[currency] provisioned IOPS-month",
+                      "required": true,
+                      "variableId": "gp3PIOPs_pricing"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "gp3PIOPCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageType"
+                      },
+                      "GP3"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "General Purpose SSD (gp3) - IOPS monthly cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "gp3 PIOPs cost",
+                  "refer": "gp3PIOPCost",
+                  "id": "gp3PIOPCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning throughput (MB/s) per volume (gp3)",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "variableLabel": "Provisioning IOPS per volume (gp3)",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "gp3ProvisioningIOPS"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to Throughput ratio",
+                  "decimalPlaces": 4,
+                  "id": "gp3ThroughputRatioChecker"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "gp3StorageAmount"
+                      },
+                      170
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "displayInCalculationString": false,
+                  "variableName": "Throughput incremental factor",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount per volume (gp3)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gp3StorageAmount"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "GB"
+                    }
+                  ],
+                  "outputUnitLabel": "Throughput incremental factor",
+                  "decimalPlaces": 6,
+                  "id": "incrementalFactor"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "gp3StorageAmount"
+                      },
+                      170
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Throughput incremental factor",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "incrementalFactor"
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "variableName": "incremental factor rounded up",
+                  "id": "incrementalFactorRoundUp"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "gp3StorageAmount"
+                      },
+                      170
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "displayInCalculationString": false,
+                  "variableName": "Minimum throughput",
+                  "operands": [
+                    {
+                      "variableLabel": "incremental factor rounded up",
+                      "variableUnitLabel": "Throughput incremental factor",
+                      "required": true,
+                      "variableId": "incrementalFactorRoundUp"
+                    },
+                    {
+                      "constant": 250,
+                      "constantUnitLabel": "MB/s"
+                    }
+                  ],
+                  "outputUnitLabel": "MB/s",
+                  "decimalPlaces": 2,
+                  "id": "minimumThroughput"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "operands": [
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "MB/s"
+                    },
+                    {
+                      "variableLabel": "Minimum throughput",
+                      "variableUnitLabel": "MB/s",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "minimumThroughput"
+                    }
+                  ],
+                  "outputUnitLabel": "MB/s minimum throughput for free",
+                  "decimalPlaces": 2,
+                  "id": "minimumThroughputCapped"
+                },
+                {
+                  "displayIf": {
+                    "<=": [
+                      {
+                        "type": "component",
+                        "id": "minimumThroughputCapped"
+                      },
+                      {
+                        "type": "component",
+                        "id": "gp3Throughput"
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "variableName": "billable gp3 Throughput (more than 170 GB)",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning throughput (MB/s) per volume (gp3)",
+                      "variableUnitLabel": "MB/s",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "variableLabel": "MB/s minimum throughput for free",
+                      "variableUnitLabel": "MB/s",
+                      "required": true,
+                      "variableId": "minimumThroughputCapped"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 Throughput",
+                  "decimalPlaces": 2,
+                  "id": "billableThroughputOver170GB"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "gp3StorageAmount"
+                          },
+                          170
+                        ]
+                      },
+                      {
+                        ">=": [
+                          {
+                            "type": "component",
+                            "id": "gp3Throughput"
+                          },
+                          125
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "variableName": "billable gp3 Throughput (less than 170 GB)",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning throughput (MB/s) per volume (gp3)",
+                      "variableUnitLabel": "MB/s",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "constant": 125,
+                      "constantUnitLabel": "MB/s"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 Throughput",
+                  "decimalPlaces": 2,
+                  "id": "billableThroughputLess170GB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "billable gp3 Throughput",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 Throughput (more than 170 GB)",
+                      "variableUnitLabel": "MB/s",
+                      "required": false,
+                      "variableId": "billableThroughputOver170GB"
+                    },
+                    {
+                      "variableLabel": "billable gp3 Throughput (less than 170 GB)",
+                      "variableUnitLabel": "MB/s",
+                      "required": false,
+                      "variableId": "billableThroughputLess170GB"
+                    }
+                  ],
+                  "outputUnitLabel": "MB/s billable gp3 throughput",
+                  "decimalPlaces": 2,
+                  "id": "billableThroughput"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "gp3 Throughput cost",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 Throughput",
+                      "variableUnitLabel": "MB/s",
+                      "required": true,
+                      "variableId": "billableThroughput"
+                    },
+                    {
+                      "variableLabel": "price for GP3 Throughput-Storage",
+                      "variableUnitLabel": "[currency] provisioned MB/s-month",
+                      "required": true,
+                      "variableId": "gp3Throughput_pricing"
+                    },
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "numberOfInstances"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageType"
+                      },
+                      "GP3"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "General Purpose SSD (gp3) - Throughput monthly cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "gp3 Throughput cost",
+                  "refer": "gp3ThroughputCost",
+                  "id": "gp3ThroughputCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS Storage Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "configureAmazonOpenSearchServiceDomain_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (Managed Storage Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "configureAmazonOpenSearchServiceDomain_managedStorage"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS IOPS Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "configureAmazonOpenSearchServiceDomain_generated_12"
+                    },
+                    {
+                      "variableLabel": "EBS Storage cost (gp3)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3StorageCost"
+                    },
+                    {
+                      "variableLabel": "gp3 PIOPs cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3PIOPCost"
+                    },
+                    {
+                      "variableLabel": "gp3 Throughput cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3ThroughputCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "configureAmazonOpenSearchServiceDomain_generated_13"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "managedStorage",
+                    "configureAmazonOpenSearchServiceDomain_generated_11",
+                    "configureAmazonOpenSearchServiceDomain_generated_12",
+                    "gp3StorageCost",
+                    "gp3StorageCostVar",
+                    "configureAmazonOpenSearchServiceDomain_managedStorage",
+                    "managedStorageCostVar",
+                    "gp3StorageRatioChecker",
+                    "gp3IOPSCalculated",
+                    "minGp3IOPS",
+                    "minGp3IOPSCapped",
+                    "billableGp3IOPs",
+                    "gp3PIOPCost",
+                    "gp3PIOPCostVar",
+                    "gp3ThroughputRatioChecker",
+                    "incrementalFactor",
+                    "incrementalFactorRoundUp",
+                    "minimumThroughput",
+                    "minimumThroughputCapped",
+                    "billableThroughputOver170GB",
+                    "billableThroughputLess170GB",
+                    "billableThroughput",
+                    "gp3ThroughputCost",
+                    "gp3ThroughputCostVar",
+                    "configureAmazonOpenSearchServiceDomain_generated_13"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Service storage cost",
+                  "decimalPlaces": 2,
+                  "IPMSupported": false,
+                  "id": "configureAmazonOpenSearchServiceDomain_generated_14",
+                  "subTotalRefer": "configureAmazonOpenSearchServiceDomain_generated_13"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "UltraWarm Instances (Optional)",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "id": "columnFormIPM",
+                "label": "UltraWarm instances cost",
+                "mappingDefinitionName": "es-ultrawarm-calc-new",
+                "calculationId": {
+                  "monthly": "monthly_ipm",
+                  "upfront": "upfront_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory (GiB)",
+                    "Storage"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "Storage",
+                  "PurchaseOption",
+                  "LeaseContractLength"
+                ],
+                "row": [
+                  {
+                    "label": "Number of nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "defaultValue": 2,
+                    "description": "minimum of 2 nodes if enabling UltraWarm",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000,
+                      "required": false
+                    },
+                    "exportValueAs": "count",
+                    "placeholder": "enter amount"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)",
+                      "Storage"
+                    ],
+                    "defaultValue": "",
+                    "exportValueAs": "instanceType"
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": ""
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption"
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "dependent": "PurchaseOption",
+                    "exportValueAs": "term"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Managed storage amount (per UltraWarm instance)",
+                "id": "managedStorageAmt",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 0,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 20480
+                },
+                "placeholder": "",
+                "description": "Maximum storage capacity per instance for the instance type selected is listed above in TB (Storage)",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "managedStorageAmt"
+                        },
+                        "1536"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "instanceType"
+                        },
+                        "ultrawarm1.medium.search"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Your input on 'Managed storage amount' has exceeded the maximum storage capacity of 1.5 TB (1536 GB / 1572864 MB) for utlrawarm1.medium.search instance type. Please reset the input value accordingly.",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "alertMediumInstance",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "pricing",
+                "label": "price for managed storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-ultrawarm",
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Volume Managed-Storage per GigaBytes"
+                },
+                "id": "managedStoragePrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "columnFormIPM",
+                    "count",
+                    "instanceType",
+                    "utilizationOut",
+                    "pricingModel",
+                    "purchaseOption",
+                    "term",
+                    "managedStorageAmt",
+                    "alertMediumInstance",
+                    "managedStoragePrice"
+                  ],
+                  "id": "unitConvert",
+                  "subTotalRefer": "configureAmazonOpenSearchServiceDomain_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "IPMSupported": true,
+                  "outputUnitLabel": "selected instance",
+                  "displayInConfigSummary": false,
+                  "referLabel": "UltraWarm instances cost",
+                  "refer": "monthly_ipm",
+                  "id": "instanceSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "count",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for managed storage",
+                      "variableUnitLabel": "[currency] per GB",
+                      "variableId": "managedStoragePrice",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Managed storage amount (per UltraWarm instance)",
+                      "variableUnitLabel": "GB",
+                      "variableId": "managedStorageAmt",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Amazon OpenSearch Service UltraWarm managed storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "ESManagedStorageMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "UltraWarm storage cost",
+                  "displayInCalculationString": true,
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Amazon OpenSearch Service UltraWarm managed storage cost)",
+                  "id": "SubTotalStorage",
+                  "refer": "ESManagedStorageMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Amazon OpenSearch Service UltraWarm managed storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "ESManagedStorageMonthlyCost",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "selected instance",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "instanceSelected",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Amazon OpenSearch Service UltraWarm instance cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalUWMonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm",
+                    "ESManagedStorageMonthlyCost",
+                    "totalUWMonthlyCost"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Service UltraWarm instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalUWMonthlyCost",
+                  "id": "uwTotalPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Amazon OpenSearch Service UltraWarm instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm",
+                  "id": "esUltraWarmInstanceUpfrontCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "es-storage",
+              "meteredUnit": "Managed Storage per GigaBytes"
+            }
+          },
+          "title": "Cold Storage - Managed Storage (Optional)",
+          "description": "",
+          "helpText": " ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/opensearch-service/pricing/",
+              "overrides": {
+                "aws": "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/cold-storage.html#coldstorage-pp",
+                "aws-us-gov": "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/cold-storage.html#coldstorage-pp"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Managed storage size",
+                "id": "Managed_storage_size",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 0,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "To enable cold storage on an OpenSearch Service domain, you must also enable UltraWarm on the same domain.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for cold storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-storage",
+                "meteredUnit": {
+                  "allRegions": "Managed Storage per GigaBytes"
+                },
+                "id": "price_for_cold_storage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "Managed_storage_size",
+                    "price_for_cold_storage"
+                  ],
+                  "id": "unitConvert_cs",
+                  "subTotalRefer": "totalUWMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Managed storage size",
+                      "variableUnitLabel": "GB",
+                      "variableId": "Managed_storage_size",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for cold storage",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "price_for_cold_storage",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Amazon OpenSearch Service Cold Storage - Managed Storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "coldStorage_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "coldStorage_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cold Storage - Managed Storage cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "coldStorage_cost",
+                  "id": "csTotalPrice"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Configure Amazon OpenSearch Serverless",
+      "description": "",
+      "id": "elasticSearchService-serverlesss",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/opensearch-service/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "es-serverless",
+              "meteredUnit": "Amazon OpenSearch Service Serverless IndexingOCU"
+            }
+          },
+          "title": "OpenSearch serverless",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "es-serverless",
+                    "meteredUnit": "Amazon OpenSearch Service Serverless IndexingOCU"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_Indexing_OCUs",
+                "label": "How many Indexing OCUs?",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.5,
+                  "maxValue": 1000000000,
+                  "defaultValue": 2
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of Indexing OCUs",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "es-serverless",
+                    "meteredUnit": "Amazon OpenSearch Service Serverless SearchOCU"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_Search_and_Query_OCUs",
+                "label": "How many Search and Query OCUs?",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000,
+                  "defaultValue": 2
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of Search and Query OCUs",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "es-serverless",
+                    "meteredUnit": "Amazon OpenSearch Service Serverless Managed Storage"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "How big is the index data?",
+                "id": "How_big_is_the_index_data",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1048576
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "One OCU comprises 6 GB of RAM, corresponding vCPU, GP3 storage (used to provide fast access to the most frequently accessed data), and data transfer to Amazon Simple Storage Service (S3).",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "alert_serverless",
+                "allowSaveEstimateOnAlert": true
+              },
+              {
+                "type": "pricing",
+                "label": "price for indexing ocu",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-serverless",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Serverless IndexingOCU"
+                },
+                "id": "price_for_indexing_ocu"
+              },
+              {
+                "type": "pricing",
+                "label": "price for search and query ocu",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-serverless",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Serverless SearchOCU"
+                },
+                "id": "price_for_search_and_query_ocu"
+              },
+              {
+                "type": "pricing",
+                "label": "price for managed storage",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "es-serverless",
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Serverless Managed Storage"
+                },
+                "id": "price_for_managed_storage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "How_many_Indexing_OCUs",
+                    "How_many_Search_and_Query_OCUs",
+                    "How_big_is_the_index_data",
+                    "alert_serverless",
+                    "price_for_indexing_ocu",
+                    "price_for_search_and_query_ocu",
+                    "price_for_managed_storage"
+                  ],
+                  "id": "unitConvert_serverless",
+                  "subTotalRefer": "coldStorage_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How many Indexing OCUs?",
+                      "variableUnitLabel": "OCUs",
+                      "variableId": "How_many_Indexing_OCUs",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for indexing ocu",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "price_for_indexing_ocu",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Indexing cost)",
+                  "decimalPlaces": 2,
+                  "id": "IndexingCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How many Search and Query OCUs?",
+                      "variableUnitLabel": "OCUs",
+                      "variableId": "How_many_Search_and_Query_OCUs",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for search and query ocu",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "price_for_search_and_query_ocu",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Search and query cost)",
+                  "decimalPlaces": 2,
+                  "id": "searchandQueryCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How big is the index data?",
+                      "variableUnitLabel": "GB",
+                      "variableId": "How_big_is_the_index_data",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for managed storage",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "price_for_managed_storage",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Managed storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "managed_storage_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Indexing cost)",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "IndexingCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency] (Search and query cost)",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "searchandQueryCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency] (Managed storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "managed_storage_cost",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Amazon OpenSearch Serverless cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalserverlessCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "IndexingCost",
+                    "searchandQueryCost",
+                    "managed_storage_cost",
+                    "totalserverlessCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Serverless cost",
+                  "decimalPlaces": 2,
+                  "IPMSupported": false,
+                  "id": "serverless_tot_cost",
+                  "subTotalRefer": "totalserverlessCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Configure Amazon OpenSearch Ingestion",
+      "description": "",
+      "id": "elasticSearchService-serverlesss-Ingestion",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/opensearch-service/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "es-serverless",
+              "meteredUnit": "Amazon OpenSearch Service Ingestion IngestionOCU"
+            }
+          },
+          "title": "OpenSearch Ingestion",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_Ingestion_OCUs",
+                "label": "How many Ingestion OCUs?",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 96,
+                  "defaultValues": 2
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of Ingestion OCUs",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "One OCU comprises 8 GB of RAM and 2 vCPU.",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "alert_ingestion",
+                "allowSaveEstimateOnAlert": true
+              },
+              {
+                "type": "pricing",
+                "label": "price for ingestion ocu",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "es-serverless",
+                "meteredUnit": {
+                  "allRegions": "Amazon OpenSearch Service Ingestion IngestionOCU"
+                },
+                "id": "price_for_ingestion_ocu"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "How_many_Ingestion_OCUs",
+                    "alert_ingestion",
+                    "price_for_ingestion_ocu"
+                  ],
+                  "id": "unitConvert_serverless_i",
+                  "subTotalRefer": "totalserverlessCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How many Ingestion OCUs?",
+                      "variableUnitLabel": "OCUs",
+                      "variableId": "How_many_Ingestion_OCUs",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for ingestion ocu",
+                      "variableUnitLabel": "[currency]",
+                      "variableId": "price_for_ingestion_ocu",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Ingestion cost)",
+                  "decimalPlaces": 2,
+                  "id": "IngestionFinalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "IngestionFinalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon OpenSearch Ingestion cost",
+                  "decimalPlaces": 2,
+                  "IPMSupported": false,
+                  "id": "ingestion_tot_cost",
+                  "subTotalRefer": "IngestionFinalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "OpenSearchService",
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

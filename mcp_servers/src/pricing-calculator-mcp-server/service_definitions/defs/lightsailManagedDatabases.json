@@ -1,0 +1,178 @@
+{
+  "version": "0.0.4",
+  "serviceName": "Lightsail Managed Databases",
+  "serviceCode": "lightsailManagedDatabases",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail-databases-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail-databases-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Databases",
+      "id": "lightsailDatabases",
+      "cards": [
+        {
+          "title": "Managed Databases",
+          "helpText": "Lightsail offers virtual servers (instances) that are easy to set up and backed by the power and reliability of AWS. You can launch your website, web application, or project in minutes, and manage your instance from the intuitive Lightsail console or API.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price for each database is determined by a combination of high availability, vCPU, memory, storage, and data transfer quota.",
+                "id": "dbText"
+              },
+              {
+                "label": "Database configuration",
+                "id": "columnFormIPM_2",
+                "type": "input",
+                "disableCalculation": false,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "lightsail-databases-calc",
+                "calculationId": {
+                  "monthly": "db_ipmPrice"
+                },
+                "primaryKey": {
+                  "Storage": [
+                    "Engine",
+                    "vCPU",
+                    "Memory",
+                    "Data Transfer Quota"
+                  ]
+                },
+                "secondaryKey": [
+                  "High Availability"
+                ],
+                "prioritizedKey": {
+                  "Storage": 100
+                },
+                "row": [
+                  {
+                    "label": "Number of databases",
+                    "type": "textInput",
+                    "selectorId": "Number of Instances",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 1000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count_db"
+                  },
+                  {
+                    "label": "High Availability",
+                    "type": "dropDown",
+                    "selectorId": "High Availability",
+                    "defaultValue": "No"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Storage",
+                    "withTags": [
+                      "Engine",
+                      "vCPU",
+                      "Memory",
+                      "Data Transfer Quota"
+                    ]
+                  },
+                  {
+                    "label": "Database utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilization",
+                    "description": "",
+                    "displayInConfigSummary": false,
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Hours/Month"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "db_ipmPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "IPMSupported": true,
+                  "label": "Lightsail db cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "db_ipmPrice",
+                  "id": "dbCostDisplay"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,326 @@
+{
+  "version": "0.0.17",
+  "serviceName": "AWS PrivateLink",
+  "serviceCode": "awsPrivateLinkVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "excludeZeroSubTotals": false,
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "AWS PrivateLink",
+      "id": "awsPrivateLink",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/privatelink/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "To estimate costs for Gateway Load Balancer endpoint (powered by AWS PrivateLink), please select the Gateway Load Balancer option.",
+          "helpText": "AWS PrivateLink enables customers to access services hosted on AWS easily but securely by keeping all the network traffic within the AWS network. You can use this capability to privately access services supported by AWS PrivateLink from your Amazon Virtual Private Cloud (VPC), without using public IPs, securely on the Amazon network. When you create endpoints for services that are available on AWS PrivateLink, these service endpoints will appear as Elastic Network Interfaces (ENIs) with private IPs in your VPCs.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/privatelink/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "mappingDefinitionName": "vpc",
+                    "type": "meteredUnit",
+                    "meteredUnit": "O8_Pzo5YwIoCLOAe25w3rrGSueRhcWMbBAy40tipVjM"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of VPC Interface endpoints per AWS region",
+                "id": "numberOfInterfaceVPCEndpointsPerRegion",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "mappingDefinitionName": "vpc",
+                    "type": "meteredUnit",
+                    "meteredUnit": "O8_Pzo5YwIoCLOAe25w3rrGSueRhcWMbBAy40tipVjM"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Availability Zones an Interface endpoint is deployed in",
+                "id": "numberOfAvailabilityZonesEndpointsDeployed",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter the amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Total data processed by all VPCE Interface endpoints in the AWS region",
+                "id": "dataProcessedByEachVPCENIAZ",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": {
+                  "aws": "Pricing Tiers -> 0-1PB @ 0.01/GB | 1-4PB @ 0.006/GB | 5+PB @ 0.004/GB",
+                  "aws-cn": ""
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for PrivateLink usage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "O8_Pzo5YwIoCLOAe25w3rrGSueRhcWMbBAy40tipVjM"
+                },
+                "id": "awsPrivateLink_generated_21"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "price for PrivateLink data processing",
+                "id": "tierPrivateLinkVPCEndpointPrice",
+                "mappingDefinitionName": "vpc",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1048576,
+                      "meteredUnit": "oXrJSNp7FUeFewlHJ00-FtrCM6eKL3uFx3VGjE1Z_eo"
+                    },
+                    {
+                      "startOfTier": 1048577,
+                      "endOfTier": 5242880,
+                      "meteredUnit": "Tqbq4NsTPpNjQAuKdJcumFAvifu-A3UlvVb7v_27IHY"
+                    },
+                    {
+                      "startOfTier": 5242881,
+                      "endOfTier": -1,
+                      "meteredUnit": "YWms5U1MHZdMGC9HWUUPt3zl8c-4L_Zi5aCrEHibyyw"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfInterfaceVPCEndpointsPerRegion",
+                    "numberOfAvailabilityZonesEndpointsDeployed",
+                    "dataProcessedByEachVPCENIAZ",
+                    "awsPrivateLink_generated_21",
+                    "tierPrivateLinkVPCEndpointPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "awsPrivateLink_generated_22"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of VPC Interface endpoints per AWS region",
+                      "variableUnitLabel": "VPC endpoints",
+                      "required": true,
+                      "variableId": "numberOfInterfaceVPCEndpointsPerRegion"
+                    },
+                    {
+                      "variableLabel": "Number of Availability Zones an Interface endpoint is deployed in",
+                      "variableUnitLabel": "ENIs per VPC endpoint",
+                      "required": true,
+                      "variableId": "numberOfAvailabilityZonesEndpointsDeployed"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for PrivateLink usage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "awsPrivateLink_generated_21"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Monthly cost for endpoint ENI)",
+                  "decimalPlaces": 2,
+                  "id": "awsPrivateLink_totalHourlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly cost for Interface endpoints",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Monthly cost for endpoint ENI)",
+                  "id": "SubTotalHourly",
+                  "refer": "awsPrivateLink_totalHourlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "price for PrivateLink data processing",
+                  "tieredPricingRefer": "tierPrivateLinkVPCEndpointPrice",
+                  "inputReferLabel": "Total data processed by all VPCE Interface endpoints in the AWS region",
+                  "inputRefer": "dataProcessedByEachVPCENIAZ",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (PrivateLink data processing cost)",
+                  "id": "tieredMathPrivateLinkDataProcessing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total data processing cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (PrivateLink data processing cost)",
+                  "id": "SubTotalDataProcessing",
+                  "refer": "tieredMathPrivateLinkDataProcessing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Monthly cost for endpoint ENI)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "awsPrivateLink_totalHourlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (PrivateLink data processing cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tieredMathPrivateLinkDataProcessing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total PrivateLink Cost)",
+                  "decimalPlaces": 2,
+                  "id": "awsPrivateLink_totalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "awsPrivateLink_totalHourlyCost",
+                    "SubTotalHourly",
+                    "tieredMathPrivateLinkDataProcessing",
+                    "SubTotalDataProcessing",
+                    "awsPrivateLink_totalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total PrivateLink endpoints and data processing cost",
+                  "decimalPlaces": 2,
+                  "id": "awsPrivateLink_generated_23",
+                  "subTotalRefer": "awsPrivateLink_totalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,203 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA ALB WAF - Web Application Firewall for Application Load Balancer - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  # WAF Web ACL for ALB
+  ALBWAFWebACL:
+    Type: AWS::WAFv2::WebACL
+    Metadata:
+      checkov:
+        skip:
+          - id: CKV_AWS_192
+            comment: "WAF includes AWS Managed Rules for comprehensive protection including SQLi, XSS, and known bad inputs. Application is Python-based with proper input validation."
+    Properties:
+      Name: !Sub '${StackPrefix}-alb-waf'
+      Description: !Sub 'WAF for ${StackPrefix} Application Load Balancer'
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      
+      Rules:
+        # Rate limiting for general traffic (custom rule - uses Action)
+        - Name: GeneralRateLimit
+          Priority: 1
+          Statement:
+            RateBasedStatement:
+              Limit: 2000  # 2000 requests per 5 minutes per IP
+              AggregateKeyType: IP
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}GeneralRateLimit'
+
+        # Stricter rate limiting for API endpoints (custom rule - uses Action)
+        - Name: APIRateLimit
+          Priority: 2
+          Statement:
+            RateBasedStatement:
+              Limit: 1000  # 1000 requests per 5 minutes per IP
+              AggregateKeyType: IP
+              ScopeDownStatement:
+                ByteMatchStatement:
+                  SearchString: '/api/'
+                  FieldToMatch:
+                    UriPath: {}
+                  TextTransformations:
+                    - Priority: 0
+                      Type: LOWERCASE
+                  PositionalConstraint: CONTAINS
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}APIRateLimit'
+
+        # AWS Managed Rules - Common Rule Set (OWASP Top 10)
+        - Name: AWSManagedRulesCommonRuleSet
+          Priority: 3
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+              ExcludedRules: []
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}CommonRuleSet'
+
+        # AWS Managed Rules - Known Bad Inputs
+        - Name: AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 4
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+              ExcludedRules: []
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}KnownBadInputs'
+
+        # AWS Managed Rules - SQL Injection Protection
+        - Name: AWSManagedRulesSQLiRuleSet
+          Priority: 5
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesSQLiRuleSet
+              ExcludedRules: []
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}SQLi'
+
+        # AWS Managed Rules - Linux Operating System Protection
+        - Name: AWSManagedRulesLinuxRuleSet
+          Priority: 6
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesLinuxRuleSet
+              ExcludedRules: []
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}Linux'
+
+        # IP Reputation monitoring
+        - Name: AWSManagedRulesAmazonIpReputationList
+          Priority: 7
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAmazonIpReputationList
+              ExcludedRules: []
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: !Sub '${StackPrefix}IpReputation'
+
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub '${StackPrefix}-alb-waf'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb-waf'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Associate WAF with ALB
+  ALBWebACLAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !ImportValue
+        Fn::Sub: '${StackPrefix}-alb-arn'
+      WebACLArn: !GetAtt ALBWAFWebACL.Arn
+
+  # CloudWatch Log Group for WAF Logs
+  WAFLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub 'aws-waf-logs-${StackPrefix}-alb'
+      RetentionInDays: 3653
+      KmsKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+
+  # WAF Logging Configuration
+  WAFLoggingConfiguration:
+    Type: AWS::WAFv2::LoggingConfiguration
+    Properties:
+      ResourceArn: !GetAtt ALBWAFWebACL.Arn
+      LogDestinationConfigs:
+        - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:aws-waf-logs-${StackPrefix}-alb"
+      LoggingFilter:
+        DefaultBehavior: KEEP
+        Filters:
+          - Behavior: KEEP
+            Conditions:
+              - ActionCondition:
+                  Action: COUNT
+            Requirement: MEETS_ANY
+
+Outputs:
+  WAFWebACLId:
+    Description: 'ID of the WAF Web ACL for ALB'
+    Value: !Ref ALBWAFWebACL
+    Export:
+      Name: !Sub '${StackPrefix}-alb-waf-id'
+
+  WAFWebACLArn:
+    Description: 'ARN of the WAF Web ACL for ALB'
+    Value: !GetAtt ALBWAFWebACL.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-alb-waf-arn'
+
+  WAFLogGroupName:
+    Description: 'CloudWatch Log Group for ALB WAF logs'
+    Value: !Ref WAFLogGroup
+    Export:
+      Name: !Sub '${StackPrefix}-alb-waf-log-group'

@@ -1,0 +1,880 @@
+{
+  "version": "0.0.58",
+  "serviceName": "S3 Standard - Infrequent Access",
+  "serviceCode": "amazonS3StandardInfrequentAccess",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ap-northeast-1",
+    "us-gov-west-1",
+    "us-gov-east-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "eu-south-1",
+    "me-south-1",
+    "me-central-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "us-iso-east-1",
+    "us-iso-west-1",
+    "us-isob-east-1",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3-standard-infrequent",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3-standard-infrequent.json"
+    },
+    {
+      "mappingDefinitionName": "glacier",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glacier/[currency]/current/glacier.json"
+    },
+    {
+      "mappingDefinitionName": "s3glacierdeeparchive",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3glacierdeeparchive/[currency]/current/s3glacierdeeparchive.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "S3 Standard - Infrequent Access",
+      "description": "is best used for data with unknown or changing access patterns.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "id": "s3StandardInfrequentAccess",
+      "cards": [
+        {
+          "title": "S3 Standard - Infrequent Access (S3 Standard-IA)",
+          "helpText": "S3 Standard-IA is for data that is accessed less frequently, but requires rapid access when needed.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "Standard Infrequent Access Storage per GB-Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Standard-IA storage",
+                "id": "s3IaStorageSize",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 Standard-IA ?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 Standard-IA",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-standard-infrequent",
+                        "meteredUnit": "PUT COPY/POST or LIST requests to Standard Infrequent Access per Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST, Lifecycle requests to S3 Standard-IA",
+                    "id": "PUT to Standard Infrequent Access Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 Standard-IA initially. To compare the cost of current storage in S3 Standard-IA to lifecycling this data to another storage class, you can specify that your storage is already stored in S3 Standard-IA while selecting Lifecycle under the new storage class to capture the upfront cost of moving your data."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "moveToStorageClassMethod"
+                        },
+                        "PUT to Standard Infrequent Access Requests"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Standard-IA Average Object Size",
+                "id": "S3_Standard_Infrequent_Access_Average_Object_Size",
+                "defaultValue": 16,
+                "description": "Used to calculate number of objects which affects cost of moving data into S3 Standard-IA. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9e-10,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "PUT COPY/POST or LIST requests to Standard Infrequent Access per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 Standard-IA",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests",
+                "id": "s3IaPutRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "GET and all other requests to Standard Infrequent Access per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "GET, SELECT, and all other requests from S3 Standard-IA",
+                "description": "Ongoing monthly number of GET, SELECT, and all other requests",
+                "id": "s3IaGetRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "Lifecycle Transition Requests into Standard Infrequent Access per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transition requests",
+                "id": "s3IaLifecycleTransitionRequests",
+                "description": "Ongoing monthly number of Lifecycle requests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "Object Retrieval in Standard Infrequent Access per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals",
+                "id": "s3IaDataRetrievalsSize",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of retrieval data"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "Data Returned by S3 Select in Standard Infrequent Access per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data returned by S3 Select",
+                "id": "s3IaSelectDataReturned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data returned by S3 Select requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-standard-infrequent",
+                    "meteredUnit": "Data Scanned by S3 Select in Standard Infrequent Access per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned by S3 Select",
+                "id": "s3IaSelectDataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data scanned by S3 Select reqeusts"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "Standard Infrequent Access Storage per GB-Mo"
+                },
+                "label": "pricing for S3 Infrequent access storage",
+                "id": "s3StandardInfrequentAccess_generated_0"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "PUT COPY/POST or LIST requests to Standard Infrequent Access per Requests"
+                },
+                "label": "pricing for PUT/COPY/POST/LIST request to S3 Standard-IA per request",
+                "id": "s3StandardInfrequentAccess_generated_1"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "GET and all other requests to Standard Infrequent Access per Requests"
+                },
+                "label": "pricing for GET/Select and similar S3 Standard-IA requests",
+                "id": "s3StandardInfrequentAccess_generated_2"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Standard Infrequent Access or One Zone - Infrequent Access or Intelligent Tiering per Requests"
+                },
+                "label": "pricing for lifecycle transition requests old",
+                "id": "s3StandardInfrequentAccess_generated_3_old"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Standard Infrequent Access per Requests"
+                },
+                "label": "pricing for lifecycle transition requests",
+                "id": "s3StandardInfrequentAccess_generated_3"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "Object Retrieval in Standard Infrequent Access per GB"
+                },
+                "label": "pricing for data retrievals",
+                "id": "s3StandardInfrequentAccess_generated_4"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "Data Returned by S3 Select in Standard Infrequent Access per GB"
+                },
+                "label": "pricing for data returned by S3 select",
+                "id": "s3StandardInfrequentAccess_generated_5"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-standard-infrequent",
+                "meteredUnit": {
+                  "allRegions": "Data Scanned by S3 Select in Standard Infrequent Access per GB"
+                },
+                "label": "pricing for data scanned by S3 Standard-IA select",
+                "id": "s3StandardInfrequentAccess_generated_6"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3StandardInfrequentAccess_generated_7",
+                  "refer": [
+                    "s3IaStorageSize",
+                    "moveToStorageClassMethod",
+                    "S3_Standard_Infrequent_Access_Average_Object_Size",
+                    "s3IaPutRequests",
+                    "s3IaGetRequests",
+                    "s3IaLifecycleTransitionRequests",
+                    "s3IaDataRetrievalsSize",
+                    "s3IaSelectDataReturned",
+                    "s3IaSelectDataScanned",
+                    "s3StandardInfrequentAccess_generated_0",
+                    "s3StandardInfrequentAccess_generated_1",
+                    "s3StandardInfrequentAccess_generated_2",
+                    "s3StandardInfrequentAccess_generated_3_old",
+                    "s3StandardInfrequentAccess_generated_3",
+                    "s3StandardInfrequentAccess_generated_4",
+                    "s3StandardInfrequentAccess_generated_5",
+                    "s3StandardInfrequentAccess_generated_6"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Standard-IA storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3IaStorageSize"
+                    },
+                    {
+                      "variableLabel": "S3 Standard-IA Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Standard_Infrequent_Access_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Standard-IA storage",
+                      "variableUnitLabel": "S3 Standard-IA Storage",
+                      "required": true,
+                      "variableId": "s3IaStorageSize"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 Infrequent access storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_0"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard-IA storage cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 Standard-IA",
+                      "variableUnitLabel": "PUT requests for S3 Standard-IA Storage",
+                      "required": true,
+                      "variableId": "s3IaPutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 Standard-IA per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard-IA PUT requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET, SELECT, and all other requests from S3 Standard-IA",
+                      "variableUnitLabel": "GET requests for S3 Standard-IA Storage",
+                      "required": true,
+                      "variableId": "s3IaGetRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for GET/Select and similar S3 Standard-IA requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard-IA GET requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transition requests",
+                      "variableUnitLabel": "lifecycle request count for S3 Standard-IA",
+                      "required": true,
+                      "variableId": "s3IaLifecycleTransitionRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard-IA Lifecycle requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IaDataRetrievalsSize"
+                    },
+                    {
+                      "variableLabel": "pricing for data retrievals",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard-IA data retrievals cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data returned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IaSelectDataReturned"
+                    },
+                    {
+                      "variableLabel": "pricing for data returned by S3 select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data returned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IaSelectDataScanned"
+                    },
+                    {
+                      "variableLabel": "pricing for data scanned by S3 Standard-IA select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data scanned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3StandardInfrequentAccess_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard-IA storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_8"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard-IA PUT requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_9"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard-IA GET requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_10"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard-IA Lifecycle requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard-IA data retrievals cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_12"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data returned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_13"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data scanned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3StandardInfrequentAccess_generated_14"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total S3 Standard-IA Storage and other costs)",
+                  "decimalPlaces": 2,
+                  "id": "s3StandardInfrequentAccess_generated_15"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "s3StandardInfrequentAccess_generated_8",
+                    "s3StandardInfrequentAccess_generated_9",
+                    "s3StandardInfrequentAccess_generated_10",
+                    "s3StandardInfrequentAccess_generated_11",
+                    "s3StandardInfrequentAccess_generated_12",
+                    "s3StandardInfrequentAccess_generated_13",
+                    "s3StandardInfrequentAccess_generated_14",
+                    "s3StandardInfrequentAccess_generated_15"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "S3 Standard - Infrequent Access (S3 Standard-IA) cost",
+                  "decimalPlaces": 2,
+                  "id": "s3StandardInfrequentAccess_generated_16",
+                  "subTotalRefer": "s3StandardInfrequentAccess_generated_15"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "PUT to Standard Infrequent Access Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 Standard-IA per request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3StandardInfrequentAccess_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "S3SIARCPCP_WithoutParts",
+                  "variableName": "S3SIARCPCP without parts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "S3SIARCPCP_WithoutParts"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 Standard - Infrequent Access (S3 Standard-IA) cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontS3SIACostDisplay",
+                  "subTotalRefer": "S3SIARCPCP_WithoutParts"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,1259 @@
+{
+  "version": "0.0.81",
+  "serviceName": "S3 Glacier Flexible Retrieval",
+  "serviceCode": "amazonS3Glacier",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "TCOCalculator",
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3-glacier-flexibleretrieval.json"
+    },
+    {
+      "mappingDefinitionName": "glacier",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glacier/[currency]/current/glacier.json"
+    },
+    {
+      "mappingDefinitionName": "s3glacierdeeparchive",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3glacierdeeparchive/[currency]/current/s3glacierdeeparchive.json"
+    }
+  ],
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "S3 Glacier Flexible Retrieval",
+      "description": "is best used for data with unknown or changing access patterns.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "id": "S3Glacier",
+      "cards": [
+        {
+          "title": "S3 Glacier Flexible Retrieval",
+          "helpText": "S3 Glacier is a secure, durable, and low-cost storage class for data archiving. You can reliably store any amount of data at costs that are competitive with or cheaper than on-premises solutions. ",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glacier/",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/s3/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Storage Settings",
+                "id": "s3GlacierFlexibleRetrieval_generated_0"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier Storage per GB Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Flexible Retrieval storage",
+                "id": "s3GlacierStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 Glacier Flexible Retrieval Average Object Size",
+                "id": "S3_Glacier_Average_Object_Size",
+                "defaultValue": 16,
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9e-10,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount.",
+                "description": "Used to calculate number of objects which affects metadata overhead and cost of moving data into S3 Glacier Flexible Retrieval. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 Glacier Flexible Retrieval?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 Glacier Flexible Retrieval",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                        "meteredUnit": "PUT requests to Glacier per Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST, Lifecycle requests to S3 Glacier Flexible Retrieval",
+                    "id": "PUT to Glacier Flexible Retrieval Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 Glacier Flexible Retrieval initially. To compare the cost of current storage in S3 Glacier Flexible Retrieval to lifecycling this data to another storage class, you can specify that your storage is already stored in S3 Glacier Flexible Retrieval while selecting Lifecycle under the new storage class to capture the upfront cost of moving your data."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "PUT requests to Glacier per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 Glacier Flexible Retrieval",
+                "id": "s3GlacierPutRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Lifecycle Transition Requests into Glacier per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transitions into S3 Glacier Flexible Retrieval",
+                "id": "s3GlacierLifecycleTransitions",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of Lifecycle requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Restore Object per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Restore requests (Standard)",
+                "id": "s3GlacierDataRetrievalRequestsStandard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of Standard Restore requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier Expedited Glacier Restore Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Restore requests (Expedited)",
+                "id": "s3GlacierDataRetrievalRequestsExpedited",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of Expedited Restore requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier S3 API Tier 5"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Restore requests (Bulk)",
+                "id": "s3GlacierDataRetrievalRequestsBulk",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of Bulk Restore requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier S3 Standard Retrieval RestoreObject"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals (Standard)",
+                "description": "Ongoing monthly volume of Standard Restore retrieval data",
+                "id": "s3GlacierDataRetrievalsStandard",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier S3 Expedited Retrieval"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals (Expedited)",
+                "id": "s3GlacierDataRetrievalsExpedited",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of Expedited Restore retrieval data"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                    "meteredUnit": "Glacier S3 Bulk Retrieval RestoreObject"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data retrievals (Bulk)",
+                "id": "s3GlacierDataRetrievalsBulk",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of Bulk Restore retrieval data"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "glacier",
+                    "meteredUnit": "Provisioned-Capacity per Units"
+                  }
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Provisioned Capacity Units",
+                "placeholder": "Select Provisioned Capacity Units",
+                "id": "s3GlacierProvisionedCapacityUnits",
+                "description": "Each unit of capacity provides that at least three expedited retrievals can be performed every five minutes and provides up to 150 MB/s of retrieval throughput.",
+                "options": [
+                  {
+                    "label": "0",
+                    "id": "0"
+                  },
+                  {
+                    "label": "1",
+                    "id": "1"
+                  },
+                  {
+                    "label": "2",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "PUT requests to Glacier per Requests"
+                },
+                "label": "pricing for PUT requests to S3 Glacier",
+                "id": "s3GlacierFlexibleRetrieval_generated_1"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Glacier per Requests"
+                },
+                "label": "pricing for Lifecycle Transition requests into S3 Glacier",
+                "id": "s3GlacierFlexibleRetrieval_generated_2"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier S3 Standard Retrieval RestoreObject"
+                },
+                "label": "pricing for Standard-Retrieval",
+                "id": "s3GlacierFlexibleRetrieval_generated_3"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier S3 Expedited Retrieval"
+                },
+                "label": "pricing for Expedited-Retrieval",
+                "id": "s3GlacierFlexibleRetrieval_generated_4"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier S3 Bulk Retrieval RestoreObject"
+                },
+                "label": "pricing for Bulk-Retrieval",
+                "id": "s3GlacierFlexibleRetrieval_generated_5"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Restore Object per Requests"
+                },
+                "label": "pricing for request retrieval (Standard)",
+                "id": "s3GlacierFlexibleRetrieval_generated_6"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier Expedited Glacier Restore Requests"
+                },
+                "label": "pricing for request retrieval (Expedited)",
+                "id": "s3GlacierFlexibleRetrieval_generated_7"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier S3 API Tier 5"
+                },
+                "label": "pricing for request retrieval (Bulk)",
+                "id": "s3GlacierFlexibleRetrieval_generated_8"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glacier",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned-Capacity per Units"
+                },
+                "label": "pricing for provisioned capacity",
+                "id": "s3GlacierFlexibleRetrieval_generated_9"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "meteredUnit": {
+                  "allRegions": "Glacier Storage per GB Mo"
+                },
+                "label": "pricing for glacier storage",
+                "id": "s3GlacierFlexibleRetrieval_generated_10"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3-glacier-flexibleretrieval",
+                "volumeDiscountEligibility": false,
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "amazonS3Standard_t_p"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3GlacierFlexibleRetrieval_generated_11",
+                  "refer": [
+                    "s3GlacierFlexibleRetrieval_generated_0",
+                    "s3GlacierStorage",
+                    "S3_Glacier_Average_Object_Size",
+                    "moveToStorageClassMethod",
+                    "s3GlacierPutRequests",
+                    "s3GlacierLifecycleTransitions",
+                    "s3GlacierDataRetrievalRequestsStandard",
+                    "s3GlacierDataRetrievalRequestsExpedited",
+                    "s3GlacierDataRetrievalRequestsBulk",
+                    "s3GlacierDataRetrievalsStandard",
+                    "s3GlacierDataRetrievalsExpedited",
+                    "s3GlacierDataRetrievalsBulk",
+                    "s3GlacierProvisionedCapacityUnits",
+                    "s3GlacierFlexibleRetrieval_generated_1",
+                    "s3GlacierFlexibleRetrieval_generated_2",
+                    "s3GlacierFlexibleRetrieval_generated_3",
+                    "s3GlacierFlexibleRetrieval_generated_4",
+                    "s3GlacierFlexibleRetrieval_generated_5",
+                    "s3GlacierFlexibleRetrieval_generated_6",
+                    "s3GlacierFlexibleRetrieval_generated_7",
+                    "s3GlacierFlexibleRetrieval_generated_8",
+                    "s3GlacierFlexibleRetrieval_generated_9",
+                    "s3GlacierFlexibleRetrieval_generated_10",
+                    "amazonS3Standard_t_p"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Flexible Retrieval storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierStorage"
+                    },
+                    {
+                      "variableLabel": "S3 Glacier Flexible Retrieval Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Glacier_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSize"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSize"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGB"
+                    },
+                    {
+                      "variableLabel": "pricing for glacier storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_10"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Glacier Flexible Retrieval storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "GOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Glacier Flexible Retrieval storage overhead cost for metadata",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Glacier Flexible Retrieval storage overhead cost for metadata)",
+                  "id": "GOCVar",
+                  "refer": "GOC",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSize1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSize1"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGB1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC",
+                  "inputRefer": "overHeadSizeGB1",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "S3 Standard storage overhead cost for metadata",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "id": "SOVCVar",
+                  "refer": "SOVC",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Glacier Flexible Retrieval storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierStorage"
+                    },
+                    {
+                      "variableLabel": "pricing for glacier storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_10"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Glacier Flexible Retrieval storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "GSC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Glacier Flexible Retrieval storage cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Glacier Flexible Retrieval storage cost)",
+                  "id": "GSCVar",
+                  "refer": "GSC",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Glacier Flexible Retrieval storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "SOVC"
+                    },
+                    {
+                      "variableLabel": "[currency] (Glacier Flexible Retrieval storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GSC"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Glacier Flexible Retrieval storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "s3GlacierFlexibleRetrieval_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 Glacier Flexible Retrieval",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierPutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT requests to S3 Glacier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (PUT, COPY, POST, LIST requests to S3 Glacier Flexible Retrieval cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transitions into S3 Glacier Flexible Retrieval",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierLifecycleTransitions"
+                    },
+                    {
+                      "variableLabel": "pricing for Lifecycle Transition requests into S3 Glacier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Lifecycle transitions cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Restore requests (Standard)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalRequestsStandard"
+                    },
+                    {
+                      "variableLabel": "pricing for request retrieval (Standard)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Restore requests (Standard))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Restore requests (Expedited)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalRequestsExpedited"
+                    },
+                    {
+                      "variableLabel": "pricing for request retrieval (Expedited)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Restore requests (Expedited))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Restore requests (Bulk)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalRequestsBulk"
+                    },
+                    {
+                      "variableLabel": "pricing for request retrieval (Bulk)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_8"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Restore requests (Bulk))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals (Standard)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalsStandard"
+                    },
+                    {
+                      "variableLabel": "pricing for Standard-Retrieval",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Data retrievals (Standard))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_18"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals (Expedited)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalsExpedited"
+                    },
+                    {
+                      "variableLabel": "pricing for Expedited-Retrieval",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Data retrievals (Expedited))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_19"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data retrievals (Bulk)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3GlacierDataRetrievalsBulk"
+                    },
+                    {
+                      "variableLabel": "pricing for Bulk-Retrieval",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Data retrievals (Bulk))",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected Provisioned Capacity",
+                  "displayInConfigSummary": true,
+                  "referLabel": "Provisioned Capacity Units",
+                  "id": "s3GlacierFlexibleRetrieval_generated_21",
+                  "refer": "s3GlacierProvisionedCapacityUnits"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "selected Provisioned Capacity",
+                      "variableUnitLabel": "Provisioned Capacity Units",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_21"
+                    },
+                    {
+                      "variableLabel": "pricing for provisioned capacity",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_9"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for provisioned capacity)",
+                  "decimalPlaces": 4,
+                  "id": "s3GlacierFlexibleRetrieval_generated_22"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "outputUnitLabel": "[currency] (Total S3 Glacier Flexible Retrieval cost )",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Total Glacier Flexible Retrieval storage cost)",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_12"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (PUT, COPY, POST, LIST requests to S3 Glacier Flexible Retrieval cost)",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_13"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Lifecycle transitions cost)",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_14"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Restore requests (Standard))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_15"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Restore requests (Expedited))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_16"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Restore requests (Bulk))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_17"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Data retrievals (Standard))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_18"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Data retrievals (Expedited))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_19"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for Data retrievals (Bulk))",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_20"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableLabel": "[currency] (Cost for provisioned capacity)",
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_22"
+                    }
+                  ],
+                  "decimalPlaces": 2,
+                  "id": "s3GlacierFlexibleRetrieval_generated_23"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "overHeadSize",
+                    "overHeadSizeGB",
+                    "GOC",
+                    "GOCVar",
+                    "overHeadSize1",
+                    "overHeadSizeGB1",
+                    "SOVC",
+                    "SOVCVar",
+                    "GSC",
+                    "GSCVar",
+                    "s3GlacierFlexibleRetrieval_generated_12",
+                    "s3GlacierFlexibleRetrieval_generated_13",
+                    "s3GlacierFlexibleRetrieval_generated_14",
+                    "s3GlacierFlexibleRetrieval_generated_15",
+                    "s3GlacierFlexibleRetrieval_generated_16",
+                    "s3GlacierFlexibleRetrieval_generated_17",
+                    "s3GlacierFlexibleRetrieval_generated_18",
+                    "s3GlacierFlexibleRetrieval_generated_19",
+                    "s3GlacierFlexibleRetrieval_generated_20",
+                    "s3GlacierFlexibleRetrieval_generated_21",
+                    "s3GlacierFlexibleRetrieval_generated_22",
+                    "s3GlacierFlexibleRetrieval_generated_23"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": false,
+                  "label": "S3 Glacier Flexible Retrieval cost",
+                  "decimalPlaces": 2,
+                  "id": "s3GlacierFlexibleRetrieval_generated_24",
+                  "subTotalRefer": "s3GlacierFlexibleRetrieval_generated_23"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "PUT to Glacier Flexible Retrieval Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT requests to S3 Glacier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3GlacierFlexibleRetrieval_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "GFRRCPCP_WithoutParts",
+                  "variableName": "GFRRCPCP without parts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "GFRRCPCP_WithoutParts"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 Glacier Flexible Retrieval cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontGFRCostDisplay",
+                  "subTotalRefer": "GFRRCPCP_WithoutParts"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

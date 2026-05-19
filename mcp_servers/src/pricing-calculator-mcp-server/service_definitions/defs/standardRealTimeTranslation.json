@@ -1,0 +1,169 @@
+{
+  "version": "0.0.16",
+  "serviceName": "Standard Real-Time Translation",
+  "serviceCode": "standardRealTimeTranslation",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-1",
+    "us-west-1",
+    "ap-southeast-1",
+    "ap-northeast-1",
+    "us-gov-west-1",
+    "us-west-2",
+    "ap-southeast-2",
+    "eu-central-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "us-east-2",
+    "ca-central-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "ap-east-1",
+    "us-iso-east-1"
+  ],
+  "searchKeywords": [
+    "NLP",
+    "Natural language processing",
+    "language transalation",
+    "Text analytics",
+    "Language translation",
+    "Amazon translate",
+    "Translate"
+  ],
+  "serviceDescription": "Amazon Translate is a neural machine translation service that delivers fast, high-quality, and affordable language translation. Neural machine translation is a form of language translation automation that uses deep learning models to deliver more accurate and more natural sounding translation than traditional statistical and rule-based translation algorithms.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "translate",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/translate/[currency]/current/translate.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/translate/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Translate",
+      "description": "Amazon Translate delivers fast, high-quality, and affordable language translation. This is a neural machine translation service, which is a form of language translation automation that uses deep learning models to deliver more accurate and more natural sounding translation than traditional statistical and rule-based translation algorithms.",
+      "id": "amazonTrans_t",
+      "helpText": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/translate/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Standard Real-Time Translation",
+          "helpText": "Use Real-time translation when you want to deliver on-demand translations of content as a feature of your applications.<a href='https://aws.amazon.com/contact-us/'target='_blank'> For consistent usage greater than 1 billion characters per month, please contact us.</a>",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/translate/latest/dg/sync.html",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/translate/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "freeTierIDSRT",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Tanslate_chars_RT",
+                "label": "Number of characters including white spaces and punctuations (Standard Real-Time Translation)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "Enter average number of characters to be translated per month",
+                "description": "Average number of characters translated per month"
+              },
+              {
+                "type": "pricing",
+                "label": "price for standard realtime translate",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "translate",
+                "meteredUnit": {
+                  "allRegions": "Text Translation per Character"
+                },
+                "id": "translateRealTimePricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RTTranslatecost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Tanslate_chars_RT",
+                      "variableLabel": "Number of characters including white spaces and punctuations (Standard Real-Time Translation)",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "variableId": "translateRealTimePricing",
+                      "variableLabel": "price for standard realtime translate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Standard Real-Time Translation)",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "display",
+                  "id": "StandardRT_Translation_Disp",
+                  "refer": [
+                    "freeTierIDSRT",
+                    "Tanslate_chars_RT",
+                    "translateRealTimePricing",
+                    "RTTranslatecost"
+                  ],
+                  "subTotalRefer": "RTTranslatecost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Standard Real-Time Translation cost",
+                  "decimalPlaces": 6
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-us-gov"
+  ]
+}

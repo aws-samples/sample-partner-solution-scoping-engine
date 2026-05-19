@@ -1,0 +1,499 @@
+{
+  "version": "0.0.36",
+  "serviceName": {
+    "aws": "AWS CloudFormation",
+    "aws-cn": "Amazon CloudFormation"
+  },
+  "serviceCode": "awsCloudFormation",
+  "type": "AWSService",
+  "disableRegionSupport": {
+    "aws": false,
+    "aws-cn": false,
+    "aws-iso": false,
+    "aws-iso-b": false,
+    "aws-us-gov": false
+  },
+  "disableAddToEstimate": {
+    "aws": false,
+    "aws-cn": false,
+    "aws-iso": false,
+    "aws-iso-b": false,
+    "aws-us-gov": false
+  },
+  "regions": [
+    "us-gov-west-1",
+    "us-gov-east-1",
+    "af-south-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ap-northeast-1",
+    "ca-central-1",
+    "cn-north-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "me-central-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "us-iso-east-1",
+    "us-iso-west-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "cloudformation",
+    "formation",
+    "cloud",
+    "application resources"
+  ],
+  "serviceDescription": {
+    "aws": "AWS CloudFormation provides a common language for you to model and provision AWS and third party application extensions in your cloud environment.",
+    "aws-cn": "Amazon CloudFormation provides a common language for you to model and provision Amazon and third party application extensions in your cloud environment."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/cloudformation/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "cloudformation",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cloudformation/[currency]/current/cloudformation.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/cloudformation/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Third-Party Extension Types",
+          "helpText": {
+            "aws": "There is no additional charge for using AWS CloudFormation with extension types in the following namespaces: AWS::*, Alexa::*, and Custom::*. In this case you pay for AWS extensions (such as Amazon EC2 instances, Elastic Load Balancing load balancers, etc.) created using AWS CloudFormation as if you created them manually. You only pay for what you use, as you use it; there are no minimum fees and no required upfront commitments. When you use extension types with AWS CloudFormation outside the namespaces mentioned above, you incur charges per handler operation. Handler operations are create, update, delete, read, or list actions on an extension. ",
+            "aws-cn": "There is no additional charge for using Amazon CloudFormation with extension types in the following namespaces: Amazon::*, Alexa::*, and Custom::*. In this case you pay for Amazon extensions (such as Amazon EC2 instances, Elastic Load Balancing load balancers, etc.) created using Amazon CloudFormation as if you created them manually. You only pay for what you use, as you use it; there are no minimum fees and no required upfront commitments. When you use extension types with Amazon CloudFormation outside the namespaces mentioned above, you incur charges per handler operation. Handler operations are create, update, delete, read, or list actions on an extension. "
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloudformation/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "1000 third-party extension operations are offered free of charge per month",
+                "id": "CloudFormation_Text1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfResources",
+                "label": "Number of third-party extensions managed",
+                "displayInConfigSummary": true,
+                "defaultValue": 100,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of operations per extension",
+                "id": "numberOfOps",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "placeholder": "Enter number of operations per extension",
+                "description": "Operations are defined as create, update, delete, read, or list actions on a extension."
+              },
+              {
+                "type": "pricing",
+                "id": "cloudFormation_opsPrice",
+                "label": "Price handler operations",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudformation",
+                "meteredUnit": {
+                  "allRegions": "CloudFormation-ResourceProvider-Invocation per Operations"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Monthly total of operations",
+                  "refer": [
+                    "CloudFormation_Text1",
+                    "numberOfResources",
+                    "numberOfOps",
+                    "cloudFormation_opsPrice"
+                  ],
+                  "id": "cloudFormation_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cloudFormation_opsMult",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfResources",
+                      "variableLabel": "Number of third-party extensions managed",
+                      "variableUnitLabel": "extensions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfOps",
+                      "variableLabel": "Total number of operations per extension",
+                      "variableUnitLabel": "operations",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total operations",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cloudFormation_opsFree",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "cloudFormation_opsMult",
+                      "variableLabel": "total operations",
+                      "variableUnitLabel": "operations",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "free operations per month"
+                    }
+                  ],
+                  "outputUnitLabel": "billable operations",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "id": "minBillableOps",
+                  "operation": "Maximum",
+                  "displayInConfigSummary": false,
+                  "operands": [
+                    {
+                      "variableUnitLabel": "billable operations",
+                      "variableId": "cloudFormation_opsFree",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "min billable seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "operations (billable)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "priceBillableOps",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "minBillableOps",
+                      "variableLabel": "operations (billable)",
+                      "variableUnitLabel": "operations",
+                      "required": true
+                    },
+                    {
+                      "variableId": "cloudFormation_opsPrice",
+                      "variableLabel": "Price handler operations",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for third-party extension operations",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "cloudFormation_opsMult",
+                    "cloudFormation_opsFree",
+                    "minBillableOps",
+                    "priceBillableOps"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total CloudFormation third-party extension operations cost",
+                  "decimalPlaces": 2,
+                  "id": "CFOpsPrice",
+                  "subTotalRefer": "priceBillableOps"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Advanced",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "For the majority of cases, operations will not be longer than 30 seconds. For operations that do require longer processing times, you will be charged an additional overage price per second above the 30 second threshold. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloudformation/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "For operations that require longer processing times, you will be charged an additional overage price per second above the 30 second threshold.",
+                "id": "CloudFormation_DurationText"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration per operation",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "defaultValue": 30,
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter the average duration for each operation",
+                "description": "Average across all operations.",
+                "id": "opsDuration"
+              },
+              {
+                "type": "pricing",
+                "id": "cloudFormation_durationPrice",
+                "label": "Price for ops duration above 30 secs",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudformation",
+                "meteredUnit": {
+                  "allRegions": "CloudFormation-ResourceProvider-Duration per Second"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Monthly total of operations",
+                  "refer": [
+                    "CloudFormation_DurationText",
+                    "opsDuration",
+                    "cloudFormation_durationPrice"
+                  ],
+                  "id": "cloudFormation_unitConvert_adv",
+                  "subTotalRefer": "priceBillableOps"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cloudFormation_billableSecondsPerOperation",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "opsDuration",
+                      "variableLabel": "Average duration per operation",
+                      "variableUnitLabel": "seconds per operation",
+                      "required": true
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "second duration threshold"
+                    }
+                  ],
+                  "outputUnitLabel": "overage seconds per operation",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "id": "minBillableSecs",
+                  "operation": "Maximum",
+                  "displayInConfigSummary": false,
+                  "operands": [
+                    {
+                      "variableUnitLabel": "overage seconds per operation",
+                      "variableId": "cloudFormation_billableSecondsPerOperation",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "min billable seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "billable seconds per operation"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cloudFormation_billableSeconds",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "minBillableSecs",
+                      "variableLabel": "billable seconds per operation",
+                      "variableUnitLabel": "seconds",
+                      "required": false
+                    },
+                    {
+                      "variableId": "cloudFormation_opsMult",
+                      "variableLabel": "total operations",
+                      "variableUnitLabel": "operations",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "billable seconds per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "priceBillableSecs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "cloudFormation_billableSeconds",
+                      "variableLabel": "billable seconds per month",
+                      "variableUnitLabel": "seconds",
+                      "required": false
+                    },
+                    {
+                      "variableId": "cloudFormation_durationPrice",
+                      "variableLabel": "Price for ops duration above 30 secs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for operations duration overage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Operations duration overage cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for operations duration overage",
+                  "id": "summarizeDurationCost",
+                  "refer": "priceBillableSecs"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "cloudFormation_billableSecondsPerOperation",
+                    "minBillableSecs",
+                    "cloudFormation_billableSeconds",
+                    "priceBillableSecs",
+                    "summarizeDurationCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total CloudFormation duration overage cost",
+                  "decimalPlaces": 2,
+                  "id": "CFDurationPrice",
+                  "subTotalRefer": "summarizeDurationCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "CloudFormation"
+    }
+  ],
+  "slug": "CloudFormation",
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov",
+    "aws-cn"
+  ]
+}

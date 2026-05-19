@@ -1,0 +1,390 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Amazon Lookout for Equipment",
+  "serviceCode": "amazonLookoutForEquipment",
+  "slug": "lookoutforequipment",
+  "type": "AWSService",
+  "excludeZeroSubTotals": true,
+  "regions": [],
+  "searchKeywords": [
+    "Amazon Lookout for Equipment",
+    "equipement behavior"
+  ],
+  "serviceDescription": "Amazon Lookout for Equipment is an ML industrial equipment monitoring service that detects abnormal equipment behavior so you can act and avoid unplanned downtime.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lookout-for-equipment/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lookoutequipment",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lookoutequipment/[currency]/current/lookoutequipment.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "Amazon Lookout for Equipment enables you to detect abnormal equipment behavior using three simple steps. First, the service enables you to ingest historical data generated from sensors on industrial equipment. Second, it trains a custom machine learning (ML) model using that data to assess healthy patterns for your equipment (you can use data from up to 300 sensors to train one model). Third, it uses that model to infer abnormal patterns from incoming sensor data for continuous monitoring of your equipment. You are charged based on the amount of data ingested, the compute hours used to train your models using the ingested data, and the number of hours of inferencing run using your model. With Amazon Lookout for Equipment, you pay only for what you use, and there are no minimum fees and no upfront commitments.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/lookout-for-equipment/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service Settings",
+          "helpText": "Amazon Lookout for Equipment enables you to detect abnormal equipment behavior using three simple steps. First, the service enables you to ingest historical data generated from sensors on industrial equipment. Second, it trains a custom machine learning (ML) model using that data to assess healthy patterns for your equipment (you can use data from up to 300 sensors to train one model). Third, it uses that model to infer abnormal patterns from incoming sensor data for continuous monitoring of your equipment. You are charged based on the amount of data ingested, the compute hours used to train your models using the ingested data, and the number of hours of inferencing run using your model. With Amazon Lookout for Equipment, you pay only for what you use, and there are no minimum fees and no upfront commitments. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lookout-for-equipment/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Volume Discounts",
+                "content": "AWS can offer tiered pricing discounts for applications involving many assets.  If your application will scale to greater than 100 assets, please contact your AWS account manager to discuss options.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "volumeDisc"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free tier",
+                "content": "As part of the AWS Free Tier, you can get started with Amazon Lookout for Equipment for free today. The first month of using Amazon Lookout for Equipment includes a free tier of 50 GB of data ingestion, 250 training hours and 168 inference hours of scheduled inference. The calculations below exclude Free Tier discounts.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "freetierAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_assets",
+                "label": "Number of assets",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000
+                },
+                "defaultValue": 1,
+                "placeholder": "Enter number of assets",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_ingestion_per_month_per_asset",
+                "label": "Number of data ingestion per month per asset",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10
+                },
+                "defaultValue": 1,
+                "placeholder": "Enter number of data ingestions per month per asset",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "Number_of_ingestion_per_month_per_asset"
+                    },
+                    0
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "Average_amount_of_data_to_be_ingested_per_month_per_asset",
+                "label": "Average amount of data to be ingested per month per asset",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 2,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1e-12,
+                  "maxValue": 50
+                },
+                "placeholder": "Enter data ingested.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_number_of_training_hours_per_month_per_asset",
+                "label": "Average number of training hours per month per asset (Typical is 8-16 hours)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "defaultValue": 12,
+                "placeholder": "Enter number of hours",
+                "description": "Amazon Lookout for Equipment will train a custom model with your data. You pay for the number of hours it takes to train your model. Amazon Lookout for Equipment may provision more compute resources in order to quickly train multiple models and pick the best one. For example, Lookout for Equipment may provision a compute resource that is greater than the baseline (e.g. Lookout for Equipment could provision a compute resource that is 9x the baseline in order to complete training), and this means that if your model is trained and ready to use within the hour, the number of hours billed will be equivalent to amount provisioned above the baseline, so in our example above of 9x, the number of hours billed will be 9 hours. All model training jobs are charged for a minimum of one hour of elapsed time and then prorated to the nearest second."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Do you have inference?",
+                "id": "Do_you_have_inference",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "validations": {
+                  "required": true
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_training",
+                "label": "Price for training",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lookoutequipment",
+                "meteredUnit": {
+                  "allRegions": "Machine Learning Hourly cost for training"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_inference",
+                "label": "Price for inference",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lookoutequipment",
+                "meteredUnit": {
+                  "allRegions": "Machine Learning hourly cost for inferencing"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_storage",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lookoutequipment",
+                "meteredUnit": {
+                  "allRegions": "Machine Learning One time charge per GB"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "volumeDisc",
+                    "freetierAlert",
+                    "Number_of_assets",
+                    "Number_of_ingestion_per_month_per_asset",
+                    "Average_amount_of_data_to_be_ingested_per_month_per_asset",
+                    "Average_number_of_training_hours_per_month_per_asset",
+                    "Do_you_have_inference",
+                    "Price_for_training",
+                    "Price_for_inference",
+                    "Price_for_storage"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected inference option",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Do you have inference?",
+                  "refer": "Do_you_have_inference",
+                  "id": "selected_inference_option"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "data_ingested_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_assets",
+                      "variableLabel": "Number of assets",
+                      "variableUnitLabel": "assets",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Number_of_ingestion_per_month_per_asset",
+                      "variableLabel": "Number of data ingestion per month per asset",
+                      "variableUnitLabel": "ingestions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_amount_of_data_to_be_ingested_per_month_per_asset",
+                      "variableLabel": "Average amount of data to be ingested per month per asset",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_storage",
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for data ingested per month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "training_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_assets",
+                      "variableLabel": "Number of assets",
+                      "variableUnitLabel": "assets",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_number_of_training_hours_per_month_per_asset",
+                      "variableLabel": "Average number of training hours per month per asset (Typical is 8-16 hours)",
+                      "variableUnitLabel": "training hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_training",
+                      "variableLabel": "Price for training",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for training per month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inference_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "selected_inference_option",
+                      "variableLabel": "selected inference option",
+                      "variableUnitLabel": "inference option",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Number_of_assets",
+                      "variableLabel": "Number of assets",
+                      "variableUnitLabel": "assets",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableId": "Price_for_inference",
+                      "variableLabel": "Price for inference",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for inference per month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "data_ingested_cost",
+                      "variableLabel": "[currency] for data ingested per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "training_cost",
+                      "variableLabel": "[currency] for training per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "inference_cost",
+                      "variableLabel": "[currency] for inference per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] cost per month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "selected_inference_option",
+                    "data_ingested_cost",
+                    "training_cost",
+                    "inference_cost",
+                    "total_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Lookout for Equipment cost",
+                  "decimalPlaces": 2,
+                  "id": "total_cost_1",
+                  "subTotalRefer": "total_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "lookoutequip"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

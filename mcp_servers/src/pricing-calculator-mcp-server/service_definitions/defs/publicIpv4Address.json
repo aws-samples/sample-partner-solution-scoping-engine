@@ -1,0 +1,231 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Public IPv4 Address",
+  "serviceCode": "publicIpv4Address",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ],
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "AWS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Public IPv4 Address",
+      "id": "ipv4publicaddress",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Public IPv4 Address",
+          "helpText": "",
+          "bodyText": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of In-use public IPv4 addresses",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the number of public IPv4 addresses attached to EC2 instances and AWS services.",
+                "id": "numberOfInusepublicipv4address"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Idle public IPv4 addresses",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the number of Idle public IPv4 addresses allocated to the account, unattached to AWS services.",
+                "id": "numberOfIdlepublicipv4address"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "raRs1O4ORCruh2ORL1aNMcTmbmUZ3VQSwRnpIb5TVaE"
+                },
+                "label": "price for in-use ipv4 public address",
+                "id": "inuse_ipv4price"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "enBL9w78IlUB4rLQv7C_wCmsA4Vo5og-FQEZN4yF1Yk"
+                },
+                "label": "price for idle ipv4 public address",
+                "id": "idle_ipv4price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfInusepublicipv4address",
+                    "numberOfIdlepublicipv4address",
+                    "inuse_ipv4price",
+                    "idle_ipv4price"
+                  ],
+                  "id": "ipv4_unitconversion",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of In-use public IPv4 addresses",
+                      "variableUnitLabel": "in-use public IPv4 address",
+                      "required": true,
+                      "variableId": "numberOfInusepublicipv4address"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for in-use ipv4 public address",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "inuse_ipv4price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total In-use public IPv4 address charge)",
+                  "decimalPlaces": 2,
+                  "id": "inuseip4cost_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Idle public IPv4 addresses",
+                      "variableUnitLabel": "idle public IPv4 address",
+                      "required": true,
+                      "variableId": "numberOfIdlepublicipv4address"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for idle ipv4 public address",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "idle_ipv4price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Idle public IPv4 address charge)",
+                  "decimalPlaces": 2,
+                  "id": "idleip4cost_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Total In-use public IPv4 address charge)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "inuseip4cost_2"
+                    },
+                    {
+                      "variableLabel": "[currency] (Total Idle public IPv4 address charge)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "idleip4cost_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total public IPv4 address charge)",
+                  "decimalPlaces": 2,
+                  "id": "totalip4cost_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "inuseip4cost_2",
+                    "idleip4cost_2",
+                    "totalip4cost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total public IPv4 address charge",
+                  "decimalPlaces": 2,
+                  "id": "totalip4cost_3_monthy",
+                  "subTotalRefer": "totalip4cost_2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

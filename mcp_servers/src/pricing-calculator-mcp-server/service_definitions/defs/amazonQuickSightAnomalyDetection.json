@@ -1,0 +1,206 @@
+{
+  "version": "0.0.32",
+  "serviceName": "Amazon QuickSight Alerts & Anomaly Detection",
+  "serviceCode": "amazonQuickSightAnomalyDetection",
+  "type": "AWSService",
+  "subType": "subService",
+  "searchKeywords": [],
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-north-1",
+    "sa-east-1",
+    "us-gov-west-1"
+  ],
+  "serviceDescription": "",
+  "costType": [
+    "Monthly"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "quicksight",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/quicksight/[currency]/current/quicksight.json"
+    }
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Alerts & Anomaly Detection",
+      "cards": [
+        {
+          "title": "Alerts & Anomaly Detection",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Metrics",
+                "label": "info alert",
+                "content": "If you set up one alert to run hourly, that would bill as 24 metrics per day (or 720 metrics per month). If you set up an Anomaly Detection job to watch “sales”, and then added break-downs by region (four regions) and product category (let’s assume 10 categories), that could be up to 55 metrics (1 sales + 4 regions + 10 categories + 4*10 region-categories, depending on if you choose to run it for all combinations of the data). If you ran that anomaly job daily, you’d expect to run 1.65 per thousand metrics (55 * 30 = 1,650) per month.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "metric_infoAlert"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Metrics",
+                "id": "numberOfMetrics",
+                "options": [
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of metrics"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "metric tiered pricing",
+                "id": "metricPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000,
+                      "meteredUnit": "Enterprise Alerts from 0 to 1000 per kilometric"
+                    },
+                    {
+                      "startOfTier": 1001,
+                      "endOfTier": 10000,
+                      "meteredUnit": "Enterprise Alerts from 1000 to 10000 per kilometric"
+                    },
+                    {
+                      "startOfTier": 10001,
+                      "endOfTier": 100000,
+                      "meteredUnit": "Enterprise Alerts from 10000 to 100000 per kilometric"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Enterprise Alerts from 100000 to Inf per kilometric"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions management events",
+                  "refer": [
+                    "metric_infoAlert",
+                    "numberOfMetrics",
+                    "metricPrice"
+                  ],
+                  "id": "unitConvertML",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Metrics",
+                      "variableUnitLabel": "metrics",
+                      "required": true,
+                      "variableId": "numberOfMetrics"
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "metrics per kilometric",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total kilometrics",
+                  "decimalPlaces": 2,
+                  "id": "totalKilometrics"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "metric tiered pricing",
+                  "inputReferLabel": "total kilometrics",
+                  "outputUnitLabel": "[currency] (metrics)",
+                  "inputUnitLabel": "kilometrics",
+                  "decimalPlaces": 2,
+                  "id": "metricTieredMath",
+                  "inputRefer": "totalKilometrics",
+                  "tieredPricingRefer": "metricPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalKilometrics",
+                    "metricTieredMath"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost for Alerts and ML-powered anomaly detection metrics",
+                  "decimalPlaces": 2,
+                  "id": "totalAlertCostDisplay",
+                  "subTotalRefer": "metricTieredMath"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

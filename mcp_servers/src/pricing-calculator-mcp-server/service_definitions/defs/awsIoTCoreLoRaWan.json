@@ -1,0 +1,1098 @@
+{
+  "version": "0.0.14",
+  "serviceName": "LoRaWAN",
+  "serviceCode": "awsIoTCoreLoRaWan",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-1",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "iot",
+    "device",
+    "messages",
+    "shadow",
+    "registry",
+    "rules",
+    "device shadow",
+    "rules engine",
+    "basic ingest",
+    "mqtt",
+    "LoRaWAN"
+  ],
+  "serviceDescription": {
+    "aws": "AWS IoT Core is a managed cloud service that lets connected devices easily and securely interact with cloud applications and other devices.",
+    "aws-cn": "Amazon IoT Core is a managed cloud service that lets connected devices easily and securely interact with cloud applications and other devices.",
+    "aws-us-gov": "AWS IoT Core is a managed cloud service that lets connected devices easily and securely interact with cloud applications and other devices."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/iot-core/",
+      "overrides": {
+        "aws-cn": "https://www.amazonaws.cn/en/iot-core/pricing/"
+      }
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iot",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iot/[currency]/current/iot.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Devices",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfDevices",
+                "label": "Number of devices (LoRaWAN)",
+                "description": "Enter the number of devices you will utilize.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "Messaging",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "To estimate your monthly costs, enter the number of messages you expect to transmit. You are charged for messages sent in both directions, from a device to AWS IoT Core and from AWS IoT Core to a device.<a href='https://aws.amazon.com/iot-core/pricing/additional-details/#LoRaWAN_Metering'target='_blank'> Learn more about LoRaWAN metering details</a>.",
+                  "aws-cn": "To estimate your monthly costs, enter the number of messages you expect to transmit. You are charged for messages sent in both directions, from a device to Amazon IoT Core and from Amazon IoT Core to a device.<a href='https://www.amazonaws.cn/en/iot-core/pricing/'> Learn more about LoRaWAN metering details</a>."
+                },
+                "id": "messagingText1"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "LoRaWAN Messages Up to 1B"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "LoRaWAN Messages Next 4B"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "LoRaWAN Messages Over 5B"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfMessagesLoRaWAN",
+                "label": "Number of messages for a device",
+                "description": {
+                  "aws": "Enter the number of messages transmitted between a device and AWS IoT Core in a month.",
+                  "aws-cn": "Enter the number of messages transmitted between a device and Amazon IoT Core in a month."
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for messages per month LoRaWAN",
+                "id": "tieredMessagePricingLoRaWAN",
+                "mappingDefinitionName": "iot",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000000,
+                      "meteredUnit": "LoRaWAN Messages Up to 1B"
+                    },
+                    {
+                      "startOfTier": 1000000001,
+                      "endOfTier": 5000000000,
+                      "meteredUnit": "LoRaWAN Messages Next 4B"
+                    },
+                    {
+                      "startOfTier": 5000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "LoRaWAN Messages Over 5B"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "l_mes_UnitConv",
+                  "refer": [
+                    "messagingText1",
+                    "numberOfMessagesLoRaWAN",
+                    "tieredMessagePricingLoRaWAN"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messageLoraWANMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfMessagesLoRaWAN",
+                      "variableLabel": "Number of messages for a device",
+                      "variableUnitLabel": "messages per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfDevices",
+                      "variableLabel": "Number of devices (LoRaWAN)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable messages",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredMsgLoRaWANMonthlyCost",
+                  "tieredPricingRefer": "tieredMessagePricingLoRaWAN",
+                  "tieredPricingReferLabel": "Price for messages per month LoRaWAN",
+                  "inputRefer": "messageLoraWANMultiple",
+                  "inputReferLabel": "total billable messages",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "Messages",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "messageLoraWANMultiple",
+                    "tieredMsgLoRaWANMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "LoRaWAN Message cost",
+                  "decimalPlaces": 2,
+                  "id": "LoRaWANmessageTotalPrice",
+                  "subTotalRefer": "tieredMsgLoRaWANMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Device Shadow",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "Device Shadow and Registry"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfShadowOperations",
+                "label": "Number of Shadow operations for a device",
+                "description": "Enter the number of operations that access or modify the Device Shadow in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "Device Shadow and Registry"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each record",
+                "id": "dataPerShadowOperation",
+                "placeholder": "Enter record size",
+                "description": "Operations are metered in 1 KB increments; an update to a 1.5 KB Device Shadow record is metered as two operations.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "shadowOperationPricing",
+                "label": "Price per operation",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iot",
+                "meteredUnit": {
+                  "allRegions": "Device Shadow and Registry"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "l_ds_UnitConv",
+                  "refer": [
+                    "numberOfShadowOperations",
+                    "dataPerShadowOperation",
+                    "shadowOperationPricing"
+                  ],
+                  "subTotalRefer": "tieredMsgLoRaWANMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "opShadowRecordSizeDiv",
+                  "operation": "division",
+                  "outputUnitLabel": "record(s)",
+                  "decimalPlaces": 0,
+                  "operands": [
+                    {
+                      "variableId": "dataPerShadowOperation",
+                      "variableLabel": "Average size of each record",
+                      "variableUnitLabel": "KB per record",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "KB record increment"
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "id": "operationShadowRounded",
+                  "operationLabel": "RoundUp",
+                  "outputUnitLabel": "billable operation(s)",
+                  "operands": [
+                    {
+                      "variableId": "opShadowRecordSizeDiv",
+                      "variableLabel": "record(s)",
+                      "variableUnitLabel": "record(s)",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "operationShadowMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfShadowOperations",
+                      "variableLabel": "Number of Shadow operations for a device",
+                      "variableUnitLabel": "operations per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "operationShadowRounded",
+                      "variableLabel": "billable operation(s)",
+                      "variableUnitLabel": "billable operation(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "shadowOperationPricing",
+                      "variableLabel": "Price per operation",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfDevices",
+                      "variableLabel": "Number of devices (LoRaWAN)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "opShadowRecordSizeDiv",
+                    "operationShadowRounded",
+                    "operationShadowMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Device Shadow operations cost",
+                  "decimalPlaces": 2,
+                  "id": "operationShadowTotalPrice",
+                  "subTotalRefer": "operationShadowMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Registry",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "Device Shadow and Registry"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfRegRequests",
+                "label": "Number of Registry requests",
+                "description": "Enter the number of Registry requests in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "Device Shadow and Registry"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each record",
+                "id": "dataPerRequest",
+                "placeholder": "Enter record size",
+                "description": "Requests are metered in 1 KB increments; a request that returns a 1.5 KB Registry record is metered as two requests.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "requestPricing",
+                "label": "Price per request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iot",
+                "meteredUnit": {
+                  "allRegions": "Device Shadow and Registry"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "l_reg_UnitConv",
+                  "refer": [
+                    "numberOfRegRequests",
+                    "dataPerRequest",
+                    "requestPricing"
+                  ],
+                  "subTotalRefer": "operationShadowMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requestRecordSizeDiv",
+                  "operation": "division",
+                  "outputUnitLabel": "record(s)",
+                  "decimalPlaces": 0,
+                  "operands": [
+                    {
+                      "variableId": "dataPerRequest",
+                      "variableLabel": "Average size of each record",
+                      "variableUnitLabel": "KB per record",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "KB record increment"
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "id": "requestRounded",
+                  "operationLabel": "RoundUp",
+                  "outputUnitLabel": "billable request(s)",
+                  "operands": [
+                    {
+                      "variableId": "requestRecordSizeDiv",
+                      "variableLabel": "record(s)",
+                      "variableUnitLabel": "record(s)",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requestMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfRegRequests",
+                      "variableLabel": "Number of Registry requests",
+                      "variableUnitLabel": "requests per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "requestRounded",
+                      "variableLabel": "billable request(s)",
+                      "variableUnitLabel": "billable request(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "requestPricing",
+                      "variableLabel": "Price per request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "requestRecordSizeDiv",
+                    "requestRounded",
+                    "requestMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Registry requests cost",
+                  "decimalPlaces": 2,
+                  "id": "requestTotalPrice",
+                  "subTotalRefer": "requestMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Rules Engine",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "RulesTriggered"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfBasicIngestRules",
+                "label": "Average number of rules triggered by a message",
+                "description": "Enter the average number of rules triggered by a message.",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "iot",
+                    "meteredUnit": "ActionsExecuted"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfBasicIngestActions",
+                "label": "Average number of actions executed per rule",
+                "description": "Enter the average number of actions executed per rule by a device.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 10
+                }
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "RulesTriggered"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "appflow",
+                        "meteredUnit": "ActionsExecuted"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each message",
+                "id": "dataPerBasicIngestRule",
+                "placeholder": "Enter message size",
+                "description": "Rules and actions are metered in 5 KB increments; a rule with two actions that is executed for a 7 KB message is metered as two rules and four actions.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "basicIngestRulePricing",
+                "label": "Price per rule",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iot",
+                "meteredUnit": {
+                  "allRegions": "RulesTriggered"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "basicIngestActionPricing",
+                "label": "Price per action",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iot",
+                "meteredUnit": {
+                  "allRegions": "ActionsExecuted"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "l_ruleEng_UnitConv",
+                  "refer": [
+                    "numberOfBasicIngestRules",
+                    "numberOfBasicIngestActions",
+                    "dataPerBasicIngestRule",
+                    "basicIngestRulePricing",
+                    "basicIngestActionPricing"
+                  ],
+                  "subTotalRefer": "requestMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestRuleMessageSizeDiv",
+                  "operation": "division",
+                  "outputUnitLabel": "message(s)",
+                  "decimalPlaces": 0,
+                  "operands": [
+                    {
+                      "variableId": "dataPerBasicIngestRule",
+                      "variableLabel": "Average size of each message",
+                      "variableUnitLabel": "KB per message",
+                      "required": true
+                    },
+                    {
+                      "constant": 5,
+                      "constantUnitLabel": "KB message increment"
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "id": "basicIngestRuleMessageRounded",
+                  "outputUnitLabel": "metered message(s)",
+                  "operands": [
+                    {
+                      "variableId": "basicIngestRuleMessageSizeDiv",
+                      "variableLabel": "message(s)",
+                      "variableUnitLabel": "message(s)",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestRuleMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfBasicIngestRules",
+                      "variableLabel": "Average number of rules triggered by a message",
+                      "variableUnitLabel": "rule(s) executed per message",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfMessagesLoRaWAN",
+                      "variableLabel": "Number of messages for a device",
+                      "variableUnitLabel": "message(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfDevices",
+                      "variableLabel": "Number of devices (LoRaWAN)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable rules",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestActionMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfBasicIngestActions",
+                      "variableLabel": "Average number of actions executed per rule",
+                      "variableUnitLabel": "action(s) triggered per rule",
+                      "required": true
+                    },
+                    {
+                      "variableId": "basicIngestRuleMultiple",
+                      "variableLabel": "total billable rules",
+                      "variableUnitLabel": "total billable rules",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable actions",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestRulesMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "basicIngestRuleMultiple",
+                      "variableLabel": "total billable rules",
+                      "variableUnitLabel": "Rules per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "basicIngestRulePricing",
+                      "variableLabel": "Price per rule",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Rules)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestActionsMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "basicIngestActionMultiple",
+                      "variableLabel": "total billable actions",
+                      "variableUnitLabel": "Actions per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "basicIngestActionPricing",
+                      "variableLabel": "Price per action",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Actions)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "basicIngestRulesEngineMonthlyCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "basicIngestRulesMonthlyCost",
+                      "variableLabel": "[currency] (Rules)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "basicIngestActionsMonthlyCost",
+                      "variableLabel": "[currency] (Actions)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "basicIngestRuleMessageSizeDiv",
+                    "basicIngestRuleMessageRounded",
+                    "basicIngestRuleMultiple",
+                    "basicIngestActionMultiple",
+                    "basicIngestRulesMonthlyCost",
+                    "basicIngestActionsMonthlyCost",
+                    "basicIngestRulesEngineMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Rules Engine cost",
+                  "decimalPlaces": 2,
+                  "id": "basicIngestRulesEngineTotalPrice",
+                  "subTotalRefer": "basicIngestRulesEngineMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "title": "Device Location",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "Position 0 to 1000000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "Position 1000000 to 5000000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "iot",
+                        "meteredUnit": "Position 5000000 to Inf"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "id": "averageNumberOfLocationUpdates_lora",
+                "label": "Average number of location updates",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for location per month",
+                "id": "tieredLocationPricing_lora",
+                "mappingDefinitionName": "iot",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Position 0 to 1000000"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 5000000,
+                      "meteredUnit": "Position 1000000 to 5000000"
+                    },
+                    {
+                      "startOfTier": 5000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Position 5000000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "M_location_UnitConv_lora",
+                  "refer": [
+                    "averageNumberOfLocationUpdates_lora",
+                    "tieredLocationPricing_lora"
+                  ],
+                  "subTotalRefer": "basicIngestRulesEngineMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundDown",
+                  "factor": 1,
+                  "operationLabel": "round",
+                  "id": "roundDownlocation_lora",
+                  "outputUnitLabel": "device location update(s)",
+                  "operands": [
+                    {
+                      "variableId": "averageNumberOfLocationUpdates_lora",
+                      "variableLabel": "Average number of location updates",
+                      "variableUnitLabel": "device location update(s)",
+                      "required": true
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "locationsMonthlyCost_lora",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDevices",
+                      "variableLabel": "Number of devices (LoRaWAN)",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "roundDownlocation_lora",
+                      "variableLabel": "device location update(s)",
+                      "variableUnitLabel": "device location update(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "location update(s) per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredLocationMonthlyCost_lora",
+                  "tieredPricingRefer": "tieredLocationPricing_lora",
+                  "tieredPricingReferLabel": "Price for location per month",
+                  "inputRefer": "locationsMonthlyCost_lora",
+                  "inputReferLabel": "location update(s) per month",
+                  "outputUnitLabel": "[currency] (Device Location cost)",
+                  "inputUnitLabel": "device location updates",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "roundDownlocation_lora",
+                    "locationsMonthlyCost_lora",
+                    "tieredLocationMonthlyCost_lora"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Device Location cost",
+                  "decimalPlaces": 2,
+                  "id": "deviceLocationTotalPrice_lora",
+                  "subTotalRefer": "tieredLocationMonthlyCost_lora"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

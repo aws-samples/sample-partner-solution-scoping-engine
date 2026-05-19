@@ -1,0 +1,182 @@
+{
+  "version": "0.0.11",
+  "serviceName": "ProServe Year 4 Price",
+  "serviceCode": "proServeYear4Cost",
+  "type": "AWSService",
+  "subType": "subService",
+  "disableRegionSupport": {
+    "aws": true,
+    "aws-iso": true,
+    "aws-iso-b": true,
+    "aws-us-gov": true
+  },
+  "regions": [
+    "us-east-1",
+    "us-gov-west-1",
+    "us-iso-east-1",
+    "us-iso-west-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "ProServe",
+    "professional",
+    "services"
+  ],
+  "serviceDescription": "AWS Professional Services Year 4 Price",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/professional-services/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [],
+  "costType": [
+    "Year 4"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "AWS Professional Services Year 4 Price",
+      "id": "proServeYear4",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/professional-services/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "ProServe Year 4 Price",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "ProServe Year 4 total pricing for each order will be commensurate with the level of effort specified by the customer.  To determine pricing, AWS would estimate the number of Units necessary to perform the work and multiply that by the current price of one Unit of ProServe.",
+                "id": "proServeY4_Text"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Service year",
+                "id": "proServeY1_Select",
+                "options": [
+                  {
+                    "label": "August 1 2024 to Jul 31 2025 (16,652 [currency]/Unit)",
+                    "id": "16652"
+                  },
+                  {
+                    "label": "August 1 2025 to Jul 31 2026 (17,152 [currency]/Unit)",
+                    "id": "17152"
+                  },
+                  {
+                    "label": "August 1 2026 to Jul 31 2027 (17,667 [currency]/Unit)",
+                    "id": "17667"
+                  },
+                  {
+                    "label": "August 1 2027 to Jul 31 2028 (18,196 [currency]/Unit)",
+                    "id": "18196"
+                  },
+                  {
+                    "label": "August 1 2028 to Jul 31 2029 (18,742 [currency]/Unit)",
+                    "id": "18742"
+                  },
+                  {
+                    "label": "August 1 2029 to Jul 31 2030 (19,304 [currency]/Unit)",
+                    "id": "19304"
+                  },
+                  {
+                    "label": "August 1 2030 to Jul 31 2031 (19,883 [currency]/Unit)",
+                    "id": "19883"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "16652",
+                "description": "Select the service year",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "proServeY4_numberOfUnits",
+                "label": "ProServe units",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "description": "Number of ProServe units per year",
+                "placeholder": "Enter number of units"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected year price",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Service year",
+                  "refer": "proServeY1_Select",
+                  "id": "priceForYearSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "proServeY4_UnitCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "proServeY4_numberOfUnits",
+                      "variableLabel": "ProServe units",
+                      "variableUnitLabel": "ProServe Units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceForYearSelected",
+                      "variableLabel": "selected year price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] ProServe unit costs",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "proServeY4_Text",
+                    "proServeY1_Select",
+                    "proServeY4_numberOfUnits",
+                    "priceForYearSelected",
+                    "proServeY4_UnitCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Year 4",
+                  "label": "ProServe total",
+                  "decimalPlaces": 2,
+                  "id": "proServeY4_DisplayPrice",
+                  "subTotalRefer": "proServeY4_UnitCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "version": "0.0.4",
+  "serviceName": "Lightsail Virtual Servers",
+  "serviceCode": "lightsailVirtualServers",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail-instances-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail-instances-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Virtual Servers",
+      "id": "lightsailVirtualServers",
+      "cards": [
+        {
+          "title": "Virtual Servers",
+          "helpText": "Lightsail offers virtual servers (instances) that are easy to set up and backed by the power and reliability of AWS. You can launch your website, web application, or project in minutes, and manage your instance from the intuitive Lightsail console or API.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price for each virtual server is determined by a combination of operating system, vCPU, memory, storage, and data transfer quota.",
+                "id": "vitrualServersText"
+              },
+              {
+                "label": "Virtual server configuration",
+                "id": "columnFormIPM",
+                "type": "input",
+                "disableCalculation": false,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "lightsail-instances-calc",
+                "calculationId": {
+                  "monthly": "virtualServer_ipmPrice"
+                },
+                "primaryKey": {
+                  "operation": [
+                    "Storage",
+                    "vCPU",
+                    "Memory",
+                    "Data Transfer Quota"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "prioritizedKey": {
+                  "operation": 100
+                },
+                "row": [
+                  {
+                    "label": "Number of servers",
+                    "type": "textInput",
+                    "selectorId": "Number of Instances",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 1000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "Linux",
+                    "exportValueAs": "ops"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "operation",
+                    "withTags": [
+                      "Storage",
+                      "vCPU",
+                      "Memory",
+                      "Data Transfer Quota"
+                    ]
+                  },
+                  {
+                    "label": "Server utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilization",
+                    "description": "",
+                    "displayInConfigSummary": false,
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Hours/Month"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "virtualServer_ipmPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "IPMSupported": true,
+                  "label": "Lightsail virtual server cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "virtualServer_ipmPrice",
+                  "id": "virtualServerCostDisplay"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

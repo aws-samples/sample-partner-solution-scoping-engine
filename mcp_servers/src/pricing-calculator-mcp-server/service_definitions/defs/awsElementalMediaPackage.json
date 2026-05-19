@@ -1,0 +1,900 @@
+{
+  "version": "0.0.24",
+  "serviceName": "AWS Elemental MediaPackage",
+  "serviceCode": "awsElementalMediaPackage",
+  "type": "AWSService",
+  "regions": [
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "us-iso-east-1",
+    "us-isob-east-1"
+  ],
+  "serviceDescription": "AWS Elemental MediaPackage reliably prepares and protects your video for delivery over the Internet. From a single video input, AWS Elemental MediaPackage creates video streams formatted to play on connected TVs, mobile phones, computers, tablets, and game consoles.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/mediapackage/"
+    }
+  },
+  "searchKeywords": [
+    "media",
+    "video processing",
+    "broadcast",
+    "TV",
+    "video streams",
+    "channels"
+  ],
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elementalmediapackage",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmediapackage/[currency]/current/elementalmediapackage.json"
+    },
+    {
+      "deniedPartitions": [
+        "aws-iso"
+      ],
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Elemental MediaPackage",
+      "id": "mediaPackage",
+      "description": "For live channels, you are charged based on the amount of video ingested into the channel (measured in GB) and the amount of content originated and packaged for the channel (measured in GB).",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/mediapackage/"
+        }
+      },
+      "volumeDiscountEligibility": false,
+      "cards": [
+        {
+          "title": "Live packaging service settings",
+          "helpText": "You will be charged for each stream AWS Elemental MediaPackage ingests for your live channels, as it receives video from your live encoder. Ingest charges are based on the size and number of those streams, measured in GB. This means you will pay more if you have more input streams on your channel, or if those streams are higher bitrates.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediapackage/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below do not include data transfer out costs. You will incur additional charges when you serve content from AWS Elemental MediaPackage outside of AWS. If the content output is delivered to a destination over the internet or via a CDN other than Amazon CloudFront, then internet data transfer charges apply. The GB originated amount in the calculations section can be used to estimate data transfer costs in the section below.",
+                "partitions": [
+                  "aws"
+                ],
+                "id": "Live_bodyText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inputs per channel",
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 2
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "empLive_numberOfInputsPerChannel"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Total duration of live streams per month",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total duration of live streams per month (example: 730 hours for one 24/7 linear stream).",
+                "displayInConfigSummary": true,
+                "id": "empLive_durationPerMonth"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Ingest bitrate per input (Mbit per second)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount in Mbit/s",
+                "description": "Ingestion bitrate per input in Mbit/s",
+                "id": "empLive_ingestBitrate"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Number of viewers per hour",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "empLive_numberOfViewers"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average bitrate per viewer (Mbit per second)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter bitrate in Mbit/s",
+                "description": "Bitrate per viewer in Mbit/s",
+                "id": "empLive_bitratePerViewer"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Cache/hit ratio",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter cache/hit ratio as a pecentage",
+                "description": "",
+                "id": "empLive_cacheHitRatio"
+              },
+              {
+                "type": "pricing",
+                "label": "price for live ingest",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmediapackage",
+                "meteredUnit": {
+                  "allRegions": "Ingest"
+                },
+                "id": "empLive_ingestPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for live origination and packaging",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmediapackage",
+                "meteredUnit": {
+                  "allRegions": "Origination and Packaging"
+                },
+                "id": "empLive_orgPackagePrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Live_bodyText",
+                    "empLive_numberOfInputsPerChannel",
+                    "empLive_durationPerMonth",
+                    "empLive_ingestBitrate",
+                    "empLive_numberOfViewers",
+                    "empLive_bitratePerViewer",
+                    "empLive_cacheHitRatio",
+                    "empLive_ingestPrice",
+                    "empLive_orgPackagePrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "empLive_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Ingest bitrate per input (Mbit per second)",
+                      "variableUnitLabel": "Mbit/s",
+                      "required": true,
+                      "variableId": "empLive_ingestBitrate"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "Mbit per Gbit"
+                    }
+                  ],
+                  "outputUnitLabel": "Bitrate per input (Gbit per second)",
+                  "decimalPlaces": 10,
+                  "id": "empLive_bitRateGbps"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Bitrate per input (Gbit per second)",
+                      "variableUnitLabel": "Gbit/s",
+                      "required": true,
+                      "variableId": "empLive_bitRateGbps"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds per minute"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes per hour"
+                    }
+                  ],
+                  "outputUnitLabel": "Bitrate per input (Gbit per hour)",
+                  "decimalPlaces": 4,
+                  "id": "empLive_GbitPerHr"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Bitrate per input (Gbit per hour)",
+                      "variableUnitLabel": "Gbit per hour",
+                      "required": true,
+                      "variableId": "empLive_GbitPerHr"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "bits per byte"
+                    }
+                  ],
+                  "outputUnitLabel": "GB ingested per input (per hour)",
+                  "decimalPlaces": 6,
+                  "id": "empLive_GBPerHr"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB ingested per input (per hour)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empLive_GBPerHr"
+                    },
+                    {
+                      "variableLabel": "Number of inputs per channel",
+                      "variableUnitLabel": "input(s)",
+                      "required": true,
+                      "variableId": "empLive_numberOfInputsPerChannel"
+                    },
+                    {
+                      "variableLabel": "Total duration of live streams per month",
+                      "variableUnitLabel": "hour(s)",
+                      "required": true,
+                      "variableId": "empLive_durationPerMonth"
+                    }
+                  ],
+                  "outputUnitLabel": "GB ingested per month",
+                  "decimalPlaces": 2,
+                  "id": "empLive_GBPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB ingested per month",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empLive_GBPerMonth"
+                    },
+                    {
+                      "variableLabel": "price for live ingest",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "empLive_ingestPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly live ingest charges)",
+                  "decimalPlaces": 2,
+                  "id": "empLive_GBCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Live ingest charges (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (monthly live ingest charges)",
+                  "id": "empLive_summarizeLiveIngestCost",
+                  "refer": "empLive_GBCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Cache/hit ratio",
+                      "variableUnitLabel": "ratio",
+                      "required": true,
+                      "variableId": "empLive_cacheHitRatio"
+                    }
+                  ],
+                  "outputUnitLabel": "Cache/hit rate",
+                  "decimalPlaces": 0,
+                  "id": "empLive_finalCacheHitRate"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average bitrate per viewer (Mbit per second)",
+                      "variableUnitLabel": "Mbit/s",
+                      "required": true,
+                      "variableId": "empLive_bitratePerViewer"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "Mbit per Gbit"
+                    }
+                  ],
+                  "outputUnitLabel": "Bitrate per viewer (Gbit per second)",
+                  "decimalPlaces": 10,
+                  "id": "empLive_bitRatePerViewerGbps"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Bitrate per viewer (Gbit per second)",
+                      "variableUnitLabel": "Gbit/s",
+                      "required": true,
+                      "variableId": "empLive_bitRatePerViewerGbps"
+                    },
+                    {
+                      "variableLabel": "Average Number of viewers per hour",
+                      "variableUnitLabel": "viewers",
+                      "required": true,
+                      "variableId": "empLive_numberOfViewers"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds per minute"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes per hour"
+                    }
+                  ],
+                  "outputUnitLabel": "Total viewer bitrate (Gbit per hour)",
+                  "decimalPlaces": 4,
+                  "id": "empLive_GbitPerHrViewer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Total viewer bitrate (Gbit per hour)",
+                      "variableUnitLabel": "Gbit per hour",
+                      "required": true,
+                      "variableId": "empLive_GbitPerHrViewer"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "bits per byte"
+                    }
+                  ],
+                  "outputUnitLabel": "Total viewer GB delivered per hour",
+                  "decimalPlaces": 4,
+                  "id": "empLive_GBPerHrViewer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total viewer GB delivered per hour",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empLive_GBPerHrViewer"
+                    },
+                    {
+                      "variableLabel": "Total duration of live streams per month",
+                      "variableUnitLabel": "hour(s)",
+                      "required": true,
+                      "variableId": "empLive_durationPerMonth"
+                    },
+                    {
+                      "variableLabel": "Cache/hit rate",
+                      "variableUnitLabel": "cache/hit rate",
+                      "required": true,
+                      "variableId": "empLive_finalCacheHitRate"
+                    }
+                  ],
+                  "outputUnitLabel": "GB originated",
+                  "decimalPlaces": 2,
+                  "id": "empLive_GBOriginated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB originated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empLive_GBOriginated"
+                    },
+                    {
+                      "variableLabel": "price for live origination and packaging",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "empLive_orgPackagePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly origination and packaging charges)",
+                  "decimalPlaces": 2,
+                  "id": "empLive_orgPackageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Live origination and packaging charges (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (monthly origination and packaging charges)",
+                  "id": "empLive_summarizeLiveOrgPackCost",
+                  "refer": "empLive_orgPackageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (monthly live ingest charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "empLive_GBCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly origination and packaging charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "empLive_orgPackageCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "empLive_totalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "empLive_bitRateGbps",
+                    "empLive_GbitPerHr",
+                    "empLive_GBPerHr",
+                    "empLive_GBPerMonth",
+                    "empLive_GBCost",
+                    "empLive_summarizeLiveIngestCost",
+                    "empLive_finalCacheHitRate",
+                    "empLive_bitRatePerViewerGbps",
+                    "empLive_GbitPerHrViewer",
+                    "empLive_GBPerHrViewer",
+                    "empLive_GBOriginated",
+                    "empLive_orgPackageCost",
+                    "empLive_summarizeLiveOrgPackCost",
+                    "empLive_totalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Live ingest, packaging and origination cost",
+                  "decimalPlaces": 2,
+                  "id": "empLive_costDisplay",
+                  "subTotalRefer": "empLive_totalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "VOD packaging service settings",
+          "helpText": "With video on demand (VOD) packaging, you are charged based on the amount of video content originated and packaged from the VOD packaging group (measured in GB). You continue to pay your standard rates for content stored in Amazon S3. MediaPackage can help reduce storage costs, as only a single format of an adaptive bitrate (ABR) set is required, which can be distributed in multiple formats with different content protection (DRM) policies applied.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mediapackage/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below do not include data transfer out costs. You will incur additional charges when you serve content from AWS Elemental MediaPackage outside of AWS. If the content output is delivered to a destination over the internet or via a CDN other than Amazon CloudFront, then internet data transfer charges apply. The GB originated amount in the calculations section can be used to estimate data transfer costs in the section below.",
+                "partitions": [
+                  "aws"
+                ],
+                "id": "Live_bodyText_VOD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Hours of VOD content watched",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "empVOD_hoursVOD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average bitrate (Mbit per second)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter bitrate in Mbit/s",
+                "description": "Bitrate in Mbit/s",
+                "id": "empVOD_avgBitrate"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "VOD cache/hit ratio",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter cache/hit ratio as a pecentage",
+                "description": "",
+                "id": "empVOD_cacheHitRatio"
+              },
+              {
+                "type": "pricing",
+                "label": "price for VOD origination and packaging",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmediapackage",
+                "meteredUnit": {
+                  "allRegions": "VOD Origination and Packaging"
+                },
+                "id": "empVOD_orgPackagePrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Live_bodyText_VOD",
+                    "empVOD_hoursVOD",
+                    "empVOD_avgBitrate",
+                    "empVOD_cacheHitRatio",
+                    "empVOD_orgPackagePrice"
+                  ],
+                  "subTotalRefer": "empLive_totalCost",
+                  "id": "empVOD_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average bitrate (Mbit per second)",
+                      "variableUnitLabel": "Mbit/s",
+                      "required": true,
+                      "variableId": "empVOD_avgBitrate"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "Mbit per Gbit"
+                    }
+                  ],
+                  "outputUnitLabel": "VOD bitrate (Gbit per second)",
+                  "decimalPlaces": 10,
+                  "id": "empVOD_GbitPerSecond"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "VOD bitrate (Gbit per second)",
+                      "variableUnitLabel": "Gbit/s",
+                      "required": true,
+                      "variableId": "empVOD_GbitPerSecond"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds per minute"
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes per hour"
+                    }
+                  ],
+                  "outputUnitLabel": "VOD bitrate (Gbit per hour)",
+                  "decimalPlaces": 4,
+                  "id": "empVOD_GbitPerHr"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "VOD bitrate (Gbit per hour)",
+                      "variableUnitLabel": "Gbit per hour",
+                      "required": true,
+                      "variableId": "empVOD_GbitPerHr"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "bits per byte"
+                    }
+                  ],
+                  "outputUnitLabel": "VOD GB delivered per hour",
+                  "decimalPlaces": 4,
+                  "id": "empVOD_GBPerHr"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "VOD cache/hit ratio",
+                      "variableUnitLabel": "ratio",
+                      "required": true,
+                      "variableId": "empVOD_cacheHitRatio"
+                    }
+                  ],
+                  "outputUnitLabel": "VOD cache/hit rate",
+                  "decimalPlaces": 0,
+                  "id": "empVOD_finalCacheHitRate"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "VOD GB delivered per hour",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empVOD_GBPerHr"
+                    },
+                    {
+                      "variableLabel": "VOD cache/hit rate",
+                      "variableUnitLabel": "cache/hit rate",
+                      "required": true,
+                      "variableId": "empVOD_finalCacheHitRate"
+                    },
+                    {
+                      "variableLabel": "Hours of VOD content watched",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "empVOD_hoursVOD"
+                    }
+                  ],
+                  "outputUnitLabel": "VOD GB originated per month",
+                  "decimalPlaces": 2,
+                  "id": "empVOD_GBPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "VOD GB originated per month",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "empVOD_GBPerMonth"
+                    },
+                    {
+                      "variableLabel": "price for VOD origination and packaging",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "empVOD_orgPackagePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly VOD origination and packaging)",
+                  "decimalPlaces": 2,
+                  "id": "empVOD_GBCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "empVOD_GbitPerSecond",
+                    "empVOD_GbitPerHr",
+                    "empVOD_GBPerHr",
+                    "empVOD_finalCacheHitRate",
+                    "empVOD_GBPerMonth",
+                    "empVOD_GBCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "VOD packaging and origination cost",
+                  "decimalPlaces": 2,
+                  "id": "empVOD_costDisplay",
+                  "subTotalRefer": "empVOD_GBCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Transfer",
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "expandable": true,
+          "defaultExpansion": false,
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "emp_dataTransfer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "emp_dataTransfer"
+                  ],
+                  "id": "emp_dataTransferUnitConvert",
+                  "subTotalRefer": "empVOD_GBCost"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "emp_dataTransferCost",
+                  "refer": "emp_dataTransfer"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "emp_dataTransferPriceDisplay",
+                  "refer": [
+                    "emp_dataTransferCost"
+                  ],
+                  "subTotalRefer": "emp_dataTransferCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "ElementalMediaPackage",
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

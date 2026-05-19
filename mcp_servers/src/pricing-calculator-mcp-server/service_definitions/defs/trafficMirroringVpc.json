@@ -1,0 +1,149 @@
+{
+  "version": "0.0.8",
+  "serviceName": "Traffic Mirroring",
+  "serviceCode": "trafficMirroringVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Traffic Mirroring",
+      "id": "template_TrafficMirror",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/vpc/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of traffic mirroring sessions",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of traffic mirroring sessions on ENIs in your Amazon VPC.",
+                "placeholder": "Enter the number of traffic mirroring sessions on ENIs.",
+                "displayInConfigSummary": true,
+                "id": "numberOfTrafficMirroringSession"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for Traffic Mirroring Source per hour"
+                },
+                "label": "pricing for Traffic Mirroring",
+                "id": "priceOfTrafficMirroring"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of traffic mirroring sessions",
+                      "variableUnitLabel": "sessions",
+                      "required": true,
+                      "variableId": "numberOfTrafficMirroringSession"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "pricing for Traffic Mirroring",
+                      "variableUnitLabel": "[currency] per session-hr",
+                      "required": true,
+                      "variableId": "priceOfTrafficMirroring"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "monthlyTrafficMirroringCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total Traffic Mirroring charge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "numberOfTrafficMirroringSession",
+                    "priceOfTrafficMirroring",
+                    "monthlyTrafficMirroringCost"
+                  ],
+                  "id": "totalTrafficMirroringMonthlyCharge",
+                  "subTotalRefer": "monthlyTrafficMirroringCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

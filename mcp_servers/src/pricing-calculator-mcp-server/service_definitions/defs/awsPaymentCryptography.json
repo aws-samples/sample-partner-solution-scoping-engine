@@ -1,0 +1,307 @@
+{
+  "version": "0.0.13",
+  "serviceName": "AWS Payment Cryptography",
+  "serviceCode": "awsPaymentCryptography",
+  "type": "AWSService",
+  "slug": "paymentcryptography",
+  "regions": [],
+  "searchKeywords": [
+    "AWS Payment Cryptography"
+  ],
+  "serviceDescription": "Create and host payment processing applications using cloud-native payments cryptography and key exchange.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "paymentcryptography",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/paymentcryptography/[currency]/current/paymentcryptography.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/payment-cryptography/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/payment-cryptography/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "AWS Payment Cryptography",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "Number_of_API_requests",
+                "label": "Number of API requests",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 100000,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+31
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_active_keys",
+                "label": "Number of active keys",
+                "displayInConfigSummary": true,
+                "defaultValue": 10,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+25
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for keys",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "paymentcryptography",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Encryption Key"
+                },
+                "id": "price_for_keys"
+              },
+              {
+                "type": "pricing",
+                "id": "price_for_API_calls",
+                "label": "price for API calls",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "paymentcryptography",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 20000000,
+                      "meteredUnit": "API Request 0 to 20000000"
+                    },
+                    {
+                      "startOfTier": 20000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "API Request 20000000 to Inf"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price_for_API_calls_3_tiers",
+                "label": "price for API calls 3 tiers",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "paymentcryptography",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 20000000,
+                      "meteredUnit": "API Request 0 to 20000000"
+                    },
+                    {
+                      "startOfTier": 20000001,
+                      "endOfTier": 220000000,
+                      "meteredUnit": "API Request 20000000 to 220000000"
+                    },
+                    {
+                      "startOfTier": 220000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "API Request 220000000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_API_requests",
+                    "Number_of_active_keys",
+                    "price_for_keys",
+                    "price_for_API_calls",
+                    "price_for_API_calls_3_tiers"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvrh"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "paymentcryptography",
+                      "meteredUnit": "API Request 20000000 to Inf"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "Number_of_API_requests",
+                  "inputReferLabel": "Number of API requests",
+                  "tieredPricingRefer": "price_for_API_calls",
+                  "tieredPricingReferLabel": "price for API calls",
+                  "inputUnitLabel": "API calls",
+                  "decimalPlaces": 2,
+                  "id": "API_Cost",
+                  "outputUnitLabel": "[currency] (API calls)",
+                  "variableName": "2 tier cost"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "paymentcryptography",
+                      "meteredUnit": "API Request 220000000 to Inf"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "Number_of_API_requests",
+                  "inputReferLabel": "Number of API requests",
+                  "tieredPricingRefer": "price_for_API_calls_3_tiers",
+                  "tieredPricingReferLabel": "price for API calls 3 tiers",
+                  "inputUnitLabel": "API calls",
+                  "decimalPlaces": 2,
+                  "id": "API_Cost_3_tiers",
+                  "outputUnitLabel": "[currency] (API calls)",
+                  "variableName": "3 tier cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "2 tier cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "API_Cost"
+                    },
+                    {
+                      "variableLabel": "3 tier cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "API_Cost_3_tiers"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total API calls)",
+                  "decimalPlaces": 2,
+                  "id": "total_API_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of active keys",
+                      "variableUnitLabel": "keys",
+                      "required": true,
+                      "variableId": "Number_of_active_keys"
+                    },
+                    {
+                      "variableLabel": "price for keys",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_keys"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (keys)",
+                  "decimalPlaces": 2,
+                  "id": "keys_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (total API calls)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "total_API_cost"
+                    },
+                    {
+                      "variableLabel": "[currency] (keys)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "keys_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total cost)",
+                  "decimalPlaces": 2,
+                  "id": "tot_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "API_Cost",
+                    "API_Cost_3_tiers",
+                    "total_API_cost",
+                    "keys_cost",
+                    "tot_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Payment Cryptography",
+                  "decimalPlaces": 2,
+                  "id": "total_cost",
+                  "subTotalRefer": "tot_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

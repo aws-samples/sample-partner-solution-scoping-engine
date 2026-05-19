@@ -1,0 +1,380 @@
+{
+  "version": "0.0.20",
+  "serviceName": "SageMaker Training",
+  "serviceCode": "sageMakerTraining",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-training-instances-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-training-instances-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "sagemaker-storage",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-storage.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "SageMaker Training",
+      "description": "",
+      "id": "sagemakerTraining",
+      "helpText": "SageMaker makes it easy to train machine learning (ML) models by providing everything you need to train, tune, and debug models. When you use SageMaker Debugger, the built-in rules are free. For custom rules, you will need to choose an instance and you will be charged for the duration for which the instance is in use.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "SageMaker Training",
+          "helpText": "SageMaker makes it easy to train machine learning (ML) models by providing everything you need to train, tune, and debug models. When you use SageMaker Debugger, the built-in rules are free. For custom rules, you will need to choose an instance and you will be charged for the duration for which the instance is in use.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "trainingJobsPerMonth",
+                "label": "Number of training jobs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of training jobs per month",
+                "description": "Number of training jobs"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "instancesPerJob",
+                "label": "Number of instances per job",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of instances per job",
+                "description": "Number of instances"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "HrsPerInstancePerJob",
+                "label": "Hour(s) per instance per job",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of hours per instance per job",
+                "description": "Number of hours per instance per job"
+              },
+              {
+                "label": "SageMaker training IPM",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "sagemaker-training-instances-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "Compute Type",
+                    "V CPU",
+                    "Memory",
+                    "Clock Speed",
+                    "GPU",
+                    "Network Performance",
+                    "Storage",
+                    "GPU Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Instance name",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "Compute Type",
+                      "V CPU",
+                      "Memory",
+                      "Clock Speed",
+                      "GPU",
+                      "Network Performance",
+                      "Storage",
+                      "GPU Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "trainingJobsPerMonth",
+                      "variableLabel": "Number of training jobs per month",
+                      "variableUnitLabel": "jobs per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "instancesPerJob",
+                      "variableLabel": "Number of instances per job",
+                      "variableUnitLabel": "instances per job",
+                      "required": true
+                    },
+                    {
+                      "variableId": "HrsPerInstancePerJob",
+                      "variableLabel": "Hour(s) per instance per job",
+                      "variableUnitLabel": "hours per job",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "SageMaker Training hours per month",
+                  "decimalPlaces": 6,
+                  "id": "sageMakerTraining_generated_0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "SageMaker Training hours per month",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "sageMakerTraining_generated_0"
+                    },
+                    {
+                      "variableLabel": "SageMaker training IPM",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly On-Demand cost)",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerTraining_generated_1"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "trainingJobsPerMonth",
+                    "instancesPerJob",
+                    "HrsPerInstancePerJob",
+                    "columnFormIPM",
+                    "sageMakerTraining_generated_0",
+                    "sageMakerTraining_generated_1"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for SageMaker Training",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerTraining_generated_2",
+                  "subTotalRefer": "sageMakerTraining_generated_1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "ML Storage",
+          "description": "Optional. Enter the amount of additional storage you would like to add.",
+          "helpText": "SageMaker attaches an ML storage volume to the ML compute instance.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage",
+                "id": "SM_storageType",
+                "options": [
+                  {
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "General Purpose"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "General Purpose",
+                "validations": {
+                  "required": true
+                },
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "SM_storageAmount",
+                "label": "Storage amount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": " "
+              },
+              {
+                "type": "pricing",
+                "label": "price for single AZ storage",
+                "id": "dms_singleAZStoragePrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-storage",
+                "meteredUnit": {
+                  "allRegions": "wkRN1ctjhFL1RqdEdzJnayRBsimG4Fw9dFkMDCYtQWc"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "SM_unitConvert",
+                  "refer": [
+                    "SM_storageType",
+                    "SM_storageAmount",
+                    "dms_singleAZStoragePrice"
+                  ],
+                  "subTotalRefer": "sageMakerTraining_generated_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SM_StorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "SM_storageAmount",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for single AZ storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "dms_singleAZStoragePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "SM_StorageDisplayType",
+                  "refer": [
+                    "SM_StorageCost"
+                  ],
+                  "subTotalRefer": "SM_StorageCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage pricing",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

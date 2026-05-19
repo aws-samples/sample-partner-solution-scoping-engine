@@ -1,0 +1,405 @@
+{
+  "version": "0.0.6",
+  "serviceName": "AgentCore Memory",
+  "serviceCode": "agentCoreMemory",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Agentcore"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrockagentcore",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrockagentcore/[currency]/current/bedrockagentcore.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "memory",
+      "description": "Calculate memory costs",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/bedrock/agentcore/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Memory",
+          "helpText": {
+            "aws": "AgentCore Memory service for managing short-term and long-term memory for AI agents"
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_agentsessions_per_month",
+                "label": "Number of agent sessions per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The total number of agent sessions expected to run per month"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_turns_per_session",
+                "label": "Average number of turns per session (real time)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "description": "Average number of conversational exchanges between a user and an AI agent within a single session"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_session_duration_seconds",
+                "label": "Average Session Duration (seconds)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The average length of each agent session, measured in seconds"
+              },
+              {
+                "type": "pricing",
+                "id": "shortterm_memory_price",
+                "label": "Price for short-term memory",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "TDuSCdPba0uTy3rwbJZyab7htUHBjGxYt9iCaVGCSnU"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "builtin_storage_price",
+                "label": "Price for built-in long-term storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "OSp7Fpp9qgh9DZf0DirFE2BV6cH_2UZA07CA6Dkin9g"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "custom_storage_price",
+                "label": "Price for custom long-term storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "fUlmnVgzH-hlz3FvNQhTYqfZLjuptNoV0mXJ6B4PHjU"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "retrieval_price",
+                "label": "Price for memory retrieval",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "SClys47lHPwnqQw3i_HFUa3lPE0ThcMACUWdLHLcDHE"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Short_term_memory_events",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_turns_per_session",
+                      "variableLabel": "Average number of turns per session (real time)",
+                      "variableUnitLabel": "turns",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Short-term memory events"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Short_term_memory_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Short_term_memory_events",
+                      "variableLabel": "Short-term memory events",
+                      "variableUnitLabel": "events",
+                      "required": true
+                    },
+                    {
+                      "variableId": "shortterm_memory_price",
+                      "variableLabel": "Price for short-term memory",
+                      "variableUnitLabel": "[currency] per event",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Short-term memory cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Built_in_memory_extraction",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Short_term_memory_events",
+                      "variableLabel": "Short-term memory events",
+                      "variableUnitLabel": "events",
+                      "required": true
+                    },
+                    {
+                      "constant": 2,
+                      "constantUnitLabel": "strategies"
+                    },
+                    {
+                      "constant": 0.03,
+                      "constantUnitLabel": "extraction rate (estimated 2 strategies x 3% extraction rate from short term events)"
+                    }
+                  ],
+                  "outputUnitLabel": "Built-in long-term memory extracted"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Custom_memory_extraction",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Short_term_memory_events",
+                      "variableLabel": "Short-term memory events",
+                      "variableUnitLabel": "events",
+                      "required": true
+                    },
+                    {
+                      "constant": 3,
+                      "constantUnitLabel": "strategies"
+                    },
+                    {
+                      "constant": 0.01,
+                      "constantUnitLabel": "extraction rate (estimated 3 strategies x 1% extraction rate)"
+                    }
+                  ],
+                  "outputUnitLabel": "Custom long-term memory extracted"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Built_in_storage_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Built_in_memory_extraction",
+                      "variableLabel": "Built-in long-term memory extracted",
+                      "variableUnitLabel": "events",
+                      "required": true
+                    },
+                    {
+                      "variableId": "builtin_storage_price",
+                      "variableLabel": "Price for built-in long-term storage",
+                      "variableUnitLabel": "[currency] per event",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Built-in long-term storage cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Custom_storage_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Custom_memory_extraction",
+                      "variableLabel": "Custom long-term memory extracted",
+                      "variableUnitLabel": "events",
+                      "required": true
+                    },
+                    {
+                      "variableId": "custom_storage_price",
+                      "variableLabel": "Price for custom long-term storage",
+                      "variableUnitLabel": "[currency] per event",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Custom long-term storage cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Retrieval_rate",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "Average_session_duration_seconds",
+                      "variableLabel": "Average Session Duration (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 120,
+                      "constantUnitLabel": "seconds per retrieval"
+                    }
+                  ],
+                  "outputUnitLabel": "Memory Retrievals per session"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Memory_retrievals",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Retrieval_rate",
+                      "variableLabel": "Memory Retrievals per session",
+                      "variableUnitLabel": "retrievals",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Memory retrievals per month"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Memory_retrieval_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Memory_retrievals",
+                      "variableLabel": "Memory retrievals per month",
+                      "variableUnitLabel": " Memory retrievals",
+                      "required": true
+                    },
+                    {
+                      "variableId": "retrieval_price",
+                      "variableLabel": "Price for memory retrieval",
+                      "variableUnitLabel": "[currency] per memory retrieval",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Long-term Memory retrieval cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Long_term_storage_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "Built_in_storage_cost",
+                      "variableLabel": "Built-in long-term storage cost",
+                      "variableUnitLabel": "[currency] Built-in long term storage",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Custom_storage_cost",
+                      "variableLabel": "Custom long-term storage cost",
+                      "variableUnitLabel": "[currency] Custom long-term storage",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Long-term storage cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "Short_term_memory_cost",
+                      "variableLabel": "Short-term memory cost",
+                      "variableUnitLabel": "[currency] Short-term memory",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Long_term_storage_cost",
+                      "variableLabel": "Long-term storage cost",
+                      "variableUnitLabel": "[currency] Long-term storage",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Memory_retrieval_cost",
+                      "variableLabel": "Long-term Memory retrieval cost",
+                      "variableUnitLabel": "[currency] Long-term Memory retrieval",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Memory Monthly Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Number_of_agentsessions_per_month",
+                    "Average_turns_per_session",
+                    "Average_session_duration_seconds",
+                    "shortterm_memory_price",
+                    "builtin_storage_price",
+                    "custom_storage_price",
+                    "retrieval_price",
+                    "Short_term_memory_events",
+                    "Short_term_memory_cost",
+                    "Built_in_memory_extraction",
+                    "Custom_memory_extraction",
+                    "Built_in_storage_cost",
+                    "Custom_storage_cost",
+                    "Retrieval_rate",
+                    "Memory_retrievals",
+                    "Memory_retrieval_cost",
+                    "Long_term_storage_cost",
+                    "Total_monthly_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Memory Cost",
+                  "decimalPlaces": 2,
+                  "id": "tot_cost_memory",
+                  "subTotalRefer": "Total_monthly_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

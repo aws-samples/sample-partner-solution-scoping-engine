@@ -1,0 +1,608 @@
+{
+  "version": "0.0.31",
+  "serviceName": "Amazon WorkDocs",
+  "serviceCode": "amazonWorkdocs",
+  "type": "AWSService",
+  "slug": "WorkDocs",
+  "regions": [
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-west-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "Amazon WorkDocs is a fully managed, secure content creation, storage, and collaboration service. With Amazon WorkDocs, you can easily create, edit, and share content, and because it’s stored centrally on AWS, access it from anywhere on any device.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/workdocs/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "workdocs",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workdocs/[currency]/current/workdocs.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "WorkDocs",
+      "id": "workDocs",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/workdocs/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": "You can store virtually any type of file on Amazon WorkDocs. Each individual user account on Amazon WorkDocs includes 1 TB of storage capacity by default. Administrators can set storage limits for individual users and also purchase additional storage for users on a pay-as-you-go basis. There is no limit on the amount of additional data and number of documents you can store.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/workdocs/pricing/"
+            }
+          },
+          "bodyText": "The calculations below exclude Free Tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of users",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of users",
+                "id": "numberOfUsers"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per user",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                },
+                "defaultValue": 1024,
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "storagePerUser"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "workdocs",
+                "label": "Pricing for Workdocs additional storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1024,
+                      "meteredUnit": "Additional storage First TB"
+                    },
+                    {
+                      "startOfTier": 1025,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Additional storage Next 49TB"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Additional storage Next 450TB"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": 1024000,
+                      "meteredUnit": "Additional storage Next 500TB"
+                    },
+                    {
+                      "startOfTier": 1024001,
+                      "endOfTier": 5120000,
+                      "meteredUnit": "Additional storage Next 4000TB"
+                    },
+                    {
+                      "startOfTier": 5120001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Additional storage Over 5000 TB"
+                    }
+                  ]
+                },
+                "id": "workDocs_generated_0"
+              },
+              {
+                "type": "pricing",
+                "label": "Workdocs per User fee",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workdocs",
+                "meteredUnit": {
+                  "allRegions": "WorkDocs Paid"
+                },
+                "id": "workDocs_generated_1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "numberOfUsers",
+                    "storagePerUser",
+                    "workDocs_generated_0",
+                    "workDocs_generated_1"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "workDocs_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage per user",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storagePerUser"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "GB (Storage included per user)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Additional storage after 1TB)",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (Additional storage after 1TB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "workDocs_generated_3"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Billable additional storage per user)",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "GB (Billable additional storage per user)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "workDocs_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Total billable additional storage)",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Workdocs additional storage",
+                  "inputReferLabel": "GB (Total billable additional storage)",
+                  "outputUnitLabel": "[currency] (WorkDocs additional storage cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_6",
+                  "inputRefer": "workDocs_generated_5",
+                  "tieredPricingRefer": "workDocs_generated_0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "Workdocs per User fee",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "workDocs_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (WorkDocs users cost)",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (WorkDocs additional storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "workDocs_generated_6"
+                    },
+                    {
+                      "variableLabel": "[currency] (WorkDocs users cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "workDocs_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total WorkDocs cost)",
+                  "id": "workDocs_generated_8"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "workDocs_generated_3",
+                    "workDocs_generated_4",
+                    "workDocs_generated_5",
+                    "workDocs_generated_6",
+                    "workDocs_generated_7",
+                    "workDocs_generated_8"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] (Total WorkDocs cost)",
+                  "decimalPlaces": 2,
+                  "id": "workDocs_generated_9",
+                  "subTotalRefer": "workDocs_generated_8"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "WorkDocs - with Active WorkSpaces",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/workdocs/pricing/"
+        }
+      },
+      "id": "workDocswithWorkSpaces",
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": "Amazon WorkSpaces users receive access to WorkDocs for no additional charge. This includes 50 GB of storage per WorkSpaces user. For a discounted rate as per the pricing page, this can be upgraded to 1 TB of storage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/workdocs/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "workDocsWithActiveWorkSpaces_generated_10"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of users",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of users",
+                "id": "numberOfUsers"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per user",
+                "description": "Above 50GB of Free storage for WorkSpace users",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                },
+                "defaultValue": 974,
+                "placeholder": "Enter amount",
+                "help": "",
+                "id": "storagePerUser"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "workdocs",
+                "label": "Pricing for Workdocs additional storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1024,
+                      "meteredUnit": "Additional storage First TB"
+                    },
+                    {
+                      "startOfTier": 1025,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Additional storage Next 49TB"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Additional storage Next 450TB"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": 1024000,
+                      "meteredUnit": "Additional storage Next 500TB"
+                    },
+                    {
+                      "startOfTier": 1024001,
+                      "endOfTier": 5120000,
+                      "meteredUnit": "Additional storage Next 4000TB"
+                    },
+                    {
+                      "startOfTier": 5120001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Additional storage Over 5000 TB"
+                    }
+                  ]
+                },
+                "id": "workDocsWithActiveWorkSpaces_generated_11"
+              },
+              {
+                "type": "pricing",
+                "label": "Workdocs with workspaces per user fee",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workdocs",
+                "meteredUnit": {
+                  "allRegions": "WorkDocs and Amazon WorkSpaces"
+                },
+                "id": "workDocsWithActiveWorkSpaces_generated_12"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "workDocsWithActiveWorkSpaces_generated_10",
+                    "numberOfUsers",
+                    "storagePerUser",
+                    "workDocsWithActiveWorkSpaces_generated_11",
+                    "workDocsWithActiveWorkSpaces_generated_12"
+                  ],
+                  "id": "workDocsWithActiveWorkSpaces_generated_13",
+                  "subTotalRefer": "workDocs_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "Workdocs with workspaces per user fee",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_12"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (WorkDocs with WorkSpaces bundle cost)",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage per user",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storagePerUser"
+                    },
+                    {
+                      "constant": 974,
+                      "constantUnitLabel": "GB (Storage included per user)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Additional storage after 1TB)",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (Additional storage after 1TB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_15"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "GB",
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_10"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Billable additional storage per user after 1TB)",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "GB (Billable additional storage per user after 1TB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_16"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Total billable additional storage)",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Workdocs additional storage",
+                  "inputReferLabel": "GB (Total billable additional storage)",
+                  "outputUnitLabel": "[currency] (WorkDocs with WorkSpaces additional storage cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_18",
+                  "inputRefer": "workDocsWithActiveWorkSpaces_generated_17",
+                  "tieredPricingRefer": "workDocsWithActiveWorkSpaces_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (WorkDocs with WorkSpaces additional storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_18"
+                    },
+                    {
+                      "variableLabel": "[currency] (WorkDocs with WorkSpaces bundle cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "workDocsWithActiveWorkSpaces_generated_14"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total WorkDocs with Active WorkSpaces cost)",
+                  "id": "workDocsWithActiveWorkSpaces_generated_19"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "workDocsWithActiveWorkSpaces_generated_14",
+                    "workDocsWithActiveWorkSpaces_generated_15",
+                    "workDocsWithActiveWorkSpaces_generated_16",
+                    "workDocsWithActiveWorkSpaces_generated_17",
+                    "workDocsWithActiveWorkSpaces_generated_18",
+                    "workDocsWithActiveWorkSpaces_generated_19"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total WorkDocs with Active WorkSpaces cost",
+                  "decimalPlaces": 2,
+                  "id": "workDocsWithActiveWorkSpaces_generated_20",
+                  "subTotalRefer": "workDocsWithActiveWorkSpaces_generated_19"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

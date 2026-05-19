@@ -1,0 +1,3545 @@
+{
+  "version": "0.0.36",
+  "serviceName": "Amazon QuickSight Readers, Authors, SPICE",
+  "serviceCode": "amazonQuickSightReadersAuthorsSpice",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "searchKeywords": [
+    "QuickSight",
+    "Serverless",
+    "Embedding",
+    "BI",
+    "Business intelligence",
+    "Data visualization",
+    "Insights",
+    "Embedded Analytics"
+  ],
+  "regions": [],
+  "serviceDescription": "Amazon QuickSight is a fast, cloud-powered business intelligence service that makes it easy to deliver insights to everyone in your organization. QuickSight dashboards can be embedded in applications, require no infrastructure setup or management, and can automatically scale to tens of thousands of users.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/quicksight/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "quicksight",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/quicksight/[currency]/current/quicksight.json"
+    }
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Reader Per User Pricing",
+      "description": "Per-user pricing is ideal for Business Intelligence (BI) applications and embedded analytics deployments with high individual session activity, and where end-users can be individually provisioned and managed.",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "pFdqy7ZyDHRnzZoNGEKtiZOykqZ4VK9qP7RNNUbtu-A"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "gTW3i2vNM59sbhcRULanvk27gYbnU-Y2B56O9WxJb2Y"
+                }
+              }
+            ]
+          },
+          "title": "Reader Pricing",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/quicksight/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "quicksight",
+                    "meteredUnit": "pFdqy7ZyDHRnzZoNGEKtiZOykqZ4VK9qP7RNNUbtu-A"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfReaders",
+                "label": "Number of Readers",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "quicksight",
+                    "meteredUnit": "gTW3i2vNM59sbhcRULanvk27gYbnU-Y2B56O9WxJb2Y"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfReaderPros",
+                "label": "Number of Reader Pros",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "total-usage-percentage"
+                        },
+                        1
+                      ]
+                    },
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "total-usage-percentage"
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                "header": "Usage percent not equal to 100%",
+                "label": "Usage alert",
+                "content": "You cannot have a total usage percentage that does not equal 100%",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "usage_warning"
+              },
+              {
+                "type": "pricing",
+                "id": "paidReaderSession",
+                "label": "Price per paid reader session",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "pFdqy7ZyDHRnzZoNGEKtiZOykqZ4VK9qP7RNNUbtu-A"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "proReaderSession",
+                "label": "Price per pro reader session",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "gTW3i2vNM59sbhcRULanvk27gYbnU-Y2B56O9WxJb2Y"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfReaders",
+                    "numberOfReaderPros",
+                    "usage_warning",
+                    "paidReaderSession",
+                    "proReaderSession"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "readerPerUser_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "costReaders",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaders",
+                      "variableLabel": "Number of Readers",
+                      "variableUnitLabel": "Reader(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "paidReaderSession",
+                      "variableLabel": "Price per paid reader session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Readers",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Reader cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for Readers",
+                  "id": "summarizeReaderCost",
+                  "refer": "costReaders"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "costReaderPro",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaderPros",
+                      "variableLabel": "Number of Reader Pros",
+                      "variableUnitLabel": "Reader Pro(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "proReaderSession",
+                      "variableLabel": "Price per pro reader session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Reader Pros",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Reader pro cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] Reader Pros",
+                  "id": "summarizeReaderProCost",
+                  "refer": "costReaderPro"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyReaderCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "costReaders",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "costReaderPro",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "costReaders",
+                    "summarizeReaderCost",
+                    "costReaderPro",
+                    "summarizeReaderProCost",
+                    "monthlyReaderCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of Readers",
+                  "decimalPlaces": 2,
+                  "id": "monthlyReaderCostDisplay",
+                  "subTotalRefer": "monthlyReaderCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "sy5y8jyideWmq8NfsLKCEAEyZ7axQplmh5kXF6URgHc"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "hYUbVCrZ4_v0IbTfCkMjQMVWlly8RYVaPgd1dms89GI"
+                }
+              }
+            ]
+          },
+          "title": "Author Pricing",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfAuthors",
+                "label": "Number of Authors",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Subscription breakdown",
+                "id": "subscription-breakdown"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of Authors with an annual subscription",
+                "defaultValue": 100,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentAnnualAuthors"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of Authors paying month to month",
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentMonthlyAuthors"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "total-author-percentage"
+                        },
+                        1
+                      ]
+                    },
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "total-author-percentage"
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                "header": "Author subscription percent not equal to 100%",
+                "label": "Author alert",
+                "content": "You cannot have a total author subscription percentage not equal to 100%",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "author-warning"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "quicksight",
+                    "meteredUnit": "u8TevJXrKYu8N2aQZp36SeenZ27ZLRTU4FNXulFc5Fw"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfAuthorPros",
+                "label": "Number of Author Pros",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "annualUserSubscription",
+                "label": "subscription price per user per month",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "sy5y8jyideWmq8NfsLKCEAEyZ7axQplmh5kXF6URgHc"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "monthToMonthUserSubscription",
+                "label": "subscription price per user per month (month to month)",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "hYUbVCrZ4_v0IbTfCkMjQMVWlly8RYVaPgd1dms89GI"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceAuthorPro",
+                "label": "price author pro",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "u8TevJXrKYu8N2aQZp36SeenZ27ZLRTU4FNXulFc5Fw"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfAuthors",
+                    "subscription-breakdown",
+                    "percentAnnualAuthors",
+                    "percentMonthlyAuthors",
+                    "author-warning",
+                    "numberOfAuthorPros",
+                    "annualUserSubscription",
+                    "monthToMonthUserSubscription",
+                    "priceAuthorPro"
+                  ],
+                  "subTotalRefer": "monthlyReaderCost",
+                  "id": "author_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percent of Authors with an annual subscription",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentAnnualAuthors"
+                    },
+                    {
+                      "variableLabel": "Percent of Authors paying month to month",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentMonthlyAuthors"
+                    }
+                  ],
+                  "outputUnitLabel": "total author percentage",
+                  "decimalPlaces": 2,
+                  "id": "total-author-percentage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualAuthorsNumberUnrounded",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Percent of Authors with an annual subscription",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentAnnualAuthors"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) with annual subscription(s) (unrounded)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Author(s) with annual subscription(s) (unrounded)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": false,
+                      "variableId": "annualAuthorsNumberUnrounded"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) with annual subscription(s)",
+                  "id": "annualAuthorsNumber"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualAuthorPriceTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "annualAuthorsNumber",
+                      "variableLabel": "Author(s) with annual subscription(s)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "annualUserSubscription",
+                      "variableLabel": "subscription price per user per month",
+                      "variableUnitLabel": "[currency] per user per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author cost for author(s) with annual subscription(s) (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                  "id": "summarizeAuthorCostWithSubscription",
+                  "refer": "annualAuthorPriceTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyAuthorsNumberUnrounded",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentMonthlyAuthors",
+                      "variableLabel": "Percent of Authors paying month to month",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) paying month to month (unrounded)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "Author(s)",
+                      "variableLabel": "Author(s) paying month to month (unrounded)",
+                      "required": false,
+                      "variableId": "monthlyAuthorsNumberUnrounded"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) paying month to month",
+                  "id": "monthlyAuthorsNumber"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyAuthorPriceTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "monthlyAuthorsNumber",
+                      "variableLabel": "Author(s) paying month to month",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "monthToMonthUserSubscription",
+                      "variableLabel": "subscription price per user per month (month to month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for author(s) paying month to month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author cost for author(s) paying month to month (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for author(s) paying month to month)",
+                  "id": "summarizeAuthorCostWithMonthToMonth",
+                  "refer": "monthlyAuthorPriceTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "costAuthorPro",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthorPros",
+                      "variableLabel": "Number of Author Pros",
+                      "variableUnitLabel": "Author Pro(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceAuthorPro",
+                      "variableLabel": "price author pro",
+                      "variableUnitLabel": "[currency] per Author Pro per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for Author Pros)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author Pro cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for Author Pros)",
+                  "id": "summarizeAuthorCostPro",
+                  "refer": "costAuthorPro"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "authorsMonthlyPrice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "annualAuthorPriceTotal",
+                      "variableLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "monthlyAuthorPriceTotal",
+                      "variableLabel": "[currency] (cost per month for author(s) paying month to month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "costAuthorPro",
+                      "variableLabel": "[currency] (cost per month for Author Pros)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total cost of Author(s))",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "total-author-percentage",
+                    "annualAuthorsNumberUnrounded",
+                    "annualAuthorsNumber",
+                    "annualAuthorPriceTotal",
+                    "summarizeAuthorCostWithSubscription",
+                    "monthlyAuthorsNumberUnrounded",
+                    "monthlyAuthorsNumber",
+                    "monthlyAuthorPriceTotal",
+                    "summarizeAuthorCostWithMonthToMonth",
+                    "costAuthorPro",
+                    "summarizeAuthorCostPro",
+                    "authorsMonthlyPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of Authors",
+                  "decimalPlaces": 2,
+                  "id": "authorsTotalPrice",
+                  "subTotalRefer": "authorsMonthlyPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "HxBjm_i8ILwJkiPknGWzK7_gGVbB4k1gq_odwuRTRIA"
+                }
+              },
+              {
+                "or": [
+                  {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfReaderPros"
+                      },
+                      0
+                    ]
+                  },
+                  {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfAuthorPros"
+                      },
+                      0
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "title": "Q Enablement Fee",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/quicksight/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Per Account Q enablement Fee",
+                "label": "Per Account Q enablement Fee text",
+                "content": "A per month per account Amazon Q enablement fee applies for accounts with at least one Pro user or with at least one Amazon Q Topic",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "qFeeText"
+              },
+              {
+                "type": "pricing",
+                "id": "qEnablementPrice",
+                "label": "Price for Q enablement",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "HxBjm_i8ILwJkiPknGWzK7_gGVbB4k1gq_odwuRTRIA"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "qFeeText",
+                    "qEnablementPrice"
+                  ],
+                  "subTotalRefer": "authorsMonthlyPrice",
+                  "id": "q_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Q enablement fee (monthly)",
+                  "displayInCalculationString": false,
+                  "useCurrency": true,
+                  "referLabel": "Price for Q enablement",
+                  "id": "summarizeQFee",
+                  "refer": "qEnablementPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "summarizeQFee"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Per Account Q enablement Fee",
+                  "decimalPlaces": 2,
+                  "id": "monthlyQCostDisplay",
+                  "subTotalRefer": "summarizeQFee"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "SPICE Capacity",
+          "cardType": "spiceCapacity",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "spiceGBs",
+                "label": "SPICE capacity in gigabytes (GB)",
+                "displayInConfigSummary": true,
+                "defaultValue": 10,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 10,
+                  "maxValue": 1000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceEnterpriseSPICE",
+                "label": "price per GB for enterprise SPICE capacity",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "XnT30EmRG58ySq5UK6BIYLyPvqeG26_KCJ04aNwJFcg"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAuthorsForSpice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "numberOfAuthorPros",
+                      "variableLabel": "Number of Author Pros",
+                      "variableUnitLabel": "Author Pro(s)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total Author(s)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "freeSPICE",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalAuthorsForSpice",
+                      "variableLabel": "total Author(s)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "constant": 10,
+                      "constantUnitLabel": "GB (Free SPICE Capacity per Author)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Free SPICE)",
+                  "decimalPlaces": 3
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalSPICECost",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "spiceGBs",
+                      "variableLabel": "SPICE capacity in gigabytes (GB)",
+                      "variableUnitLabel": "SPICE GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "freeSPICE",
+                      "variableLabel": "GB (Free SPICE)",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Additional SPICE)",
+                  "minValue": 0,
+                  "decimalPlaces": 3
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "spiceMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "additionalSPICECost",
+                      "variableLabel": "GB (Additional SPICE)",
+                      "variableUnitLabel": "GB (Addtional SPICE)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "priceEnterpriseSPICE",
+                      "variableLabel": "price per GB for enterprise SPICE capacity",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "spiceGBs",
+                    "priceEnterpriseSPICE",
+                    "totalAuthorsForSpice",
+                    "freeSPICE",
+                    "additionalSPICECost",
+                    "spiceMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of SPICE capacity",
+                  "decimalPlaces": 2,
+                  "id": "spiceTotalPrice",
+                  "subTotalRefer": "spiceMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "userPricing"
+    },
+    {
+      "title": "Reader Session Capacity Pricing",
+      "description": "Capacity pricing is ideal for embedded applications and Business Intelligence (BI) deployments at large scale, where average session consumption per user is low (<10 sessions/month) but aggregate session usage across users is high. It is required for: 1) Public sharing of dashboards on websites where individual end-users cannot be provisioned and managed, 2) Programmatic access and refresh of QuickSight dashboards on kiosk screens, 3) Whitelabeled QuickSight deployment in embedded applications (requires annual plan).",
+      "cards": [
+        {
+          "title": "Reader Pricing",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/quicksight/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfReaders",
+                "label": "Number of Readers",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Usage breakdown",
+                "id": "usage-breakdown"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of active readers (twice a day)",
+                "defaultValue": 5,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentActiveReaders"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of frequent readers (twice a week)",
+                "defaultValue": 50,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentFrequentReaders"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of occasional readers (twice a month)",
+                "defaultValue": 25,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentOccasionalReaders"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of inactive readers (less than monthly)",
+                "defaultValue": 20,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentInactiveReaders"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "total-usage-percentage"
+                        },
+                        1
+                      ]
+                    },
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "total-usage-percentage"
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                "header": "Usage percent not equal to 100%",
+                "label": "Usage alert",
+                "content": "You cannot have a total usage percentage that does not equal 100%",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "usage_warning"
+              },
+              {
+                "type": "pricing",
+                "id": "priceStarterPackOveragePerSession",
+                "label": "Price per overage sessions (500)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Reader CapacityPricing 500 Sessions Overage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceStarterPerMonth",
+                "label": "Price per month for starter pack",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Monthly Reader Monthly 500 Sessions Pack per Month"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceFiftyPackOveragePerSession",
+                "label": "Price per overage session (50k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Annual Reader CapacityPricing 50K Sessions Overage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceFiftyPackPerSession",
+                "label": "Price per session (50k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Annual Reader CapacityPricing 50K Sessions Usage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price200KOveragePerSession",
+                "label": "Price per overage session (200k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 200KSessions Usage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price200KPerSession",
+                "label": "Price per session (200k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 200KSessions Usage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price400KOveragePerSession",
+                "label": "Price per overage session (400k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 400KSessions Overage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price400KPerSession",
+                "label": "Price per session (400k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 400KSessions Usage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price800KPerSession",
+                "label": "Price per session (800k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 800KSessions Usage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price800KOveragePerSession",
+                "label": "Price per overage session (800k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 800KSessions Overage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price1600KPackOveragePerSession",
+                "label": "Price per overage session (1600k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 1600KSessions Overage per Sessions"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "price1600KPackPerSession",
+                "label": "Price per session (1600k pack)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Free Reader CapacityPricing 1600KSessions Usage per Sessions"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfReaders",
+                    "usage-breakdown",
+                    "percentActiveReaders",
+                    "percentFrequentReaders",
+                    "percentOccasionalReaders",
+                    "percentInactiveReaders",
+                    "usage_warning",
+                    "priceStarterPackOveragePerSession",
+                    "priceStarterPerMonth",
+                    "priceFiftyPackOveragePerSession",
+                    "priceFiftyPackPerSession",
+                    "price200KOveragePerSession",
+                    "price200KPerSession",
+                    "price400KOveragePerSession",
+                    "price400KPerSession",
+                    "price800KPerSession",
+                    "price800KOveragePerSession",
+                    "price1600KPackOveragePerSession",
+                    "price1600KPackPerSession"
+                  ],
+                  "subTotalRefer": "spiceMonthlyCost",
+                  "id": "readerSessionCap_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percent of active readers (twice a day)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentActiveReaders"
+                    },
+                    {
+                      "variableLabel": "Percent of frequent readers (twice a week)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentFrequentReaders"
+                    },
+                    {
+                      "variableLabel": "Percent of occasional readers (twice a month)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentOccasionalReaders"
+                    },
+                    {
+                      "variableLabel": "Percent of inactive readers (less than monthly)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentInactiveReaders"
+                    }
+                  ],
+                  "outputUnitLabel": "total usage percentage",
+                  "decimalPlaces": 2,
+                  "id": "total-usage-percentage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberActiveReaders",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaders",
+                      "variableLabel": "Number of Readers",
+                      "variableUnitLabel": "Reader(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentActiveReaders",
+                      "variableLabel": "Percent of active readers (twice a day)",
+                      "variableUnitLabel": "",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "Active Reader(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "required": false,
+                      "variableLabel": "Active Reader(s)",
+                      "variableId": "numberActiveReaders"
+                    }
+                  ],
+                  "outputUnitLabel": "Active Readers",
+                  "id": "numberActiveReadersRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberFrequentReaders",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaders",
+                      "variableLabel": "Number of Readers",
+                      "variableUnitLabel": "Reader(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentFrequentReaders",
+                      "variableLabel": "Percent of frequent readers (twice a week)",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Frequent Reader(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "required": false,
+                      "variableLabel": "Frequent Reader(s)",
+                      "variableId": "numberFrequentReaders"
+                    }
+                  ],
+                  "outputUnitLabel": "Frequent Readers",
+                  "id": "numberFrequentReadersRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberOccasionalReaders",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaders",
+                      "variableLabel": "Number of Readers",
+                      "variableUnitLabel": "Reader(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentOccasionalReaders",
+                      "variableLabel": "Percent of occasional readers (twice a month)",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Occasional Reader(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "required": false,
+                      "variableLabel": "Occasional Reader(s)",
+                      "variableId": "numberOccasionalReaders"
+                    }
+                  ],
+                  "outputUnitLabel": "Occasional Readers",
+                  "id": "numberOccasionalReadersRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberInactiveReaders",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfReaders",
+                      "variableLabel": "Number of Readers",
+                      "variableUnitLabel": "Reader(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentInactiveReaders",
+                      "variableLabel": "Percent of inactive readers (less than monthly)",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Inactive Reader(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "required": false,
+                      "variableLabel": "Inactive Reader(s)",
+                      "variableId": "numberInactiveReaders"
+                    }
+                  ],
+                  "outputUnitLabel": "Inactive Readers",
+                  "id": "numberInactiveReadersRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberActiveSessions",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberActiveReadersRounded",
+                      "variableLabel": "Active Readers",
+                      "variableUnitLabel": "Active Readers",
+                      "required": true
+                    },
+                    {
+                      "constant": 40,
+                      "constantUnitLabel": "Sessions per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Active sessions per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberFrequentSessions",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberFrequentReadersRounded",
+                      "variableLabel": "Frequent Readers",
+                      "variableUnitLabel": "Frequent Readers",
+                      "required": true
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "Sessions per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Frequent sessions per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberOccasionalSessions",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberOccasionalReadersRounded",
+                      "variableLabel": "Occasional Readers",
+                      "variableUnitLabel": "Occasional Readers",
+                      "required": true
+                    },
+                    {
+                      "constant": 2,
+                      "constantUnitLabel": "Sessions per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Occasional sessions per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberInactiveSessions",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberInactiveReadersRounded",
+                      "variableLabel": "Inactive Readers",
+                      "variableUnitLabel": "Readers",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "Sessions per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Inactive sessions per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalMonthlySessions",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "numberActiveSessions",
+                      "variableLabel": "Active sessions per month",
+                      "variableUnitLabel": "Active Reader Sessions",
+                      "required": false
+                    },
+                    {
+                      "variableId": "numberFrequentSessions",
+                      "variableLabel": "Frequent sessions per month",
+                      "variableUnitLabel": "Frequent Reader Sessions",
+                      "required": false
+                    },
+                    {
+                      "variableId": "numberOccasionalSessions",
+                      "variableLabel": "Occasional sessions per month",
+                      "variableUnitLabel": "Occasional Reader Sessions",
+                      "required": false
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "Inactive Reader Sessions"
+                    }
+                  ],
+                  "outputUnitLabel": "Sessions per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAnnualSessions",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalMonthlySessions",
+                      "variableLabel": "Sessions per month",
+                      "variableUnitLabel": "Sessions per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "Months"
+                    }
+                  ],
+                  "outputUnitLabel": "Sessions per year",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Sessions (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Sessions per year",
+                  "id": "summarizeSessions",
+                  "refer": "totalAnnualSessions"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageMonthlyStarterPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalMonthlySessions",
+                      "variableLabel": "Sessions per month",
+                      "variableUnitLabel": "Sessions per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 500,
+                      "constantUnitLabel": "Sessions per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per month (for the Monthly Starter Pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageMonthlyStarterPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageMonthlyStarterPack",
+                      "variableLabel": "Overage sessions per month (for the Monthly Starter Pack)",
+                      "variableUnitLabel": "Overage sessions per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceStarterPackOveragePerSession",
+                      "variableLabel": "Price per overage sessions (500)",
+                      "variableUnitLabel": "[currency] (per overage session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for monthly starter pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyStarterPackPrice",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "priceStarterPerMonth",
+                      "variableLabel": "Price per month for starter pack",
+                      "variableUnitLabel": "[currency] (monthly commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageMonthlyStarterPackCost",
+                      "variableLabel": "[currency] (overage for monthly starter pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly starter pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualStarterPackPrice",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "monthlyStarterPackPrice",
+                      "variableLabel": "[currency] (monthly starter pack)",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "months"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (per year for monthly starter pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Starter pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (per year for monthly starter pack)",
+                  "id": "summarizeStarterPackCost",
+                  "refer": "annualStarterPackPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageFiftyPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalAnnualSessions",
+                      "variableLabel": "Sessions per year",
+                      "variableUnitLabel": "Sessions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 50000,
+                      "constantUnitLabel": "Sessions per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per year (for the 50,000 session pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageFiftyPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageFiftyPack",
+                      "variableLabel": "Overage sessions per year (for the 50,000 session pack)",
+                      "variableUnitLabel": "Overage sessions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceFiftyPackOveragePerSession",
+                      "variableLabel": "Price per overage session (50k pack)",
+                      "variableUnitLabel": "[currency] (per overage session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 50,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageFiftyPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "constant": 50000,
+                      "constantUnitLabel": "Sessions per year"
+                    },
+                    {
+                      "variableId": "priceFiftyPackPerSession",
+                      "variableLabel": "Price per session (50k pack)",
+                      "variableUnitLabel": "[currency] (per session)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 50,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fiftyPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageFiftyPackCost",
+                      "variableLabel": "[currency] (annual commitment for 50,000 session pack)",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageFiftyPackCost",
+                      "variableLabel": "[currency] (overage for 50,000 session pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (50,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "50,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (50,000 session pack)",
+                  "id": "summarizeFiftyPackCost",
+                  "refer": "fiftyPackCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageTwoHunPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalAnnualSessions",
+                      "variableLabel": "Sessions per year",
+                      "variableUnitLabel": "Sessions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 200000,
+                      "constantUnitLabel": "Sessions per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per year (for the 200,000 session pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageTwoHunPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageTwoHunPack",
+                      "variableLabel": "Overage sessions per year (for the 200,000 session pack)",
+                      "variableUnitLabel": "Overage sessions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price200KOveragePerSession",
+                      "variableLabel": "Price per overage session (200k pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 200,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageTwoHunPackCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 200000,
+                      "constantUnitLabel": "Sessions per year"
+                    },
+                    {
+                      "variableId": "price200KPerSession",
+                      "variableLabel": "Price per session (200k pack)",
+                      "variableUnitLabel": "[currency] (per session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 200,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "twoHunPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageTwoHunPackCost",
+                      "variableLabel": "[currency] (annual commitment for 200,000 session pack)",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageTwoHunPackCost",
+                      "variableLabel": "[currency] (overage for 200,000 session pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (200,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "200,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (200,000 session pack)",
+                  "id": "summarizeTwoHunPackCost",
+                  "refer": "twoHunPackCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageFourHunPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalAnnualSessions",
+                      "variableLabel": "Sessions per year",
+                      "variableUnitLabel": "Sessions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 400000,
+                      "constantUnitLabel": "Sessions per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per year (for the 400,000 session pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageFourHunPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageFourHunPack",
+                      "variableLabel": "Overage sessions per year (for the 400,000 session pack)",
+                      "variableUnitLabel": "Overage sessions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price400KOveragePerSession",
+                      "variableLabel": "Price per overage session (400k pack)",
+                      "variableUnitLabel": "[currency] (per overage session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 400,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageFourHunPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "constant": 400000,
+                      "constantUnitLabel": "Sessions per year"
+                    },
+                    {
+                      "variableId": "price400KPerSession",
+                      "variableLabel": "Price per session (400k pack)",
+                      "variableUnitLabel": "[currency] (per session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 400,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fourHunPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageFourHunPackCost",
+                      "variableLabel": "[currency] (annual commitment for 400,000 session pack)",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageFourHunPackCost",
+                      "variableLabel": "[currency] (overage for 400,000 session pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (400,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "400,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (400,000 session pack)",
+                  "id": "summarizeFourHunPackCost",
+                  "refer": "fourHunPackCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageEightHunPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalAnnualSessions",
+                      "variableLabel": "Sessions per year",
+                      "variableUnitLabel": "Sessions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 800000,
+                      "constantUnitLabel": "Sessions per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per year (for the 800,000 session pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageEightHunPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageEightHunPack",
+                      "variableLabel": "Overage sessions per year (for the 800,000 session pack)",
+                      "variableUnitLabel": "Overage sessions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price800KOveragePerSession",
+                      "variableLabel": "Price per overage session (800k pack)",
+                      "variableUnitLabel": "[currency] (per overage session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 800,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageEightHunPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "constant": 800000,
+                      "constantUnitLabel": "Sessions per year"
+                    },
+                    {
+                      "variableId": "price800KPerSession",
+                      "variableLabel": "Price per session (800k pack)",
+                      "variableUnitLabel": "[currency] (per session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 800,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "eightHunPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageEightHunPackCost",
+                      "variableLabel": "[currency] (annual commitment for 800,000 session pack)",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageEightHunPackCost",
+                      "variableLabel": "[currency] (overage for 800,000 session pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (800,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "800,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (800,000 session pack)",
+                  "id": "summarizeEightHunPackCost",
+                  "refer": "eightHunPackCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageHighestPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "totalAnnualSessions",
+                      "variableLabel": "Sessions per year",
+                      "variableUnitLabel": "Sessions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 1600000,
+                      "constantUnitLabel": "Sessions per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage sessions per year (for the 1,600,000 session pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageHighestPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageHighestPack",
+                      "variableLabel": "Overage sessions per year (for the 1,600,000 session pack)",
+                      "variableUnitLabel": "Overage sessions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price1600KPackOveragePerSession",
+                      "variableLabel": "Price per overage session (1600k pack)",
+                      "variableUnitLabel": "[currency] (per overage session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 1,600,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageHighestPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "constant": 1600000,
+                      "constantUnitLabel": "Sessions per year"
+                    },
+                    {
+                      "variableId": "price1600KPackPerSession",
+                      "variableLabel": "Price per session (1600k pack)",
+                      "variableUnitLabel": "[currency] (per session)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 1,600,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "highestPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageHighestPackCost",
+                      "variableLabel": "[currency] (annual commitment for 1,600,000 session pack)",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageHighestPackCost",
+                      "variableLabel": "[currency] (overage for 1,600,000 session pack)",
+                      "variableUnitLabel": "[currency] (overage session cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (1,600,000 session pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "1,600,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (1,600,000 session pack)",
+                  "id": "summarizeHighestHunPackCost",
+                  "refer": "highestPackCost"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfReaders"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "id": "minimumPackPrice",
+                  "outputUnitLabel": "[currency] (Lowest session pack cost)",
+                  "decimalPlaces": 2,
+                  "operands": [
+                    {
+                      "variableId": "annualStarterPackPrice",
+                      "variableLabel": "[currency] (per year for monthly starter pack)",
+                      "variableUnitLabel": "[currency] (monthly starter pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "fiftyPackCost",
+                      "variableLabel": "[currency] (50,000 session pack)",
+                      "variableUnitLabel": "[currency] (50,000 session pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "twoHunPackCost",
+                      "variableLabel": "[currency] (200,000 session pack)",
+                      "variableUnitLabel": "[currency] (200,000 session pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "fourHunPackCost",
+                      "variableLabel": "[currency] (400,000 session pack)",
+                      "variableUnitLabel": "[currency] (400,000 session pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "eightHunPackCost",
+                      "variableLabel": "[currency] (800,000 session pack)",
+                      "variableUnitLabel": "[currency] (800,000 session pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "highestPackCost",
+                      "variableLabel": "[currency] (1,600,000 session pack)",
+                      "variableUnitLabel": "[currency] (1,600,000 session pack)",
+                      "required": false
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyMinPackPrice",
+                  "operation": "division",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "minimumPackPrice",
+                      "variableLabel": "[currency] (Lowest session pack cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "Months"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "total-usage-percentage",
+                    "numberActiveReaders",
+                    "numberActiveReadersRounded",
+                    "numberFrequentReaders",
+                    "numberFrequentReadersRounded",
+                    "numberOccasionalReaders",
+                    "numberOccasionalReadersRounded",
+                    "numberInactiveReaders",
+                    "numberInactiveReadersRounded",
+                    "numberActiveSessions",
+                    "numberFrequentSessions",
+                    "numberOccasionalSessions",
+                    "numberInactiveSessions",
+                    "totalMonthlySessions",
+                    "totalAnnualSessions",
+                    "summarizeSessions",
+                    "overageMonthlyStarterPack",
+                    "overageMonthlyStarterPackCost",
+                    "monthlyStarterPackPrice",
+                    "annualStarterPackPrice",
+                    "summarizeStarterPackCost",
+                    "overageFiftyPack",
+                    "overageFiftyPackCost",
+                    "usageFiftyPackCost",
+                    "fiftyPackCost",
+                    "summarizeFiftyPackCost",
+                    "overageTwoHunPack",
+                    "overageTwoHunPackCost",
+                    "usageTwoHunPackCost",
+                    "twoHunPackCost",
+                    "summarizeTwoHunPackCost",
+                    "overageFourHunPack",
+                    "overageFourHunPackCost",
+                    "usageFourHunPackCost",
+                    "fourHunPackCost",
+                    "summarizeFourHunPackCost",
+                    "overageEightHunPack",
+                    "overageEightHunPackCost",
+                    "usageEightHunPackCost",
+                    "eightHunPackCost",
+                    "summarizeEightHunPackCost",
+                    "overageHighestPack",
+                    "overageHighestPackCost",
+                    "usageHighestPackCost",
+                    "highestPackCost",
+                    "summarizeHighestHunPackCost",
+                    "minimumPackPrice",
+                    "monthlyMinPackPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of readers",
+                  "decimalPlaces": 2,
+                  "id": "monthlyMinPackPriceDisplay",
+                  "subTotalRefer": "monthlyMinPackPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "sy5y8jyideWmq8NfsLKCEAEyZ7axQplmh5kXF6URgHc"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "hYUbVCrZ4_v0IbTfCkMjQMVWlly8RYVaPgd1dms89GI"
+                }
+              }
+            ]
+          },
+          "title": "Author Pricing",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfAuthors",
+                "label": "Number of Authors",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Subscription breakdown",
+                "id": "subscription-breakdown"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of Authors with an annual subscription",
+                "defaultValue": 100,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentAnnualAuthors"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "label": "Percent of Authors paying month to month",
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "id": "percentMonthlyAuthors"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "total-author-percentage"
+                        },
+                        1
+                      ]
+                    },
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "total-author-percentage"
+                        },
+                        1
+                      ]
+                    }
+                  ]
+                },
+                "header": "Author subscription percent not equal to 100%",
+                "label": "Author alert",
+                "content": "You cannot have a total author subscription percentage that does not equal 100%",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "author-warning"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "quicksight",
+                    "meteredUnit": "u8TevJXrKYu8N2aQZp36SeenZ27ZLRTU4FNXulFc5Fw"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfAuthorPros",
+                "label": "Number of Author Pros",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceAuthorPro",
+                "label": "price author pro",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "u8TevJXrKYu8N2aQZp36SeenZ27ZLRTU4FNXulFc5Fw"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "annualUserSubscription",
+                "label": "subscription price per user per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "sy5y8jyideWmq8NfsLKCEAEyZ7axQplmh5kXF6URgHc"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "monthToMonthUserSubscription",
+                "label": "subscription price per user per month (month to month)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "hYUbVCrZ4_v0IbTfCkMjQMVWlly8RYVaPgd1dms89GI"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfAuthors",
+                    "subscription-breakdown",
+                    "percentAnnualAuthors",
+                    "percentMonthlyAuthors",
+                    "author-warning",
+                    "numberOfAuthorPros",
+                    "priceAuthorPro",
+                    "annualUserSubscription",
+                    "monthToMonthUserSubscription"
+                  ],
+                  "subTotalRefer": "monthlyMinPackPrice",
+                  "id": "author_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percent of Authors with an annual subscription",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentAnnualAuthors"
+                    },
+                    {
+                      "variableLabel": "Percent of Authors paying month to month",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentMonthlyAuthors"
+                    }
+                  ],
+                  "outputUnitLabel": "total author percentage",
+                  "decimalPlaces": 2,
+                  "id": "total-author-percentage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualAuthorsNumberUnrounded",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Percent of Authors with an annual subscription",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "percentAnnualAuthors"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) with annual subscription(s) (unrounded)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Author(s) with annual subscription(s) (unrounded)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": false,
+                      "variableId": "annualAuthorsNumberUnrounded"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) with annual subscription(s)",
+                  "id": "annualAuthorsNumber"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualAuthorPriceTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "annualAuthorsNumber",
+                      "variableLabel": "Author(s) with annual subscription(s)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "annualUserSubscription",
+                      "variableLabel": "subscription price per user per month",
+                      "variableUnitLabel": "[currency] per user per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author cost for author(s) with annual subscription(s) (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                  "id": "summarizeAuthorCostWithSubscription",
+                  "refer": "annualAuthorPriceTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyAuthorsNumberUnrounded",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentMonthlyAuthors",
+                      "variableLabel": "Percent of Authors paying month to month",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) paying month to month (unrounded)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "Author(s)",
+                      "variableLabel": "Author(s) paying month to month (unrounded)",
+                      "required": false,
+                      "variableId": "monthlyAuthorsNumberUnrounded"
+                    }
+                  ],
+                  "outputUnitLabel": "Author(s) paying month to month",
+                  "id": "monthlyAuthorsNumber"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyAuthorPriceTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "monthlyAuthorsNumber",
+                      "variableLabel": "Author(s) paying month to month",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "monthToMonthUserSubscription",
+                      "variableLabel": "subscription price per user per month (month to month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for author(s) paying month to month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author cost for author(s) paying month to month (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for author(s) paying month to month)",
+                  "id": "summarizeAuthorCostWithMonthToMonth",
+                  "refer": "monthlyAuthorPriceTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "costAuthorPro",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthorPros",
+                      "variableLabel": "Number of Author Pros",
+                      "variableUnitLabel": "Author Pro(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceAuthorPro",
+                      "variableLabel": "price author pro",
+                      "variableUnitLabel": "[currency] per Author Pro per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost per month for Author Pros)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Author Pro cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (cost per month for Author Pros)",
+                  "id": "summarizeAuthorCostPro",
+                  "refer": "costAuthorPro"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "authorsMonthlyPrice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "annualAuthorPriceTotal",
+                      "variableLabel": "[currency] (cost per month for author(s) with annual subscription(s))",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "monthlyAuthorPriceTotal",
+                      "variableLabel": "[currency] (cost per month for author(s) paying month to month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "costAuthorPro",
+                      "variableLabel": "[currency] (cost per month for Author Pros)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total cost of author(s))",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "total-author-percentage",
+                    "annualAuthorsNumberUnrounded",
+                    "annualAuthorsNumber",
+                    "annualAuthorPriceTotal",
+                    "summarizeAuthorCostWithSubscription",
+                    "monthlyAuthorsNumberUnrounded",
+                    "monthlyAuthorsNumber",
+                    "monthlyAuthorPriceTotal",
+                    "summarizeAuthorCostWithMonthToMonth",
+                    "costAuthorPro",
+                    "summarizeAuthorCostPro",
+                    "authorsMonthlyPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of authors",
+                  "decimalPlaces": 2,
+                  "id": "authorsTotalPrice",
+                  "subTotalRefer": "authorsMonthlyPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "quicksight",
+                  "meteredUnit": "HxBjm_i8ILwJkiPknGWzK7_gGVbB4k1gq_odwuRTRIA"
+                }
+              },
+              {
+                ">": [
+                  {
+                    "type": "component",
+                    "id": "numberOfAuthorPros"
+                  },
+                  0
+                ]
+              }
+            ]
+          },
+          "title": "Q Enablement Fee",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/quicksight/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Per Account Q enablement Fee",
+                "label": "Per Account Q enablement Fee text",
+                "content": "A per month per account Amazon Q enablement fee applies for accounts with at least one Pro user or with at least one Amazon Q Topic",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "qFeeText"
+              },
+              {
+                "type": "pricing",
+                "id": "qEnablementPrice",
+                "label": "Price for Q enablement",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "HxBjm_i8ILwJkiPknGWzK7_gGVbB4k1gq_odwuRTRIA"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "qFeeText",
+                    "qEnablementPrice"
+                  ],
+                  "subTotalRefer": "authorsMonthlyPrice",
+                  "id": "q_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Q enablement fee (monthly)",
+                  "displayInCalculationString": false,
+                  "useCurrency": true,
+                  "referLabel": "Price for Q enablement",
+                  "id": "summarizeQFee",
+                  "refer": "qEnablementPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "summarizeQFee"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Per Account Q enablement Fee",
+                  "decimalPlaces": 2,
+                  "id": "monthlyQCostDisplay",
+                  "subTotalRefer": "summarizeQFee"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Q Questions Capacity Pricing",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/quicksight/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Questions",
+                "id": "numberOfQquestions",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "questionsPerYear"
+                    },
+                    999999
+                  ]
+                },
+                "header": "Contact Us",
+                "label": "Author alert",
+                "content": "Please <a href='https://pages.awscloud.com/QuickSightDemo.html' target='_blank'>contact us</a> for pricing 1,000,000+ questions/year",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "questionsContactUs"
+              },
+              {
+                "type": "pricing",
+                "id": "priceMonthlyQ500Pack",
+                "label": "Price per Q 500 Pack",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "yktB_Isju0geCE1eF82h5OJMoV4B92gJu1NiASSX7JY"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceQ500OveragePerMonth",
+                "label": "Price per Q 500 Pack Overage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "8LBksHXYEchbd2H0754maCbJo-vY5OVvJie-Qk8eGkE"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceQ60KOverage",
+                "label": "Price per Q 60K overage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "8b4aQtIGYaYXBkZLzkvOSaUA_yXfIp-hHLYMRkz5RZM"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceQ60KPack",
+                "label": "Price per Q 60K Pack",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "0Zy1_GExwfNGV3W4PMaNV3XItBp7pDN31vmxmMYw3TY"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceQ600KOverage",
+                "label": "Price per Q 600K overage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Kqd3e8TsYGcTPPltBySuWLDpeRFWfUNCEXfjOueImYw"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceQ600kPack",
+                "label": "Price per Q 600K Pack",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "c_Fh42S3U57vAnHdS6GWbRRPW8OvOBgeM45u1J23EZg"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfQquestions",
+                    "questionsContactUs",
+                    "priceMonthlyQ500Pack",
+                    "priceQ500OveragePerMonth",
+                    "priceQ60KOverage",
+                    "priceQ60KPack",
+                    "priceQ600KOverage",
+                    "priceQ600kPack"
+                  ],
+                  "subTotalRefer": "summarizeQFee",
+                  "id": "Qquestions_unitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageMonthlyQ500Pack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberOfQquestions",
+                      "variableLabel": "Number of Questions",
+                      "variableUnitLabel": "Questions",
+                      "required": true
+                    },
+                    {
+                      "constant": 500,
+                      "constantUnitLabel": "Questions included per month"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage questions per month (for the Monthly 500 question pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageMonthlyQ500PackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageMonthlyQ500Pack",
+                      "variableUnitLabel": "Overage questions per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceQ500OveragePerMonth",
+                      "variableLabel": "Price per Q 500 Pack Overage",
+                      "variableUnitLabel": "[currency] (overage)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for monthly 500 pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyQ500PackPrice",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "priceMonthlyQ500Pack",
+                      "variableLabel": "Price per Q 500 Pack",
+                      "variableUnitLabel": "[currency] (monthly commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageMonthlyQ500PackCost",
+                      "variableUnitLabel": "[currency] (overage cost)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly 500 pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "500 pack (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (monthly 500 pack)",
+                  "id": "summarizeQ500PackCost",
+                  "refer": "monthlyQ500PackPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "q500PackAnnualCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "monthlyQ500PackPrice",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "months per year"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] annual cost (for the 500/month question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "questionsPerYear",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "numberOfQquestions",
+                      "variableLabel": "Number of Questions",
+                      "variableUnitLabel": "Questions",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "months per year"
+                    }
+                  ],
+                  "outputUnitLabel": "total questions per year",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageQ60KPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "questionsPerYear",
+                      "variableUnitLabel": "Total questions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 60000,
+                      "constantUnitLabel": "Questions included per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage questions per year (for the 60,000 question pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageQ60KPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageQ60KPack",
+                      "variableUnitLabel": "Overage questions per year",
+                      "variableLabel": "Overage questions per year (for the 60,000 question pack)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceQ60KOverage",
+                      "variableLabel": "Price per Q 60K overage",
+                      "variableUnitLabel": "[currency] (overage)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 60,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageQ60KPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "constant": 60000,
+                      "constantUnitLabel": "questions per year"
+                    },
+                    {
+                      "variableId": "priceQ60KPack",
+                      "variableLabel": "Price per Q 60K Pack",
+                      "variableUnitLabel": "[currency] (per question)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 60,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "q60KPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageQ60KPackCost",
+                      "variableLabel": "[currency] (annual commitment for 60,000 question pack)",
+                      "variableUnitLabel": "[currency] (annual commitment for 60,000 question pack) ",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageQ60KPackCost",
+                      "variableUnitLabel": "[currency] (overage)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (60,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "60,000 question pack (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (60,000 question pack)",
+                  "id": "summarizeQ60KPackCost",
+                  "refer": "q60KPackCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageQ600KPack",
+                  "operation": "subtraction",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "questionsPerYear",
+                      "variableUnitLabel": "Total questions per year",
+                      "required": true
+                    },
+                    {
+                      "constant": 600000,
+                      "constantUnitLabel": "Questions included per year"
+                    }
+                  ],
+                  "outputUnitLabel": "Overage questions per year (for the 600,000 question pack)",
+                  "minValue": 0,
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "overageQ600KPackCost",
+                  "operation": "multiplication",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "overageQ600KPack",
+                      "variableUnitLabel": "Overage questions per year",
+                      "required": true
+                    },
+                    {
+                      "variableId": "priceQ600KOverage",
+                      "variableLabel": "Price per Q 600K overage",
+                      "variableUnitLabel": "[currency] (overage)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (overage for 600,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "usageQ600KPackCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 600000,
+                      "constantUnitLabel": "Questions per year"
+                    },
+                    {
+                      "variableId": "priceQ600kPack",
+                      "variableLabel": "Price per Q 600K Pack",
+                      "variableUnitLabel": "[currency] (per question)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (annual commitment for 600,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "q600KPackCost",
+                  "operation": "addition",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "usageQ600KPackCost",
+                      "variableUnitLabel": "[currency] (annual commitment)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "overageQ600KPackCost",
+                      "variableUnitLabel": "[currency] (overage)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (600,000 question pack)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "600,000 session pack tier (annual)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (600,000 question pack)",
+                  "id": "summarizeq600KPackCost",
+                  "refer": "q600KPackCost"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfQquestions"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "id": "minimumQquestionPackPrice",
+                  "outputUnitLabel": "[currency] (Lowest question pack cost)",
+                  "decimalPlaces": 2,
+                  "operands": [
+                    {
+                      "variableId": "q500PackAnnualCost",
+                      "variableUnitLabel": "[currency] (500 question pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "q60KPackCost",
+                      "variableUnitLabel": "[currency] (60,000 question pack)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "q600KPackCost",
+                      "variableUnitLabel": "[currency] (600,000 question pack)",
+                      "required": false
+                    }
+                  ]
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyQquestionMinPackPrice",
+                  "operation": "division",
+                  "displayCalculationString": true,
+                  "operands": [
+                    {
+                      "variableId": "minimumQquestionPackPrice",
+                      "variableLabel": "[currency] (Lowest question pack cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "Months"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "overageMonthlyQ500Pack",
+                    "overageMonthlyQ500PackCost",
+                    "monthlyQ500PackPrice",
+                    "summarizeQ500PackCost",
+                    "q500PackAnnualCost",
+                    "questionsPerYear",
+                    "overageQ60KPack",
+                    "overageQ60KPackCost",
+                    "usageQ60KPackCost",
+                    "q60KPackCost",
+                    "summarizeQ60KPackCost",
+                    "overageQ600KPack",
+                    "overageQ600KPackCost",
+                    "usageQ600KPackCost",
+                    "q600KPackCost",
+                    "summarizeq600KPackCost",
+                    "minimumQquestionPackPrice",
+                    "monthlyQquestionMinPackPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Q Questions Capacity",
+                  "decimalPlaces": 2,
+                  "id": "monthlyQquestionMinPackPriceDisplay",
+                  "subTotalRefer": "monthlyQquestionMinPackPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "SPICE Capacity",
+          "cardType": "spiceCapacity",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "spiceGBs",
+                "label": "SPICE capacity in gigabytes (GB)",
+                "displayInConfigSummary": true,
+                "defaultValue": 10,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 10,
+                  "maxValue": 1000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceEnterpriseSPICE",
+                "label": "price per GB for enterprise SPICE capacity",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "quicksight",
+                "meteredUnit": {
+                  "allRegions": "Enterprise SPICE capacity provisioned per GB Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAuthorsForSpice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuthors",
+                      "variableLabel": "Number of Authors",
+                      "variableUnitLabel": "Author(s)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "numberOfAuthorPros",
+                      "variableLabel": "Number of Author Pros",
+                      "variableUnitLabel": "Author Pro(s)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total Author(s)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "freeSPICE",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalAuthorsForSpice",
+                      "variableLabel": "total Author(s)",
+                      "variableUnitLabel": "Author(s)",
+                      "required": true
+                    },
+                    {
+                      "constant": 10,
+                      "constantUnitLabel": "GB (Free SPICE Capacity per Author)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Free SPICE)",
+                  "decimalPlaces": 3
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalSPICECost",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "spiceGBs",
+                      "variableLabel": "SPICE capacity in gigabytes (GB)",
+                      "variableUnitLabel": "SPICE GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "freeSPICE",
+                      "variableLabel": "GB (Free SPICE)",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Additional SPICE)",
+                  "minValue": 0,
+                  "decimalPlaces": 3
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "spiceMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "additionalSPICECost",
+                      "variableLabel": "GB (Additional SPICE)",
+                      "variableUnitLabel": "GB (Addtional SPICE)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "priceEnterpriseSPICE",
+                      "variableLabel": "price per GB for enterprise SPICE capacity",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "spiceGBs",
+                    "priceEnterpriseSPICE",
+                    "totalAuthorsForSpice",
+                    "freeSPICE",
+                    "additionalSPICECost",
+                    "spiceMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost of SPICE capacity",
+                  "decimalPlaces": 2,
+                  "id": "spiceTotalPrice",
+                  "subTotalRefer": "spiceMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "capacityPricing"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

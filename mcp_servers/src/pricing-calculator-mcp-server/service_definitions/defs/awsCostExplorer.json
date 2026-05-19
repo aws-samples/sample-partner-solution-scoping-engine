@@ -1,0 +1,361 @@
+{
+  "version": "0.0.17",
+  "serviceName": {
+    "aws": "AWS Cost Explorer",
+    "aws-cn": "Amazon Cost Explorer"
+  },
+  "serviceCode": "awsCostExplorer",
+  "type": "AWSService",
+  "slug": "cost-explorer",
+  "disableAddToEstimate": {
+    "aws": false,
+    "aws-cn": false
+  },
+  "regions": [],
+  "searchKeywords": [
+    "aws cost explorer",
+    "aws budgets",
+    "cost management",
+    "budgets",
+    "cost explorer"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Cost Explorer provides you with a set of default reports that you can use as the starting place for your analysis. From there, use the filtering and grouping capabilities to dive deeper into your cost and usage data and generate custom insights.",
+    "aws-cn": "Amazon Cost Explorer provides you with a set of default reports that you can use as the starting place for your analysis. From there, use the filtering and grouping capabilities to dive deeper into your cost and usage data and generate custom insights."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "costexplorer",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/costexplorer/[currency]/current/costexplorer.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/aws-cost-management/aws-cost-explorer/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/aws-cost-management/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "title": "AWS Cost Explorer API",
+          "helpText": "The AWS Cost Explorer API lets you directly access the interactive, ad-hoc query engine that powers AWS Cost Explorer.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-cost-management/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of API requests per month",
+                "id": "Number_of_API_requests",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The AWS Cost Explorer API lets you directly access the interactive, ad-hoc query engine that powers AWS Cost Explorer.",
+                "placeholder": "Enter the number of API request(s)"
+              },
+              {
+                "type": "pricing",
+                "label": "api request cost",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "costexplorer",
+                "meteredUnit": {
+                  "allRegions": "API Request"
+                },
+                "id": "api_request_cost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_API_requests",
+                    "api_request_cost"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvCostExp"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ApiRequestFinCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of API requests per month",
+                      "variableId": "Number_of_API_requests",
+                      "variableUnitLabel": "API request(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "api request cost",
+                      "variableId": "api_request_cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ApiRequestFinCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Cost Explorer API cost",
+                  "decimalPlaces": 2,
+                  "id": "finCostAPI",
+                  "subTotalRefer": "ApiRequestFinCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "title": "AWS Cost Explorer Hourly Granularity",
+          "helpText": "The Cost Explorer Hourly granularity allows you to access hourly granularity for the past 14 days and resource level granularity for EC2 instances.<b><a href='https://www.amazonaws.cn/en/'target='_blank'> Learn More</a></b>.",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of UsageRecords per month",
+                "id": "Number_of_UsageRecords_PerMonth",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "description": "",
+                "placeholder": "Enter the number of Usage record(s)"
+              },
+              {
+                "type": "pricing",
+                "label": "price per UsageRecord per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "costexplorer",
+                "meteredUnit": {
+                  "allRegions": "Storage per UsageRecord month"
+                },
+                "id": "UsageRecord_cost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_UsageRecords_PerMonth",
+                    "UsageRecord_cost"
+                  ],
+                  "subTotalRefer": "ApiRequestFinCost",
+                  "id": "UnitConvCostExp_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ApiRequestFinCost_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of UsageRecords per month",
+                      "variableId": "Number_of_UsageRecords_PerMonth",
+                      "variableUnitLabel": "UsageRecord(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per UsageRecord per month",
+                      "variableId": "UsageRecord_cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ApiRequestFinCost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "UsageRecord Cost",
+                  "decimalPlaces": 2,
+                  "id": "finCostAPI_2",
+                  "subTotalRefer": "ApiRequestFinCost_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-iso-f",
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "Amazon Cost Explorer API",
+          "helpText": "The Amazon Cost Explorer API lets you directly access the interactive, ad-hoc query engine that powers Amazon Cost Explorer.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-cost-management/aws-cost-explorer/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of API requests per month",
+                "id": "Number_of_API_requests",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The Amazon Cost Explorer API lets you directly access the interactive, ad-hoc query engine that powers Amazon Cost Explorer.",
+                "placeholder": "Enter the number of API request(s)"
+              },
+              {
+                "type": "pricing",
+                "label": "api request cost",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "costexplorer",
+                "meteredUnit": {
+                  "allRegions": "API Request"
+                },
+                "id": "api_request_cost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_API_requests",
+                    "api_request_cost"
+                  ],
+                  "subTotalRefer": "ApiRequestFinCost_2",
+                  "id": "UnitConvCostExp"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ApiRequestFinCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of API requests per month",
+                      "variableId": "Number_of_API_requests",
+                      "variableUnitLabel": "API request(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "api request cost",
+                      "variableId": "api_request_cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ApiRequestFinCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Cost Explorer API cost",
+                  "decimalPlaces": 2,
+                  "id": "finCostAPI",
+                  "subTotalRefer": "ApiRequestFinCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-iso-f",
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "Amazon Cost Explorer Hourly and Resource Granularity",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The Cost Explorer Hourly and Resource level granularity allows you to access hourly granularity for the past 14 days and resource level granularity for EC2 instances.<b><a href='https://www.amazonaws.cn/en/'target='_blank'> Learn More</a></b>.",
+                "id": "costExplorerAlert"
+              }
+            ]
+          }
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso-f",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

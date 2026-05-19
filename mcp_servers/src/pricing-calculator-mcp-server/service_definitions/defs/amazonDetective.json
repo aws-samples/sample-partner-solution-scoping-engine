@@ -1,0 +1,213 @@
+{
+  "version": "0.0.25",
+  "serviceName": "Amazon Detective",
+  "serviceCode": "amazonDetective",
+  "type": "AWSService",
+  "slug": "detective",
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "detective",
+    "amazon Detective"
+  ],
+  "serviceDescription": "Amazon Detective makes it easy to analyze, investigate, and quickly identify the root cause of potential security issues or suspicious activities. Amazon Detective automatically collects log data from your AWS resources and uses machine learning, statistical analysis, and graph theory to build a linked set of data that enables you to easily conduct faster and more efficient security investigations.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "detective",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/detective/[currency]/current/detective.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/detective/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/detective/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon Detective",
+          "helpText": "Amazon Detective makes it easy to analyze, investigate, and quickly identify the root cause of potential security issues or suspicious activities. Amazon Detective automatically collects log data from your AWS resources and uses machine learning, statistical analysis, and graph theory to build a linked set of data that enables you to easily conduct faster and more efficient security investigations.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/detective/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataIngested",
+                "label": "Data ingested from AWS CloudTrail, Amazon VPC Flow Logs, Amazon GuardDuty (per account, per region)",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the volume of Data ingested from AWS CloudTrail, Amazon VPC Flow Logs, Amazon GuardDuty",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Pricing_Detective",
+                "id": "detectiveTieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "detective",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000,
+                      "meteredUnit": "Amazon Detective First 1000"
+                    },
+                    {
+                      "startOfTier": 1001,
+                      "endOfTier": 5000,
+                      "meteredUnit": "Amazon Detective Next 4000"
+                    },
+                    {
+                      "startOfTier": 5001,
+                      "endOfTier": 10000,
+                      "meteredUnit": "Amazon Detective Next 5000"
+                    },
+                    {
+                      "startOfTier": 10001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Amazon Detective Over 10000"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "dataIngested",
+                    "detectiveTieredPricing"
+                  ],
+                  "id": "_generated_0",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputReferLabel": "Data ingested from AWS CloudTrail, Amazon VPC Flow Logs, Amazon GuardDuty (per account, per region)",
+                  "tieredPricingRefer": "detectiveTieredPricing",
+                  "tieredPricingReferLabel": "Tierd_Pricing_Detective",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 2,
+                  "id": "detective_cost",
+                  "outputUnitLabel": "[currency] per month",
+                  "inputRefer": "dataIngested"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Data ingested cost per month",
+                  "displayInCalculationString": false,
+                  "useCurrency": true,
+                  "referLabel": "[currency] per month",
+                  "id": "detectiveVar",
+                  "decimalPlaces": 2,
+                  "refer": "detective_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "detective_cost",
+                    "detectiveVar"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Detective cost",
+                  "decimalPlaces": 2,
+                  "id": "detectiveDataIngestedTotalPrice",
+                  "subTotalRefer": "detectiveVar"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

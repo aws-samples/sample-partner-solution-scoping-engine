@@ -1,0 +1,2535 @@
+{
+  "version": "0.0.37",
+  "serviceName": "AWS DRS - Replication",
+  "serviceCode": "awsDrsRecoveryReplication",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "eu-west-1",
+    "ap-northeast-1",
+    "us-east-2",
+    "us-west-2",
+    "us-east-1",
+    "ap-southeast-2",
+    "eu-west-2",
+    "eu-central-1",
+    "ap-southeast-1"
+  ],
+  "searchKeywords": [
+    "disaster recovery",
+    "replicate",
+    "elastic recovery",
+    "point in time",
+    "recovery",
+    "on-premises recovery",
+    "cloud-based",
+    "affordable storage"
+  ],
+  "serviceDescription": "AWS Elastic Disaster Recovery (AWS DRS) minimizes downtime and data loss with fast, reliable recovery of on-premises and cloud-based applications using affordable storage, minimal compute, and point-in-time recovery.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/disaster-recovery/pricing/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elastic-dr",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elasticdisasterrecovery/[currency]/current/elastic-dr.json"
+    },
+    {
+      "mappingDefinitionName": "ebs-calculator",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ec2/[currency]/current/ebs-calculator.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Recovery replication",
+      "id": "template1",
+      "description": "Your monthly cost will be comprised of the charge for AWS DRS, as well as the additional AWS resources that AWS DRS uses to maintain ongoing replication and to enable drill or recovery launches, as described below.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/disaster-recovery/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Replication",
+          "bodyText": "AWS DRS is billed hourly, per replicating server. The cost is the same, regardless of the number of disks, size of storage, number of drill or recovery launches, or the Region to which you are replicating.",
+          "helpText": "AWS Elastic Disaster Recovery (AWS DRS) has simple, predictable, usage-based pricing. With AWS Elastic Disaster Recovery, you pay only for the servers you are actively replicating to AWS. Your costs are based on a flat per hour fee. There are no resources to manage, no upfront costs, and no minimum fee. This gives you the flexibility to easily use our recovery solution by paying on an hourly basis, rather than committing to a long-term contract or set number of servers.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/disaster-recovery/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOnPremiseServerReplicated",
+                "label": "Number of source servers replicated per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Number of source servers servers replicated per month",
+                "description": "The number of source servers replicated using AWS Elastic Disaster Recovery (AWS DRS) to run business-critical applications for an average month (730 hours)."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfDisk",
+                "label": "Number of disks",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Number of disks",
+                "description": "The total number of disks accross all source servers."
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "avgChangeRateOfDisk",
+                "label": "Average change rate on disks per day",
+                "description": "The combined average change rate on disks per day.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage on all disks and all servers",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount",
+                "description": "The total storage across all disks on all source servers."
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "EBS volumes",
+                "id": "ebsVolText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "ebsVolumeType",
+                "label": "EBS volume type",
+                "options": [
+                  {
+                    "label": "Auto volume type selection",
+                    "id": "auto"
+                  },
+                  {
+                    "label": "Faster, general purpose SSD (gp3)",
+                    "id": "Storage General Purpose gp3 GB Mo"
+                  },
+                  {
+                    "label": "Faster, general purpose SSD (gp2)",
+                    "id": "Storage General Purpose GB Mo"
+                  },
+                  {
+                    "label": "Lower cost, throughput optimized HDD (st1)",
+                    "id": "Storage Throughput Optimized HDD GB Mo"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "auto",
+                "description": "For all volumes (>=125GB) are priced as chosen EBS volume type from the dropdown list. All the rest (<125GB) are priced as standard disks (EBS Magnetic).",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "EBS volume type pricing",
+                "id": "ebsVolumeTypePricing",
+                "mappingDefinitionName": "ebs-calculator",
+                "refers": [
+                  {
+                    "variableLabel": "EBS volume type",
+                    "variableId": "ebsVolumeType"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ebsVolumeType"
+                    },
+                    "auto"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "ebsVolumeCostType",
+                "label": "Cost type",
+                "options": [
+                  {
+                    "label": "Estimated cost - General purpose SSD (gp3) & Cold HDD (sc1) & Magnetic (previous generation)",
+                    "id": "avg"
+                  },
+                  {
+                    "label": "Minimum cost - Cold HDD (sc1) & Magnetic (previous generation)",
+                    "id": "min"
+                  },
+                  {
+                    "label": "Maximum cost - General purpose SSD (gp3) & Magnetic (previous generation) ",
+                    "id": "max"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "",
+                "description": "",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ebsVolumeCostType"
+                    },
+                    "min"
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Calculation for minimum cost: All volumes equal or larger than 125GB are priced as sc1, all the rest (<125GB), priced as standard disks",
+                "id": "minCostText"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ebsVolumeCostType"
+                    },
+                    "max"
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Calculation for maximum cost: All volumes equal or larger than 125GB are priced as gp3, all the rest (<125GB), priced as standard disks",
+                "id": "maxCostText"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ebsVolumeCostType"
+                    },
+                    "avg"
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Calculation for estimated cost: The volume is dynamically modified from gp3 to sc1 (and back) based on the average write rate using <b>12MiB/s per 1TiB</b> as the threshold (See <a href='https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/hdd-vols.html#EBSVolumeTypes_sc1' target='_blank'>EBS documentation</a> for more details). Estimated cost calculation will be determined by the average write rate range your usage falls into.",
+                "id": "avgCostText"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ebsVolumeCostType"
+                    },
+                    "avg"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "<table  style='border-collapse: collapse;text-align: center;'><thead><tr style='background-color: #cccccc;'><th colspan='2' style='border: 1px solid black;'>Average write rate</th><th rowspan='2' style='border: 1px solid black;'>Estimated gp3 usage</th><th rowspan='2' style='border: 1px solid black;'>Estimated sc1 usage</th></tr><tr><th style='border: 1px solid black; background-color: #cccccc;'>Min (MiB/s per 1TiB) </th><th style='border: 1px solid black;background-color: #cccccc;'>Max (MiB/s per 1TiB) </th></tr></thead><tbody><tr><td style='border: 1px solid black;'>-</td><td style='border: 1px solid black;'>0</td><td style='border: 1px solid black;'>0%</td><td style='border: 1px solid black;'>100%</td></tr> <tr><td style='border: 1px solid black;'>0</td><td style='border: 1px solid black;'>3</td><td style='border: 1px solid black;'>12.5%</td><td style='border: 1px solid black;'>87.5%</td></tr><tr><td style='border: 1px solid black;'>3</td><td style='border: 1px solid black;'>6</td><td style='border: 1px solid black;'>25%</td><td style='border: 1px solid black;'>75%</td></tr><tr><td style='border: 1px solid black;'>6</td><td style='border: 1px solid black;'>9</td><td style='border: 1px solid black;'>37.5%</td><td style='border: 1px solid black;'>62.5%</td></tr><tr><td style='border: 1px solid black;'>9</td><td style='border: 1px solid black;'>12</td><td style='border: 1px solid black;'>50%</td><td style='border: 1px solid black;'>50%</td></tr><tr><td style='border: 1px solid black;'>12</td><td style='border: 1px solid black;'>15</td><td style='border: 1px solid black;'>62.5%</td><td style='border: 1px solid black;'>37.5%</td></tr><tr><td style='border: 1px solid black;'>15</td><td style='border: 1px solid black;'>18</td><td style='border: 1px solid black;'>75%</td><td style='border: 1px solid black;'>25%</td></tr><tr><td style='border: 1px solid black;'>18</td><td style='border: 1px solid black;'>21</td><td style='border: 1px solid black;'>87.5%</td><td style='border: 1px solid black;'>12.5%</td></tr><tr><td style='border: 1px solid black;'>21</td><td style='border: 1px solid black;'>-</td><td style='border: 1px solid black;'>100%</td><td style='border: 1px solid black;'>0%</td></tr></tbody></table></table><p> <b> * Thresholds are dynamic based on the calculated average disk size. The example above refers to 1TiB average disk size. For X TiB, the Min and Max should be multiplied by X.</b> </p>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "AverageCostThresholdInfoText"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentOfHigherPerformance",
+                "label": "Percentage of source disks equal or larger than 125 GB",
+                "description": "All volumes equal to or larger than 125 GB will use selected EBS volume. The remainder will use low-cost standard EBS volumes",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "EBS snapshots",
+                "id": "ebsSnapshotText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfRetentionDays",
+                "label": "Number of days selected for EBS snapshot retention period ",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Number of days selected for EBS snapshot retention period",
+                "defaultValue": 7,
+                "description": "The default retention policy is 7 days."
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "EC2 instance",
+                "id": "ec2TextHeader"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "AWS DRS uses EC2 instances as Replication Servers, which facilitate ongoing data replication. By default, these are low-cost t3.small EC2 instances. Each Replication Server can handle replication of disks from multiple source servers, with a maximum of 15 staging disks. For some high write rate source servers, you may choose to use more performant instance types as Replication Servers. Replication Servers are launched and terminated by AWS DRS automatically, as needed.<br/><br/> For EC2 On-Demand instance hourly rate, please refer to <a href='https://aws.amazon.com/ec2/pricing/on-demand/' target='_blank'>EC2 Pricing page</a> for the most-up-to-date price. <br/><br/> To estimate EC2 charge, please choose 'Add service' to add EC2 calculator on My Estimate page after saving DRS estimate to there. My Estimate page will display total monthly and annual cost of DRS, EBS and EC2.<br/><br/>By default, the volumes per replication server is 15 and applied to below calculation for 'Number of replication servers' (='Number of disks' divided by 15). Apply the result directly to the input field 'Quantity' in <a href='https://calculator.aws/#/createCalculator/EC2' target='_blank'>EC2 calculator - Quick estimate</a> for EC2 cost.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "ec2InfoText"
+              },
+              {
+                "type": "pricing",
+                "id": "elasticDrPrice",
+                "label": "Price for elastic disaster recovery",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elastic-dr",
+                "meteredUnit": {
+                  "allRegions": "Server DR Normal-Replication"
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for EBS high perofrmance",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "meteredUnit": {
+                  "allRegions": "Storage General Purpose gp3 GB Mo"
+                },
+                "id": "ebsGP3Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for cold HDD (sc1)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "meteredUnit": {
+                  "allRegions": "Storage Cold HDD GB Mo"
+                },
+                "id": "ebsSC1Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for EBS Magnetic",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "meteredUnit": {
+                  "allRegions": "Storage Magnetic GB Mo"
+                },
+                "id": "ebsMagneticPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for snapshot",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Amazon S3 GB Mo"
+                },
+                "id": "ebsSnapShotPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOnPremiseServerReplicated",
+                    "numberOfDisk",
+                    "avgChangeRateOfDisk",
+                    "storageAmount",
+                    "ebsVolText",
+                    "ebsVolumeType",
+                    "ebsVolumeTypePricing",
+                    "ebsVolumeCostType",
+                    "minCostText",
+                    "maxCostText",
+                    "avgCostText",
+                    "AverageCostThresholdInfoText",
+                    "percentOfHigherPerformance",
+                    "ebsSnapshotText",
+                    "numberOfRetentionDays",
+                    "ec2TextHeader",
+                    "ec2InfoText",
+                    "elasticDrPrice",
+                    "ebsGP3Price",
+                    "ebsSC1Price",
+                    "ebsMagneticPrice",
+                    "ebsSnapShotPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalDRScharge",
+                  "variableName": "Total AWS DRS charge",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOnPremiseServerReplicated",
+                      "variableLabel": "Number of source servers replicated per month",
+                      "variableUnitLabel": "servers",
+                      "required": true
+                    },
+                    {
+                      "variableId": "elasticDrPrice",
+                      "variableLabel": "Price for elastic disaster recovery",
+                      "variableUnitLabel": "[currency] per server per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "Hours"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total DRS Replication Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Total AWS DRS charge",
+                  "id": "totalDRSchargeVar",
+                  "refer": "totalDRScharge"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyChangeGB",
+                  "variableName": "Daily GB change",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storageAmount",
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableUnitLabel": "GB (base)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Average change rate on disks per day",
+                      "variableId": "avgChangeRateOfDisk",
+                      "variableUnitLabel": "daily change rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "(daily change in GB)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyChangeMB",
+                  "variableName": "Daily MB change",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "dailyChangeGB",
+                      "variableLabel": "Daily GB change",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "MB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "(daily change in MB)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SecondChangeMB",
+                  "variableName": "MB change per second",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "dailyChangeMB",
+                      "variableLabel": "Daily MB change",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "constant": 86400,
+                      "constantUnitLabel": "seconds in a day"
+                    }
+                  ],
+                  "outputUnitLabel": "(MB/s average write rate)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalGP3storage",
+                  "variableName": "total storage over 125 GB",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storageAmount",
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentOfHigherPerformance",
+                      "variableLabel": "Percentage of source disks equal or larger than 125 GB",
+                      "variableUnitLabel": "(percentage of source disks larger than 125 GB)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB (source disks equal or larger than 125 GB)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageAmountTB",
+                  "variableName": "Storage amount in TB",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "storageAmount",
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": "1024",
+                      "constantUnitLabel": "GB"
+                    }
+                  ],
+                  "outputUnitLabel": "TB",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "avgDiskSizeInTB",
+                  "variableName": "Average disk size in TB",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "storageAmountTB",
+                      "variableLabel": "Storage amount in TB",
+                      "variableUnitLabel": "TB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfDisk",
+                      "variableLabel": "Number of disks",
+                      "variableUnitLabel": "disks",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "TB (Average disk size in TB)",
+                  "decimalPlaces": 4,
+                  "displayInCalculationString": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "3XMBps",
+                  "variableName": "3X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 3,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (12.5% gp3, 87.5% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "6XMBps",
+                  "variableName": "6X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 6,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (25% gp3, 75% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "9XMBps",
+                  "variableName": "9X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 9,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (37.5% gp3, 62.5% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "12XMBps",
+                  "variableName": "12X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 12,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (50% gp3, 50% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "15XMBps",
+                  "variableName": "15X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 15,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (62.5% gp3, 37.5% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "18XMBps",
+                  "variableName": "18X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 18,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (75% gp3, 25% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "21XMBps",
+                  "variableName": "21X threshold",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 21,
+                      "constantUnitLabel": "MB/s per 1TB"
+                    },
+                    {
+                      "variableId": "avgDiskSizeInTB",
+                      "variableLabel": "Average disk size in TB",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MBps (87.5% gp3, 12.5% sc1)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost100",
+                  "variableName": "Total auto average sc1 cost (100%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "(100% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "3XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost125",
+                  "variableName": "Total auto average gp3 cost (12.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.125,
+                      "constantUnitLabel": "(12.5% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "3XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost875",
+                  "variableName": "Total auto average sc1 cost (87.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.875,
+                      "constantUnitLabel": "(87.5% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "3XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "6XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost25",
+                  "variableName": "Total auto average gp3 cost (25%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.25,
+                      "constantUnitLabel": "(25% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "3XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "6XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost75",
+                  "variableName": "Total auto average sc1 cost (75%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.75,
+                      "constantUnitLabel": "(75% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "6XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "9XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost375",
+                  "variableName": "Total auto average gp3 cost (37.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.375,
+                      "constantUnitLabel": "(37.5% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "6XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "9XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost625",
+                  "variableName": "Total auto average sc1 cost (62.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.625,
+                      "constantUnitLabel": "(62.5% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "9XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "12XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost50",
+                  "variableName": "Total auto average gp3 cost (50%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "(50% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "9XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "12XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost50",
+                  "variableName": "Total auto average sc1 cost (50%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "(50% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "12XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "15XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost625",
+                  "variableName": "Total auto average gp3 cost (62.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.625,
+                      "constantUnitLabel": "(62.5% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "12XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "15XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost375",
+                  "variableName": "Total auto average sc1 cost (37.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.375,
+                      "constantUnitLabel": "(37.5% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "15XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "18XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost75",
+                  "variableName": "Total auto average gp3 cost (75%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.75,
+                      "constantUnitLabel": "(75% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "15XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "18XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost25",
+                  "variableName": "Total auto average sc1 cost (25%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.25,
+                      "constantUnitLabel": "(25% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "18XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "21XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost875",
+                  "variableName": "Total auto average gp3 cost (87.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.875,
+                      "constantUnitLabel": "(87.5% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "18XMBps"
+                          }
+                        ]
+                      },
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "21XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost125",
+                  "variableName": "Total auto average sc1 cost (12.5%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.125,
+                      "constantUnitLabel": "(12.5% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "and": [
+                          {
+                            "==": [
+                              {
+                                "type": "component",
+                                "id": "ebsVolumeType"
+                              },
+                              "auto"
+                            ]
+                          },
+                          {
+                            "not": {
+                              "or": [
+                                {
+                                  "==": [
+                                    {
+                                      "type": "component",
+                                      "id": "ebsVolumeCostType"
+                                    },
+                                    "min"
+                                  ]
+                                },
+                                {
+                                  "==": [
+                                    {
+                                      "type": "component",
+                                      "id": "ebsVolumeCostType"
+                                    },
+                                    "max"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "21XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgGP3Cost100",
+                  "variableName": "Total auto average gp3 cost (100%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "(100% gp3)"
+                    },
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "ebsVolumeCostType"
+                          },
+                          "avg"
+                        ]
+                      },
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "SecondChangeMB"
+                          },
+                          {
+                            "type": "component",
+                            "id": "21XMBps"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgSC1Cost0",
+                  "variableName": "Total auto average sc1 cost (0%)",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalGP3storage",
+                      "variableLabel": "total storage over 125 GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "(0% sc1)"
+                    },
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoAvgCost",
+                  "variableName": "Total auto average cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totalAutoAvgSC1Cost100",
+                      "variableLabel": "Total auto average sc1 cost (100%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost125",
+                      "variableLabel": "Total auto average gp3 cost (12.5%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost875",
+                      "variableLabel": "Total auto average sc1 cost (87.5%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost25",
+                      "variableLabel": "Total auto average gp3 cost (25%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost75",
+                      "variableLabel": "Total auto average sc1 cost (75%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost375",
+                      "variableLabel": "Total auto average gp3 cost (37.5%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost625",
+                      "variableLabel": "Total auto average sc1 cost (62.5%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost50",
+                      "variableLabel": "Total auto average gp3 cost (50%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost50",
+                      "variableLabel": "Total auto average sc1 cost (50%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost625",
+                      "variableLabel": "Total auto average gp3 cost (62.5%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost375",
+                      "variableLabel": "Total auto average sc1 cost (37.5%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost75",
+                      "variableLabel": "Total auto average gp3 cost (75%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost25",
+                      "variableLabel": "Total auto average sc1 cost (25%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost875",
+                      "variableLabel": "Total auto average gp3 cost (87.5%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost125",
+                      "variableLabel": "Total auto average sc1 cost (12.5%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgGP3Cost100",
+                      "variableLabel": "Total auto average gp3 cost (100%)",
+                      "variableUnitLabel": "[currency] (gp3)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalAutoAvgSC1Cost0",
+                      "variableLabel": "Total auto average sc1 cost (0%)",
+                      "variableUnitLabel": "[currency](sc1)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeCostType"
+                      },
+                      "avg"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Average Auto Volume Type (greater or equal to 125 GB) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalAutoAvgCost",
+                  "referLabel": "Total auto average cost",
+                  "id": "totalAutoAvgCostVar"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeCostType"
+                      },
+                      "min"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoMinCost",
+                  "variableName": "Total auto minimum cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ebsSC1Price",
+                      "variableLabel": "price for cold HDD (sc1)",
+                      "variableUnitLabel": "[currency] GB per month (sc1)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "total storage over 125 GB",
+                      "variableId": "totalGP3storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeCostType"
+                      },
+                      "min"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Minimum Auto Volume Type (greater or equeal to 125 GB) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalAutoMinCost",
+                  "referLabel": "Total auto minimum cost",
+                  "id": "totalAutoMinCostVar"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeCostType"
+                      },
+                      "max"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAutoMaxCost",
+                  "variableName": "Total auto maximum cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ebsGP3Price",
+                      "variableLabel": "price for EBS high perofrmance",
+                      "variableUnitLabel": "[currency] GB per month (gp3)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "total storage over 125 GB",
+                      "variableId": "totalGP3storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeCostType"
+                      },
+                      "max"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Maximum Auto Volume Type (greater or equeal to 125 GB) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalAutoMaxCost",
+                  "referLabel": "Total auto maximum cost",
+                  "id": "totalAutoMaxCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalGP3Cost",
+                  "variableName": "Total cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ebsVolumeTypePricing",
+                      "variableLabel": "EBS volume type pricing",
+                      "variableUnitLabel": "[currency] GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "total storage over 125 GB",
+                      "variableId": "totalGP3storage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeType"
+                      },
+                      "Storage General Purpose gp3 GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS General Purpose SSD (GP3) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalGP3Cost",
+                  "referLabel": "Total cost",
+                  "id": "totalGP3CostVar"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeType"
+                      },
+                      "Storage General Purpose GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS General Purpose SSD (GP2) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalGP3Cost",
+                  "referLabel": "Total cost",
+                  "id": "totalGP2CostVar"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ebsVolumeType"
+                      },
+                      "Storage Throughput Optimized HDD GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Throughput Optimized HDD (st1) Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalGP3Cost",
+                  "referLabel": "Total cost",
+                  "id": "totalSt1CostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "percentOfStorageLowCost",
+                  "variableName": "percent of low cost storage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Percentage of source disks equal or larger than 125 GB",
+                      "variableId": "percentOfHigherPerformance",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "(percentage of storage requires EBS Magnetic)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalEBSMagneticCost",
+                  "variableName": "Total EBS magnetic cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ebsMagneticPrice",
+                      "variableLabel": "price for EBS Magnetic",
+                      "variableUnitLabel": "[currency] GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableId": "storageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "percentOfStorageLowCost",
+                      "variableLabel": "percent of low cost storage",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Standard Volume Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalEBSMagneticCost",
+                  "referLabel": "Total EBS magnetic cost",
+                  "id": "totalEBSMagneticCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalEBSVolumeCharge",
+                  "variableName": "Total EBS volume cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total cost",
+                      "variableId": "totalGP3Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total auto average cost",
+                      "variableId": "totalAutoAvgCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total auto minimum cost",
+                      "variableId": "totalAutoMinCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total auto maximum cost",
+                      "variableId": "totalAutoMaxCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total EBS magnetic cost",
+                      "variableId": "totalEBSMagneticCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Volume Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalEBSVolumeCharge",
+                  "referLabel": "Total EBS volume cost",
+                  "id": "totalEBSVolumeChargeVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SnapshotsForRetention",
+                  "variableName": "Snapshots for retention period",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storageAmount",
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableUnitLabel": "GB (base)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Average change rate on disks per day",
+                      "variableId": "avgChangeRateOfDisk",
+                      "variableUnitLabel": "daily change rate",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfRetentionDays",
+                      "variableLabel": "Number of days selected for EBS snapshot retention period ",
+                      "variableUnitLabel": "days retention",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "(GB) snapshots",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Snapshots New Data",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "refer": "SnapshotsForRetention",
+                  "referLabel": "Snapshots for retention period",
+                  "id": "totalSnapShotsNewData"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalSnapshots",
+                  "variableName": "Total EBS Snapshots",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "storageAmount",
+                      "variableLabel": "Storage on all disks and all servers",
+                      "variableUnitLabel": "GB (snapshots base)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "SnapshotsForRetention",
+                      "variableLabel": "Snapshots for retention period",
+                      "variableUnitLabel": "GB (snapshots new)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "(GB) total EBS Snapshots",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ebsSnapshotsCharge",
+                  "variableName": "Total Snapshots charge",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ebsSnapShotPrice",
+                      "variableLabel": "price for snapshot",
+                      "variableUnitLabel": "[currency] GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Total EBS Snapshots",
+                      "variableId": "totalSnapshots",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Snapshots Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Total Snapshots charge",
+                  "refer": "ebsSnapshotsCharge",
+                  "id": "ebsSnapshotsChargeVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalEBScost",
+                  "variableName": "Total EBS cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totalEBSVolumeCharge",
+                      "variableLabel": "Total EBS volume cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total Snapshots charge",
+                      "variableId": "ebsSnapshotsCharge",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total EBS Cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Total EBS cost",
+                  "refer": "totalEBScost",
+                  "id": "totalEBScostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberOfReplicationServer",
+                  "variableName": "Number of replication servers",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDisk",
+                      "variableLabel": "Number of disks",
+                      "variableUnitLabel": "volumes",
+                      "required": true
+                    },
+                    {
+                      "constant": 15,
+                      "constantUnitLabel": "volumes per replication server"
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "variableName": "Rounded number of replication servers",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of replication servers",
+                      "variableUnitLabel": "rounded t3.small On-Demand replication servers",
+                      "required": true,
+                      "variableId": "numberOfReplicationServer"
+                    }
+                  ],
+                  "outputUnitLabel": "replication servers (t3.small EC2 instances)",
+                  "allowZero": true,
+                  "id": "roundedNumberOfReplicationServer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total number of replication servers (EC2 instances)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "refer": "roundedNumberOfReplicationServer",
+                  "referLabel": "Rounded number of replication servers",
+                  "id": "totalEC2Instance"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalReplicationCost",
+                  "variableName": "Total replication cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totalDRScharge",
+                      "variableLabel": "Total AWS DRS charge",
+                      "variableUnitLabel": "[currency] (DRS)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalEBScost",
+                      "variableLabel": "Total EBS cost",
+                      "variableUnitLabel": "[currency] (EBS)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalDRScharge",
+                    "totalDRSchargeVar",
+                    "dailyChangeGB",
+                    "dailyChangeMB",
+                    "SecondChangeMB",
+                    "totalGP3storage",
+                    "storageAmountTB",
+                    "avgDiskSizeInTB",
+                    "3XMBps",
+                    "6XMBps",
+                    "9XMBps",
+                    "12XMBps",
+                    "15XMBps",
+                    "18XMBps",
+                    "21XMBps",
+                    "totalAutoAvgSC1Cost100",
+                    "totalAutoAvgGP3Cost125",
+                    "totalAutoAvgSC1Cost875",
+                    "totalAutoAvgGP3Cost25",
+                    "totalAutoAvgSC1Cost75",
+                    "totalAutoAvgGP3Cost375",
+                    "totalAutoAvgSC1Cost625",
+                    "totalAutoAvgGP3Cost50",
+                    "totalAutoAvgSC1Cost50",
+                    "totalAutoAvgGP3Cost625",
+                    "totalAutoAvgSC1Cost375",
+                    "totalAutoAvgGP3Cost75",
+                    "totalAutoAvgSC1Cost25",
+                    "totalAutoAvgGP3Cost875",
+                    "totalAutoAvgSC1Cost125",
+                    "totalAutoAvgGP3Cost100",
+                    "totalAutoAvgSC1Cost0",
+                    "totalAutoAvgCost",
+                    "totalAutoAvgCostVar",
+                    "totalAutoMinCost",
+                    "totalAutoMinCostVar",
+                    "totalAutoMaxCost",
+                    "totalAutoMaxCostVar",
+                    "totalGP3Cost",
+                    "totalGP3CostVar",
+                    "totalGP2CostVar",
+                    "totalSt1CostVar",
+                    "percentOfStorageLowCost",
+                    "totalEBSMagneticCost",
+                    "totalEBSMagneticCostVar",
+                    "totalEBSVolumeCharge",
+                    "totalEBSVolumeChargeVar",
+                    "SnapshotsForRetention",
+                    "totalSnapShotsNewData",
+                    "totalSnapshots",
+                    "ebsSnapshotsCharge",
+                    "ebsSnapshotsChargeVar",
+                    "totalEBScost",
+                    "totalEBScostVar",
+                    "numberOfReplicationServer",
+                    "roundedNumberOfReplicationServer",
+                    "totalEC2Instance",
+                    "totalReplicationCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total DRS and EBS Costs",
+                  "decimalPlaces": 2,
+                  "id": "totalReplicationCostDisplay",
+                  "subTotalRefer": "totalReplicationCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

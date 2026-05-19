@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Sera session data ElastiCache Redis infrastructure'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Default: sera
+    Description: Prefix for all resource names to support multiple SERA deployments
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: Must start with a lowercase letter, contain only lowercase letters, numbers, and hyphens, and be 3-21 characters long
+
+Resources:
+  # ElastiCache Subnet Group
+  SeraSessionDataSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: !Sub '${StackPrefix}-session-data-subnet-group'
+      Description: !Sub 'Subnet group for ${StackPrefix} session data ElastiCache cluster'
+      SubnetIds:
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-session-db-subnet-1-id'
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-session-db-subnet-2-id'
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-session-db-subnet-3-id'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Redis AUTH token secret (kept for migration compatibility)
+  RedisAuthTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-SMG4
+            reason: "This is only to maintain compatibility-uses IAM Auth Tokens for authentication"
+    Properties:
+      Name: !Sub '${StackPrefix}-redis-auth-token'
+      Description: !Sub 'Redis AUTH token for ${StackPrefix} session data cluster'
+      GenerateSecretString:
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\`~+=[]{}|;:,.*?()_%'
+        RequireEachIncludedType: false
+        IncludeSpace: false
+      KmsKeyId: !ImportValue 
+          Fn::Sub: '${StackPrefix}-kms-key-arn'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Custom default User for migration compatibility
+  RedisDisabledDefaultUser:
+    Type: AWS::ElastiCache::User
+    Properties:
+      UserId: !Sub '${StackPrefix}-disabled-default'
+      UserName: "default"
+      AccessString: "off ~* +@all"
+      AuthenticationMode:
+        Type: "password"
+        Passwords: 
+          - !Sub "{{resolve:secretsmanager:${RedisAuthTokenSecret}:SecretString}}"
+      Engine: "redis"
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # IAM-based User
+  RedisIamUser:
+    Type: AWS::ElastiCache::User
+    Properties:
+      UserId: !Sub '${StackPrefix}-iam-user'
+      UserName: !Sub '${StackPrefix}-iam-user'
+      AccessString: "on ~* +@all"
+      AuthenticationMode:
+        Type: "iam"
+      Engine: "redis"
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # UserGroup containing both users
+  RedisUserGroup:
+    Type: AWS::ElastiCache::UserGroup
+    Properties:
+      Engine: "redis"
+      UserGroupId: !Sub '${StackPrefix}-user-group'
+      UserIds: 
+        - !Ref RedisDisabledDefaultUser
+        - !Ref RedisIamUser
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # ElastiCache Replication Group (Redis with replicas)
+  SeraSessionDataRedisCluster:
+    Type: AWS::ElastiCache::ReplicationGroup
+    DependsOn: RedisUserGroup
+    Properties:
+      ReplicationGroupId: !Sub '${StackPrefix}-session-data'
+      ReplicationGroupDescription: !Sub 'Redis cluster for ${StackPrefix} session data'
+      Engine: redis
+      EngineVersion: 7.1
+      CacheNodeType: cache.m6g.large
+      NumCacheClusters: 2  
+      MultiAZEnabled: true
+      AutomaticFailoverEnabled: true
+      TransitEncryptionEnabled: true
+      AtRestEncryptionEnabled: true
+      KmsKeyId: !ImportValue 
+          Fn::Sub: '${StackPrefix}-kms-key-id'
+      CacheSubnetGroupName: !Ref SeraSessionDataSubnetGroup
+      SecurityGroupIds:
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-redis-sg-id'
+      UserGroupIds:
+        - !Sub '${StackPrefix}-user-group'
+      Port: 19703
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+Outputs:
+  # Redis AUTH token secret
+  RedisAuthTokenSecretArn:
+    Description: 'ARN of the Redis AUTH token secret'
+    Value: !Ref RedisAuthTokenSecret
+    Export:
+      Name: !Sub '${StackPrefix}-redis-auth-token-secret-arn'
+
+  # ElastiCache outputs
+  ElastiCacheEndpoint:
+    Description: Primary endpoint for the Redis cluster
+    Value: !GetAtt SeraSessionDataRedisCluster.PrimaryEndPoint.Address
+    Export:
+      Name: !Sub '${StackPrefix}-redis-endpoint'
+
+  ElastiCachePort:
+    Description: Port for the Redis cluster
+    Value: !GetAtt SeraSessionDataRedisCluster.PrimaryEndPoint.Port
+    Export:
+      Name: !Sub '${StackPrefix}-redis-port'
+
+  # Hard coded value: Support for CloudFormation error: Template error: resource SeraSessionDataRedisCluster does not support attribute type ReplicationGroupId in Fn::GetAtt even though docs say this is valid
+  ReplicationGroupId:
+    Description: Replication Group ID
+    Value: !Sub '${StackPrefix}-session-data'
+    Export:
+      Name: !Sub '${StackPrefix}-redis-replication-group-id'
+
+  # Replication Group ARN
+  ReplicationGroupArn:
+    Description: 'ARN of the Redis replication group'
+    Value: !Sub 'arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:replicationgroup:${SeraSessionDataRedisCluster}'
+    Export:
+      Name: !Sub '${StackPrefix}-redis-replication-group-arn'
+
+  # IAM User outputs
+  RedisIamUserArn:
+    Description: 'ARN of the Redis IAM user'
+    Value: !Sub 'arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:user:${RedisIamUser}'
+    Export:
+      Name: !Sub '${StackPrefix}-redis-iam-user-arn'
+
+  RedisIamUserName:
+    Description: 'Name of the Redis IAM user'
+    Value: !Ref RedisIamUser
+    Export:
+      Name: !Sub '${StackPrefix}-redis-iam-user-name'

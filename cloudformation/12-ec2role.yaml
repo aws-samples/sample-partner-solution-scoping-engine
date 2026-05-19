@@ -1,0 +1,328 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA EC2 IAM Role'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Default: sera
+    Description: Prefix for all resource names to support multiple SERA deployments
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: Must start with a lowercase letter, contain only lowercase letters, numbers, and hyphens, and be 3-21 characters long
+
+Resources:
+  SeraEC2PermissionsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "SSM Session Manager permissions require Resource: '*' for core functionality (CreateControlChannel, OpenDataChannel, etc.). These are AWS-managed service permissions required for secure remote access. This is the only wildcard resource in the policy - all other permissions are scoped to specific SERA resources."
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-IAM5
+            reason: "Wildcard permissions are required for application functionality: S3 object access for chat documents/logs/artifacts, KMS key operations for encryption/decryption, and DynamoDB index access for queries. Access is scoped to specific resources via ARN imports."
+            appliesTo:
+              # S3 bucket object wildcards
+              - 'Resource::["${ChatDocsBucketArn}/*",{"ChatDocsBucketArn":{"Fn::ImportValue":"${StackPrefix}-chat-docs-bucket-arn"}}]'
+              - 'Resource::["${LogfilesBucketArn}/*",{"LogfilesBucketArn":{"Fn::ImportValue":"${StackPrefix}-logfiles-bucket-arn"}}]'
+              - 'Resource::["${TokenUsageDataBucketArn}/*",{"TokenUsageDataBucketArn":{"Fn::ImportValue":"${StackPrefix}-token-usage-data-bucket-arn"}}]'
+              - 'Resource::["${CodeArtifactsBucketArn}/*",{"CodeArtifactsBucketArn":{"Fn::ImportValue":"${StackPrefix}-code-artifacts-bucket-arn"}}]'
+              # KMS action wildcards
+              - 'Action::kms:ReEncrypt*'
+              - 'Action::kms:GenerateDataKey*'
+              # DynamoDB index wildcards
+              - 'Resource::["arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ChatsTableName}/index/*",{"ChatsTableName":{"Fn::ImportValue":"${StackPrefix}-chats-data-table-name"}}]'
+              - 'Resource::["arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SupportTableName}/index/*",{"SupportTableName":{"Fn::ImportValue":"${StackPrefix}-support-relationship-data-table-name"}}]'
+              # General resource wildcard
+              - 'Resource::*'
+      checkov:
+        skip:
+          - id: CKV_AWS_111
+            comment: "SSM Session Manager permissions require Resource: '*' for core functionality (CreateControlChannel, OpenDataChannel, etc.). These are AWS-managed service permissions required for secure remote access. All other permissions are scoped to specific SERA resources via ARN imports."
+    Properties:
+      Description: !Sub 'IAM policy for ${StackPrefix} EC2 instances'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # S3 Bucket Level Permissions
+          - Sid: S3BucketLevelPermissions
+            Effect: Allow
+            Action:
+              - s3:ListBucket
+              - s3:GetBucketVersioning
+              - s3:GetBucketLocation
+              - s3:ListBucketVersions
+            Resource:
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-logfiles-bucket-arn'
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-code-artifacts-bucket-arn'
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-chat-docs-bucket-arn'
+
+          # S3 Object Level GET-PUT-DELETE-Permissions
+          - Sid: S3ObjectLevelGetPutDeletePermissions
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:DeleteObject
+              - s3:PutObjectTagging
+            Resource:
+              - !Sub 
+                - "${ChatDocsBucketArn}/*"
+                - ChatDocsBucketArn: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-chat-docs-bucket-arn'
+
+          # S3 Object Level PUT-Permissions
+          - Sid: S3ObjectLevelPutPermissions
+            Effect: Allow
+            Action:
+              - s3:PutObject
+            Resource:
+              - !Sub 
+                - "${LogfilesBucketArn}/*"
+                - LogfilesBucketArn: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-logfiles-bucket-arn'
+              - !Sub 
+                - "${TokenUsageDataBucketArn}/*"
+                - TokenUsageDataBucketArn: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-token-usage-data-bucket-arn'
+
+          # S3 Object Level GET-Permissions
+          - Sid: S3ObjectLevelGetPermissions
+            Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource:
+              - !Sub 
+                - "${CodeArtifactsBucketArn}/*"
+                - CodeArtifactsBucketArn: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-code-artifacts-bucket-arn'
+
+          # Bedrock Permissions
+          - Sid: BedrockPermissions
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: 
+              - !Sub 'arn:aws:bedrock:*::foundation-model/anthropic.claude-sonnet-4*'
+              - !Sub 'arn:aws:bedrock:*::foundation-model/us.anthropic.claude-sonnet-4*'
+              - !Sub 'arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/anthropic.claude-sonnet-4*'
+              - !Sub 'arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/us.anthropic.claude-sonnet-4*'
+              - !Sub 
+                - 'arn:aws:bedrock:*:${AWS::AccountId}:guardrail/${GuardrailId}'
+                - GuardrailId: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-aws-sa-bedrock-guardrail-id'
+
+          # SES Email Sending Permissions
+          - Sid: SESEmailSending
+            Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: 
+              - !Sub 'arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/*'
+
+          # KMS Key permissions
+          - Sid: KMSPermissions
+            Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: 
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-kms-key-arn'
+
+          - Sid: SecretsManagerPermissions
+            Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+            Resource: 
+                - !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-client-secret-arn'
+                - !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-auth-token-secret-arn'
+                - !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cloudfront-private-key-secret-arn'
+                - !ImportValue 
+                  Fn::Sub: '${StackPrefix}-flask-secret-key-arn'
+                - !ImportValue 
+                  Fn::Sub: '${StackPrefix}-nova-act-api-secret-arn'
+
+          # Cognito Permissions for group membership
+          - Sid: CognitoGroupPermissions
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminListGroupsForUser
+            Resource: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-user-pool-arn'
+
+          # CloudFormation Template validation
+          - Sid: CloudFormationTemplateValidation 
+            Effect: Allow 
+            Action: 
+              - cloudformation:ValidateTemplate
+            Resource: '*'
+          
+          #Price List API
+          - Sid: PriceListApiPermissions
+            Effect: Allow 
+            Action: 
+              - pricelist:DescribeServices
+              - pricelist:GetAttributeValues
+              - pricelist:GetPriceListFileUrl
+              - pricelist:GetProducts
+              - pricelist:ListPriceLists
+            Resource: '*'
+
+          # ElastiCache IAM Authentication permissions
+          - Sid: ElastiCacheIAMAuthPermissions
+            Effect: Allow
+            Action:
+              - elasticache:Connect
+            Resource:
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-redis-replication-group-arn'
+              - !ImportValue 
+                Fn::Sub: '${StackPrefix}-redis-iam-user-arn'
+          
+          - Sid: DynamoDBPermissions
+            Effect: Allow
+            Action:
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:DescribeTable
+            Resource: 
+              - !Sub 
+                - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ChatsTableName}"
+                - ChatsTableName: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-chats-data-table-name'
+              - !Sub 
+                - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SupportTableName}"
+                - SupportTableName: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-support-relationship-data-table-name'
+              - !Sub 
+                - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${ChatsTableName}/index/*"
+                - ChatsTableName: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-chats-data-table-name'
+              - !Sub 
+                - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${SupportTableName}/index/*"
+                - SupportTableName: !ImportValue 
+                    Fn::Sub: '${StackPrefix}-support-relationship-data-table-name'
+              
+          - Sid: SSMSessionManagerCore
+            Effect: Allow
+            Action: 
+              - ssm:DescribeAssociation
+              - ssm:GetDeployablePatchSnapshotForInstance
+              - ssm:GetDocument
+              - ssm:DescribeDocument
+              - ssm:GetManifest
+              - ssm:ListAssociations
+              - ssm:ListInstanceAssociations
+              - ssm:PutInventory
+              - ssm:PutComplianceItems
+              - ssm:PutConfigurePackageResult
+              - ssm:UpdateAssociationStatus
+              - ssm:UpdateInstanceAssociationStatus
+              - ssm:UpdateInstanceInformation
+              - ssmmessages:CreateControlChannel
+              - ssmmessages:CreateDataChannel
+              - ssmmessages:OpenControlChannel
+              - ssmmessages:OpenDataChannel
+              - ec2messages:AcknowledgeMessage
+              - ec2messages:DeleteMessage
+              - ec2messages:FailMessage
+              - ec2messages:GetEndpoint
+              - ec2messages:GetMessages
+              - ec2messages:SendReply
+            Resource: '*'
+
+          - Sid: CloudWatchLogsPermissions
+            Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              - logs:DescribeLogStreams
+              - logs:DescribeLogGroups
+            Resource: 
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StackPrefix}-ec2-application-logs'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${StackPrefix}-ec2-application-logs:*'
+
+  # EC2 IAM Role
+  SeraEC2InstanceRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-IAM4
+            reason: "AmazonSSMManagedInstanceCore AWS managed policy is required for Systems Manager functionality (Session Manager, patch management, etc.). This is a standard AWS service integration."
+            appliesTo:
+              - 'Policy::arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+    Properties:
+      Description: !Sub 'IAM role for ${StackPrefix} EC2 instances'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref SeraEC2PermissionsPolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-app-ec2-instance-role-v5'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # EC2 Instance Profile
+  SeraEC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub '${StackPrefix}-app-ec2-instance-profile-v5'
+      Roles:
+        - !Ref SeraEC2InstanceRole
+
+Outputs:
+  # EC2 Role Outputs
+  SeraEC2InstanceRoleArn:
+    Description: 'ARN of the SERA EC2 instance role'
+    Value: !GetAtt SeraEC2InstanceRole.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-instance-role-arn'
+
+  SeraEC2InstanceRoleName:
+    Description: 'Name of the SERA EC2 instance role'
+    Value: !Ref SeraEC2InstanceRole
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-instance-role-name'
+
+  SeraEC2InstanceProfileArn:
+    Description: 'ARN of the SERA EC2 instance profile'
+    Value: !GetAtt SeraEC2InstanceProfile.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-instance-profile-arn'
+
+  SeraEC2InstanceProfileName:
+    Description: 'Name of the SERA EC2 instance profile'
+    Value: !Ref SeraEC2InstanceProfile
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-instance-profile-name'

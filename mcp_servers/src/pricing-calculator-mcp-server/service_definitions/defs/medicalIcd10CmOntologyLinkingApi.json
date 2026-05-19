@@ -1,0 +1,440 @@
+{
+  "version": "0.0.9",
+  "serviceName": "Medical ICD-10-CM Ontology Linking API",
+  "serviceCode": "medicalIcd10CmOntologyLinkingApi",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-gov-west-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics"
+  ],
+  "serviceDescription": "",
+  "excludeZeroSubTotals": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehendmedical",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehendmedical/[currency]/current/comprehendmedical.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "API call selection",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Type of API call",
+                "id": "Type_of_API_call",
+                "options": [
+                  {
+                    "label": "Synchronous",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Asynchronous",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "validations": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "Type_of_API_call"
+              },
+              "1"
+            ]
+          },
+          "title": "Medical ICD-10-CM Ontology Linking API",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_text_(utf-8)_documents",
+                "label": "Number of text (utf-8) documents (ICD-10-CM)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text (utf-8) documents to be analyzed",
+                "description": "Number of text (utf-8) documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_characters_in_a_document",
+                "label": "Average characters in a document (ICD-10-CM)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text (utf-8) document",
+                "description": "Average number of characters in each text (utf-8) document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "detect erICD10CM cost",
+                "id": "detect_erICD10CM_cost",
+                "mappingDefinitionName": "comprehendmedical",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "InferICD10CM"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 2000000,
+                      "meteredUnit": "InferICD10CM Tier2"
+                    },
+                    {
+                      "startOfTier": 2000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "InferICD10CM Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_text_(utf-8)_documents",
+                      "variableLabel": "Number of text (utf-8) documents (ICD-10-CM)",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_characters_in_a_document",
+                      "variableLabel": "Average characters in a document (ICD-10-CM)",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "units rounded up",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "monthlyICD10CMfinCost",
+                  "outputUnitLabel": "[currency]",
+                  "inputRefer": "unitsRounded",
+                  "inputReferLabel": "units rounded up to nearest 1 unit",
+                  "tieredPricingRefer": "detect_erICD10CM_cost",
+                  "tieredPricingReferLabel": "detect erICD10CM cost",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1",
+                    "Number_of_text_(utf-8)_documents",
+                    "Average_characters_in_a_document",
+                    "detect_erICD10CM_cost",
+                    "unitsPerRequest",
+                    "unitsChar",
+                    "unitsRounded",
+                    "monthlyICD10CMfinCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Medical ICD-10-CM Ontology Linking API",
+                  "decimalPlaces": 2,
+                  "id": "ICD10CMfin",
+                  "subTotalRefer": "monthlyICD10CMfinCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "Type_of_API_call"
+              },
+              "0"
+            ]
+          },
+          "title": "Medical ICD-10-CM Ontology Linking API",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1_a"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_text_(utf-8)_documents_a",
+                "label": "Number of text (utf-8) documents (ICD-10-CM)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text (utf-8) documents to be analyzed",
+                "description": "Number of text (utf-8) documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_characters_in_a_document_a",
+                "label": "Average characters in a document (ICD-10-CM)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text (utf-8) document",
+                "description": "Average number of characters in each text (utf-8) document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "detect erICD10CM cost",
+                "id": "detect_erICD10CM_cost_a",
+                "mappingDefinitionName": "comprehendmedical",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "ICD10CMInference Batching"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 2000000,
+                      "meteredUnit": "ICD10CMInference Batching Tier2"
+                    },
+                    {
+                      "startOfTier": 2000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ICD10CMInference Batching Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_a",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_text_(utf-8)_documents_a",
+                      "variableLabel": "Number of text (utf-8) documents (ICD-10-CM)",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_characters_in_a_document_a",
+                      "variableLabel": "Average characters in a document (ICD-10-CM)",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_a",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest_a",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_a",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_a",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "units rounded up",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "monthlyICD10CMfinCost_a",
+                  "outputUnitLabel": "[currency]",
+                  "inputRefer": "unitsRounded_a",
+                  "inputReferLabel": "units rounded up to nearest 1 unit",
+                  "tieredPricingRefer": "detect_erICD10CM_cost_a",
+                  "tieredPricingReferLabel": "detect erICD10CM cost",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1_a",
+                    "Number_of_text_(utf-8)_documents_a",
+                    "Average_characters_in_a_document_a",
+                    "detect_erICD10CM_cost_a",
+                    "unitsPerRequest_a",
+                    "unitsChar_a",
+                    "unitsRounded_a",
+                    "monthlyICD10CMfinCost_a"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Medical ICD-10-CM Ontology Linking API",
+                  "decimalPlaces": 2,
+                  "id": "ICD10CMfin_a",
+                  "subTotalRefer": "monthlyICD10CMfinCost_a"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

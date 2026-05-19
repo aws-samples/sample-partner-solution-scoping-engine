@@ -1,0 +1,1123 @@
+{
+  "version": "0.0.52",
+  "serviceName": "Amazon DocumentDB (with MongoDB compatibility)",
+  "serviceCode": "amazonDocumentDB",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "docdb",
+    "MongoDB",
+    "mongodb",
+    "document database",
+    "DocumentDB"
+  ],
+  "serviceDescription": "Amazon DocumentDB (with MongoDB compatibility) is a fast, scalable, highly available, and fully managed document database service that supports MongoDB workloads.",
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "docdb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/docdb/[currency]/current/docdb.json"
+    },
+    {
+      "mappingDefinitionName": "docdb-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/docdb/[currency]/current/docdb-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "docdbstorage-calc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/docdb/[currency]/current/docdbstorage-calc.json"
+    },
+    {
+      "mappingDefinitionName": "docdb-iooptimized-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/docdb/[currency]/current/docdb-iooptimized-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/documentdb/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Configure DocumentDB (with MongoDB compatibility)",
+      "description": "Amazon DocumentDB (with MongoDB compatibility) is a fully managed document database service that supports MongoDB workloads. With Amazon DocumentDB, you only pay for what you use, and there are no upfront costs.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/documentdb/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Cluster Storage Configuration Option",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/",
+              "overrides": {
+                "aws": "https://docs.aws.amazon.com/documentdb/latest/developerguide/db-cluster-storage-configs.html",
+                "aws-us-gov": "https://docs.aws.amazon.com/documentdb/latest/developerguide/db-cluster-storage-configs.html"
+              }
+            }
+          },
+          "description": "Staring from Amazon DocumentDB 5.0, instance-based clusters support two storage configurations types: Amazon DocumentDB Standard and Amazon DocumentDB I/O-Optimized.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "edition",
+                "label": "DocumentDB Cluster Configuration Option",
+                "options": [
+                  {
+                    "label": "Amazon DocumentDB Standard",
+                    "id": "docdbStandard"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "docdb",
+                        "meteredUnit": "Database Storage IO-Optimized-DocDB"
+                      }
+                    },
+                    "label": "Amazon DocumentDB I/O-Optimized",
+                    "id": "docdbIOoptimized"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "docdbStandard",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "docdbStandard"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Cost effective pricing for many applications with moderate I/O usage (I/O costs <25% of total database costs). <br>Pay-per-request I/O charges apply. DB instance and storage prices don't include I/O usage.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoDocdbStandard"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "docdbIOoptimized"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Predictable pricing for all applications. Improved price-performance for I/O-intensive applications (I/O costs >25% of total database costs). <br>No additional charges for read/write I/O operations. DB instance and storage prices includes I/O usage.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "userTypeInfoDocdbIOoptimized"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Database Storage"
+                },
+                "id": "standardStoragePrice"
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "docdbStandard"
+            ]
+          },
+          "title": "Amazon DocumentDB Standard Instance",
+          "helpText": "On-demand instances let you pay per second, with no long-term commitments or upfront fees. This frees you from the cost and complexity of planning and purchasing database capacity in advance and having to guess the correct capacity.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Virtual server configuration",
+                "id": "columnFormIPM",
+                "type": "input",
+                "disableCalculation": false,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "docdb-calc",
+                "calculationId": {
+                  "monthly": "docdb_ipmPrice"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Quantity",
+                    "type": "textInput",
+                    "selectorId": "Quantity",
+                    "description": "Enter the number of instances in your cluster including replica instances",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000000000,
+                      "required": true
+                    },
+                    "defaultValue": 1,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "db.t3.medium",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Server utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "Enter the utilization of your cluster. The default utilization assumes 730 hours in a month.",
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Hours/Month"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "docdb_ipmPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "label": "Instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "docdb_ipmPrice",
+                  "id": "docDBCostDisplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "docdbIOoptimized"
+            ]
+          },
+          "title": "Amazon DocumentDB I/O-Optimized Instance",
+          "helpText": "On-demand instances let you pay per second, with no long-term commitments or upfront fees. This frees you from the cost and complexity of planning and purchasing database capacity in advance and having to guess the correct capacity.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Virtual server configuration",
+                "id": "columnFormIPMIOOptimized",
+                "type": "input",
+                "disableCalculation": false,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "docdb-iooptimized-calc",
+                "calculationId": {
+                  "monthly": "docdb_IOOptimizedipmPrice"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Quantity",
+                    "type": "textInput",
+                    "selectorId": "Quantity",
+                    "description": "Enter the number of instances in your cluster including replica instances",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000000000,
+                      "required": true
+                    },
+                    "defaultValue": 1,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "db.t3.medium",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Server utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "Enter the utilization of your cluster. The default utilization assumes 730 hours in a month.",
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Hours/Month"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "docdb_IOOptimizedipmPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "label": "Instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "docdb_IOOptimizedipmPrice",
+                  "id": "docDBIOOPtimizedCostDisplay"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "docdbStandard"
+            ]
+          },
+          "title": "Storage and IOs - Standard",
+          "helpText": "Storage consumed by your Amazon DocumentDB cluster is billed in per GB-month increments and IOs consumed are billed in per million request increments. You pay only for the storage and IOs your Amazon DocumentDB cluster consumes and do not need to provision in advance.",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage",
+                "id": "sizeForStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount of storage for the cluster in a given month",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "I/Os",
+                "id": "IORequests",
+                "options": [
+                  {
+                    "label": "millions",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "outputFrequency": {
+                  "label": "millions",
+                  "id": "millionPerMonth"
+                },
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter total number of I/Os in millions",
+                "description": "Enter the number of IOs (in millions) for the cluster in a given month"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Database Storage"
+                },
+                "id": "configureDocumentDbWithMongoDbCompatibility_generated_0"
+              },
+              {
+                "type": "pricing",
+                "label": "price for ios",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "1 million IO requests"
+                },
+                "id": "configureDocumentDbWithMongoDbCompatibility_generated_1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeForStorage",
+                    "IORequests",
+                    "configureDocumentDbWithMongoDbCompatibility_generated_0",
+                    "configureDocumentDbWithMongoDbCompatibility_generated_1"
+                  ],
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_2",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeForStorage"
+                    },
+                    {
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "configureDocumentDbWithMongoDbCompatibility_generated_0"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "I/Os",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "IORequests"
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": "1000000"
+                    }
+                  ],
+                  "outputUnitLabel": "Million requests",
+                  "id": "totalRequest"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Million requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "totalRequest"
+                    },
+                    {
+                      "variableLabel": "price for ios",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "configureDocumentDbWithMongoDbCompatibility_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (I/O Rate Cost)",
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Storage Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "configureDocumentDbWithMongoDbCompatibility_generated_3"
+                    },
+                    {
+                      "variableLabel": "[currency] (I/O Rate Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "configureDocumentDbWithMongoDbCompatibility_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_5"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "configureDocumentDbWithMongoDbCompatibility_generated_3",
+                    "totalRequest",
+                    "configureDocumentDbWithMongoDbCompatibility_generated_4",
+                    "configureDocumentDbWithMongoDbCompatibility_generated_5"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon DocumentDB Standard Storage and IO Cost",
+                  "decimalPlaces": 2,
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_6",
+                  "subTotalRefer": "configureDocumentDbWithMongoDbCompatibility_generated_5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "docdbIOoptimized"
+            ]
+          },
+          "title": "Storage - I/O-Optimized",
+          "helpText": "Storage consumed by your Amazon DocumentDB cluster is billed in per GB-month increments and IOs consumed are billed in per million request increments. You pay only for the storage and IOs your Amazon DocumentDB cluster consumes and do not need to provision in advance.",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage",
+                "id": "sizeForIOOptimizeStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount of storage for the cluster in a given month",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Database Storage IO-Optimized-DocDB"
+                },
+                "id": "docDBstorageIOOPtimized"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeForIOOptimizeStorage",
+                    "docDBstorageIOOPtimized"
+                  ],
+                  "id": "docdbStorageIOOPtimizedUnitConversionDisplay",
+                  "subTotalRefer": "configureDocumentDbWithMongoDbCompatibility_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeForIOOptimizeStorage"
+                    },
+                    {
+                      "variableLabel": "Price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "docDBstorageIOOPtimized"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "docdbIOOPtimizedStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "docdbIOOPtimizedStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon DocumentDB I/O-Optimized Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "docdbIOOptimizedStorageTotal",
+                  "subTotalRefer": "docdbIOOPtimizedStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": " Backup storage",
+          "helpText": "Backup storage is allocated by region. Total backup storage space is equivalent to the sum of the storage for all backups in that region.",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Info",
+                "label": "Info",
+                "content": "Backup storage costs apply to both Amazon DocumentDB elastic clusters and instance-based clusters.",
+                "alertType": "info",
+                "isDismissable": false,
+                "id": "backupStorageInforAlert"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Backup storage",
+                "id": "sizeForBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount of backup storage that is in excess of 100% of the storage size for the cluster in a given month.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot"
+                },
+                "id": "configureDocumentDbWithMongoDbCompatibility_generated_7"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "backupStorageInforAlert",
+                    "sizeForBackupStorage",
+                    "configureDocumentDbWithMongoDbCompatibility_generated_7"
+                  ],
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_8",
+                  "subTotalRefer": "docdbIOOPtimizedStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeForBackupStorage"
+                    },
+                    {
+                      "variableLabel": "Price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "configureDocumentDbWithMongoDbCompatibility_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Backup storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_9"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "configureDocumentDbWithMongoDbCompatibility_generated_9"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "configureDocumentDbWithMongoDbCompatibility_generated_10",
+                  "subTotalRefer": "configureDocumentDbWithMongoDbCompatibility_generated_9"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Elastic Cluster Compute (on-demand vCPU pricing)",
+          "helpText": "On-Demand vCPUs let you pay per second, with no long-term commitments or upfront fees. This frees you from the cost and complexity of planning and purchasing database capacity in advance, and from having to guess the correct capacity. Pricing is per vCPU hour consumed, from the time your Amazon DocumentDB Elastic Clusters is launched until it is deleted. vCPUs provide RAM (memory), I/O operations, and the required CPU cores for your workload. Partial vCPU hours are billed in one-second increments, with a 10-minute charge following a billable status change such as creating, modifying, or deleting your cluster. ",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Shards",
+                "id": "NumberofShards",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 32
+                },
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "Numberofvcpus",
+                "label": "Number of vCPUs per Node (for all Nodes in shard)",
+                "options": [
+                  {
+                    "label": "2",
+                    "id": "2"
+                  },
+                  {
+                    "label": "4",
+                    "id": "4"
+                  },
+                  {
+                    "label": "8",
+                    "id": "8"
+                  },
+                  {
+                    "label": "16",
+                    "id": "16"
+                  },
+                  {
+                    "label": "32",
+                    "id": "32"
+                  },
+                  {
+                    "label": "64",
+                    "id": "64"
+                  }
+                ],
+                "defaultDropDownItem": "",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false
+                },
+                "placeholder": "Enter total s3 capacity in TB",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Nodes per shard",
+                "id": "NumberofNodes",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 16
+                },
+                "defaultValue": 2,
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for elastic cluster compute",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Database Utilization CreateCluster"
+                },
+                "id": "docdb_elastic_cluster_utilisation_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "NumberofShards",
+                    "Numberofvcpus",
+                    "NumberofNodes",
+                    "docdb_elastic_cluster_utilisation_price"
+                  ],
+                  "id": "elsticcluster_display",
+                  "subTotalRefer": "configureDocumentDbWithMongoDbCompatibility_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "vCPUs",
+                  "displayInCalculationString": false,
+                  "referLabel": "Number of vCPUs per Node (for all Nodes in shard)",
+                  "refer": "Numberofvcpus",
+                  "id": "vCPU_shard"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Shards",
+                      "variableUnitLabel": "shards",
+                      "required": true,
+                      "variableId": "NumberofShards"
+                    },
+                    {
+                      "variableLabel": "vCPUs",
+                      "variableUnitLabel": "vCPUs",
+                      "required": true,
+                      "variableId": "vCPU_shard"
+                    },
+                    {
+                      "variableLabel": "Number of Nodes per shard",
+                      "variableUnitLabel": "nodes",
+                      "required": true,
+                      "variableId": "NumberofNodes"
+                    },
+                    {
+                      "variableLabel": "price for elastic cluster compute",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "docdb_elastic_cluster_utilisation_price"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (on-demand vCPU cost)",
+                  "decimalPlaces": 2,
+                  "id": "ondemandvCPUCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "vCPU_shard",
+                    "ondemandvCPUCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elastic Cluster Compute cost",
+                  "decimalPlaces": 2,
+                  "id": "elasticClusterCost_Final",
+                  "subTotalRefer": "ondemandvCPUCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Elastic Cluster Storage",
+          "helpText": "You pay only for the storage that your Amazon DocumentDB Elastic Clusters consumes and don’t need to provision storage in advance.Storage consumed by your Amazon DocumentDB Elastic Clusters is billed per GB-month. Billable storage includes your data, indexes, and change stream data. ",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/documentdb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage",
+                "id": "sizeForElasticStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for elastic cluster storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "docdbstorage-calc",
+                "meteredUnit": {
+                  "allRegions": "Database Storage CreateCluster"
+                },
+                "id": "docdb_elastic_cluster_storage_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "sizeForElasticStorage",
+                    "docdb_elastic_cluster_storage_price"
+                  ],
+                  "id": "elsticclusterStorage_display",
+                  "subTotalRefer": "ondemandvCPUCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeForElasticStorage"
+                    },
+                    {
+                      "variableLabel": "price for elastic cluster storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "docdb_elastic_cluster_storage_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (elastic storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "elsticStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "elsticStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elastic Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "elasticStoragerCost_Final",
+                  "subTotalRefer": "elsticStorageCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "documentDB"
+    }
+  ],
+  "slug": "DocumentDB",
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

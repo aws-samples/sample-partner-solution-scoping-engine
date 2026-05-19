@@ -1,0 +1,370 @@
+{
+  "version": "0.0.19",
+  "serviceName": "Proxy Phone Session",
+  "serviceCode": "proxyPhoneSession",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "Amazon Chime lets you meet, chat, and collaborate with the security of AWS. You can work seamlessly on your devices, and meet from your desk or on the go - ensuring you always stay connected.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/chime/chime-sdk/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "chimevoiceconnector",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector-textmessage-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector-textmessage-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Proxy Phone Session",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/chime/chime-sdk/"
+        }
+      },
+      "id": "Template_proxyPhone",
+      "cards": [
+        {
+          "title": "Proxy Phone Session",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfSessionProxy",
+                "label": "Number of Sessions",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Number of inbound calling minutes to US numbers",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration",
+                "id": "numberOfInboundCalling"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_Outbound",
+                "calculationId": {
+                  "hourly": "toCountryPrice_Outbound"
+                },
+                "remap": {
+                  "constant": {
+                    "CallType": "SMA Outbound"
+                  }
+                },
+                "primaryKey": "CallType",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country (Outbound)",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Number of outbound US audio minutes",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration",
+                "id": "numberOfOutboundCalling"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-textmessage-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_Outbound_text",
+                "calculationId": {
+                  "hourly": "toCountryPrice_Outbound_text"
+                },
+                "primaryKey": "messagetype",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country (Outbound Text)",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outbound Text Messages",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter amount",
+                "id": "numberOfOutboundSMS"
+              },
+              {
+                "type": "pricing",
+                "label": "price for proxy phone per Session",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimevoiceconnector",
+                "meteredUnit": {
+                  "allRegions": "ChimeVoiceConnector session per Sessions"
+                },
+                "id": "proxyPhoneSessionPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for inbound in Voice Connector",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimevoiceconnector",
+                "meteredUnit": {
+                  "allRegions": "ChimeVoiceConnector United States of America"
+                },
+                "id": "inbound_USA"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "proxyPhoneUnitConversion",
+                  "refer": [
+                    "numberOfSessionProxy",
+                    "numberOfInboundCalling",
+                    "columnFormIPM_Outbound",
+                    "numberOfOutboundCalling",
+                    "columnFormIPM_Outbound_text",
+                    "numberOfOutboundSMS",
+                    "proxyPhoneSessionPrice",
+                    "inbound_USA"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Sessions",
+                      "variableUnitLabel": "session",
+                      "required": true,
+                      "variableId": "numberOfSessionProxy"
+                    },
+                    {
+                      "variableLabel": "price for proxy phone per Session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "proxyPhoneSessionPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for proxy phone per session)",
+                  "decimalPlaces": 4,
+                  "id": "session_tot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of inbound calling minutes to US numbers",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "numberOfInboundCalling"
+                    },
+                    {
+                      "variableLabel": "price for inbound in Voice Connector",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "inbound_USA"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for proxy phone inbound US audio minutes)",
+                  "decimalPlaces": 4,
+                  "id": "proxyPhone_inbound"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of outbound US audio minutes",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "numberOfOutboundCalling"
+                    },
+                    {
+                      "variableLabel": "price for Chime call me Voice Connector",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "toCountryPrice_Outbound",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for proxy phone outbound US audio minutes)",
+                  "decimalPlaces": 4,
+                  "id": "proxyPhone_outbound"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of outbound Text Messages",
+                      "variableUnitLabel": "messages",
+                      "required": true,
+                      "variableId": "numberOfOutboundSMS"
+                    },
+                    {
+                      "variableLabel": "price for avg outbound SMS call",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "toCountryPrice_Outbound_text",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for average outbound text messages)",
+                  "decimalPlaces": 4,
+                  "id": "proxyPhone_outbound_text"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for proxy phone per session)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "session_tot"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for proxy phone inbound US audio minutes)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "proxyPhone_inbound"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for proxy phone outbound US audio minutes)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "proxyPhone_outbound"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for average outbound text messages)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "proxyPhone_outbound_text"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4,
+                  "id": "proxyPhone_total"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "session_tot",
+                    "proxyPhone_inbound",
+                    "proxyPhone_outbound",
+                    "proxyPhone_outbound_text",
+                    "proxyPhone_total"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Proxy Phone Session pricing",
+                  "decimalPlaces": 2,
+                  "id": "proxyPhone_Final",
+                  "subTotalRefer": "proxyPhone_total"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

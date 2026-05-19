@@ -1,0 +1,185 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Lightsail CDN",
+  "serviceCode": "lightsailCdn",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Content Delivery Network (CDN)",
+      "id": "lightsailCDN",
+      "cards": [
+        {
+          "title": "CDN",
+          "helpText": "Easily distribute your content to a global audience for a fixed monthly price.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The pricing estimates below do not include free tier.",
+                "id": "lightsailCDNText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "CDNBundle",
+                "label": "CDN bundle subscription",
+                "options": [
+                  {
+                    "label": "50 GB bundle",
+                    "id": "Lightsail CDN bundle subscription fee up to 50GB"
+                  },
+                  {
+                    "label": "200 GB bundle",
+                    "id": "Lightsail CDN bundle subscription fee up to 200GB"
+                  },
+                  {
+                    "label": "500 GB bundle",
+                    "id": "Lightsail CDN bundle subscription fee up to 500GB"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "Lightsail CDN bundle subscription fee up to 50GB",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "CDN bundle price",
+                "id": "CDNBundlePrice",
+                "mappingDefinitionName": "lightsail",
+                "refers": [
+                  {
+                    "variableLabel": "CDN bundle subscription",
+                    "variableId": "CDNBundle"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "lightsailCDNText",
+                    "CDNBundle",
+                    "CDNBundlePrice"
+                  ],
+                  "id": "unitConvertCDN",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "CDNBundle"
+                      },
+                      "CDNBundleDropDown"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "CDN bundle price",
+                      "required": true,
+                      "variableId": "CDNBundlePrice"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (CDN Cost)",
+                  "decimalPlaces": 2,
+                  "id": "CDNCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "CDN bundle price (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "CDN bundle price",
+                  "id": "summarizeCost",
+                  "refer": "CDNBundlePrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "CDNCost",
+                    "summarizeCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lightsail CDN cost",
+                  "decimalPlaces": 2,
+                  "id": "lightsailCDNCostDisplay",
+                  "subTotalRefer": "summarizeCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

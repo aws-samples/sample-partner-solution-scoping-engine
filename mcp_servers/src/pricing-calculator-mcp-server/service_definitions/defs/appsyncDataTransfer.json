@@ -1,0 +1,187 @@
+{
+  "version": "0.0.16",
+  "serviceName": "Appsync Data Transfer",
+  "serviceCode": "appsyncDataTransfer",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "data transfer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appsync/",
+      "overrides": {
+        "aws-cn": "https://www.amazonaws.cn/en/appsync/pricing/"
+      }
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    },
+    {
+      "mappingDefinitionName": "appsync",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appsync/[currency]/current/appsync.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "Data transfer is used for transfer between different services and the charges apply for data transfer into the region, out of the region and with in the region.",
+      "helpText": {
+        "aws": "AWS AppSync enables your app to receive Real-time Updates to the data that you want to keep in sync. Your app needs to remain connected to the AWS AppSync service to receive Real-time Updates.",
+        "aws-cn": "Amazon AppSync enables your app to receive Real-time Updates to the data that you want to keep in sync. Your app needs to remain connected to the Amazon AppSync service to receive Real-time Updates."
+      },
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ec2/pricing/on-demand/#Data_Transfer",
+          "overrides": {
+            "aws-cn": "https://www.amazonaws.cn/en/ec2/pricing/"
+          }
+        }
+      },
+      "excludeRegion": [],
+      "cards": [
+        {
+          "title": "Data Transfer",
+          "helpText": {
+            "aws": "AWS AppSync enables your app to receive Real-time Updates to the data that you want to keep in sync. Your app needs to remain connected to the AWS AppSync service to receive Real-time Updates.",
+            "aws-cn": "Amazon AppSync enables your app to receive Real-time Updates to the data that you want to keep in sync. Your app needs to remain connected to the Amazon AppSync service to receive Real-time Updates."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/on-demand/#Data_Transfer",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/ec2/pricing/"
+              }
+            }
+          },
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appsync",
+                "meteredUnit": {
+                  "allRegions": "RealTime Updates per Messages"
+                },
+                "label": "pricing appsync",
+                "id": "appsyncMUForRegions"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "_generated_0",
+                  "refer": [
+                    "dataTransfer",
+                    "appsyncMUForRegions"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "_generated_2",
+                  "refer": [
+                    "_generated_1"
+                  ],
+                  "subTotalRefer": "_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "awsDatatransfer"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

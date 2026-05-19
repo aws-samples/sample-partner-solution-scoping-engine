@@ -1,0 +1,1659 @@
+{
+  "version": "0.0.35",
+  "serviceName": "PSTN Audio",
+  "serviceCode": "ptsnAudio",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "Amazon Chime lets you meet, chat, and collaborate with the security of AWS. You can work seamlessly on your devices, and meet from your desk or on the go - ensuring you always stay connected.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/chime/chime-sdk/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "chimefeatures",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimefeatures/[currency]/current/chimefeatures.json"
+    },
+    {
+      "mappingDefinitionName": "chime",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chime/[currency]/current/chime.json"
+    },
+    {
+      "mappingDefinitionName": "lambda",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lambda/[currency]/current/lambda.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector-smain-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector-smain-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Chime",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/chime/chime-sdk/"
+        }
+      },
+      "id": "Template_PSTNAudio",
+      "cards": [
+        {
+          "title": "Toll Public Switched Telephone Network (PSTN) Audio",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The Amazon Chime SDK allows you to add phone numbers for your meetings so that attendees can participate using a landline or mobile phone. For dial in, the service currently supports DID and toll-free phone numbers in 15 countries. For dial out, the service supports calling to over 115 countries. To use PSTN audio, builders create a serverless IVR application using AWS Lambda.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "The Amazon Chime SDK allows you to add phone numbers for your meetings so that attendees can participate using a landline or mobile phone. For dial in, the service currently supports DID and toll-free phone numbers in 15 countries. For dial out, the service supports calling to over 115 countries. To use PSTN audio, builders create a serverless IVR application using AWS Lambda.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-smain-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_did",
+                "calculationId": {
+                  "hourly": "didFromContryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "NumberType": "DDI"
+                  }
+                },
+                "primaryKey": "NumberType",
+                "secondaryKey": [
+                  "FromCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country for DID",
+                    "type": "dropDown",
+                    "selectorId": "FromCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DIDs",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of phone numbers",
+                "id": "numberOfTollNumbers"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Monthly PSTN meeting joins",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of meeting joins per month",
+                "id": "avgCalls1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Lambda request invocations per call",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 2000
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 20,
+                "placeholder": "Enter number of average Lambda request invocations per call",
+                "id": "avgLambdaReq"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration for each lambda request",
+                "id": "durationlambdaRequest",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "defaultValue": 5,
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 20,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_inbound",
+                "calculationId": {
+                  "hourly": "tollCountryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "CallType": "SMA Local"
+                  }
+                },
+                "primaryKey": "CallType",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select inbound country (Same as DID)",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of each inbound call (toll)",
+                "id": "durationCallTollFree1",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_Outbound",
+                "calculationId": {
+                  "hourly": "toCountryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "CallType": "SMA Outbound"
+                  }
+                },
+                "primaryKey": "CallType",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country (outbound)",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of each Outbound call (toll)",
+                "id": "durationOutboundCall",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of Noise Reduction each call",
+                "id": "noiseReduction",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Chime sdk",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chime",
+                "meteredUnit": {
+                  "allRegions": "AmazonChime minutes sdk"
+                },
+                "id": "amazonChime_sdk_price2"
+              },
+              {
+                "type": "pricing",
+                "label": "price for PSTN",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime Sip Media per minutes"
+                },
+                "id": "amazonChime_pstn_price1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Requests"
+                },
+                "id": "amazonChime_lambdaRequest1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Duration"
+                },
+                "id": "amazonChime_lambdaDuration1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for noise reduction",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime VoiceFocus per minutes"
+                },
+                "id": "noiseReductionPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "columnFormIPM_did",
+                    "numberOfTollNumbers",
+                    "avgCalls1",
+                    "avgLambdaReq",
+                    "durationlambdaRequest",
+                    "columnFormIPM_inbound",
+                    "durationCallTollFree1",
+                    "columnFormIPM_Outbound",
+                    "durationOutboundCall",
+                    "noiseReduction",
+                    "amazonChime_sdk_price2",
+                    "amazonChime_pstn_price1",
+                    "amazonChime_lambdaRequest1",
+                    "amazonChime_lambdaDuration1",
+                    "noiseReductionPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "durationConvPSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DIDs",
+                      "variableUnitLabel": "phone numbers",
+                      "required": false,
+                      "variableId": "numberOfTollNumbers"
+                    },
+                    {
+                      "variableLabel": "price for DID Toll",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "didFromContryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Toll Phone Number)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNtollphonenumber"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (toll)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree1"
+                    },
+                    {
+                      "variableLabel": "price for PSTN",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_pstn_price1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for PSTN audio application usage cost)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNAudioCost1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq"
+                    },
+                    {
+                      "variableLabel": "price for lambda request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_lambdaRequest1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Lambda requests)",
+                  "decimalPlaces": 6,
+                  "id": "LambdaRequestPSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq"
+                    },
+                    {
+                      "variableLabel": "Average duration for each lambda request",
+                      "variableUnitLabel": "duration of each request in seconds",
+                      "required": true,
+                      "variableId": "durationlambdaRequest"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_lambdaDuration1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Lambda duration)",
+                  "decimalPlaces": 6,
+                  "id": "LambdaDurationPSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (toll)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree1"
+                    },
+                    {
+                      "variableLabel": "price for Chime sdk",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_sdk_price2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNSDKCost1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (toll)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree1"
+                    },
+                    {
+                      "variableLabel": "country Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "tollCountryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Inbound toll calling minutes)",
+                  "decimalPlaces": 6,
+                  "id": "inBoundTollFreePSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average duration of each Outbound call (toll)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationOutboundCall"
+                    },
+                    {
+                      "variableLabel": "to country Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "toCountryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Outbound toll calling minutes)",
+                  "decimalPlaces": 6,
+                  "id": "outBoundTollFreePSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls1"
+                    },
+                    {
+                      "variableLabel": "Average duration of Noise Reduction each call",
+                      "variableUnitLabel": "average noise reduction per call",
+                      "required": true,
+                      "variableId": "noiseReduction"
+                    },
+                    {
+                      "variableLabel": "price for noise reduction",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "noiseReductionPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for noise reduction)",
+                  "decimalPlaces": 6,
+                  "id": "noiseReductionPSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for PSTN audio application usage cost)",
+                      "variableUnitLabel": "[currency] (cost for PSTN audio application usage cost)",
+                      "required": false,
+                      "variableId": "PSTNAudioCost1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Lambda requests)",
+                      "variableUnitLabel": "[currency] (cost for Lambda requests)",
+                      "required": false,
+                      "variableId": "LambdaRequestPSTN1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Lambda duration)",
+                      "variableUnitLabel": "[currency] (cost for Lambda duration)",
+                      "required": false,
+                      "variableId": "LambdaDurationPSTN1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                      "variableUnitLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                      "required": false,
+                      "variableId": "PSTNSDKCost1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Inbound toll calling minutes)",
+                      "variableUnitLabel": "[currency] (cost for Inbound toll calling minutes)",
+                      "required": false,
+                      "variableId": "inBoundTollFreePSTN1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Outbound toll calling minutes)",
+                      "variableUnitLabel": "[currency] (cost for Outbound toll calling minutes)",
+                      "required": false,
+                      "variableId": "outBoundTollFreePSTN1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for noise reduction)",
+                      "variableUnitLabel": "[currency] for noise reduction",
+                      "required": false,
+                      "variableId": "noiseReductionPSTN1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for call)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyPSTN1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": false,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for call)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "AddAllmonthlyPSTN1"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Toll Phone Number)",
+                      "variableUnitLabel": "[currency] (cost for Toll Phone Number)",
+                      "required": false,
+                      "variableId": "PSTNtollphonenumber"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total monthly cost for Toll PSTN Audio)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyPSTNFinal2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PSTNAudioCost1",
+                    "LambdaRequestPSTN1",
+                    "LambdaDurationPSTN1",
+                    "PSTNSDKCost1",
+                    "PSTNtollphonenumber",
+                    "inBoundTollFreePSTN1",
+                    "outBoundTollFreePSTN1",
+                    "noiseReductionPSTN1",
+                    "AddAllmonthlyPSTN1",
+                    "AddAllmonthlyPSTNFinal2"
+                  ],
+                  "subType": "priceDisplay",
+                  "IPMSupported": true,
+                  "costType": "Monthly",
+                  "label": "Toll PSTN pricing",
+                  "decimalPlaces": 2,
+                  "id": "PSTNFinal1",
+                  "subTotalRefer": "AddAllmonthlyPSTNFinal2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Toll-Free Public Switched Telephone Network (PSTN) Audio",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The Amazon Chime SDK allows you to add phone numbers for your meetings so that attendees can participate using a landline or mobile phone. For dial in, the service currently supports DID and toll-free phone numbers in 15 countries. For dial out, the service supports calling to over 115 countries. To use PSTN audio, builders create a serverless IVR application using AWS Lambda.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "The Amazon Chime SDK allows you to add phone numbers for your meetings so that attendees can participate using a landline or mobile phone. For dial in, the service currently supports DID and toll-free phone numbers in 15 countries. For dial out, the service supports calling to over 115 countries. To use PSTN audio, builders create a serverless IVR application using AWS Lambda.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-smain-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_TollFree",
+                "calculationId": {
+                  "hourly": "tollFreeFromContryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "NumberType": "Toll Free"
+                  }
+                },
+                "primaryKey": "NumberType",
+                "secondaryKey": [
+                  "FromCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country for DID",
+                    "type": "dropDown",
+                    "selectorId": "FromCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DIDs or toll-free numbers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of phone numbers",
+                "id": "numberOfTollNumbers1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Monthly PSTN meeting joins",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of meeting joins per month",
+                "id": "avgCalls"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Lambda request invocations per call",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 2000
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 20,
+                "placeholder": "Enter number of average Lambda request invocations per call",
+                "id": "avgLambdaReq1"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration for each lambda request",
+                "id": "durationlambdaRequest1",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "defaultValue": 5,
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 20,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_inbound_TollFree",
+                "calculationId": {
+                  "hourly": "tollFreeCountryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "CallType": "SMA Toll-Free"
+                  }
+                },
+                "primaryKey": "CallType",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select inbound country (same as DID)",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of each inbound call (Toll-Free)",
+                "id": "durationCallTollFree",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of Noise Reduction each call(Toll Free)",
+                "id": "noiseReductionTollFree",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Chime sdk",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chime",
+                "meteredUnit": {
+                  "allRegions": "AmazonChime minutes sdk"
+                },
+                "id": "amazonChime_sdk_price3"
+              },
+              {
+                "type": "pricing",
+                "label": "price for PSTN",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime Sip Media per minutes"
+                },
+                "id": "amazonChime_pstn_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Requests"
+                },
+                "id": "amazonChime_lambdaRequest"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Duration"
+                },
+                "id": "amazonChime_lambdaDuration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for noise reduction (Toll Free)",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime VoiceFocus per minutes"
+                },
+                "id": "noiseReductionPriceTollFree"
+              },
+              {
+                "type": "pricing",
+                "label": "price for inbound in Voice Connector",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimevoiceconnector",
+                "meteredUnit": {
+                  "allRegions": "ChimeVoiceConnector United States of America Toll Free"
+                },
+                "id": "amazonChime_tollFree"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "columnFormIPM_TollFree",
+                    "numberOfTollNumbers1",
+                    "avgCalls",
+                    "avgLambdaReq1",
+                    "durationlambdaRequest1",
+                    "columnFormIPM_inbound_TollFree",
+                    "durationCallTollFree",
+                    "noiseReductionTollFree",
+                    "amazonChime_sdk_price3",
+                    "amazonChime_pstn_price",
+                    "amazonChime_lambdaRequest",
+                    "amazonChime_lambdaDuration",
+                    "noiseReductionPriceTollFree",
+                    "amazonChime_tollFree"
+                  ],
+                  "subTotalRefer": "AddAllmonthlyPSTNFinal2",
+                  "id": "durationConvPSTN2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DIDs or toll-free numbers",
+                      "variableUnitLabel": "phone numbers",
+                      "required": false,
+                      "variableId": "numberOfTollNumbers1"
+                    },
+                    {
+                      "variableLabel": "price for DID Toll Free",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tollFreeFromContryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Toll-Free Phone Number)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNtollphonenumber1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (Toll-Free)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree"
+                    },
+                    {
+                      "variableLabel": "price for inbound in Voice Connector",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_tollFree"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Inbound Toll-Free calling minutes)",
+                  "decimalPlaces": 6,
+                  "id": "inBoundTollFreePSTN"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (Toll-Free)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree"
+                    },
+                    {
+                      "variableLabel": "price for PSTN",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_pstn_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for PSTN audio application usage cost)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNAudioCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq1"
+                    },
+                    {
+                      "variableLabel": "price for lambda request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_lambdaRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Lambda requests)",
+                  "decimalPlaces": 6,
+                  "id": "LambdaRequestPSTN"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq1"
+                    },
+                    {
+                      "variableLabel": "Average duration for each lambda request",
+                      "variableUnitLabel": "duration of each request in seconds",
+                      "required": true,
+                      "variableId": "durationlambdaRequest1"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_lambdaDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Lambda duration)",
+                  "decimalPlaces": 6,
+                  "id": "LambdaDurationPSTN"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average duration of each inbound call (Toll-Free)",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallTollFree"
+                    },
+                    {
+                      "variableLabel": "country Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tollFreeCountryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNSDKCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly PSTN meeting joins",
+                      "variableUnitLabel": "meetings",
+                      "required": true,
+                      "variableId": "avgCalls"
+                    },
+                    {
+                      "variableLabel": "Average duration of Noise Reduction each call(Toll Free)",
+                      "variableUnitLabel": "average noise reduction per call (Toll Free)",
+                      "required": true,
+                      "variableId": "noiseReductionTollFree"
+                    },
+                    {
+                      "variableLabel": "price for noise reduction (Toll Free)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "noiseReductionPriceTollFree"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for noise reduction)",
+                  "decimalPlaces": 6,
+                  "id": "noiseReductionCostTollFree"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for Inbound Toll-Free calling minutes)",
+                      "variableUnitLabel": "[currency] (cost for Inbound Toll-Free calling minutes)",
+                      "required": false,
+                      "variableId": "inBoundTollFreePSTN"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for PSTN audio application usage cost)",
+                      "variableUnitLabel": "[currency] (cost for PSTN audio application usage cost)",
+                      "required": false,
+                      "variableId": "PSTNAudioCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Lambda requests)",
+                      "variableUnitLabel": "[currency] (cost for Lambda requests)",
+                      "required": false,
+                      "variableId": "LambdaRequestPSTN"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Lambda duration)",
+                      "variableUnitLabel": "[currency] (cost for Lambda duration)",
+                      "required": false,
+                      "variableId": "LambdaDurationPSTN"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                      "variableUnitLabel": "[currency] (cost for connection to Amazon Chime SDK meeting session)",
+                      "required": false,
+                      "variableId": "PSTNSDKCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for noise reduction)",
+                      "variableUnitLabel": "[currency] for noise Reduction",
+                      "required": false,
+                      "variableId": "noiseReductionCostTollFree"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyPSTN"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": false,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "AddAllmonthlyPSTN"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Toll-Free Phone Number)",
+                      "variableUnitLabel": "[currency] (cost for Toll-Free Phone Number)",
+                      "required": false,
+                      "variableId": "PSTNtollphonenumber1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total monthly cost for Toll-Free PSTN Audio)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyPSTNFinal1"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "inBoundTollFreePSTN",
+                    "PSTNAudioCost",
+                    "LambdaRequestPSTN",
+                    "LambdaDurationPSTN",
+                    "PSTNSDKCost",
+                    "PSTNtollphonenumber1",
+                    "tollFreeCountryPrice",
+                    "noiseReductionCostTollFree",
+                    "AddAllmonthlyPSTN",
+                    "AddAllmonthlyPSTNFinal1"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "label": "Toll-Free PSTN pricing",
+                  "decimalPlaces": 2,
+                  "id": "PSTNFinal",
+                  "subTotalRefer": "AddAllmonthlyPSTNFinal1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Call Recording",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "With Amazon Chime SDK PSTN Audio call recording, you are only charged for what you use, on a per-minute rate for the time that call recording is on. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "With Amazon Chime SDK PSTN Audio call recording, you are only charged for what you use, on a per-minute rate for the time that call recording is on.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Enter duration of call recording",
+                "id": "callRecording",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 2880,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for noise recording",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime CallRecording per minutes"
+                },
+                "id": "noiseRecordingPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "callRecording",
+                    "noiseRecordingPrice"
+                  ],
+                  "subTotalRefer": "AddAllmonthlyPSTNFinal1",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "callRecordingCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "callRecording",
+                      "variableLabel": "Enter duration of call recording",
+                      "variableUnitLabel": "minute(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "noiseRecordingPrice",
+                      "variableLabel": "price for noise recording",
+                      "variableUnitLabel": "[currency] per minutes",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for call recording",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "callRecordingCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Call Recording Cost",
+                  "decimalPlaces": 2,
+                  "id": "callRecordingTotalPrice",
+                  "subTotalRefer": "callRecordingCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Serverless Voice App",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "With Amazon Chime SDK PSTN Audio you can build serverless voice applications that enable use cases such as a click to call application on your website or app, as well as conversational voice experiences built in conjunction with Amazon Lex.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "With Amazon Chime SDK PSTN Audio you can build serverless voice applications that enable use cases such as a click to call application on your website or app, as well as conversational voice experiences built in conjunction with Amazon Lex.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of calls in minutes",
+                "id": "durationCallRequest_serverless",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration of calls in minutes"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Quantity Of Calls",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter no of Calls",
+                "id": "noOfCalls_serverless"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Lambda request invocations per call",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 2000
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 20,
+                "placeholder": "Enter number of average Lambda request invocations per call",
+                "id": "avgLambdaReq_serverless"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration for each lambda request",
+                "id": "durationlambdaRequest_serverless",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "defaultValue": 5,
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 20,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for PSTN Audio",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime Sip Media per minutes"
+                },
+                "id": "pstnServerlessAudio"
+              },
+              {
+                "type": "pricing",
+                "label": "price for serverless audio lambda request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Requests"
+                },
+                "id": "pstn_lambdaRequest1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for serveless audio lambda duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Duration"
+                },
+                "id": "pstn_lambdaDuration1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "durationCallRequest_serverless",
+                    "noOfCalls_serverless",
+                    "avgLambdaReq_serverless",
+                    "durationlambdaRequest_serverless",
+                    "pstnServerlessAudio",
+                    "pstn_lambdaRequest1",
+                    "pstn_lambdaDuration1"
+                  ],
+                  "subTotalRefer": "callRecordingCost",
+                  "id": "durationConvServerless"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Duration of calls in minutes",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationCallRequest_serverless"
+                    },
+                    {
+                      "variableLabel": "Quantity Of Calls",
+                      "variableUnitLabel": "calls",
+                      "required": true,
+                      "variableId": "noOfCalls_serverless"
+                    },
+                    {
+                      "variableLabel": "price for PSTN Audio",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pstnServerlessAudio"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for PSTN Audio Usage)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNAudioUsage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Quantity Of Calls",
+                      "variableUnitLabel": "calls",
+                      "required": true,
+                      "variableId": "noOfCalls_serverless"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq_serverless"
+                    },
+                    {
+                      "variableLabel": "price for serverless audio lambda request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pstn_lambdaRequest1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Lambda duration)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNLambdaRequest"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Quantity Of Calls",
+                      "variableUnitLabel": "calls",
+                      "required": true,
+                      "variableId": "noOfCalls_serverless"
+                    },
+                    {
+                      "variableLabel": "Average Lambda request invocations per call",
+                      "variableUnitLabel": "average invocations per call",
+                      "required": true,
+                      "variableId": "avgLambdaReq_serverless"
+                    },
+                    {
+                      "variableLabel": "Average duration for each lambda request",
+                      "variableUnitLabel": "duration of request",
+                      "required": true,
+                      "variableId": "durationlambdaRequest_serverless"
+                    },
+                    {
+                      "variableLabel": "price for serveless audio lambda duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pstn_lambdaDuration1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for lambda duration)",
+                  "decimalPlaces": 6,
+                  "id": "PSTNLambdaDuration"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for PSTN Audio Usage)",
+                      "variableUnitLabel": "[currency] (cost for PSTN Audio Usage)",
+                      "required": true,
+                      "variableId": "PSTNAudioUsage"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Lambda duration)",
+                      "variableUnitLabel": "[currency] (cost for Lambda duration)",
+                      "required": true,
+                      "variableId": "PSTNLambdaRequest"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for lambda duration)",
+                      "variableUnitLabel": "[currency] (cost for lambda duration)",
+                      "required": true,
+                      "variableId": "PSTNLambdaDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for serverless Voice App)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyPSTNServeless"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PSTNAudioUsage",
+                    "PSTNLambdaRequest",
+                    "PSTNLambdaDuration",
+                    "AddAllmonthlyPSTNServeless"
+                  ],
+                  "subType": "priceDisplay",
+                  "IPMSupported": true,
+                  "costType": "Monthly",
+                  "label": "Serverless Voice App",
+                  "decimalPlaces": 2,
+                  "id": "PSTNFinalServerless",
+                  "subTotalRefer": "AddAllmonthlyPSTNServeless"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,4856 @@
+{
+  "version": "0.0.137",
+  "serviceName": {
+    "aws": "AWS Lambda",
+    "aws-cn": "Amazon Lambda",
+    "aws-us-gov": "AWS Lambda"
+  },
+  "serviceCode": "aWSLambda",
+  "type": "AWSService",
+  "slug": "Lambda",
+  "regions": [],
+  "serviceDescription": {
+    "aws": "AWS Lambda lets you run code without provisioning or managing servers. You pay only for the compute time you consume - there is no charge when your code is not running.",
+    "aws-cn": "Amazon Lambda lets you run code without provisioning or managing servers. You pay only for the compute time you consume - there is no charge when your code is not running.",
+    "aws-us-gov": "AWS Lambda lets you run code without provisioning or managing servers. You pay only for the compute time you consume - there is no charge when your code is not running."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lambda/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lambda",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lambda/[currency]/current/lambda.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Lambda Function -  Include Free Tier",
+      "deniedPartitions": [
+        "aws-iso",
+        "aws-iso-b",
+        "aws-iso-f"
+      ],
+      "id": "lambdaWithFreeTier",
+      "description": "Lambda counts a request each time it starts executing in response to an event notification or invoke call, including test invokes from the console. You are charged for the total number of requests across all your functions. The price depends on the amount of memory you allocate to  your function. The Lambda free tier includes 1M free requests per month and 400,000 GB-seconds of compute time per month.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/lambda/"
+        }
+      },
+      "mappingFromTemplate": "lambdaWithoutFreeTier",
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": {
+            "aws": "With AWS Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute.",
+            "aws-cn": "With Amazon Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute.",
+            "aws-us-gov": "With AWS Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/#AWS_Lambda_Pricing"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Requests"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Duration"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Duration-Provisioned"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Provisioned-Concurrency"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "selectArchitectureRequests",
+                "label": "Architecture",
+                "options": [
+                  {
+                    "label": "x86",
+                    "id": "1"
+                  },
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Arm",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "description": "",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "requestsMeteredUnitName",
+                "label": "requests metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Requests"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Requests-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "storageMeteredUnitName",
+                "label": "storage metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Storage-Duration"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Storage-Duration-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "durationMeteredUnitName",
+                "label": "duration metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Duration"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Duration-ARM"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests",
+                "id": "numberOfRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each request (in ms)",
+                "id": "durationOfEachRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "sizeOfMemoryAllocated",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Storage-Duration"
+                          }
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "selectArchitectureRequests"
+                            },
+                            1
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Storage-Duration-ARM"
+                          }
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "selectArchitectureRequests"
+                            },
+                            2
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "label": "Amount of ephemeral storage allocated",
+                "description": "Enter the amount between 512 MB and 10,240 MB. The first 512 MB are at no additional charge, you only pay for any additional storage that you configure for the function.",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 512,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.5,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter the amount",
+                "id": "storageAmountEphemeral"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda storage",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionIncludeFreeTier_storagePrice",
+                "refers": [
+                  {
+                    "variableLabel": "storage metered unit name",
+                    "variableId": "storageMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda requests",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionIncludeFreeTier_requestPrice",
+                "refers": [
+                  {
+                    "variableLabel": "requests metered unit name",
+                    "variableId": "requestsMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda duration single tier",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaIncludeFreeTier_durationPriceSingleTier",
+                "refers": [
+                  {
+                    "variableLabel": "duration metered unit name",
+                    "variableId": "durationMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing example",
+                "id": "tierPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lambda",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 6000000000,
+                      "meteredUnit": "Lambda Duration"
+                    },
+                    {
+                      "startOfTier": 6000000001,
+                      "endOfTier": 15000000000,
+                      "meteredUnit": "Lambda Duration Tier2"
+                    },
+                    {
+                      "startOfTier": 15000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Lambda Duration Tier3"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing example arm",
+                "id": "tierPrice-arm",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lambda",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 7500000000,
+                      "meteredUnit": "Lambda Duration-ARM"
+                    },
+                    {
+                      "startOfTier": 7500000001,
+                      "endOfTier": 18750000000,
+                      "meteredUnit": "Lambda Duration-ARM Tier2"
+                    },
+                    {
+                      "startOfTier": 18750000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Lambda Duration-ARM Tier3"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free Tier",
+                "label": "info alert",
+                "content": "The Lambda free tier includes 1M free requests per month and 400,000 GB-seconds of compute time per month.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "Lambda_FreeTier_Text_aws"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "selectArchitectureRequests",
+                    "requestsMeteredUnitName",
+                    "storageMeteredUnitName",
+                    "durationMeteredUnitName",
+                    "numberOfRequests",
+                    "durationOfEachRequest",
+                    "sizeOfMemoryAllocated",
+                    "storageAmountEphemeral",
+                    "lambdaFunctionIncludeFreeTier_storagePrice",
+                    "lambdaFunctionIncludeFreeTier_requestPrice",
+                    "lambdaIncludeFreeTier_durationPriceSingleTier",
+                    "tierPrice",
+                    "tierPrice-arm",
+                    "Lambda_FreeTier_Text_aws"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "lambdaFunctionIncludeFreeTier_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "Duration of each request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfMemoryAllocated"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_4"
+                    },
+                    {
+                      "constant": 400000,
+                      "constantUnitLabel": "free tier GB-s"
+                    }
+                  ],
+                  "outputUnitLabel": "GB-s",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "GB-s",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_5"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "total billable GB-s",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_6"
+                },
+                {
+                  "displayIf": {
+                    "not": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration Tier2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration Tier3"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM Tier2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM Tier3"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total billable GB-s",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_6"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration single tier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaIncludeFreeTier_durationPriceSingleTier"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "variableName": "compute cost single tier",
+                  "decimalPlaces": 2,
+                  "id": "lambdaIncludeFreeTier_ComputeCostSingleTier"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "selectArchitectureRequests"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration Tier2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration Tier3"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing example",
+                  "tieredPricingRefer": "tierPrice",
+                  "inputReferLabel": "total billable GB-s",
+                  "inputRefer": "lambdaFunctionIncludeFreeTier_generated_6",
+                  "inputUnitLabel": "GB-s",
+                  "decimalPlaces": 4,
+                  "variableName": "lambdaFunctionIncludeFreeTier_generated_7",
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "id": "lambdaFunctionIncludeFreeTier_generated_7"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "selectArchitectureRequests"
+                          },
+                          2
+                        ]
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration-ARM Tier2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration-ARM Tier3"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing example arm",
+                  "tieredPricingRefer": "tierPrice-arm",
+                  "inputReferLabel": "total billable GB-s",
+                  "inputRefer": "lambdaFunctionIncludeFreeTier_generated_6",
+                  "inputUnitLabel": "GB-s",
+                  "decimalPlaces": 4,
+                  "variableName": "lambdaFunctionIncludeFreeTier_generated_44",
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "id": "lambdaFunctionIncludeFreeTier_generated_44"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_7"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_44"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaIncludeFreeTier_ComputeCostSingleTier"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly compute cost",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_totalMonthlyCompute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "total monthly compute cost",
+                  "id": "subTotalCompute",
+                  "refer": "lambdaFunctionIncludeFreeTier_totalMonthlyCompute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "free tier requests"
+                    }
+                  ],
+                  "outputUnitLabel": "monthly billable requests",
+                  "decimalPlaces": 0,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "monthly billable requests",
+                      "variableUnitLabel": "monthly billable requests",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_8"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly billable requests",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total monthly billable requests",
+                      "variableUnitLabel": "total monthly billable requests",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_9"
+                    },
+                    {
+                      "variableLabel": "price for lambda requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_requestPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalRequestsFreeTier",
+                  "refer": "lambdaFunctionIncludeFreeTier_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableStorage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of ephemeral storage allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmountEphemeral"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "GB (no additional charge)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB billable ephemeral storage per function",
+                  "decimalPlaces": 2,
+                  "minValue": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB billable ephemeral storage per function",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "billableStorage"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "compute seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "total storage (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_storageGbSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total storage (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_storageGbSeconds"
+                    },
+                    {
+                      "variableLabel": "price for lambda storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_storagePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly ephemeral storage charges)",
+                  "decimalPlaces": 4,
+                  "id": "lambdaFunctionIncludeFreeTier_ephemeralStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly ephemeral storage charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "refer": "lambdaFunctionIncludeFreeTier_ephemeralStorageCost",
+                  "referLabel": "[currency] (monthly ephemeral storage charges)",
+                  "id": "lambdaFunctionIncludeFreeTier_subTotalEphStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total monthly compute cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_totalMonthlyCompute"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_10"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly ephemeral storage charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_ephemeralStorageCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_11"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionIncludeFreeTier_generated_3",
+                    "lambdaFunctionIncludeFreeTier_generated_4",
+                    "lambdaFunctionIncludeFreeTier_generated_5",
+                    "lambdaFunctionIncludeFreeTier_generated_6",
+                    "lambdaIncludeFreeTier_ComputeCostSingleTier",
+                    "lambdaFunctionIncludeFreeTier_generated_7",
+                    "lambdaFunctionIncludeFreeTier_generated_44",
+                    "lambdaFunctionIncludeFreeTier_totalMonthlyCompute",
+                    "subTotalCompute",
+                    "lambdaFunctionIncludeFreeTier_generated_8",
+                    "lambdaFunctionIncludeFreeTier_generated_9",
+                    "lambdaFunctionIncludeFreeTier_generated_10",
+                    "subTotalRequestsFreeTier",
+                    "billableStorage",
+                    "lambdaFunctionIncludeFreeTier_storageGbSeconds",
+                    "lambdaFunctionIncludeFreeTier_ephemeralStorageCost",
+                    "lambdaFunctionIncludeFreeTier_subTotalEphStorage",
+                    "lambdaFunctionIncludeFreeTier_generated_11"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda costs - With Free Tier",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_12",
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_generated_11"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Provisioned Concurrency",
+          "helpText": "You can enable Provisioned Concurrency for your Lambda functions for greater control over the performance of your serverless applications. When enabled, Provisioned Concurrency keeps functions initialized and hyper-ready to respond in double-digit milliseconds. You pay for the amount of concurrency that you configure and for the period of time that you configure it.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/#Provisioned_Concurrency_Pricing",
+              "overrides": {
+                "aws-cn": "https://docs.amazonaws.cn/lambda/latest/dg/configuration-concurrency.html"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Requests"
+                      }
+                    },
+                    {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Duration-Provisioned"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Provisioned-Concurrency"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "selectArchitectureConcurrency",
+                "label": "Architecture",
+                "options": [
+                  {
+                    "label": "x86",
+                    "id": "1"
+                  },
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "lambda",
+                                "meteredUnit": "Lambda Duration-ARM"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Arm",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "description": "",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "requestsMeteredUnitNameConcurrency",
+                "label": "requests metered unit name concurrency",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Requests"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Requests-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "provisionedMeteredUnitName",
+                "label": "provisioned MeteredUnit Name",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Duration-Provisioned"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Duration-Provisioned-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "provisionedConcurrencyMeteredUnitName",
+                "label": "provisioned Concurrency MeteredUnit Name",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Provisioned-Concurrency"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Provisioned-Concurrency-ARM"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "lambda",
+                                "meteredUnit": "Lambda Duration"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "lambda",
+                                "meteredUnit": "Lambda Duration-ARM"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Concurrency",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the concurrency configured for the function",
+                "id": "provisionedConcurrency"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "lambda",
+                                "meteredUnit": "Lambda Duration"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "lambda",
+                                "meteredUnit": "Lambda Duration-ARM"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Time for which Provisioned Concurrency is enabled",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the time period when Provisioned Concurrency is enabled for your function over the whole month",
+                "displayInConfigSummary": true,
+                "id": "timeForProvisionedConcurrency"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Requests"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Requests-ARM"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests for Provisioned Concurrency",
+                "id": "numberOfRequestsForProvisionedConcurrency",
+                "description": "Enter the number of requests that you will make when the function is configured with Provisioned Concurrency",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each provisioned request (in ms)",
+                "id": "durationOfEachProvisionedRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "memoryAllocatedForConcurrency",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda requests concurrency",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionIncludeFreeTier_requestPriceConcurrency",
+                "refers": [
+                  {
+                    "variableLabel": "requests metered unit name concurrency",
+                    "variableId": "requestsMeteredUnitNameConcurrency"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda duration provisioned",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionIncludeFreeTier_provisionedDurationPrice",
+                "refers": [
+                  {
+                    "variableLabel": "provisioned MeteredUnit Name",
+                    "variableId": "provisionedMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for provisioned concurrency",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionIncludeFreeTier_provisionedConcurrencyPrice",
+                "refers": [
+                  {
+                    "variableLabel": "provisioned Concurrency MeteredUnit Name",
+                    "variableId": "provisionedConcurrencyMeteredUnitName"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "selectArchitectureConcurrency",
+                    "requestsMeteredUnitNameConcurrency",
+                    "provisionedMeteredUnitName",
+                    "provisionedConcurrencyMeteredUnitName",
+                    "provisionedConcurrency",
+                    "timeForProvisionedConcurrency",
+                    "numberOfRequestsForProvisionedConcurrency",
+                    "durationOfEachProvisionedRequest",
+                    "memoryAllocatedForConcurrency",
+                    "lambdaFunctionIncludeFreeTier_requestPriceConcurrency",
+                    "lambdaFunctionIncludeFreeTier_provisionedDurationPrice",
+                    "lambdaFunctionIncludeFreeTier_provisionedConcurrencyPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_generated_11",
+                  "id": "lambdaFunctionIncludeFreeTier_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Concurrency",
+                      "variableUnitLabel": "concurrency",
+                      "required": true,
+                      "variableId": "provisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Time for which Provisioned Concurrency is enabled",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "timeForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "memoryAllocatedForConcurrency"
+                    },
+                    {
+                      "variableLabel": "price for provisioned concurrency",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_provisionedConcurrencyPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Provisioned Concurrency charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly provisioned concurrency charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (Provisioned Concurrency charges)",
+                  "id": "subTotalProCon",
+                  "refer": "lambdaFunctionIncludeFreeTier_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests for Provisioned Concurrency",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequestsForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Duration of each provisioned request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachProvisionedRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_18"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "memoryAllocatedForConcurrency"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_18"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_19"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_19"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration provisioned",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_provisionedDurationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly compute charges)",
+                  "id": "subTotalProConCompute",
+                  "refer": "lambdaFunctionIncludeFreeTier_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests for Provisioned Concurrency",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequestsForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "price for lambda requests concurrency",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_requestPriceConcurrency"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_21"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalProConRequests",
+                  "refer": "lambdaFunctionIncludeFreeTier_generated_21"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Provisioned Concurrency charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_17"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly compute charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_20"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_generated_21"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_22"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionIncludeFreeTier_generated_17",
+                    "subTotalProCon",
+                    "lambdaFunctionIncludeFreeTier_generated_18",
+                    "lambdaFunctionIncludeFreeTier_generated_19",
+                    "lambdaFunctionIncludeFreeTier_generated_20",
+                    "subTotalProConCompute",
+                    "lambdaFunctionIncludeFreeTier_generated_21",
+                    "subTotalProConRequests",
+                    "lambdaFunctionIncludeFreeTier_generated_22"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda costs for Provisioned Concurrency",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_generated_23",
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_generated_22"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Edge-Duration"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Edge-Requests"
+                }
+              }
+            ]
+          },
+          "title": "Lambda@Edge",
+          "helpText": "There is no free tier for Lambda@Edge at this time. You are charged for the total number of requests across all your functions. Lambda@Edge counts a request each time it starts executing in response to a CloudFront event globally.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/#AWS_Lambda_Pricing",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/lambda/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "There is no free tier for Lambda@Edge at this time. Lambda@Edge pricing does not vary by region. You are charged for the total number of requests across all your functions executed in all regions.",
+                "id": "edge_text"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests",
+                "id": "numberOfEdgeRequests",
+                "description": "",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each request (in ms)",
+                "id": "durationOfEachEdgeRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "sizeOfEdgeMemoryAllocated",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda edge requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Edge-Requests"
+                },
+                "id": "lambdaFunctionIncludeFreeTier_edgeRequestPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda edge duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Edge-Duration"
+                },
+                "id": "lambdaFunctionIncludeFreeTier_edgeDurationPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "edge_text",
+                    "numberOfEdgeRequests",
+                    "durationOfEachEdgeRequest",
+                    "sizeOfEdgeMemoryAllocated",
+                    "lambdaFunctionIncludeFreeTier_edgeRequestPrice",
+                    "lambdaFunctionIncludeFreeTier_edgeDurationPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_generated_22",
+                  "id": "lambdaFunctionIncludeFreeTier_edgeUnitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfEdgeRequests"
+                    },
+                    {
+                      "variableLabel": "Duration of each request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachEdgeRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeTotalComputeSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfEdgeMemoryAllocated"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeTotalComputeSeconds"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeTotalComputeGBSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeTotalComputeGBSeconds"
+                    },
+                    {
+                      "variableLabel": "price for lambda edge duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeDurationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeComputeCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly compute charges)",
+                  "id": "subTotalComputeEdge",
+                  "refer": "lambdaFunctionIncludeFreeTier_edgeComputeCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfEdgeRequests"
+                    },
+                    {
+                      "variableLabel": "price for lambda edge requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeRequestPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeRequestCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalRequestEdge",
+                  "refer": "lambdaFunctionIncludeFreeTier_edgeRequestCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (monthly compute charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeComputeCharges"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionIncludeFreeTier_edgeRequestCharges"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeTotalCharges"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionIncludeFreeTier_edgeTotalComputeSeconds",
+                    "lambdaFunctionIncludeFreeTier_edgeTotalComputeGBSeconds",
+                    "lambdaFunctionIncludeFreeTier_edgeComputeCharges",
+                    "subTotalComputeEdge",
+                    "lambdaFunctionIncludeFreeTier_edgeRequestCharges",
+                    "subTotalRequestEdge",
+                    "lambdaFunctionIncludeFreeTier_edgeTotalCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda@Edge costs",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_edgeCostDisplay",
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_edgeTotalCharges"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "lambda",
+              "meteredUnit": "Lambda Processed-Bytes"
+            }
+          },
+          "title": "Lambda HTTP Response Streaming",
+          "helpText": {
+            "aws": "AWS Lambda functions can return an HTTP response stream when invoked via the InvokeWithResponseStream API or through a function URL using the ResponseStream invoke mode. When using HTTP response streaming, you are charged for each GB written to the response stream by your function. You can stream the first 6MB per request at no cost.",
+            "aws-us-gov": "AWS Lambda functions can return an HTTP response stream when invoked via the InvokeWithResponseStream API or through a function URL using the ResponseStream invoke mode. When using HTTP response streaming, you are charged for each GB written to the response stream by your function. You can stream the first 6MB per request at no cost.",
+            "aws-cn": "Amazon Lambda functions can return an HTTP response stream when invoked via the InvokeWithResponseStream API or through a function URL using the ResponseStream invoke mode. When using HTTP response streaming, you are charged for each GB written to the response stream by your function. You can stream the first 6MB per request at no cost."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/#AWS_Lambda_Pricing",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/lambda/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Invoke Mode",
+                "id": "lambdaFunctionIncludeFreeTier_lambdaInvokeMode",
+                "options": [
+                  {
+                    "label": "Buffered",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Response stream",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionIncludeFreeTier_lambdaInvokeMode"
+                    },
+                    0
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "There is no additional charge on buffered response.",
+                "id": "HTTP_buffered_IncludeFreeTier_text"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionIncludeFreeTier_lambdaInvokeMode"
+                    },
+                    1
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Invokes",
+                "id": "numberofInvokes",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionIncludeFreeTier_lambdaInvokeMode"
+                    },
+                    1
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average response payload size",
+                "id": "lambdaFunctionIncludeFreeTier_responseStreamingData",
+                "description": "",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "delegate": {
+                  "==": [
+                    {
+                      "id": "lambdaFunctionIncludeFreeTier_lambdaInvokeMode",
+                      "type": "component"
+                    },
+                    "1"
+                  ],
+                  "validations": {
+                    "required": true,
+                    "allowDecimals": true,
+                    "minValue": 0,
+                    "maxValue": 100000000
+                  }
+                },
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter average response payload size"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda response streaming",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Processed-Bytes"
+                },
+                "id": "lambdaFunctionIncludeFreeTier_ProcessBytesPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "lambdaFunctionIncludeFreeTier_lambdaInvokeMode",
+                    "HTTP_buffered_IncludeFreeTier_text",
+                    "numberofInvokes",
+                    "lambdaFunctionIncludeFreeTier_responseStreamingData",
+                    "lambdaFunctionIncludeFreeTier_ProcessBytesPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_edgeTotalCharges",
+                  "id": "unitConversion_ResponseStreaming"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Average response payload size",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_responseStreamingData"
+                    },
+                    {
+                      "constant": 6,
+                      "constantUnitLabel": "MB free of a given response payload"
+                    }
+                  ],
+                  "outputUnitLabel": "MB of processed bytes billable per invoke",
+                  "decimalPlaces": 8,
+                  "id": "lambdaFunctionIncludeFreeTier_responseStreamingGBFree"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "MB of processed bytes billable per invoke",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_responseStreamingGBFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "MB billable",
+                  "decimalPlaces": 8,
+                  "id": "chargableBytesGBInvoke"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "chargableBytesGBInvoke"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "MB billable",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "chargableBytesGBInvoke"
+                    },
+                    {
+                      "constant": 0.0009765625,
+                      "constantUnitLabel": "GB in a MB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB of processed bytes billable per invoke",
+                  "decimalPlaces": 8,
+                  "id": "MBtoGBConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Invokes",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberofInvokes"
+                    },
+                    {
+                      "variableLabel": "GB of processed bytes billable per invoke",
+                      "variableUnitLabel": "GB per invoke",
+                      "required": true,
+                      "variableId": "MBtoGBConversion"
+                    }
+                  ],
+                  "outputUnitLabel": "GB total billable",
+                  "decimalPlaces": 8,
+                  "id": "billableGBstreamed"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "billableGBstreamed"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "variableName": "Chargeable bytes streamed (GB)",
+                  "operands": [
+                    {
+                      "variableLabel": "GB total billable",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "billableGBstreamed"
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "GB per month free tier"
+                    }
+                  ],
+                  "outputUnitLabel": "GB total billable",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_responseStreamingGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Chargeable bytes streamed (GB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_responseStreamingGB"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "GB total billable",
+                  "decimalPlaces": 8,
+                  "id": "lambdaFunctionIncludeFreeTier_billableGBstreamed"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "lambdaFunctionIncludeFreeTier_billableGBstreamed"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB total billable",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_billableGBstreamed"
+                    },
+                    {
+                      "variableLabel": "price for lambda response streaming",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionIncludeFreeTier_ProcessBytesPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly processed bytes charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_monthlyProcessedByteCharges"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionIncludeFreeTier_responseStreamingGBFree",
+                    "chargableBytesGBInvoke",
+                    "MBtoGBConversion",
+                    "billableGBstreamed",
+                    "lambdaFunctionIncludeFreeTier_responseStreamingGB",
+                    "lambdaFunctionIncludeFreeTier_billableGBstreamed",
+                    "lambdaFunctionIncludeFreeTier_monthlyProcessedByteCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda HTTP Response Streaming costs",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionIncludeFreeTier_monthlyProcessedByteChargesDisplay",
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_monthlyProcessedByteCharges"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Lambda Function -  Without Free Tier",
+      "description": "Lambda counts a request each time it starts executing in response to an event notification or invoke call, including test invokes from the console. You are charged for the total number of requests across all your functions. The price depends on the amount of memory you allocate to  your function. The Lambda free tier discounts are excluded",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/lambda/pricing/",
+          "overrides": {
+            "aws": "https://aws.amazon.com/lambda/",
+            "aws-us-gov": "https://aws.amazon.com/lambda/"
+          }
+        }
+      },
+      "id": "lambdaWithoutFreeTier",
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": {
+            "aws": "With AWS Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute.",
+            "aws-cn": "With Amazon Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute.",
+            "aws-us-gov": "With AWS Lambda, you pay only for what you use. You are charged based on the number of requests for your functions and the duration, the time it takes for your code to execute."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/",
+              "overrides": {
+                "aws": "https://aws.amazon.com/lambda/",
+                "aws-us-gov": "https://aws.amazon.com/lambda/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov",
+                  "aws-iso-e"
+                ],
+                "id": "lambdaFreeTier_bodyText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "selectArchitectureRequests",
+                "label": "Architecture",
+                "options": [
+                  {
+                    "label": "x86",
+                    "id": "1"
+                  },
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Arm",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "description": "",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "requestsMeteredUnitName",
+                "label": "requests metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Requests"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Requests-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "durationMeteredUnitName",
+                "label": "duration metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Duration"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Duration-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "storageMeteredUnitName",
+                "label": "storage metered unit name",
+                "originalId": "selectArchitectureRequests",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Storage-Duration"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Storage-Duration-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests",
+                "id": "numberOfRequests",
+                "description": "",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each request (in ms)",
+                "id": "durationOfEachRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "sizeOfMemoryAllocated",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Storage-Duration"
+                          }
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "selectArchitectureRequests"
+                            },
+                            1
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Storage-Duration-ARM"
+                          }
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "selectArchitectureRequests"
+                            },
+                            2
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "label": "Amount of ephemeral storage allocated",
+                "description": "Enter the amount between 512 MB and 10,240 MB. The first 512 MB are at no additional charge, you only pay for any additional storage that you configure for the function.",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 512,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.5,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter the amount",
+                "id": "storageAmountEphemeral"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda storage",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_storagePrice",
+                "refers": [
+                  {
+                    "variableLabel": "storage metered unit name",
+                    "variableId": "storageMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda requests",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_requestPrice",
+                "refers": [
+                  {
+                    "variableLabel": "requests metered unit name",
+                    "variableId": "requestsMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda duration single tier",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_durationPrice",
+                "refers": [
+                  {
+                    "variableLabel": "duration metered unit name",
+                    "variableId": "durationMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing lambda duration",
+                "id": "tierPriceLambdaDuration",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lambda",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 6000000000,
+                      "meteredUnit": "Lambda Duration"
+                    },
+                    {
+                      "startOfTier": 6000000001,
+                      "endOfTier": 15000000000,
+                      "meteredUnit": "Lambda Duration Tier2"
+                    },
+                    {
+                      "startOfTier": 15000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Lambda Duration Tier3"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing lambda duration arm",
+                "id": "tierPriceLambdaDuration-arm",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lambda",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 7500000000,
+                      "meteredUnit": "Lambda Duration-ARM"
+                    },
+                    {
+                      "startOfTier": 7500000001,
+                      "endOfTier": 18750000000,
+                      "meteredUnit": "Lambda Duration-ARM Tier2"
+                    },
+                    {
+                      "startOfTier": 18750000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Lambda Duration-ARM Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "lambdaFreeTier_bodyText",
+                    "selectArchitectureRequests",
+                    "requestsMeteredUnitName",
+                    "durationMeteredUnitName",
+                    "storageMeteredUnitName",
+                    "numberOfRequests",
+                    "durationOfEachRequest",
+                    "sizeOfMemoryAllocated",
+                    "storageAmountEphemeral",
+                    "lambdaFunctionWithoutFreeTier_storagePrice",
+                    "lambdaFunctionWithoutFreeTier_requestPrice",
+                    "lambdaFunctionWithoutFreeTier_durationPrice",
+                    "tierPriceLambdaDuration",
+                    "tierPriceLambdaDuration-arm"
+                  ],
+                  "subTotalRefer": "lambdaFunctionIncludeFreeTier_monthlyProcessedByteCharges",
+                  "id": "lambdaFunctionWithoutFreeTier_generated_26"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "Duration of each request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_27"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfMemoryAllocated"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_27"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_28"
+                },
+                {
+                  "displayIf": {
+                    "not": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration Tier2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration Tier3"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM Tier2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM Tier3"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_28"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration single tier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_durationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "variableName": "compute cost single tier",
+                  "decimalPlaces": 2,
+                  "id": "lambdaWithoutFreeTier_ComputeCostSingleTier"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "selectArchitectureRequests"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration Tier2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration Tier3"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing lambda duration",
+                  "tieredPricingRefer": "tierPriceLambdaDuration",
+                  "inputReferLabel": "total compute (GB-s)",
+                  "inputRefer": "lambdaFunctionWithoutFreeTier_generated_28",
+                  "inputUnitLabel": "GB-s",
+                  "decimalPlaces": 4,
+                  "variableName": "lambda duration cost tiered",
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "id": "lambdaWithoutFreeTier_DurationCost"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "selectArchitectureRequests"
+                          },
+                          2
+                        ]
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration-ARM Tier2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "lambda",
+                          "meteredUnit": "Lambda Duration-ARM Tier3"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing lambda duration arm",
+                  "tieredPricingRefer": "tierPriceLambdaDuration-arm",
+                  "inputReferLabel": "total compute (GB-s)",
+                  "inputRefer": "lambdaFunctionWithoutFreeTier_generated_28",
+                  "inputUnitLabel": "GB-s",
+                  "decimalPlaces": 4,
+                  "variableName": "lambda duration arm cost tiered",
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "id": "lambdaWithoutFreeTier_DurationCostArm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaWithoutFreeTier_ComputeCostSingleTier"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaWithoutFreeTier_DurationCost"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaWithoutFreeTier_DurationCostArm"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly compute",
+                  "decimalPlaces": 2,
+                  "id": "lambdaWithoutFreeTier_totalMonthlyCompute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "total monthly compute",
+                  "id": "subTotalCompute",
+                  "refer": "lambdaWithoutFreeTier_totalMonthlyCompute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "price for lambda requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_requestPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_30"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalRequest",
+                  "refer": "lambdaFunctionWithoutFreeTier_generated_30"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableStorage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of ephemeral storage allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmountEphemeral"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "GB (no additional charge)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB billable ephemeral storage per function",
+                  "decimalPlaces": 2,
+                  "minValue": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB billable ephemeral storage per function",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "billableStorage"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_27"
+                    }
+                  ],
+                  "outputUnitLabel": "total storage (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_storageGbSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total storage (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_storageGbSeconds"
+                    },
+                    {
+                      "variableLabel": "price for lambda storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_storagePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly ephemeral storage charges)",
+                  "decimalPlaces": 4,
+                  "id": "lambdaFunctionWithoutFreeTier_ephemeralStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly ephemeral storage charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly ephemeral storage charges)",
+                  "id": "subTotalEphStorage",
+                  "refer": "lambdaFunctionWithoutFreeTier_ephemeralStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total monthly compute",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaWithoutFreeTier_totalMonthlyCompute"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_30"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly ephemeral storage charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_ephemeralStorageCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_31"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionWithoutFreeTier_generated_27",
+                    "lambdaFunctionWithoutFreeTier_generated_28",
+                    "lambdaWithoutFreeTier_ComputeCostSingleTier",
+                    "lambdaWithoutFreeTier_DurationCost",
+                    "lambdaWithoutFreeTier_DurationCostArm",
+                    "lambdaWithoutFreeTier_totalMonthlyCompute",
+                    "subTotalCompute",
+                    "lambdaFunctionWithoutFreeTier_generated_30",
+                    "subTotalRequest",
+                    "billableStorage",
+                    "lambdaFunctionWithoutFreeTier_storageGbSeconds",
+                    "lambdaFunctionWithoutFreeTier_ephemeralStorageCost",
+                    "subTotalEphStorage",
+                    "lambdaFunctionWithoutFreeTier_generated_31"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda cost",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_32",
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_generated_31"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Requests"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Duration"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Duration-Provisioned"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Provisioned-Concurrency"
+                }
+              }
+            ]
+          },
+          "title": "Provisioned Concurrency",
+          "helpText": "You can enable Provisioned Concurrency for your Lambda functions for greater control over the performance of your serverless applications. When enabled, Provisioned Concurrency keeps functions initialized and hyper-ready to respond in double-digit milliseconds. You pay for the amount of concurrency that you configure and for the period of time that you configure it.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/",
+              "overrides": {
+                "aws": "https://aws.amazon.com/lambda/",
+                "aws-us-gov": "https://aws.amazon.com/lambda/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "selectArchitectureConcurrency",
+                "label": "Architecture",
+                "options": [
+                  {
+                    "label": "x86",
+                    "id": "1"
+                  },
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Requests-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Duration-Provisioned-ARM"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "lambda",
+                            "meteredUnit": "Lambda Provisioned-Concurrency-ARM"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Arm",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "description": "",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "requestsMeteredUnitNameConcurrency",
+                "label": "requests metered unit name concurrency",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Requests"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Requests-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "provisionedMeteredUnitName",
+                "label": "provisioned MeteredUnit Name",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Duration-Provisioned"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Duration-Provisioned-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "provisionedConcurrencyMeteredUnitName",
+                "label": "provisioned Concurrency MeteredUnit Name",
+                "originalId": "selectArchitectureConcurrency",
+                "replacements": [
+                  {
+                    "originalString": "1",
+                    "replaceString": "Lambda Provisioned-Concurrency"
+                  },
+                  {
+                    "originalString": "2",
+                    "replaceString": "Lambda Provisioned-Concurrency-ARM"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Concurrency",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the concurrency configured for the function",
+                "id": "provisionedConcurrency"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Time for which Provisioned Concurrency is enabled",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the time period when Provisioned Concurrency is enabled for your function over the whole month",
+                "displayInConfigSummary": true,
+                "id": "timeForProvisionedConcurrency"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests for Provisioned Concurrency",
+                "description": "Enter the number of requests that you will make when the function is configured with Provisioned Concurrency",
+                "id": "numberOfRequestsForProvisionedConcurrency",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each provisioned request (in ms)",
+                "id": "durationOfEachProvisionedRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "memoryAllocatedForConcurrency",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda requests concurrency",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_requestPriceConcurrency",
+                "refers": [
+                  {
+                    "variableLabel": "requests metered unit name concurrency",
+                    "variableId": "requestsMeteredUnitNameConcurrency"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for lambda duration provisioned",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_provisionedDurationPrice",
+                "refers": [
+                  {
+                    "variableLabel": "provisioned MeteredUnit Name",
+                    "variableId": "provisionedMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for provisioned concurrency",
+                "mappingDefinitionName": "lambda",
+                "id": "lambdaFunctionWithoutFreeTier_provisionedConcurrencyPrice",
+                "refers": [
+                  {
+                    "variableLabel": "provisioned Concurrency MeteredUnit Name",
+                    "variableId": "provisionedConcurrencyMeteredUnitName"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "selectArchitectureConcurrency",
+                    "requestsMeteredUnitNameConcurrency",
+                    "provisionedMeteredUnitName",
+                    "provisionedConcurrencyMeteredUnitName",
+                    "provisionedConcurrency",
+                    "timeForProvisionedConcurrency",
+                    "numberOfRequestsForProvisionedConcurrency",
+                    "durationOfEachProvisionedRequest",
+                    "memoryAllocatedForConcurrency",
+                    "lambdaFunctionWithoutFreeTier_requestPriceConcurrency",
+                    "lambdaFunctionWithoutFreeTier_provisionedDurationPrice",
+                    "lambdaFunctionWithoutFreeTier_provisionedConcurrencyPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_generated_31",
+                  "id": "lambdaFunctionWithoutFreeTier_generated_36"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Concurrency",
+                      "variableUnitLabel": "concurrency",
+                      "required": true,
+                      "variableId": "provisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Time for which Provisioned Concurrency is enabled",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "timeForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "memoryAllocatedForConcurrency"
+                    },
+                    {
+                      "variableLabel": "price for provisioned concurrency",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_provisionedConcurrencyPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Provisioned Concurrency charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_37"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Provisioned Concurrency charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (Provisioned Concurrency charges)",
+                  "id": "subTotalProCon",
+                  "refer": "lambdaFunctionWithoutFreeTier_generated_37"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests for Provisioned Concurrency",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequestsForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "Duration of each provisioned request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachProvisionedRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_38"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "memoryAllocatedForConcurrency"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_38"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_39"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_39"
+                    },
+                    {
+                      "variableLabel": "price for lambda duration provisioned",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_provisionedDurationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_40"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly compute charges)",
+                  "id": "subTotalProConCompute",
+                  "refer": "lambdaFunctionWithoutFreeTier_generated_40"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests for Provisioned Concurrency",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequestsForProvisionedConcurrency"
+                    },
+                    {
+                      "variableLabel": "price for lambda requests concurrency",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_requestPriceConcurrency"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_41"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalProConRequest",
+                  "refer": "lambdaFunctionWithoutFreeTier_generated_41"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Provisioned Concurrency charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_37"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly compute charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_40"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_generated_41"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_42"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionWithoutFreeTier_generated_37",
+                    "subTotalProCon",
+                    "lambdaFunctionWithoutFreeTier_generated_38",
+                    "lambdaFunctionWithoutFreeTier_generated_39",
+                    "lambdaFunctionWithoutFreeTier_generated_40",
+                    "subTotalProConCompute",
+                    "lambdaFunctionWithoutFreeTier_generated_41",
+                    "subTotalProConRequest",
+                    "lambdaFunctionWithoutFreeTier_generated_42"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda costs for Provisioned Concurrency",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_generated_43",
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_generated_42"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Edge-Duration"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "lambda",
+                  "meteredUnit": "Lambda Edge-Requests"
+                }
+              }
+            ]
+          },
+          "title": "Lambda@Edge",
+          "helpText": "You are charged for the total number of requests across all your functions. Lambda@Edge counts a request each time it starts executing in response to a CloudFront event globally.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/",
+              "overrides": {
+                "aws": "https://aws.amazon.com/lambda/",
+                "aws-us-gov": "https://aws.amazon.com/lambda/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "There is no free tier for Lambda@Edge at this time. Lambda@Edge pricing does not vary by region. You are charged for the total number of requests across all your functions executed in all regions.",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov",
+                  "aws-iso-e"
+                ],
+                "id": "edge_text"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of requests",
+                "description": "",
+                "id": "numberOfEdgeRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1E+21
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration of each request (in ms)",
+                "id": "durationOfEachEdgeRequest",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated from the time your code begins executing until it returns or otherwise terminates."
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated",
+                "id": "sizeOfEdgeMemoryAllocated",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda edge requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Edge-Requests"
+                },
+                "id": "lambdaFunctionWithoutFreeTier_edgeRequestPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda edge duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Edge-Duration"
+                },
+                "id": "lambdaFunctionWithoutFreeTier_edgeDurationPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "edge_text",
+                    "numberOfEdgeRequests",
+                    "durationOfEachEdgeRequest",
+                    "sizeOfEdgeMemoryAllocated",
+                    "lambdaFunctionWithoutFreeTier_edgeRequestPrice",
+                    "lambdaFunctionWithoutFreeTier_edgeDurationPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_generated_42",
+                  "id": "lambdaFunctionWithoutFreeTier_edgeUnitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfEdgeRequests"
+                    },
+                    {
+                      "variableLabel": "Duration of each request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachEdgeRequest"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeTotalComputeSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfEdgeMemoryAllocated"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeTotalComputeSeconds"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeTotalComputeGBSeconds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeTotalComputeGBSeconds"
+                    },
+                    {
+                      "variableLabel": "price for lambda edge duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeDurationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeComputeCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly compute charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly compute charges)",
+                  "id": "subTotalEdgeCompute",
+                  "refer": "lambdaFunctionWithoutFreeTier_edgeComputeCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfEdgeRequests"
+                    },
+                    {
+                      "variableLabel": "price for lambda edge requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeRequestPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeRequestCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (monthly request charges)",
+                  "id": "subTotalEdgeRequest",
+                  "refer": "lambdaFunctionWithoutFreeTier_edgeRequestCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (monthly compute charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeComputeCharges"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "lambdaFunctionWithoutFreeTier_edgeRequestCharges"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeTotalCharges"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionWithoutFreeTier_edgeTotalComputeSeconds",
+                    "lambdaFunctionWithoutFreeTier_edgeTotalComputeGBSeconds",
+                    "lambdaFunctionWithoutFreeTier_edgeComputeCharges",
+                    "subTotalEdgeCompute",
+                    "lambdaFunctionWithoutFreeTier_edgeRequestCharges",
+                    "subTotalEdgeRequest",
+                    "lambdaFunctionWithoutFreeTier_edgeTotalCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda@Edge costs",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_edgeCostDisplay",
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_edgeTotalCharges"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "lambda",
+              "meteredUnit": "Lambda Processed-Bytes"
+            }
+          },
+          "title": "Lambda HTTP Response Streaming",
+          "helpText": {
+            "aws": "AWS Lambda functions can return an HTTP response stream when invoked via the InvokeWithResponseStream API or through a function URL using the ResponseStream invoke mode. When using HTTP response streaming, you are charged for each GB written to the response stream by your function. You can stream the first 6MB per request at no cost.",
+            "aws-cn": "Amazon Lambda functions can return an HTTP response stream when invoked via the InvokeWithResponseStream API or through a function URL using the ResponseStream invoke mode. When using HTTP response streaming, you are charged for each GB written to the response stream by your function. You can stream the first 6MB per request at no cost."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lambda/pricing/",
+              "overrides": {
+                "aws": "https://aws.amazon.com/lambda/",
+                "aws-us-gov": "https://aws.amazon.com/lambda/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier 100 GB of HTTP response streaming per month.",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov",
+                  "aws-iso-e"
+                ],
+                "id": "httpResponse_text"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Invoke Mode",
+                "id": "lambdaFunctionWithoutFreeTier_lambdaInvokeMode",
+                "options": [
+                  {
+                    "label": "Buffered",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Response stream",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionWithoutFreeTier_lambdaInvokeMode"
+                    },
+                    0
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "There is no additional charge on buffered response.",
+                "id": "HTTP_buffered_WithoutFreeTier_text"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionWithoutFreeTier_lambdaInvokeMode"
+                    },
+                    1
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Invokes",
+                "id": "numberofInvokes_withoutFreetier",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "lambdaFunctionWithoutFreeTier_lambdaInvokeMode"
+                    },
+                    1
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average response payload size",
+                "id": "lambdaFunctionWithoutFreeTier_responseStreamingData",
+                "description": "",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "delegate": {
+                  "==": [
+                    {
+                      "id": "lambdaFunctionWithoutFreeTier_lambdaInvokeMode",
+                      "type": "component"
+                    },
+                    "1"
+                  ],
+                  "validations": {
+                    "required": true,
+                    "allowDecimals": true,
+                    "minValue": 1,
+                    "maxValue": 100000000
+                  }
+                },
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter response payload size"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lambda response streaming",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Processed-Bytes"
+                },
+                "id": "lambdaFunctionWithoutFreeTier_ProcessBytesPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "httpResponse_text",
+                    "lambdaFunctionWithoutFreeTier_lambdaInvokeMode",
+                    "HTTP_buffered_WithoutFreeTier_text",
+                    "numberofInvokes_withoutFreetier",
+                    "lambdaFunctionWithoutFreeTier_responseStreamingData",
+                    "lambdaFunctionWithoutFreeTier_ProcessBytesPrice"
+                  ],
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_edgeTotalCharges",
+                  "id": "unitConversion_WithoutFreeTier_ResponseStreaming"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Average response payload size",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_responseStreamingData"
+                    },
+                    {
+                      "constant": 6,
+                      "constantUnitLabel": "MB free of a given response payload"
+                    }
+                  ],
+                  "outputUnitLabel": "MB of processed bytes billable per invoke",
+                  "decimalPlaces": 8,
+                  "id": "lambdaFunctionWithoutFreeTier_responseStreamingGBFree"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "MB of processed bytes billable per invoke",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_responseStreamingGBFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "MB billable",
+                  "decimalPlaces": 8,
+                  "id": "chargableBytesGBInvoke_withoutFree"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "chargableBytesGBInvoke_withoutFree"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "MB billable",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "variableId": "chargableBytesGBInvoke_withoutFree"
+                    },
+                    {
+                      "constant": 0.0009765625,
+                      "constantUnitLabel": "GB in a MB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB of processed bytes billable per invoke",
+                  "decimalPlaces": 8,
+                  "id": "MBtoGBConversion_withoutFreeTier"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Invokes",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberofInvokes_withoutFreetier"
+                    },
+                    {
+                      "variableLabel": "GB of processed bytes billable per invoke",
+                      "variableUnitLabel": "GB per invoke",
+                      "required": true,
+                      "variableId": "MBtoGBConversion_withoutFreeTier"
+                    }
+                  ],
+                  "outputUnitLabel": "GB total billable",
+                  "decimalPlaces": 8,
+                  "id": "billableGBstreamed_withoutFreetier"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Monthly processed byte charges",
+                  "operands": [
+                    {
+                      "variableLabel": "GB total billable",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "billableGBstreamed_withoutFreetier"
+                    },
+                    {
+                      "variableLabel": "price for lambda response streaming",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "lambdaFunctionWithoutFreeTier_ProcessBytesPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly processed bytes charges)",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_monthlyProcessedByteCharges"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lambdaFunctionWithoutFreeTier_responseStreamingGBFree",
+                    "chargableBytesGBInvoke_withoutFree",
+                    "MBtoGBConversion_withoutFreeTier",
+                    "billableGBstreamed_withoutFreetier",
+                    "lambdaFunctionWithoutFreeTier_monthlyProcessedByteCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda HTTP Response Streaming costs",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFunctionWithoutFreeTier_monthlyProcessedByteChargesDisplay",
+                  "subTotalRefer": "lambdaFunctionWithoutFreeTier_monthlyProcessedByteCharges"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

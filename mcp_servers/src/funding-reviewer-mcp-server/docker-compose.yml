@@ -1,0 +1,154 @@
+version: '3.8'
+
+services:
+  funding-reviewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: funding-reviewer-mcp-server
+    restart: unless-stopped
+    environment:
+      # Load environment variables from .env file
+      - AWS_REGION=${AWS_REGION:-us-west-2}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_PROFILE=${AWS_PROFILE}
+      - BEDROCK_MODEL_ID=${BEDROCK_MODEL_ID:-us.anthropic.claude-3-7-sonnet-20250219-v1:0}
+      - BEDROCK_TEMPERATURE=${BEDROCK_TEMPERATURE:-0.1}
+      - BEDROCK_MAX_TOKENS=${BEDROCK_MAX_TOKENS:-4000}
+      - BEDROCK_TIMEOUT=${BEDROCK_TIMEOUT:-300}
+      - MCP_SERVER_NAME=${MCP_SERVER_NAME:-funding-reviewer}
+      - MCP_SERVER_VERSION=${MCP_SERVER_VERSION:-1.0.0}
+      - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
+      - MCP_SERVER_PORT=${MCP_SERVER_PORT:-8080}
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-50}
+      - SUPPORTED_IMAGE_FORMATS=${SUPPORTED_IMAGE_FORMATS:-png,jpg,jpeg}
+      - SUPPORTED_DOCUMENT_FORMATS=${SUPPORTED_DOCUMENT_FORMATS:-pdf,docx}
+      - SUPPORTED_CSV_FORMATS=${SUPPORTED_CSV_FORMATS:-csv}
+      - TEMP_DIR=${TEMP_DIR:-/tmp/funding-reviewer}
+      - REFERENCE_DOCS_PATH=${REFERENCE_DOCS_PATH:-awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md}
+      - PROJECT_TEMPLATE_PATH=${PROJECT_TEMPLATE_PATH:-awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+      - ENABLE_CORRELATION_IDS=${ENABLE_CORRELATION_IDS:-true}
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-600}
+      - MAX_CONCURRENT_REQUESTS=${MAX_CONCURRENT_REQUESTS:-10}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - RETRY_BACKOFF_FACTOR=${RETRY_BACKOFF_FACTOR:-2.0}
+      - ENABLE_HEALTH_CHECK=${ENABLE_HEALTH_CHECK:-true}
+      - HEALTH_CHECK_INTERVAL=${HEALTH_CHECK_INTERVAL:-30}
+      - ENABLE_REQUEST_VALIDATION=${ENABLE_REQUEST_VALIDATION:-true}
+      - MAX_REQUEST_SIZE_MB=${MAX_REQUEST_SIZE_MB:-100}
+      - ENABLE_FILE_SCANNING=${ENABLE_FILE_SCANNING:-true}
+      - DEBUG_MODE=${DEBUG_MODE:-false}
+      - DEV_MODE=${DEV_MODE:-false}
+      - MOCK_BEDROCK=${MOCK_BEDROCK:-false}
+      - ENABLE_METRICS=${ENABLE_METRICS:-true}
+      - METRICS_INTERVAL=${METRICS_INTERVAL:-60}
+      - ENABLE_PERFORMANCE_MONITORING=${ENABLE_PERFORMANCE_MONITORING:-true}
+      # MCP Server specific
+      - PYTHONUNBUFFERED=1
+      - FASTMCP_LOG_LEVEL=${FASTMCP_LOG_LEVEL:-INFO}
+    ports:
+      - "${MCP_SERVER_PORT:-8080}:8080"
+    volumes:
+      # Mount reference documents
+      - ./awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md:/app/awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md:ro
+      - ./awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx:/app/awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx:ro
+      # Mount temporary directory for file processing
+      - funding-temp:/tmp/funding-reviewer
+      # Mount logs directory
+      - funding-logs:/var/log/funding-reviewer
+      # Mount AWS credentials (optional, if not using IAM roles)
+      - ~/.aws:/home/appuser/.aws:ro
+    networks:
+      - funding-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Development service with additional tools
+  funding-reviewer-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: funding-reviewer-mcp-server-dev
+    environment:
+      # Same environment variables as production
+      - AWS_REGION=${AWS_REGION:-us-west-2}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_PROFILE=${AWS_PROFILE}
+      - BEDROCK_MODEL_ID=${BEDROCK_MODEL_ID:-us.anthropic.claude-3-7-sonnet-20250219-v1:0}
+      - BEDROCK_TEMPERATURE=${BEDROCK_TEMPERATURE:-0.1}
+      - BEDROCK_MAX_TOKENS=${BEDROCK_MAX_TOKENS:-4000}
+      - BEDROCK_TIMEOUT=${BEDROCK_TIMEOUT:-300}
+      - MCP_SERVER_NAME=${MCP_SERVER_NAME:-funding-reviewer}
+      - MCP_SERVER_VERSION=${MCP_SERVER_VERSION:-1.0.0}
+      - MCP_SERVER_HOST=${MCP_SERVER_HOST:-0.0.0.0}
+      - MCP_SERVER_PORT=${MCP_SERVER_PORT:-8080}
+      - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-50}
+      - SUPPORTED_IMAGE_FORMATS=${SUPPORTED_IMAGE_FORMATS:-png,jpg,jpeg}
+      - SUPPORTED_DOCUMENT_FORMATS=${SUPPORTED_DOCUMENT_FORMATS:-pdf}
+      - SUPPORTED_CSV_FORMATS=${SUPPORTED_CSV_FORMATS:-csv}
+      - TEMP_DIR=${TEMP_DIR:-/tmp/funding-reviewer}
+      - REFERENCE_DOCS_PATH=${REFERENCE_DOCS_PATH:-awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md}
+      - PROJECT_TEMPLATE_PATH=${PROJECT_TEMPLATE_PATH:-awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx}
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+      - ENABLE_CORRELATION_IDS=${ENABLE_CORRELATION_IDS:-true}
+      - REQUEST_TIMEOUT=${REQUEST_TIMEOUT:-600}
+      - MAX_CONCURRENT_REQUESTS=${MAX_CONCURRENT_REQUESTS:-10}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - RETRY_BACKOFF_FACTOR=${RETRY_BACKOFF_FACTOR:-2.0}
+      - ENABLE_HEALTH_CHECK=${ENABLE_HEALTH_CHECK:-true}
+      - HEALTH_CHECK_INTERVAL=${HEALTH_CHECK_INTERVAL:-30}
+      - ENABLE_REQUEST_VALIDATION=${ENABLE_REQUEST_VALIDATION:-true}
+      - MAX_REQUEST_SIZE_MB=${MAX_REQUEST_SIZE_MB:-100}
+      - ENABLE_FILE_SCANNING=${ENABLE_FILE_SCANNING:-true}
+      - DEBUG_MODE=${DEBUG_MODE:-true}
+      - DEV_MODE=${DEV_MODE:-true}
+      - MOCK_BEDROCK=${MOCK_BEDROCK:-false}
+      - ENABLE_METRICS=${ENABLE_METRICS:-true}
+      - METRICS_INTERVAL=${METRICS_INTERVAL:-60}
+      - ENABLE_PERFORMANCE_MONITORING=${ENABLE_PERFORMANCE_MONITORING:-true}
+    ports:
+      - "${MCP_SERVER_PORT:-8080}:8080"
+    volumes:
+      # Mount source code for development
+      - .:/app
+      # Mount reference documents
+      - ./awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md:/app/awslabs/funding_reviewer_mcp_server/docs/poc_general_guidance.md:ro
+      - ./awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx:/app/awslabs/funding_reviewer_mcp_server/docs/PoC_Project_Plan_Template.docx:ro
+      # Mount temporary directory for file processing
+      - funding-temp:/tmp/funding-reviewer
+      # Mount logs directory
+      - funding-logs:/var/log/funding-reviewer
+      # Mount AWS credentials (optional, if not using IAM roles)
+      - ~/.aws:/home/appuser/.aws:ro
+    networks:
+      - funding-network
+    profiles:
+      - dev
+
+volumes:
+  funding-temp:
+    driver: local
+  funding-logs:
+    driver: local
+
+networks:
+  funding-network:
+    driver: bridge

@@ -1,0 +1,481 @@
+{
+  "version": "0.0.14",
+  "serviceName": "Amazon Elastic Transcoder",
+  "serviceCode": "amazonElasticTranscoder",
+  "type": "AWSService",
+  "regions": [
+    "ap-northeast-1",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "eu-west-1",
+    "us-east-1",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "Amazon Elastic Transcoder is media transcoding in the cloud. It is designed to be a highly scalable, easy to use and a cost effective way for developers and businesses to convert (or “transcode”) media files from their source format into versions that will playback on devices like smartphones, tablets and PCs.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/elastictranscoder/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "ets",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ets/[currency]/current/ets.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Elastic Transcoder",
+      "id": "amazonElasticTranscoder",
+      "cards": [
+        {
+          "title": "Video Asset Sets to Transcode * (SD - Standard Definition, HD - High Definition)",
+          "helpText": "With Amazon Elastic Transcoder, pay only for what you use. There is no minimum fee. Pricing depends on the duration and resolution of the content that you output. Each output file is billed in whole minute increments where each partial minute is rounded up to the next full minute.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elastictranscoder/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "amazonElasticTranscoder_generated_0"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Video assets to transcode",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "assets per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter the amount",
+                "description": "",
+                "id": "videoAssetsTranscodingFrequency"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average video length of assets",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "defaultOption": {
+                  "label": "minutes",
+                  "value": "min"
+                },
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter the amount",
+                "description": "Each output file is billed in whole minute increments where each partial minute is rounded up to the next full minute",
+                "id": "averageDurationOfVideoAssets"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "SD output formats count",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "countOFSDOutputs"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "HD output formats count",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "countOFHDOutputs"
+              },
+              {
+                "type": "pricing",
+                "label": "price for SD output",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ets",
+                "meteredUnit": {
+                  "allRegions": "Standard Definition per minutes"
+                },
+                "id": "amazonElasticTranscoder_generated_1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for HD output",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ets",
+                "meteredUnit": {
+                  "allRegions": "High Definition per minutes"
+                },
+                "id": "amazonElasticTranscoder_generated_2"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "amazonElasticTranscoder_generated_3",
+                  "refer": [
+                    "amazonElasticTranscoder_generated_0",
+                    "videoAssetsTranscodingFrequency",
+                    "averageDurationOfVideoAssets",
+                    "countOFSDOutputs",
+                    "countOFHDOutputs",
+                    "amazonElasticTranscoder_generated_1",
+                    "amazonElasticTranscoder_generated_2"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Average video length of assets",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "averageDurationOfVideoAssets"
+                    }
+                  ],
+                  "outputUnitLabel": "Average video length of assets in minutes",
+                  "id": "amazonElasticTranscoder_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Video assets to transcode",
+                      "variableUnitLabel": "assets",
+                      "required": true,
+                      "variableId": "videoAssetsTranscodingFrequency"
+                    },
+                    {
+                      "variableLabel": "Average video length of assets in minutes",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_4"
+                    },
+                    {
+                      "variableLabel": "SD output formats count",
+                      "variableUnitLabel": "SD output count",
+                      "required": true,
+                      "variableId": "countOFSDOutputs"
+                    },
+                    {
+                      "variableLabel": "price for SD output",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (SD Transcoding cost per month)",
+                  "decimalPlaces": 4,
+                  "id": "amazonElasticTranscoder_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Video assets to transcode",
+                      "variableUnitLabel": "assets",
+                      "required": true,
+                      "variableId": "videoAssetsTranscodingFrequency"
+                    },
+                    {
+                      "variableLabel": "Average video length of assets in minutes",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_4"
+                    },
+                    {
+                      "variableLabel": "HD output formats count",
+                      "variableUnitLabel": "HD output count",
+                      "required": true,
+                      "variableId": "countOFHDOutputs"
+                    },
+                    {
+                      "variableLabel": "price for HD output",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (HD Transcoding cost per month)",
+                  "decimalPlaces": 4,
+                  "id": "amazonElasticTranscoder_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (SD Transcoding cost per month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonElasticTranscoder_generated_5"
+                    },
+                    {
+                      "variableLabel": "[currency] (HD Transcoding cost per month)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonElasticTranscoder_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "amazonElasticTranscoder_generated_7"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "amazonElasticTranscoder_generated_4",
+                    "amazonElasticTranscoder_generated_5",
+                    "amazonElasticTranscoder_generated_6",
+                    "amazonElasticTranscoder_generated_7"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Video assets transcoding cost",
+                  "decimalPlaces": 2,
+                  "id": "amazonElasticTranscoder_generated_8",
+                  "subTotalRefer": "amazonElasticTranscoder_generated_7"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Audio (only) Asset Sets to Transcode",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Audio (only) assets to transcode",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "assets per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter the amount",
+                "description": "",
+                "id": "audioAssetsTranscodingFrequency"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average audio length of assets",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "defaultOption": {
+                  "label": "minutes",
+                  "value": "min"
+                },
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter the amount",
+                "description": "Each output file is billed in whole minute increments where each partial minute is rounded up to the next full minute",
+                "id": "averageDurationOfAudioAssets"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Audio output formats count",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "countOFAudioOutputs"
+              },
+              {
+                "type": "pricing",
+                "label": "price for audio output",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ets",
+                "meteredUnit": {
+                  "allRegions": "Audio per minutes"
+                },
+                "id": "amazonElasticTranscoder_generated_9"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "amazonElasticTranscoder_generated_10",
+                  "refer": [
+                    "audioAssetsTranscodingFrequency",
+                    "averageDurationOfAudioAssets",
+                    "countOFAudioOutputs",
+                    "amazonElasticTranscoder_generated_9"
+                  ],
+                  "subTotalRefer": "amazonElasticTranscoder_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Average audio length of assets",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "averageDurationOfAudioAssets"
+                    }
+                  ],
+                  "outputUnitLabel": "Average audio length of assets in minutes",
+                  "id": "amazonElasticTranscoder_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Audio (only) assets to transcode",
+                      "variableUnitLabel": "assets",
+                      "required": true,
+                      "variableId": "audioAssetsTranscodingFrequency"
+                    },
+                    {
+                      "variableLabel": "Average audio length of assets in minutes",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_11"
+                    },
+                    {
+                      "variableLabel": "Audio output formats count",
+                      "variableUnitLabel": "audio output count",
+                      "required": true,
+                      "variableId": "countOFAudioOutputs"
+                    },
+                    {
+                      "variableLabel": "price for audio output",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonElasticTranscoder_generated_9"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Audio Transcoding cost per month)",
+                  "decimalPlaces": 2,
+                  "id": "amazonElasticTranscoder_generated_12"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "amazonElasticTranscoder_generated_11",
+                    "amazonElasticTranscoder_generated_12"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Audio (only) assets transcoding cost",
+                  "decimalPlaces": 2,
+                  "id": "amazonElasticTranscoder_generated_13",
+                  "subTotalRefer": "amazonElasticTranscoder_generated_12"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "ElasticTranscoder",
+  "partitions": [
+    "aws"
+  ]
+}

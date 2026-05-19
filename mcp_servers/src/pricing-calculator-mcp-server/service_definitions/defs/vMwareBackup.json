@@ -1,0 +1,2882 @@
+{
+  "version": "0.0.18",
+  "serviceName": "VMware Backup",
+  "serviceCode": "vMwareBackup",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Analytics",
+    "SQL",
+    "query",
+    "S3",
+    "big data",
+    "Presto",
+    "serverless",
+    "ad-hoc analysis",
+    "log processing",
+    "bigquery",
+    "big query",
+    "query S3 data",
+    "spark",
+    "spark session",
+    "code execustion"
+  ],
+  "serviceDescription": "",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/backup/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "backup",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/backup/[currency]/current/backup.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/backup/"
+        }
+      },
+      "cards": [
+        {
+          "title": "VMware",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/backup/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Notes",
+                "content": "<ul><li>The Pricing Calculator for AWS Backup only provides estimates for storage costs in standard backup vaults. Data transfers, restores, Backup Audit Manager reports, GET requests, etc are not included in the Pricing Calculator’s estimates. Please refer to AWS Backup’s pricing page for more details.</li><li>The Pricing Calculator presents a single monthly cost representing an average month during the first year of usage. In practice, costs may change each month due to 1) annual growth rate of protected data, and 2) a 'ramp-up' period during onboarding where new backups are being created but none have started deleting or transitioning to cold storage yet.</li><li>While cross-region copy and cross-account copy are not directly supported by the pricing calculator, we recommend creating a separate estimate for each backup copy. Your total storage costs will be the sum of the estimates. Logically air-gapped (LAG) vaults are not natively supported in the Pricing Calculator today, but note that backup copies stored in LAG vaults are charged at a 15% premium to storage in standard vaults.</li><li>If you have a backup plan with multiple rules and the time frames of the two rules overlap, AWS Backup optimizes the backup and takes a backup for the rule with the longer retention time. The Pricing Calculator captures this cost optimization for storage equal to the first full backup, however it currently does not currently capture storage optimizations for subsequent incremental backups so your actual costs may vary from the estimates.</li><li>Any backups in cold storage must be retained in cold storage for at least 90 days. If you delete backups prior to the 90-day minimum, you will be subject to early deletion charges equal to the costs that would have accumulated over the required 90 days. To use cold storage, the backup plan (frequency) must also have at least 1 day of warm storage retention. As the calculator only prices estimates for the first year of usage, the days in warm storage and days in cold storage combined must not exceed 365 days. </li><li>AWS Backup supports incremental backup for select resource types. Please refer to the AWS Backup documentation for more details. For more information on your cost estimates for AWS Backup, please contact AWS Sales Support.</li></ul>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "userInfoFirst1"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "VMWare",
+                "content": "Backup storage is based on the amount of data being protected. Provisioned but unused capacity is not backed up. For VMware, storage used is based on the disk usage, including both allocated and deleted data (this is typically less than the VM’s provisioned size, but larger than the VM’s OS-level utilization).",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "userInfo1First"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of primary data to be backed up",
+                "id": "dataSize",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 9.5367432e-06,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount of data used, not provisioned",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "annualGrowthOfPrimaryUsage",
+                "description": "Net increase or decrease in primary data over one year",
+                "label": "Estimated annual increase in primary data (%)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "dailyChangeOfPrimaryUsage",
+                "description": "Percentage of primary data that is modified on a daily basis. Industry average is 0.2% to 0.5%",
+                "label": "Estimated daily change of primary data (%)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                  }
+                },
+                "type": "input",
+                "subType": "headerText",
+                "title": "Days in Warm Storage",
+                "id": "warmDays"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "hourlyPlansWarmDays",
+                "label": "Hourly backups warm retention period",
+                "description": "Enter the length of time you will retain each hourly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "defaultDuration": "day",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "dailyPlansWarmDays",
+                "label": "Daily backups warm retention period",
+                "description": "Enter the length of time you will retain each daily backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "defaultDuration": "day",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "weeklyPlansWarmDays",
+                "label": "Weekly backups warm retention period",
+                "description": "Enter the number of weeks you will retain each weekly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "defaultDuration": "week",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "monthlyPlansWarmDays",
+                "label": "Monthly backups warm retention period",
+                "description": "Enter the number of months you will retain each monthly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "defaultDuration": "month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                  }
+                },
+                "type": "input",
+                "subType": "headerText",
+                "title": "Days in Cold Storage",
+                "id": "coldDays"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "hourlyPlansColdDays",
+                "displayInConfigSummary": true,
+                "label": "Hourly backups cold retention period",
+                "description": "Enter the length of time you will retain each hourly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "defaultDuration": "day",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "dailyPlansColdDays",
+                "label": "Daily backups cold retention period",
+                "description": "Enter the length of time you will retain each daily backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "defaultDuration": "day",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "weeklyPlansColdDays",
+                "label": "Weekly backups cold retention period",
+                "description": "Enter the number of weeks you will retain each weekly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "defaultDuration": "week",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "backup",
+                    "meteredUnit": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "id": "monthlyPlansColdDays",
+                "label": "Monthly backups cold retention period",
+                "description": "Enter the number of months you will retain each monthly backup",
+                "dropDownDuration": [
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "defaultDuration": "month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 365
+                }
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "Hourly_add"
+                        },
+                        365
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "Weekly_add"
+                        },
+                        365
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "Daily_add"
+                        },
+                        365
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "Monthly_add"
+                        },
+                        366
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid inputs",
+                "label": "info alert",
+                "content": "The Amazon Web Services Backup Pricing Calculator only supports estimates up to one year. The total retention period of warm and cold storage for a given backup frequency cannot exceed one year.",
+                "alertType": "error",
+                "isDismissable": true,
+                "allowSaveEstimateOnAlert": false,
+                "id": "maxAlert"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for warm storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "backup",
+                "meteredUnit": {
+                  "allRegions": "1LST4rgxQ9ey30SAcsnG8ZNJxVcLecn8l8QWdPX4NFo"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "priceForWarmStorage"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for cold storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "backup",
+                "meteredUnit": {
+                  "allRegions": "vITg5Qr-uQFUBw7_ksWqmh0lm2fBGs8Igw86Qrge7h4"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "priceForColdStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Hourly_add",
+                  "variableName": "Hourly Add",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly backups warm retention period",
+                      "variableUnitLabel": "days of hourly warm retention period",
+                      "required": true,
+                      "variableId": "hourlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Hourly backups cold retention period",
+                      "variableUnitLabel": "days of hourly cold retention period",
+                      "required": true,
+                      "variableId": "hourlyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "total hourly retention period",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Daily_add",
+                  "variableName": "Daily Add",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily backups warm retention period",
+                      "variableUnitLabel": "days of daily warm retention period",
+                      "required": true,
+                      "variableId": "dailyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Daily backups cold retention period",
+                      "variableUnitLabel": "days of daily cold retention period",
+                      "required": true,
+                      "variableId": "dailyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "total daily retention period",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Weekly_add",
+                  "variableName": "Weekly Add",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly backups warm retention period",
+                      "variableUnitLabel": "days of weekly warm retention period",
+                      "required": true,
+                      "variableId": "weeklyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Weekly backups cold retention period",
+                      "variableUnitLabel": "days of weekly cold retention period",
+                      "required": true,
+                      "variableId": "weeklyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "total weekly retention period",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Monthly_add",
+                  "variableName": "Monthly Add",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly backups warm retention period",
+                      "variableUnitLabel": "days of monthly warm retention period",
+                      "required": true,
+                      "variableId": "monthlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Monthly backups cold retention period",
+                      "variableUnitLabel": "days of monthly cold retention period",
+                      "required": true,
+                      "variableId": "monthlyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly retention period",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "annualGrowthPlusOne",
+                  "variableName": "Annual Growth Plus One",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Estimated annual increase in primary data (%)",
+                      "variableUnitLabel": "raw growth rate",
+                      "required": false,
+                      "variableId": "annualGrowthOfPrimaryUsage"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "annual growth rate",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataSizetimesAnnualGrowth",
+                  "variableName": "Data Size Times Annual Growth",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of primary data to be backed up",
+                      "variableUnitLabel": "GB starting data size",
+                      "required": true,
+                      "variableId": "dataSize"
+                    },
+                    {
+                      "variableLabel": "Annual Growth Plus One",
+                      "variableUnitLabel": "annual growth rate",
+                      "required": true,
+                      "variableId": "annualGrowthPlusOne"
+                    }
+                  ],
+                  "outputUnitLabel": "GB ending size of data",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataSizewithdataSizeAnnualGrowthAdded",
+                  "variableName": "Data Size and Data Size with annual growth added",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of primary data to be backed up",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataSize"
+                    },
+                    {
+                      "variableLabel": "Data Size Times Annual Growth",
+                      "variableUnitLabel": "GB ending size of data",
+                      "required": true,
+                      "variableId": "dataSizetimesAnnualGrowth"
+                    }
+                  ],
+                  "outputUnitLabel": "GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "avgBaseStorage",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Size and Data Size with annual growth added",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataSizewithdataSizeAnnualGrowthAdded"
+                    },
+                    {
+                      "constant": 2,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "average amount of data to be backed up (base storage)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "baseStorageCosts",
+                  "variableName": "Base Storage Costs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "average amount of data to be backed up (base storage)",
+                      "variableUnitLabel": "GB (base storage)",
+                      "required": true,
+                      "variableId": "avgBaseStorage"
+                    },
+                    {
+                      "variableLabel": "Price for warm storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForWarmStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "baseStorageCostsVar",
+                  "label": "Monthly Cost for Base Storage",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "baseStorageCosts",
+                  "referLabel": "Base Storage Costs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "avgbaseStorageTimesDailyChangePercent",
+                  "variableName": "Avg Base storage times daily percent",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "average amount of data to be backed up (base storage)",
+                      "variableUnitLabel": "GB (base storage)",
+                      "required": true,
+                      "variableId": "avgBaseStorage"
+                    },
+                    {
+                      "variableLabel": "Estimated daily change of primary data (%)",
+                      "variableUnitLabel": "daily change rate",
+                      "required": true,
+                      "variableId": "dailyChangeOfPrimaryUsage"
+                    }
+                  ],
+                  "displayInConfigSummary": false,
+                  "outputUnitLabel": "GB changed daily",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "avgNewDataPerHourlyBackup",
+                  "variableName": "Average new data per hourly Backup",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Avg Base storage times daily percent",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "avgbaseStorageTimesDailyChangePercent"
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "hours in a day"
+                    }
+                  ],
+                  "outputUnitLabel": "GB average new data per hourly backup",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fiftyPercentDaysOfWarmStorageHourly",
+                  "variableName": "Fifty percent days of warm storage for hourly plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly backups warm retention period",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "hourlyPlansWarmDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at zero usage ",
+                  "decimalPlaces": 2,
+                  "displayinconfigsummary": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "rampUpCalcDaysHourly",
+                  "variableName": "Ramp-up calc days for hourly plans",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Fifty percent days of warm storage for hourly plans",
+                      "variableUnitLabel": "effective days at zero usage",
+                      "required": true,
+                      "variableId": "fiftyPercentDaysOfWarmStorageHourly"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "effectiveYearsSteadyStateHourlyPlans",
+                  "variableName": "Effective years at steady state for hourly plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Ramp-up calc days for hourly plans",
+                      "variableUnitLabel": "effective days at steady-state usage",
+                      "required": true,
+                      "variableId": "rampUpCalcDaysHourly"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "effective years at steady-state usage",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageHourlyPlans",
+                  "variableName": "Warm Storage for Hourly Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per hourly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "avgNewDataPerHourlyBackup"
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "backups per day"
+                    },
+                    {
+                      "variableLabel": "Effective years at steady state for hourly plans",
+                      "variableUnitLabel": "effective years at steady-state usage",
+                      "required": false,
+                      "variableId": "effectiveYearsSteadyStateHourlyPlans"
+                    },
+                    {
+                      "variableLabel": "Hourly backups warm retention period",
+                      "variableUnitLabel": "days warm retention",
+                      "required": false,
+                      "variableId": "hourlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Price for warm storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForWarmStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "warmStorageHourlyPlansCostsVar",
+                  "label": "Hourly Backups - Warm Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "warmStorageHourlyPlans",
+                  "referLabel": "Warm Storage for Hourly Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "hourlyPlansDaysInSteadyState",
+                  "variableName": "Hourly Plans - Days in Steady State",
+                  "operation": "subtraction",
+                  "minValue": "0",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Hourly backups warm retention period",
+                      "variableUnitLabel": "days in warm storage",
+                      "required": true,
+                      "variableId": "hourlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Hourly backups cold retention period",
+                      "variableUnitLabel": "days cold storage ramp-up",
+                      "required": true,
+                      "variableId": "hourlyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "days at steady-state level of storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "percentageYearInSteadyStateHourlyPlans",
+                  "variableName": "Hourly Plans - Percentage of Year in Steady State",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly Plans - Days in Steady State",
+                      "variableUnitLabel": "days in steady-state",
+                      "required": true,
+                      "variableId": "hourlyPlansDaysInSteadyState"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "years in steady state",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "hourlyPlansAverageStorageOverRampUp",
+                  "variableName": "Hourly Plans - Average Storage over Ramp-up period",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly backups cold retention period",
+                      "variableUnitLabel": "days in cold retention",
+                      "required": true,
+                      "variableId": "hourlyPlansColdDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage during ramp-up",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "hourlyPlanspercentYearInRampUp",
+                  "variableName": "Hourly Plans - Percentage of Year in ramp-up period",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly Plans - Average Storage over Ramp-up period",
+                      "variableUnitLabel": "effective days in ramp-up",
+                      "required": true,
+                      "variableId": "hourlyPlansAverageStorageOverRampUp"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "year in ramp-up",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "hourlyPlansRampUpDiscountFactorColdStorage",
+                  "variableName": "Hourly Plans - Ramp-up discount factor for Cold Storage",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Hourly Plans - Percentage of Year in Steady State",
+                      "variableUnitLabel": "years in steady state",
+                      "required": false,
+                      "variableId": "percentageYearInSteadyStateHourlyPlans"
+                    },
+                    {
+                      "variableLabel": "Hourly Plans - Percentage of Year in ramp-up period",
+                      "variableUnitLabel": "year in ramp-up",
+                      "required": false,
+                      "variableId": "hourlyPlanspercentYearInRampUp"
+                    }
+                  ],
+                  "outputUnitLabel": "ramp-up discount factor",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageHourlyPlans",
+                  "variableName": "Cold Storage for Hourly Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per hourly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "avgNewDataPerHourlyBackup"
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "backups per day"
+                    },
+                    {
+                      "variableLabel": "Hourly backups cold retention period",
+                      "variableUnitLabel": "days cold retention",
+                      "required": false,
+                      "variableId": "hourlyPlansColdDays"
+                    },
+                    {
+                      "variableLabel": "Hourly Plans - Ramp-up discount factor for Cold Storage",
+                      "variableUnitLabel": "ramp-up discount factor",
+                      "required": false,
+                      "variableId": "hourlyPlansRampUpDiscountFactorColdStorage"
+                    },
+                    {
+                      "variableLabel": "Price for cold storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForColdStorage"
+                    }
+                  ],
+                  "displayInConfigSummary": true,
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "hourlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "coldStorageHourlyPlansCostsVar",
+                  "label": "Hourly Backups - Cold Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "coldStorageHourlyPlans",
+                  "referLabel": "Cold Storage for Hourly Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fiftyPercentDaysOfWarmStorageDaily",
+                  "variableName": "Fifty percent days of warm storage for daily plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily backups warm retention period",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "dailyPlansWarmDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at zero usage ",
+                  "decimalPlaces": 2,
+                  "displayinconfigsummary": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "rampUpCalcDaysDaily",
+                  "variableName": "Ramp-up calc days for daily plans",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Fifty percent days of warm storage for daily plans",
+                      "variableUnitLabel": "effective days at zero usage",
+                      "required": true,
+                      "variableId": "fiftyPercentDaysOfWarmStorageDaily"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "effectiveYearsSteadyStateDailyPlans",
+                  "variableName": "Effective years at steady state for daily plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Ramp-up calc days for daily plans",
+                      "variableUnitLabel": "effective days at steady-state usage",
+                      "required": true,
+                      "variableId": "rampUpCalcDaysDaily"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "effective years at steady-state usage",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageDailyPlans",
+                  "variableName": "Warm Storage for Daily Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Avg Base storage times daily percent",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "avgbaseStorageTimesDailyChangePercent"
+                    },
+                    {
+                      "variableLabel": "Daily backups warm retention period",
+                      "variableUnitLabel": "days warm retention",
+                      "required": false,
+                      "variableId": "dailyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Effective years at steady state for daily plans",
+                      "variableUnitLabel": "effective years at steady-state usage",
+                      "required": false,
+                      "variableId": "effectiveYearsSteadyStateDailyPlans"
+                    },
+                    {
+                      "variableLabel": "Price for warm storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForWarmStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "warmStorageDailyPlansCostsVar",
+                  "label": "Daily Backups - Warm Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "warmStorageDailyPlans",
+                  "referLabel": "Warm Storage for Daily Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyPlansDaysInSteadyState",
+                  "variableName": "Daily Plans - Days in Steady State",
+                  "operation": "subtraction",
+                  "minValue": "0",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Daily backups warm retention period",
+                      "variableUnitLabel": "days in warm storage",
+                      "required": true,
+                      "variableId": "dailyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Daily backups cold retention period",
+                      "variableUnitLabel": "days cold storage ramp-up",
+                      "required": true,
+                      "variableId": "dailyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "days at steady-state level of storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "percentageYearInSteadyStateDailyPlans",
+                  "variableName": "Daily Plans - Percentage of Year in Steady State",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily Plans - Days in Steady State",
+                      "variableUnitLabel": "days in steady-state",
+                      "required": true,
+                      "variableId": "dailyPlansDaysInSteadyState"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "years in steady state",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyPlansAverageStorageOverRampUp",
+                  "variableName": "Daily Plans - Average Storage over Ramp-up period",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily backups cold retention period",
+                      "variableUnitLabel": "days in cold retention",
+                      "required": true,
+                      "variableId": "dailyPlansColdDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage during ramp-up",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyPlanspercentYearInRampUp",
+                  "variableName": "Daily Plans - Percentage of Year in ramp-up period",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily Plans - Average Storage over Ramp-up period",
+                      "variableUnitLabel": "effective days in ramp-up",
+                      "required": true,
+                      "variableId": "dailyPlansAverageStorageOverRampUp"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "year in ramp-up",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dailyPlansRampUpDiscountFactorColdStorage",
+                  "variableName": "Daily Plans - Ramp-up discount factor for Cold Storage",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Daily Plans - Percentage of Year in Steady State",
+                      "variableUnitLabel": "years in steady state",
+                      "required": false,
+                      "variableId": "percentageYearInSteadyStateDailyPlans"
+                    },
+                    {
+                      "variableLabel": "Daily Plans - Percentage of Year in ramp-up period",
+                      "variableUnitLabel": "year in ramp-up",
+                      "required": false,
+                      "variableId": "dailyPlanspercentYearInRampUp"
+                    }
+                  ],
+                  "outputUnitLabel": "ramp-up discount factor",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageDailyPlans",
+                  "variableName": "Cold Storage for Daily Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Avg Base storage times daily percent",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "avgbaseStorageTimesDailyChangePercent"
+                    },
+                    {
+                      "variableLabel": "Daily backups cold retention period",
+                      "variableUnitLabel": "days cold retention",
+                      "required": false,
+                      "variableId": "dailyPlansColdDays"
+                    },
+                    {
+                      "variableLabel": "Daily Plans - Ramp-up discount factor for Cold Storage",
+                      "variableUnitLabel": "ramp-up discount factor",
+                      "required": false,
+                      "variableId": "dailyPlansRampUpDiscountFactorColdStorage"
+                    },
+                    {
+                      "variableLabel": "Price for cold storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForColdStorage"
+                    }
+                  ],
+                  "displayInConfigSummary": true,
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "dailyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "coldStorageDailyPlansCostsVar",
+                  "label": "Daily Backups - Cold Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "coldStorageDailyPlans",
+                  "referLabel": "Cold Storage for Daily Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                  "variableName": "Weekly Plans - One Minus Avg Base storage times daily percent",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Estimated daily change of primary data (%)",
+                      "variableUnitLabel": "daily change rate",
+                      "required": true,
+                      "variableId": "dailyChangeOfPrimaryUsage"
+                    }
+                  ],
+                  "displayInConfigSummary": false,
+                  "outputUnitLabel": "daily change factor",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "exponent",
+                  "id": "weeklyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent",
+                  "operands": [
+                    {
+                      "variableId": "weeklyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                      "variableLabel": "Weekly Plans - One Minus Avg Base storage times daily percent",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per week",
+                      "constant": 7
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "variableName": "Weekly Plans - Exponent of One Minus Avg Base storage times daily percent",
+                  "outputUnitLabel": "weekly change factor"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyDataChangeFactor",
+                  "variableName": "Weekly Data Change factor",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Weekly Plans - Exponent of One Minus Avg Base storage times daily percent",
+                      "variableUnitLabel": "weekly change factor",
+                      "required": true,
+                      "variableId": "weeklyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent"
+                    }
+                  ],
+                  "displayInConfigSummary": false,
+                  "outputUnitLabel": "Weekly change rate",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "averageNewDataPerWeeklyBackup",
+                  "variableName": "Average new data per weekly Backup",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "average amount of data to be backed up (base storage)",
+                      "variableUnitLabel": "GB (base storage)",
+                      "required": true,
+                      "variableId": "avgBaseStorage"
+                    },
+                    {
+                      "variableLabel": "Weekly Data Change factor",
+                      "variableUnitLabel": "Weekly change rate",
+                      "required": true,
+                      "variableId": "weeklyDataChangeFactor"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (average new data per weekly backup)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fiftyPercentDaysOfWarmStorageWeekly",
+                  "variableName": "Fifty percent days of warm storage for weekly plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly backups warm retention period",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "weeklyPlansWarmDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at zero usage ",
+                  "decimalPlaces": 2,
+                  "displayinconfigsummary": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "rampUpCalcDaysWeekly",
+                  "variableName": "Ramp-up calc days for weekly plans",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Fifty percent days of warm storage for weekly plans",
+                      "variableUnitLabel": "effective days at zero usage",
+                      "required": true,
+                      "variableId": "fiftyPercentDaysOfWarmStorageWeekly"
+                    },
+                    {
+                      "constant": 7,
+                      "constantUnitLabel": "days per week"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "effectiveYearsSteadyStateWeeklyPlans",
+                  "variableName": "Effective years at steady state for weekly plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Ramp-up calc days for weekly plans",
+                      "variableUnitLabel": "effective days at steady-state usage",
+                      "required": true,
+                      "variableId": "rampUpCalcDaysWeekly"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "effective years at steady-state usage",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageWeeklyPlansPerWeek",
+                  "variableName": "Warm Storage for Weekly Plans Per Week",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per weekly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "averageNewDataPerWeeklyBackup"
+                    },
+                    {
+                      "variableLabel": "Weekly backups warm retention period",
+                      "variableUnitLabel": "days warm retention",
+                      "required": false,
+                      "variableId": "weeklyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Effective years at steady state for weekly plans",
+                      "variableUnitLabel": "effective years at steady-state usage",
+                      "required": false,
+                      "variableId": "effectiveYearsSteadyStateWeeklyPlans"
+                    },
+                    {
+                      "variableLabel": "Price for warm storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForWarmStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageWeeklyPlans",
+                  "variableName": "Warm Storage for Weekly Plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Warm Storage for Weekly Plans Per Week",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "warmStorageWeeklyPlansPerWeek"
+                    },
+                    {
+                      "constant": 7,
+                      "constantUnitLabel": "days per week"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "warmStorageWeeklyPlansCostsVar",
+                  "label": "Weekly Backups - Warm Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "warmStorageWeeklyPlans",
+                  "referLabel": "Warm Storage for Weekly Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyPlansDaysInSteadyState",
+                  "variableName": "Weekly Plans - Days in Steady State",
+                  "operation": "subtraction",
+                  "minValue": "0",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Weekly backups warm retention period",
+                      "variableUnitLabel": "days in warm storage",
+                      "required": true,
+                      "variableId": "weeklyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Weekly backups cold retention period",
+                      "variableUnitLabel": "days cold storage ramp-up",
+                      "required": true,
+                      "variableId": "weeklyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "days at steady-state level of storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "percentageYearInSteadyStateWeeklyPlans",
+                  "variableName": "Weekly Plans - Percentage of Year in Steady State",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly Plans - Days in Steady State",
+                      "variableUnitLabel": "days in steady-state",
+                      "required": true,
+                      "variableId": "weeklyPlansDaysInSteadyState"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "years in steady state",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyPlansAverageStorageOverRampUp",
+                  "variableName": "Weekly Plans - Average Storage over Ramp-up period",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly backups cold retention period",
+                      "variableUnitLabel": "days in cold retention",
+                      "required": true,
+                      "variableId": "weeklyPlansColdDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage during ramp-up",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyPlanspercentYearInRampUp",
+                  "variableName": "Weekly Plans - Percentage of Year in ramp-up period",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly Plans - Average Storage over Ramp-up period",
+                      "variableUnitLabel": "effective days in ramp-up",
+                      "required": true,
+                      "variableId": "weeklyPlansAverageStorageOverRampUp"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "year in ramp-up",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "weeklyPlansRampUpDiscountFactorColdStorage",
+                  "variableName": "Weekly Plans - Ramp-up discount factor for Cold Storage",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Weekly Plans - Percentage of Year in Steady State",
+                      "variableUnitLabel": "years in steady state",
+                      "required": false,
+                      "variableId": "percentageYearInSteadyStateWeeklyPlans"
+                    },
+                    {
+                      "variableLabel": "Weekly Plans - Percentage of Year in ramp-up period",
+                      "variableUnitLabel": "year in ramp-up",
+                      "required": false,
+                      "variableId": "weeklyPlanspercentYearInRampUp"
+                    }
+                  ],
+                  "outputUnitLabel": "ramp-up discount factor",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageWeeklyPlans",
+                  "variableName": "Cold Storage for Weekly Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per weekly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "averageNewDataPerWeeklyBackup"
+                    },
+                    {
+                      "variableLabel": "Weekly backups cold retention period",
+                      "variableUnitLabel": "days cold retention",
+                      "required": false,
+                      "variableId": "weeklyPlansColdDays"
+                    },
+                    {
+                      "variableLabel": "Weekly Plans - Ramp-up discount factor for Cold Storage",
+                      "variableUnitLabel": "ramp-up discount factor",
+                      "required": false,
+                      "variableId": "weeklyPlansRampUpDiscountFactorColdStorage"
+                    },
+                    {
+                      "variableLabel": "Price for cold storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForColdStorage"
+                    }
+                  ],
+                  "displayInConfigSummary": true,
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageWeeklyPlans_div",
+                  "variableName": "Cold Storage for Weekly Plans div",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Cold Storage for Weekly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "coldStorageWeeklyPlans"
+                    },
+                    {
+                      "constant": 7,
+                      "constantUnitLabel": "days per week"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "weeklyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "coldStorageWeeklyPlansCostsVar",
+                  "label": "Weekly Backups - Cold Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "coldStorageWeeklyPlans_div",
+                  "referLabel": "Cold Storage for Weekly Plans div"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                  "variableName": "Monthly Plans - One Minus Avg Base storage times daily percent",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Estimated daily change of primary data (%)",
+                      "variableUnitLabel": "daily change rate",
+                      "required": true,
+                      "variableId": "dailyChangeOfPrimaryUsage"
+                    }
+                  ],
+                  "displayInConfigSummary": false,
+                  "outputUnitLabel": "daily change factor",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "exponent",
+                  "id": "monthlyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent",
+                  "operands": [
+                    {
+                      "variableId": "monthlyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                      "variableLabel": "Monthly Plans - One Minus Avg Base storage times daily percent",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "variableName": "Monthly Plans - Exponent of One Minus Avg Base storage times daily percent",
+                  "outputUnitLabel": "monthly change factor"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyDataChangeFactor",
+                  "variableName": "Monthly Data Change factor",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Monthly Plans - Exponent of One Minus Avg Base storage times daily percent",
+                      "variableUnitLabel": "monthly change factor",
+                      "required": false,
+                      "variableId": "monthlyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent"
+                    }
+                  ],
+                  "displayInConfigSummary": false,
+                  "outputUnitLabel": "Monthly change rate",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "averageNewDataPerMonthlyBackup",
+                  "variableName": "Average new data per monthly Backup",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "average amount of data to be backed up (base storage)",
+                      "variableUnitLabel": "GB (base storage)",
+                      "required": true,
+                      "variableId": "avgBaseStorage"
+                    },
+                    {
+                      "variableLabel": "Monthly Data Change factor",
+                      "variableUnitLabel": "Monthly change rate",
+                      "required": true,
+                      "variableId": "monthlyDataChangeFactor"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (average new data per monthly backup)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "fiftyPercentDaysOfWarmStorageMonthly",
+                  "variableName": "Fifty percent days of warm storage for monthly plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly backups warm retention period",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "monthlyPlansWarmDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at zero usage ",
+                  "decimalPlaces": 2,
+                  "displayinconfigsummary": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "rampUpCalcDaysMonthly",
+                  "variableName": "Ramp-up calc days for monthly plans",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Fifty percent days of warm storage for monthly plans",
+                      "variableUnitLabel": "effective days at zero usage",
+                      "required": true,
+                      "variableId": "fiftyPercentDaysOfWarmStorageMonthly"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days per month"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "effectiveYearsSteadyStateMonthlyPlans",
+                  "variableName": "Effective years at steady state for monthly plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Ramp-up calc days for monthly plans",
+                      "variableUnitLabel": "effective days at steady-state usage",
+                      "required": true,
+                      "variableId": "rampUpCalcDaysMonthly"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "effective years at steady-state usage",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageMonthlyPlansPerMonth",
+                  "variableName": "Warm Storage for Monthly Plans per Month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per monthly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "averageNewDataPerMonthlyBackup"
+                    },
+                    {
+                      "variableLabel": "Monthly backups warm retention period",
+                      "variableUnitLabel": "days warm retention",
+                      "required": false,
+                      "variableId": "monthlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Effective years at steady state for monthly plans",
+                      "variableUnitLabel": "effective years at steady-state usage",
+                      "required": false,
+                      "variableId": "effectiveYearsSteadyStateMonthlyPlans"
+                    },
+                    {
+                      "variableLabel": "Price for warm storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForWarmStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageMonthlyPlans",
+                  "variableName": "Warm Storage for Monthly Plans",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Warm Storage for Monthly Plans per Month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "warmStorageMonthlyPlansPerMonth"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansWarmDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "warmStorageMonthlyPlansCostsVar",
+                  "label": "Monthly Backups - Warm Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "warmStorageMonthlyPlans",
+                  "referLabel": "Warm Storage for Monthly Plans"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyPlansDaysInSteadyState",
+                  "variableName": "Monthly Plans - Days in Steady State",
+                  "operation": "subtraction",
+                  "minValue": "0",
+                  "operands": [
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    },
+                    {
+                      "variableLabel": "Monthly backups warm retention period",
+                      "variableUnitLabel": "days in warm storage",
+                      "required": true,
+                      "variableId": "monthlyPlansWarmDays"
+                    },
+                    {
+                      "variableLabel": "Monthly backups cold retention period",
+                      "variableUnitLabel": "days cold storage ramp-up",
+                      "required": true,
+                      "variableId": "monthlyPlansColdDays"
+                    }
+                  ],
+                  "outputUnitLabel": "days at steady-state level of storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "percentageYearInSteadyStateMonthlyPlans",
+                  "variableName": "Monthly Plans - Percentage of Year in Steady State",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly Plans - Days in Steady State",
+                      "variableUnitLabel": "days in steady-state",
+                      "required": false,
+                      "variableId": "monthlyPlansDaysInSteadyState"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "years in steady state",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyPlansAverageStorageOverRampUp",
+                  "variableName": "Monthly Plans - Average Storage over Ramp-up period",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly backups cold retention period",
+                      "variableUnitLabel": "days in cold retention",
+                      "required": true,
+                      "variableId": "monthlyPlansColdDays"
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "average usage level"
+                    }
+                  ],
+                  "outputUnitLabel": "effective days at steady-state usage during ramp-up",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyPlanspercentYearInRampUp",
+                  "variableName": "Monthly Plans - Percentage of Year in ramp-up period",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly Plans - Average Storage over Ramp-up period",
+                      "variableUnitLabel": "effective days in ramp-up",
+                      "required": true,
+                      "variableId": "monthlyPlansAverageStorageOverRampUp"
+                    },
+                    {
+                      "constant": 365,
+                      "constantUnitLabel": "days per year"
+                    }
+                  ],
+                  "outputUnitLabel": "year in ramp-up",
+                  "decimalPlaces": 6
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyPlansRampUpDiscountFactorColdStorage",
+                  "variableName": "Monthly Plans - Ramp-up discount factor for Cold Storage",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly Plans - Percentage of Year in Steady State",
+                      "variableUnitLabel": "years in steady state",
+                      "required": false,
+                      "variableId": "percentageYearInSteadyStateMonthlyPlans"
+                    },
+                    {
+                      "variableLabel": "Monthly Plans - Percentage of Year in ramp-up period",
+                      "variableUnitLabel": "year in ramp-up",
+                      "required": false,
+                      "variableId": "monthlyPlanspercentYearInRampUp"
+                    }
+                  ],
+                  "outputUnitLabel": "ramp-up discount factor",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageMonthlyPlans",
+                  "variableName": "Cold Storage for Monthly Plans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average new data per monthly Backup",
+                      "variableUnitLabel": "GB per backup",
+                      "required": false,
+                      "variableId": "averageNewDataPerMonthlyBackup"
+                    },
+                    {
+                      "variableLabel": "Monthly backups cold retention period",
+                      "variableUnitLabel": "days cold retention",
+                      "required": false,
+                      "variableId": "monthlyPlansColdDays"
+                    },
+                    {
+                      "variableLabel": "Monthly Plans - Ramp-up discount factor for Cold Storage",
+                      "variableUnitLabel": "ramp-up discount factor",
+                      "required": false,
+                      "variableId": "monthlyPlansRampUpDiscountFactorColdStorage"
+                    },
+                    {
+                      "variableLabel": "Price for cold storage",
+                      "variableUnitLabel": "[currency] price per GB-month",
+                      "required": false,
+                      "variableId": "priceForColdStorage"
+                    }
+                  ],
+                  "displayInConfigSummary": true,
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "coldStorageMonthlyPlans_div",
+                  "variableName": "Cold Storage for Monthly Plans div",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Cold Storage for Monthly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "coldStorageMonthlyPlans"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "monthlyPlansColdDays"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "coldStorageMonthlyPlansCostsVar",
+                  "label": "Monthly Backups - Cold Storage (Monthly Cost)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "coldStorageMonthlyPlans_div",
+                  "referLabel": "Cold Storage for Monthly Plans div"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "warmStorageTotalCost",
+                  "variableName": "Total Cost for Backup Storage for EFS",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Base Storage Costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "baseStorageCosts"
+                    },
+                    {
+                      "variableLabel": "Warm Storage for Hourly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "warmStorageHourlyPlans"
+                    },
+                    {
+                      "variableLabel": "Cold Storage for Hourly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "coldStorageHourlyPlans"
+                    },
+                    {
+                      "variableLabel": "Warm Storage for Daily Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "warmStorageDailyPlans"
+                    },
+                    {
+                      "variableLabel": "Cold Storage for Daily Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "coldStorageDailyPlans"
+                    },
+                    {
+                      "variableLabel": "Warm Storage for Weekly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "warmStorageWeeklyPlans"
+                    },
+                    {
+                      "variableLabel": "Cold Storage for Weekly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "coldStorageWeeklyPlans"
+                    },
+                    {
+                      "variableLabel": "Warm Storage for Monthly Plans",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "warmStorageMonthlyPlans"
+                    },
+                    {
+                      "variableLabel": "Cold Storage for Monthly Plans div",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "coldStorageMonthlyPlans_div"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "userInfoFirst1",
+                    "userInfo1First",
+                    "dataSize",
+                    "annualGrowthOfPrimaryUsage",
+                    "dailyChangeOfPrimaryUsage",
+                    "warmDays",
+                    "hourlyPlansWarmDays",
+                    "dailyPlansWarmDays",
+                    "weeklyPlansWarmDays",
+                    "monthlyPlansWarmDays",
+                    "coldDays",
+                    "hourlyPlansColdDays",
+                    "dailyPlansColdDays",
+                    "weeklyPlansColdDays",
+                    "monthlyPlansColdDays",
+                    "maxAlert",
+                    "priceForWarmStorage",
+                    "priceForColdStorage",
+                    "Hourly_add",
+                    "Daily_add",
+                    "Weekly_add",
+                    "Monthly_add",
+                    "annualGrowthPlusOne",
+                    "dataSizetimesAnnualGrowth",
+                    "dataSizewithdataSizeAnnualGrowthAdded",
+                    "avgBaseStorage",
+                    "baseStorageCosts",
+                    "baseStorageCostsVar",
+                    "avgbaseStorageTimesDailyChangePercent",
+                    "avgNewDataPerHourlyBackup",
+                    "fiftyPercentDaysOfWarmStorageHourly",
+                    "rampUpCalcDaysHourly",
+                    "effectiveYearsSteadyStateHourlyPlans",
+                    "warmStorageHourlyPlans",
+                    "warmStorageHourlyPlansCostsVar",
+                    "hourlyPlansDaysInSteadyState",
+                    "percentageYearInSteadyStateHourlyPlans",
+                    "hourlyPlansAverageStorageOverRampUp",
+                    "hourlyPlanspercentYearInRampUp",
+                    "hourlyPlansRampUpDiscountFactorColdStorage",
+                    "coldStorageHourlyPlans",
+                    "coldStorageHourlyPlansCostsVar",
+                    "fiftyPercentDaysOfWarmStorageDaily",
+                    "rampUpCalcDaysDaily",
+                    "effectiveYearsSteadyStateDailyPlans",
+                    "warmStorageDailyPlans",
+                    "warmStorageDailyPlansCostsVar",
+                    "dailyPlansDaysInSteadyState",
+                    "percentageYearInSteadyStateDailyPlans",
+                    "dailyPlansAverageStorageOverRampUp",
+                    "dailyPlanspercentYearInRampUp",
+                    "dailyPlansRampUpDiscountFactorColdStorage",
+                    "coldStorageDailyPlans",
+                    "coldStorageDailyPlansCostsVar",
+                    "weeklyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                    "weeklyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent",
+                    "weeklyDataChangeFactor",
+                    "averageNewDataPerWeeklyBackup",
+                    "fiftyPercentDaysOfWarmStorageWeekly",
+                    "rampUpCalcDaysWeekly",
+                    "effectiveYearsSteadyStateWeeklyPlans",
+                    "warmStorageWeeklyPlansPerWeek",
+                    "warmStorageWeeklyPlans",
+                    "warmStorageWeeklyPlansCostsVar",
+                    "weeklyPlansDaysInSteadyState",
+                    "percentageYearInSteadyStateWeeklyPlans",
+                    "weeklyPlansAverageStorageOverRampUp",
+                    "weeklyPlanspercentYearInRampUp",
+                    "weeklyPlansRampUpDiscountFactorColdStorage",
+                    "coldStorageWeeklyPlans",
+                    "coldStorageWeeklyPlans_div",
+                    "coldStorageWeeklyPlansCostsVar",
+                    "monthlyPlansOneMinusAvgBaseStorageTimesDailyPercent",
+                    "monthlyPlansExponentOfOneMinusAvgBaseStorageTimesDailyPercent",
+                    "monthlyDataChangeFactor",
+                    "averageNewDataPerMonthlyBackup",
+                    "fiftyPercentDaysOfWarmStorageMonthly",
+                    "rampUpCalcDaysMonthly",
+                    "effectiveYearsSteadyStateMonthlyPlans",
+                    "warmStorageMonthlyPlansPerMonth",
+                    "warmStorageMonthlyPlans",
+                    "warmStorageMonthlyPlansCostsVar",
+                    "monthlyPlansDaysInSteadyState",
+                    "percentageYearInSteadyStateMonthlyPlans",
+                    "monthlyPlansAverageStorageOverRampUp",
+                    "monthlyPlanspercentYearInRampUp",
+                    "monthlyPlansRampUpDiscountFactorColdStorage",
+                    "coldStorageMonthlyPlans",
+                    "coldStorageMonthlyPlans_div",
+                    "coldStorageMonthlyPlansCostsVar",
+                    "warmStorageTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "warmStorageTotalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "vmwareBackup"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso-f",
+    "aws-us-gov",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

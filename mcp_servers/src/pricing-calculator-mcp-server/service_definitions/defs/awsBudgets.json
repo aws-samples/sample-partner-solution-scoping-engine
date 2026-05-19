@@ -1,0 +1,341 @@
+{
+  "version": "0.0.20",
+  "serviceName": {
+    "aws": "AWS Budgets",
+    "aws-cn": "Amazon Budgets"
+  },
+  "displayAutomation": true,
+  "serviceCode": "awsBudgets",
+  "type": "AWSService",
+  "disableAddToEstimate": {
+    "aws": false,
+    "aws-iso": true,
+    "aws-iso-b": true,
+    "aws-cn": false
+  },
+  "disableRegionSupport": {
+    "aws": true,
+    "aws-iso": true,
+    "aws-iso-b": true,
+    "aws-cn": true,
+    "aws-iso-e": false
+  },
+  "slug": "budgets",
+  "searchKeywords": [
+    "budgets",
+    "cost management",
+    "budgets report"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Budgets lets you set custom cost and usage budgets that alert you when your budget thresholds are exceeded (or forecasted to exceed). You can also create budgets to track your aggregate Reservation and Savings Plans utilization and coverage metrics.",
+    "aws-cn": "Amazon Budgets lets you set custom cost and usage budgets that alert you when your budget thresholds are exceeded (or forecasted to exceed). You can also create budgets to track your aggregate Reservation and Savings Plans utilization and coverage metrics."
+  },
+  "mappingDefinitions": [
+    {
+      "deniedPartitions": [
+        "aws-iso",
+        "aws-iso-b"
+      ],
+      "mappingDefinitionName": "budgets",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/budgets/[currency]/current/budgets.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/pricing/",
+      "overrides": {
+        "aws": "https://aws.amazon.com/aws-cost-management/aws-budgets/",
+        "aws-cn": "https://www.amazonaws.cn/en/aws-cost-management/pricing/"
+      }
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/aws-cost-management/pricing/",
+          "overrides": {
+            "aws-iso": "https://awshome.ic.gov/pricing/",
+            "aws-iso-b": "https://awshome.scloud/pricing/"
+          }
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": {
+            "aws": "AWS Budgets",
+            "aws-cn": "Amazon Budgets"
+          },
+          "helpText": {
+            "aws": "In addition to budget monitoring, you can add actions to your budgets to control IAM and Service Control Policy permissions as well as AWS resources when thresholds are exceeded (or forecasted to exceed).",
+            "aws-cn": "In addition to budget monitoring, you can add actions to your budgets to control IAM and Service Control Policy permissions as well as Amazon Web Services resources when thresholds are exceeded (or forecasted to exceed)."
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of action-enabled budgets",
+                "id": "Number_of_action-enabled_budgets",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "description": {
+                  "aws": "In addition to budget monitoring, you can add actions to your budgets to control IAM and Service Control Policy permissions as well as AWS resources when thresholds are exceeded (or forecasted to exceed).",
+                  "aws-cn": "In addition to budget monitoring, you can add actions to your budgets to control IAM and Service Control Policy permissions as well as Amazon resources when thresholds are exceeded (or forecasted to exceed)."
+                },
+                "placeholder": "Enter the number of action-enabled budget(s)"
+              },
+              {
+                "type": "pricing",
+                "label": "budget action cost",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "budgets",
+                "meteredUnit": {
+                  "allRegions": "Budget Actions Inf per day"
+                },
+                "id": "budget_action_cost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_action-enabled_budgets",
+                    "budget_action_cost"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvBudgets"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "actionable_budgets",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of action-enabled budgets",
+                      "variableId": "Number_of_action-enabled_budgets",
+                      "variableUnitLabel": "action-enabled budget(s)",
+                      "required": true
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days in a month"
+                    },
+                    {
+                      "variableLabel": "budget action cost",
+                      "variableId": "budget_action_cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for action-enabled budget(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "actionable_budgets"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Budgets cost",
+                  "decimalPlaces": 2,
+                  "id": "tot_bud_final",
+                  "subTotalRefer": "actionable_budgets"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": {
+            "aws": "AWS Budgets Reports",
+            "aws-cn": "Amazon Budgets Reports"
+          },
+          "helpText": "With Budget Reports, you can create and send daily, weekly, or monthly reports to monitor the performance of your Amazon Web Services Budgets. Using the Amazon Web Services Budgets Reports console, you can easily select the subset of budgets that you would like to include in your report, define the delivery frequency, and specify your email recipients. For example, you can create a report that monitors all budgets for linked accounts belonging to a particular business unit and have that report delivered each morning to that business unit’s engineering, product, and finance leaders.",
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of budgets reports",
+                "id": "Number_of_Budgets_Reports",
+                "options": [
+                  {
+                    "label": "Daily",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "Weekly",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "Monthly",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "Monthly",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 2,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "description": "Amazon Web Services Budgets Reports allow you to monitor the performance of your budget portfolio on a daily, weekly, or monthly basis by receiving an emailed report.",
+                "placeholder": "Enter the number of budgets report(s)"
+              },
+              {
+                "type": "pricing",
+                "label": "report distribution cost",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "budgets",
+                "meteredUnit": {
+                  "allRegions": "Budgets Reports Distribution Inf per Message"
+                },
+                "id": "report_distribution_cost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_Budgets_Reports",
+                    "report_distribution_cost"
+                  ],
+                  "subTotalRefer": "actionable_budgets",
+                  "id": "UnitConvBudgetsReport"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_Budgets_Reports",
+                      "variableLabel": "Number of budgets reports",
+                      "variableUnitLabel": "report(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "report(s)",
+                  "id": "budegtsrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "budget_reports",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "report(s)",
+                      "variableId": "budegtsrounded",
+                      "variableUnitLabel": "report(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "report distribution cost",
+                      "variableId": "report_distribution_cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for budgets report(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "budegtsrounded",
+                    "budget_reports"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Budgets Reports cost",
+                  "decimalPlaces": 2,
+                  "id": "tot_bud_rep_final",
+                  "subTotalRefer": "budget_reports"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-cn",
+            "aws",
+            "aws-iso-e"
+          ],
+          "title": "AWS Budgets Reports",
+          "helpText": "With Budget Reports, you can create and send daily, weekly, or monthly reports to monitor the performance of your AWS Budgets. Using the AWS Budgets Reports console, you can easily select the subset of budgets that you would like to include in your report, define the delivery frequency, and specify your email recipients. For example, you can create a report that monitors all budgets for linked accounts belonging to a particular business unit and have that report delivered each morning to that business unit’s engineering, product, and finance leaders.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "AWS Budgets",
+                "alertType": "info",
+                "isDismissable": true,
+                "content": "AWS Budgets allows you to set custom budgets to track your cost and usage from the simplest to the most complex use cases. With AWS Budgets, you can choose to be alerted by email or SNS notification when actual or forecasted cost and usage exceed your budget threshold, or when your actual RI and Savings Plans' utilization or coverage drops below your desired threshold.",
+                "id": "budgetsid"
+              }
+            ]
+          }
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn"
+  ]
+}

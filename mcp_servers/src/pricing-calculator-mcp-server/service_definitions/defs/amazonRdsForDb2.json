@@ -1,0 +1,1324 @@
+{
+  "version": "0.0.98",
+  "serviceName": "Amazon RDS for Db2",
+  "serviceCode": "amazonRdsForDb2",
+  "type": "AWSService",
+  "slug": "RDSDb2",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Database",
+    "db2",
+    "db2",
+    "database hosting",
+    "hosted database",
+    "Managed database"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/rds/db2/"
+    }
+  },
+  "serviceDescription": "Amazon RDS makes it easy to set up, operate, and scale db2 deployments in the cloud. With Amazon RDS, you can deploy scalable db2 deployments in minutes with cost-efficient and resizable hardware capacity. ",
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rds-db2-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-db2-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "rds-db2-ondemand",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-db2-ondemand.json"
+    }
+  ],
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "templates": [
+    {
+      "title": "RDS for Db2",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/rds/db2/pricing/"
+        }
+      },
+      "excludeRegion": [],
+      "cards": [
+        {
+          "title": "Db2 instance specifications",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "For both Single-AZ and Multi-AZ deployments, pricing is per DB instance-hour consumed, from the time a DB instance is launched until it is stopped or deleted.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/db2/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "rds-db2-calc",
+                "id": "columnFormIPM",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "Memory",
+                    "vCPU"
+                  ]
+                },
+                "secondaryKey": [
+                  "Deployment Option",
+                  "TermType",
+                  "License Model",
+                  "LeaseContractLength",
+                  "PurchaseOption",
+                  "Database Edition"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "description": "Enter the number of DB instances that you need.",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000000000
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance Type",
+                    "selectorId": "Instance Type",
+                    "type": "autoSuggest",
+                    "isInstanceType": true,
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "exportTagsAsValue": {
+                      "vCPU": {
+                        "id": "vCPU",
+                        "label": "vCPU"
+                      }
+                    },
+                    "required": true
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Deployment option",
+                    "type": "dropDown",
+                    "selectorId": "Deployment Option",
+                    "exportValueAs": "deploymentStrategy"
+                  },
+                  {
+                    "label": "Pricing Model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "License Model",
+                    "type": "dropDown",
+                    "selectorId": "License Model",
+                    "exportValueAs": "licenseModel"
+                  },
+                  {
+                    "label": "Database edition",
+                    "selectorId": "Database Edition",
+                    "type": "dropDown",
+                    "exportValueAs": "databaseEdition"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "licenseModel"
+                    },
+                    "Marketplace"
+                  ]
+                },
+                "type": "display",
+                "subType": "alert",
+                "header": "Warning",
+                "content": "AWS Marketplace license costs are billed separately via AWS Marketplace. Ensure you consider your license cost. See documentation for details.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "marketplaceInfo"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "costType": "Monthly",
+                  "label": "Amazon RDS Db2 instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "rdsForDb2_generated_0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Amazon RDS provides you the ability to select from 20 GiB to 32 TiB of associated General Purpose (SSD) storage capacity for your primary data set. With General Purpose (SSD), you will be charged for storage you provision. However, you will not be charged for the I/Os you consume. Amazon RDS provides you the ability to provision the I/O capacity your database needs. You can provision and scale from 1,000 IOPS to 40,000 IOPS and 100 GiB to 32 TiB of storage. Note that maximum realized IOPS will vary by database workload. With Provisioned IOPS SSD storage, you will be charged for the IOPS and storage you provision.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/db2/pricing/#Database_Storage"
+            }
+          },
+          "cardType": "rds",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage volume",
+                "id": "storageVolume",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ General Purpose-GP3 Advanced"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ General Purpose-GP3 Standard"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ General Purpose-GP3 Advanced"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ General Purpose-GP3 Standard"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "General Purpose SSD (gp3)",
+                    "id": "General Purpose-GP3"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ Provisioned IOPS Advanced"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ Provisioned IOPS Standard"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ Provisioned IOPS Standard"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ Provisioned IOPS Advanced"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Provisioned IOPS SSD (io1)",
+                    "id": "Provisioned IOPS"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ Provisioned IOPS-IO2 Advanced"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Multi AZ Provisioned IOPS-IO2 Standard"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ Provisioned IOPS-IO2 Standard"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-db2-ondemand",
+                            "meteredUnit": "Database Storage Single AZ Provisioned IOPS-IO2 Advanced"
+                          }
+                        }
+                      ]
+                    },
+                    "label": "Provisioned IOPS SSD (io2)",
+                    "id": "Provisioned IOPS-IO2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "General Purpose",
+                "validations": {
+                  "required": true
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageVolume"
+                    },
+                    "General Purpose-GP3"
+                  ]
+                },
+                "type": "display",
+                "subType": "alert",
+                "header": "Note",
+                "content": "For GP3 Storage volumes, all IOPS and throughput use below the baseline is included at no additional charge. For volumes below 400 GiB of allocated storage, the baseline provisioned IOPS is 3,000 and baseline throughput is 125 MiBps. Volumes of 400 GiB and above, baseline provisioned IOPS is 12,000 and baseline throughput is 500 MiBps. There is an additional charge for provisioned IOPS and throughput above baseline.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "gp3info"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageVolume"
+                    },
+                    "Provisioned IOPS"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Provisioning IOPS",
+                "apiDescription": "Required only if the storageType is Provisioned IOPS.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1000,
+                  "maxValue": 256000
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "provisioningIOPS"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageVolume"
+                    },
+                    "Provisioned IOPS-IO2"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "provisionedIOPSIO2",
+                "label": "Provisioned IOPS IO2",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1000,
+                  "maxValue": 256000
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 20,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 20,
+                  "maxValue": 65536
+                },
+                "delegate": [
+                  {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "id": "storageVolume",
+                            "type": "component"
+                          },
+                          "Provisioned IOPS"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "id": "storageVolume",
+                            "type": "component"
+                          },
+                          "Provisioned IOPS-IO2"
+                        ]
+                      }
+                    ],
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 100,
+                      "maxValue": 65536
+                    },
+                    "defaults": {
+                      "defaultValue": 100
+                    }
+                  }
+                ],
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "storageAmount"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageVolume"
+                        },
+                        "General Purpose-GP3"
+                      ]
+                    },
+                    {
+                      ">=": [
+                        {
+                          "type": "component",
+                          "id": "storageAmount"
+                        },
+                        400
+                      ]
+                    }
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - IOPS",
+                "apiDescription": "Required only if the storageType is General Purpose SSD (gp3)",
+                "id": "gp3Iops",
+                "defaultValue": 12000,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 12000,
+                  "maxValue": 64000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "gp3 supports a max of 64,000 IOPS per volume"
+              },
+              {
+                "type": "input",
+                "subType": "throughput",
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "storageVolume"
+                        },
+                        "General Purpose-GP3"
+                      ]
+                    },
+                    {
+                      ">=": [
+                        {
+                          "type": "component",
+                          "id": "storageAmount"
+                        },
+                        400
+                      ]
+                    }
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - Throughput",
+                "options": [
+                  {
+                    "label": "MiBps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "defaultValue": 500,
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MiBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 500,
+                  "maxValue": 4000
+                },
+                "description": "gp3 supports a max of 4000 MiBps per volume",
+                "id": "gp3Throughput"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "gp3StorageRatioChecker"
+                        },
+                        500
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "gp3ThroughputRatioChecker"
+                        },
+                        0.25
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid IOPS to Provisioned Throughput ratio",
+                "label": "info alert",
+                "content": {
+                  "aws": "This calculator does not enforce the IOPS to GB or IOPS to Provisioned Throughput ratios for gp3. The maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GiB. The maximum ratio of provisioned throughput to provisioned IOPS is .25 MiBs per IOPS. For more information, see the General Purpose (gp3). For more information, see the General Purpose (gp3) <a href='https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html#gp3-storage'>user guide</a>.",
+                  "aws-cn": "This calculator does not enforce the IOPS to GB or IOPS to Provisioned Throughput ratios for gp3. The maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GiB. The maximum ratio of provisioned throughput to provisioned IOPS is .25 MiBs per IOPS. For more information, see the General Purpose (gp3). For more information, see the General Purpose (gp3) <a href='https://docs.amazonaws.cn/AmazonRDS/latest/UserGuide/CHAP_Storage.html#gp3-storage'>user guide</a>."
+                },
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "ebsThroughputRatioAlert"
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "rdsStorageType",
+                "originalId": "deploymentStrategy",
+                "replacements": [
+                  {
+                    "originalString": "Single-AZ",
+                    "replaceString": "Single AZ"
+                  },
+                  {
+                    "originalString": "Multi-AZ",
+                    "replaceString": "Multi AZ"
+                  },
+                  {
+                    "originalString": "(readable standbys)",
+                    "replaceString": "readable standbys"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "RDS storage type",
+                "id": "rdsStorageTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Database Storage "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " "
+                  },
+                  {
+                    "variableId": "storageVolume"
+                  },
+                  {
+                    "constant": " Advanced"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "price for iops metered unit name",
+                "id": "iopsMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " Advanced"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit for iops-io2",
+                "id": "iopsio2MeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned IO2 IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " Advanced"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "meteredunit for gp3 iops",
+                "id": "gp3IopsTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned GP3 IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " Advanced"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "meteredunit for provisioned throughput",
+                "id": "provisionedThroughputTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned Throughput "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " Advanced"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for RDS storage",
+                "id": "priceForRdsStorage",
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "RDS storage type",
+                    "variableId": "rdsStorageTypeMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for iops",
+                "id": "priceForIOPS",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "price for iops metered unit name",
+                    "variableId": "iopsMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for iops io2",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit for iops-io2",
+                    "variableId": "iopsio2MeteredUnitName"
+                  }
+                ],
+                "id": "priceForIopsIo2"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for gp3 iops",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "meteredunit for gp3 iops",
+                    "variableId": "gp3IopsTypeMeteredUnitName"
+                  }
+                ],
+                "id": "priceForGp3Iops"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for provisioned throughput",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "meteredunit for provisioned throughput",
+                    "variableId": "provisionedThroughputTypeMeteredUnitName"
+                  }
+                ],
+                "id": "priceForProvisionedThroughput"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "storageVolume",
+                    "provisioningIOPS",
+                    "provisionedIOPSIO2",
+                    "storageAmount",
+                    "gp3Iops",
+                    "gp3Throughput",
+                    "ebsThroughputRatioAlert",
+                    "rdsStorageType",
+                    "rdsStorageTypeMeteredUnitName",
+                    "iopsMeteredUnitName",
+                    "iopsio2MeteredUnitName",
+                    "gp3IopsTypeMeteredUnitName",
+                    "provisionedThroughputTypeMeteredUnitName",
+                    "priceForRdsStorage",
+                    "priceForIOPS",
+                    "priceForIopsIo2",
+                    "priceForGp3Iops",
+                    "priceForProvisionedThroughput"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "rdsForDb2_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    },
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to GB ratio (gp3)",
+                  "decimalPlaces": 2,
+                  "id": "gp3StorageRatioChecker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to Throughput ratio",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputRatioChecker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    },
+                    {
+                      "variableLabel": "price for RDS storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForRdsStorage"
+                    },
+                    {
+                      "variableLabel": "Nodes",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 4,
+                  "id": "rdsForDb2_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS",
+                      "variableUnitLabel": "Provisioned IOPS",
+                      "required": true,
+                      "variableId": "provisioningIOPS"
+                    },
+                    {
+                      "variableLabel": "price for iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForIOPS"
+                    },
+                    {
+                      "variableLabel": "Nodes",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOPS Cost)",
+                  "decimalPlaces": 4,
+                  "id": "rdsForDb2_generated_4"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageVolume"
+                      },
+                      "Provisioned IOPS-IO2"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "iopsio2Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioned IOPS IO2",
+                      "variableId": "provisionedIOPSIO2",
+                      "variableUnitLabel": "Provisioned IOPS IO2",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for iops io2",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForIopsIo2"
+                    },
+                    {
+                      "variableLabel": "Nodes",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOPS IO2 Cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "storageVolume"
+                          },
+                          "General Purpose-GP3"
+                        ]
+                      },
+                      {
+                        ">=": [
+                          {
+                            "type": "component",
+                            "id": "storageAmount"
+                          },
+                          400
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableGp3IOPS",
+                  "variableName": "billable gp3 iops cost",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    },
+                    {
+                      "constant": 12000,
+                      "constantUnitLabel": "free GP3 iops"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 iops"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "storageVolume"
+                          },
+                          "General Purpose-GP3"
+                        ]
+                      },
+                      {
+                        ">=": [
+                          {
+                            "type": "component",
+                            "id": "storageAmount"
+                          },
+                          400
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "billableProvisionedThroughput",
+                  "variableName": "billable provisioned throughput",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "constant": 500,
+                      "constantUnitLabel": "MiBps free throughput"
+                    }
+                  ],
+                  "outputUnitLabel": "MiBps billable throughput"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "storageVolume"
+                          },
+                          "General Purpose-GP3"
+                        ]
+                      },
+                      {
+                        ">=": [
+                          {
+                            "type": "component",
+                            "id": "storageAmount"
+                          },
+                          400
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "gp3IOPSCost",
+                  "variableName": "gp3 iops cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 iops cost",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "billableGp3IOPS"
+                    },
+                    {
+                      "variableLabel": "price for gp3 iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForGp3Iops"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "storageVolume"
+                          },
+                          "General Purpose-GP3"
+                        ]
+                      },
+                      {
+                        ">=": [
+                          {
+                            "type": "component",
+                            "id": "storageAmount"
+                          },
+                          400
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "provisionedThroughputCost",
+                  "variableName": "provisioned throughput cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable provisioned throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "billableProvisionedThroughput"
+                    },
+                    {
+                      "variableLabel": "price for provisioned throughput",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForProvisionedThroughput"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataVolumeCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Storage Cost)",
+                      "variableId": "rdsForDb2_generated_3",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] (IOPS Cost)",
+                      "variableId": "rdsForDb2_generated_4",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] (IOPS IO2 Cost)",
+                      "variableId": "iopsio2Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4,
+                  "variableName": "Total cost for data volume"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "rdsForDb2_generated_5",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total cost for data volume",
+                      "variableId": "dataVolumeCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "gp3 iops cost",
+                      "variableId": "gp3IOPSCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "provisioned throughput cost",
+                      "variableId": "provisionedThroughputCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "gp3StorageRatioChecker",
+                    "gp3ThroughputRatioChecker",
+                    "rdsForDb2_generated_3",
+                    "rdsForDb2_generated_4",
+                    "iopsio2Cost",
+                    "billableGp3IOPS",
+                    "billableProvisionedThroughput",
+                    "gp3IOPSCost",
+                    "provisionedThroughputCost",
+                    "dataVolumeCost",
+                    "rdsForDb2_generated_5"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage pricing",
+                  "decimalPlaces": 2,
+                  "id": "rdsForDb2_generated_6",
+                  "subTotalRefer": "rdsForDb2_generated_5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backup Storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Backup storage for Amazon RDS is the storage associated with your automated database backups and any customer-initiated DB cluster snapshots.There is no additional charge for backup storage of up to 100% of your totaldatabase storage in in the destination region.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/db2/pricing/#Backup_Storage"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "additionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-db2-ondemand",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Advanced"
+                },
+                "id": "rdsForDb2_generated_8"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalBackupStorage",
+                    "rdsForDb2_generated_8"
+                  ],
+                  "id": "rdsForDb2_generated_9",
+                  "subTotalRefer": "rdsForDb2_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalBackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "rdsForDb2_generated_8"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "rdsForDb2_generated_10"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "rdsForDb2_generated_10"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "rdsForDb2_generated_11",
+                  "subTotalRefer": "rdsForDb2_generated_10"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "rdsFordb2"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,363 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Amazon Chime Business Calling analysis",
+  "serviceCode": "chimeBusinessCallingAnalysis",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1"
+  ],
+  "serviceDescription": "Amazon Chime lets you meet, chat, and collaborate with the security of AWS. You can work seamlessly on your devices, and meet from your desk or on the go - ensuring you always stay connected.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/chime/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "chime",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chime/[currency]/current/chime.json"
+    },
+    {
+      "mappingDefinitionName": "chimedialin",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimedialin/[currency]/current/chimedialin.json"
+    },
+    {
+      "mappingDefinitionName": "chimecallme",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimecallme/[currency]/current/chimecallme.json"
+    },
+    {
+      "mappingDefinitionName": "chimecallme-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimecallme/[currency]/current/chimecallme-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "chimevoiceconnector-textmessage-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimevoiceconnector/[currency]/current/chimevoiceconnector-textmessage-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Chime",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/chime/"
+        }
+      },
+      "id": "Template3",
+      "cards": [
+        {
+          "title": " Amazon Chime Business Calling analysis",
+          "helpText": "Amazon Chime Business Calling enables low-cost public switched telephone network (PSTN) calling and texting for enterprise customers using the Amazon Chime mobile, desktop, and web apps.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/pricing/"
+            }
+          },
+          "bodyText": "Amazon Chime Business Calling enables low-cost public switched telephone network (PSTN) calling and texting for enterprise customers using the Amazon Chime mobile, desktop, and web apps.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of phone numbers required (for Business Calling)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "id": "numberOfPhoneNumbersForBusinessCalling"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inbound audio minutes (for Business Calling)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "id": "numberOfInboundUSAudioMinsForBusinessCalling"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimecallme-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_Outbound",
+                "calculationId": {
+                  "hourly": "toCountryPrice"
+                },
+                "remap": {
+                  "constant": {
+                    "Country": "United States of America"
+                  }
+                },
+                "primaryKey": "Country",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country For outbound Calling",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outbound audio minutes (for Business Calling)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "id": "numberOfOutboundUSAudioMinsForBusinessCalling"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "chimevoiceconnector-textmessage-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_send_text",
+                "calculationId": {
+                  "hourly": "toCountryPrice_send_text"
+                },
+                "primaryKey": "messagetype",
+                "secondaryKey": [
+                  "ToCountry"
+                ],
+                "row": [
+                  {
+                    "label": "Select country for sending text",
+                    "type": "dropDown",
+                    "selectorId": "ToCountry"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of US text messages sent (for Business Calling)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "id": "NumberOfUSTextMessagesSent"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Chime dial in Business Calling",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimedialin",
+                "meteredUnit": {
+                  "allRegions": "ChimeDialin United States of America Toll"
+                },
+                "id": "amazonChime_generated_0"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Chime call me Business Calling",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimecallme",
+                "meteredUnit": {
+                  "allRegions": "ChimeCallMe to United States of America"
+                },
+                "id": "amazonChime_generated_1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "amazonChime_generated_2",
+                  "refer": [
+                    "numberOfPhoneNumbersForBusinessCalling",
+                    "numberOfInboundUSAudioMinsForBusinessCalling",
+                    "columnFormIPM_Outbound",
+                    "numberOfOutboundUSAudioMinsForBusinessCalling",
+                    "columnFormIPM_send_text",
+                    "NumberOfUSTextMessagesSent",
+                    "amazonChime_generated_0",
+                    "amazonChime_generated_1"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of phone numbers required (for Business Calling)",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfPhoneNumbersForBusinessCalling"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "[currency]"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Business Calling phone numbers)",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of inbound audio minutes (for Business Calling)",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfInboundUSAudioMinsForBusinessCalling"
+                    },
+                    {
+                      "variableLabel": "price for Chime dial in Business Calling",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "amazonChime_generated_0"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Business Calling inbound US audio minutes)",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of outbound audio minutes (for Business Calling)",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfOutboundUSAudioMinsForBusinessCalling"
+                    },
+                    {
+                      "variableLabel": "to country Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "toCountryPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Business Calling outbound US audio minutes)",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of US text messages sent (for Business Calling)",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "NumberOfUSTextMessagesSent"
+                    },
+                    {
+                      "variableLabel": "price for avg outbound SMS call",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "toCountryPrice_send_text",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Business Calling US text messages sent)",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (cost for Business Calling inbound US audio minutes)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonChime_generated_4"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Business Calling outbound US audio minutes)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonChime_generated_5"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Business Calling US text messages sent)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonChime_generated_6"
+                    },
+                    {
+                      "variableLabel": "[currency] (cost for Business Calling phone numbers)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonChime_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_7"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "amazonChime_generated_3",
+                    "amazonChime_generated_4",
+                    "amazonChime_generated_5",
+                    "amazonChime_generated_6",
+                    "amazonChime_generated_7"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "label": "Amazon Chime Business Calling pricing",
+                  "decimalPlaces": 2,
+                  "id": "amazonChime_generated_8",
+                  "subTotalRefer": "amazonChime_generated_7"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

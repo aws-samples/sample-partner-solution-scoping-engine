@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Well-Architected Framework Assessment Report</title>
+    <style>
+        /* Enterprise Base Styles */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 40px; 
+            font-size: 11pt;
+        }
+        
+        /* Header */
+        .header { 
+            background: linear-gradient(135deg, #232F3E, #FF9900); 
+            color: white; 
+            padding: 35px 40px; 
+            margin-bottom: 30px; 
+        }
+        .header h1 { 
+            margin: 0 0 8px 0; 
+            font-size: 22pt; 
+            font-weight: 600; 
+        }
+        .header .subtitle { 
+            font-size: 11pt; 
+            opacity: 0.9; 
+            margin-bottom: 15px;
+        }
+        .header-info { 
+            margin-top: 15px; 
+            font-size: 10pt; 
+        }
+        .header-info p { 
+            margin: 4px 0; 
+        }
+        
+        /* Sections */
+        .section { 
+            margin-bottom: 35px; 
+            page-break-inside: avoid;
+        }
+        .section h2 { 
+            color: #232F3E; 
+            font-size: 15pt; 
+            border-bottom: 2px solid #FF9900; 
+            padding-bottom: 8px; 
+            margin: 0 0 18px 0; 
+        }
+        .section h3 { 
+            color: #232F3E; 
+            font-size: 12pt; 
+            margin: 20px 0 12px 0;
+            border-left: 3px solid #FF9900;
+            padding-left: 10px;
+        }
+        .section h4 { 
+            color: #444; 
+            font-size: 11pt; 
+            margin: 15px 0 10px 0; 
+        }
+        .section p { 
+            margin: 8px 0; 
+        }
+        
+        /* Score Badges */
+        .score-badge { 
+            display: inline-block; 
+            padding: 3px 10px; 
+            border-radius: 12px; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 10pt;
+        }
+        .score-excellent { background-color: #28a745; }
+        .score-good { background-color: #17a2b8; }
+        .score-fair { background-color: #ffc107; color: #333; }
+        .score-poor { background-color: #dc3545; }
+        
+        /* Risk Labels */
+        .risk-high { color: #dc3545; font-weight: bold; }
+        .risk-medium { color: #856404; font-weight: bold; }
+        .risk-low { color: #28a745; font-weight: bold; }
+        
+        /* Tables */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 12px 0; 
+            font-size: 10pt;
+        }
+        th { 
+            background-color: #232F3E; 
+            color: white; 
+            padding: 10px 12px; 
+            text-align: left; 
+            font-weight: 600;
+        }
+        td { 
+            padding: 8px 12px; 
+            border-bottom: 1px solid #ddd; 
+        }
+        tr:nth-child(odd) td { 
+            background-color: #f8f9fa; 
+        }
+        
+        /* Metric Cards */
+        .metrics-row { 
+            display: table; 
+            width: 100%; 
+            margin: 15px 0; 
+        }
+        .metric-card { 
+            display: table-cell; 
+            width: 25%; 
+            text-align: center; 
+            padding: 12px; 
+            background: #f8f9fa; 
+            border: 1px solid #ddd;
+        }
+        .metric-value { 
+            font-size: 22pt; 
+            font-weight: bold; 
+            color: #FF9900; 
+        }
+        .metric-label { 
+            font-size: 9pt; 
+            color: #666; 
+            margin-top: 4px;
+        }
+        
+        /* Info Boxes */
+        .info-box { 
+            padding: 12px 18px; 
+            margin: 12px 0; 
+            border-left: 4px solid; 
+        }
+        .info-box-blue { background: #e3f2fd; border-color: #2196f3; }
+        .info-box-purple { background: #f3e5f5; border-color: #9c27b0; }
+        .info-box-green { background: #e8f5e9; border-color: #4caf50; }
+        .info-box-yellow { background: #fff8e1; border-color: #ff9800; }
+        .info-box-red { background: #ffebee; border-color: #f44336; }
+        
+        /* Pillar Cards */
+        .pillar-card { 
+            background: #fff; 
+            border: 1px solid #ddd;
+            border-left: 4px solid #FF9900; 
+            padding: 20px; 
+            margin: 25px 0; 
+            page-break-inside: avoid;
+        }
+        .pillar-header { 
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+        .pillar-title { 
+            font-size: 13pt; 
+            font-weight: 600; 
+            color: #232F3E; 
+            margin: 0 0 5px 0;
+        }
+        .pillar-score {
+            font-size: 11pt;
+            color: #666;
+        }
+        
+        /* Capability Lists */
+        .capability-section {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .capability-item {
+            margin: 10px 0;
+            padding-left: 15px;
+        }
+        .capability-name {
+            font-weight: 600;
+            color: #232F3E;
+        }
+        .capability-details {
+            margin: 5px 0 0 0;
+            padding-left: 15px;
+            font-size: 10pt;
+            color: #555;
+        }
+        .capability-details li {
+            margin: 3px 0;
+        }
+        
+        /* Findings */
+        .finding-section {
+            margin: 12px 0;
+        }
+        .finding-layer {
+            margin: 10px 0;
+            padding: 10px 15px;
+            background: #fff;
+            border: 1px solid #eee;
+        }
+        .finding-layer-title {
+            font-weight: 600;
+            color: #232F3E;
+            margin-bottom: 8px;
+        }
+        
+        /* Recommendations */
+        .recommendation-card { 
+            background: #fff; 
+            border: 1px solid #ddd;
+            border-left: 3px solid #2196f3; 
+            padding: 12px 15px; 
+            margin: 12px 0; 
+        }
+        .recommendation-card.high-priority {
+            border-left-color: #dc3545;
+        }
+        .recommendation-card.medium-priority {
+            border-left-color: #ffc107;
+        }
+        .recommendation-card.low-priority {
+            border-left-color: #28a745;
+        }
+        .recommendation-title { 
+            color: #232F3E; 
+            margin: 0 0 8px 0; 
+            font-size: 11pt;
+            font-weight: 600;
+        }
+        .recommendation-meta {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Timeline */
+        .timeline-item { 
+            display: flex; 
+            align-items: flex-start; 
+            margin: 12px 0; 
+        }
+        .timeline-number { 
+            background: #FF9900; 
+            color: white; 
+            width: 26px; 
+            height: 26px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            font-size: 10pt;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .timeline-content { 
+            flex: 1; 
+        }
+        .timeline-content strong { 
+            display: block; 
+            margin-bottom: 4px; 
+        }
+        
+        /* Lists */
+        ul, ol { 
+            margin: 8px 0; 
+            padding-left: 22px; 
+        }
+        li { 
+            margin: 5px 0; 
+        }
+        
+        /* Footer */
+        .footer-box { 
+            background: #f8f9fa; 
+            border: 1px solid #ddd;
+            padding: 15px 20px; 
+            margin-top: 25px; 
+        }
+        .footer-box h4 { 
+            color: #232F3E; 
+            margin: 0 0 8px 0; 
+        }
+        
+        /* Status Indicators */
+        .status-excellent { color: #28a745; }
+        .status-good { color: #17a2b8; }
+        .status-fair { color: #ffc107; }
+        .status-poor { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>AWS Well-Architected Framework Assessment Report</h1>
+    <div class="subtitle">Comprehensive Architecture Analysis and Recommendations</div>
+    <div class="header-info">
+        <p><strong>Assessment Date:</strong> {{ assessment_date }}</p>
+        <p><strong>Architecture Type:</strong> {{ architecture_type | default('Cloud-Native Architecture') }}</p>
+        <p><strong>Overall Score:</strong> <span class="score-badge score-{{ overall_score_class }}">{{ overall_score }}%</span></p>
+    </div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="section">
+    <h2>Executive Summary</h2>
+    
+    {% if enhanced_executive_summary and enhanced_executive_summary.assessment_overview %}
+    <p>{{ enhanced_executive_summary.assessment_overview }}</p>
+    {% else %}
+    <p>This assessment evaluated your <strong>{{ architecture_type | default('cloud architecture') }}</strong> against the AWS Well-Architected Framework best practices across all six pillars. The analysis covered {{ document_analysis.total_documents | default(document_analysis.processed_documents | default(0)) }} infrastructure documents and identified {{ document_analysis.aws_services|length if document_analysis and document_analysis.aws_services else (document_analysis.identified_services|length if document_analysis and document_analysis.identified_services else 0) }} AWS services.</p>
+    {% endif %}
+    
+    <!-- Key Metrics -->
+    <div class="metrics-row">
+        <div class="metric-card">
+            <div class="metric-value">{{ overall_score }}%</div>
+            <div class="metric-label">Overall Score</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">{{ services_analyzed_count | default(document_analysis.aws_services|length if document_analysis and document_analysis.aws_services else (document_analysis.identified_services|length if document_analysis and document_analysis.identified_services else 0)) }}</div>
+            <div class="metric-label">AWS Services</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">{{ high_risk_findings }}</div>
+            <div class="metric-label">Critical Findings</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value">6</div>
+            <div class="metric-label">Pillars Assessed</div>
+        </div>
+    </div>
+    
+    {% if enhanced_executive_summary and enhanced_executive_summary.architecture_overview %}
+    <h3>Architecture Overview</h3>
+    <p>{{ enhanced_executive_summary.architecture_overview }}</p>
+    {% endif %}
+    
+    <div class="info-box info-box-purple">
+        <h4>Key Assessment Insights</h4>
+        {% if enhanced_executive_summary and enhanced_executive_summary.key_findings_summary %}
+        <ul>
+            {% for finding in enhanced_executive_summary.key_findings_summary %}
+            <li>{{ finding }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <ul>
+            <li><strong>Architecture Maturity:</strong> {{ architecture_maturity }} level with {{ overall_score }}% compliance</li>
+            <li><strong>Risk Profile:</strong> {{ high_risk_findings }} critical findings requiring immediate attention</li>
+            <li><strong>Strongest Pillar:</strong> {% set ns = namespace(highest_score=0, strongest='Reliability') %}{% for pillar in pillars %}{% if pillar.score > ns.highest_score %}{% set ns.highest_score = pillar.score %}{% set ns.strongest = pillar.name %}{% endif %}{% endfor %}{{ ns.strongest }}</li>
+        </ul>
+        {% endif %}
+    </div>
+</div>
+
+<!-- AWS SERVICES IDENTIFIED -->
+{% if document_analysis and (document_analysis.aws_services or document_analysis.identified_services) %}
+<div class="section">
+    <h2>AWS Services Identified</h2>
+    {% set services_list = document_analysis.aws_services if document_analysis.aws_services else document_analysis.identified_services %}
+    <p>The following {{ services_list|length }} AWS services were detected in your architecture:</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">Service</th>
+                <th style="width: 50%;">Description</th>
+                <th style="width: 20%; text-align: center;">Confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service in services_list %}
+            <tr>
+                {% if service is string %}
+                <td><strong>{{ service }}</strong></td>
+                <td>AWS managed service component</td>
+                <td style="text-align: center;"><span class="score-badge score-good">95%</span></td>
+                {% else %}
+                <td><strong>{{ service.name | default(service.item.split('**')[1].split('**')[0] if service.item is defined and '**' in service.item else service) }}</strong></td>
+                <td>{{ service.description | default('Core infrastructure component') }}</td>
+                <td style="text-align: center;"><span class="score-badge {% if service.confidence is defined %}{% if service.confidence >= 0.9 %}score-excellent{% elif service.confidence >= 0.8 %}score-good{% elif service.confidence >= 0.7 %}score-fair{% else %}score-poor{% endif %}{% else %}score-good{% endif %}">{{ ((service.confidence | default(0.95)) * 100) | round | int }}%</span></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- ARCHITECTURE PATTERNS -->
+{% if document_analysis and document_analysis.architectural_patterns %}
+<div class="section">
+    <h2>Architecture Patterns</h2>
+    <p>Your architecture implements the following design patterns:</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">Pattern</th>
+                <th style="width: 50%;">Description</th>
+                <th style="width: 20%; text-align: center;">Confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pattern in document_analysis.architectural_patterns %}
+            <tr>
+                {% if pattern is string %}
+                <td><strong>{{ pattern.split('**')[1] if '**' in pattern else (pattern.split(':')[0] if ':' in pattern else pattern.split(' - ')[0]) }}</strong></td>
+                <td>{{ pattern.split(': ')[1] if ': ' in pattern else (pattern.split(' - ')[1] if ' - ' in pattern else 'Architectural design pattern') }}</td>
+                <td style="text-align: center;"><span class="score-badge score-good">92%</span></td>
+                {% else %}
+                <td><strong>{{ pattern.name | default(pattern) }}</strong></td>
+                <td>{{ pattern.description | default('Architectural design pattern') }}</td>
+                <td style="text-align: center;"><span class="score-badge {% if pattern.confidence is defined %}{% if pattern.confidence >= 0.9 %}score-excellent{% elif pattern.confidence >= 0.8 %}score-good{% elif pattern.confidence >= 0.7 %}score-fair{% else %}score-poor{% endif %}{% else %}score-good{% endif %}">{{ ((pattern.confidence | default(0.92)) * 100) | round | int }}%</span></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- PILLAR ASSESSMENT OVERVIEW -->
+<div class="section">
+    <h2>Well-Architected Pillar Assessment</h2>
+    
+    <div class="info-box info-box-blue">
+        <h4>Score Assessment Guide</h4>
+        <table style="margin: 8px 0;">
+            <tr>
+                <td style="width: 25%; background-color: #28a745; color: white; font-weight: bold; text-align: center;">90%+ Excellent</td>
+                <td style="width: 25%; background-color: #17a2b8; color: white; font-weight: bold; text-align: center;">75-89% Good</td>
+                <td style="width: 25%; background-color: #ffc107; color: #333; font-weight: bold; text-align: center;">60-74% Fair</td>
+                <td style="width: 25%; background-color: #dc3545; color: white; font-weight: bold; text-align: center;">Below 60%</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>Pillar Scores Overview</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">Pillar</th>
+                <th style="width: 15%; text-align: center;">Score</th>
+                <th style="width: 20%; text-align: center;">Risk Level</th>
+                <th style="width: 35%;">Capability Coverage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pillar in pillars %}
+            <tr>
+                <td><strong>{{ pillar.name }}</strong></td>
+                <td style="text-align: center;"><span class="score-badge score-{{ pillar.score_class }}">{{ pillar.score }}%</span></td>
+                <td style="text-align: center;"><span class="risk-{{ pillar.risk_level.lower().replace(' ', '-') }}">{{ pillar.risk_level }}</span></td>
+                <td>{{ pillar.detected_capabilities|length if pillar.detected_capabilities else 0 }}/{{ pillar.expected_capabilities|length if pillar.expected_capabilities else 5 }} capabilities detected</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- DETAILED PILLAR ANALYSIS - Paragraph Format Following Sample -->
+<div class="section">
+    <h2>Detailed Pillar Analysis</h2>
+    
+    {% for pillar in pillars %}
+    <!-- {{ pillar.name }} Pillar Section -->
+    <div class="section" style="margin-top: 30px; page-break-inside: avoid;">
+        <h3>{{ pillar.name }} Assessment</h3>
+        <p><strong>Score: {{ pillar.score }}% - {% if pillar.score >= 90 %}Excellent Performance{% elif pillar.score >= 80 %}Strong Performance{% elif pillar.score >= 70 %}Good Performance{% elif pillar.score >= 60 %}Moderate Performance{% else %}Needs Improvement{% endif %}</strong></p>
+        
+        <h4>Assessment Overview</h4>
+        {% if pillar.assessment_overview %}
+        <p>{{ pillar.assessment_overview }}</p>
+        {% else %}
+        <p>Your architecture demonstrates {% if pillar.score >= 80 %}excellent{% elif pillar.score >= 60 %}good{% else %}developing{% endif %} {{ pillar.name.lower() }} practices with comprehensive {% if pillar.detected_capabilities %}{{ pillar.detected_capabilities[0].replace('_', ' ') if pillar.detected_capabilities else 'foundational' }}{% endif %} implementation and {% if pillar.score >= 80 %}strong{% else %}growing{% endif %} alignment with AWS best practices. Here's the detailed breakdown:</p>
+        {% endif %}
+        
+        <h4>Capability Analysis</h4>
+        
+        <!-- Excellent Capabilities (90-100%) -->
+        {% set excellent_caps = pillar.detected_capabilities | default([]) %}
+        {% if excellent_caps and pillar.score >= 85 %}
+        <p><strong>Excellent (90-100%)</strong></p>
+        <ul>
+            {% for capability in excellent_caps[:3] %}
+            <li><strong>{{ capability.replace('_', ' ').title() }}: {% if pillar.score >= 90 %}95%{% elif pillar.score >= 85 %}92%{% else %}88%{% endif %}</strong>
+                <ul>
+                    <li>[OK] Complete implementation aligned with AWS best practices</li>
+                    <li>[OK] Operational and actively monitored in architecture</li>
+                    <li>[OK] Consistent resource configuration and management</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        
+        <!-- Good Capabilities (80-89%) -->
+        {% if pillar.score >= 70 %}
+        <p><strong>Good (80-89%)</strong></p>
+        <ul>
+            {% if pillar.detected_capabilities %}
+            {% for capability in pillar.detected_capabilities[3:5] if pillar.detected_capabilities|length > 3 %}
+            <li><strong>{{ capability.replace('_', ' ').title() }}: 85%</strong>
+                <ul>
+                    <li>[OK] Well-implemented with minor optimization opportunities</li>
+                    <li>[!] Gap: Consider additional monitoring and alerting</li>
+                </ul>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li><strong>Core {{ pillar.name }} Practices: 85%</strong>
+                <ul>
+                    <li>[OK] Foundation established with room for enhancement</li>
+                    <li>[!] Gap: Additional automation recommended</li>
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        
+        <!-- Needs Improvement (70-79%) -->
+        {% if pillar.missing_capabilities or pillar.score < 80 %}
+        <p><strong>Needs Improvement (70-79%)</strong></p>
+        <ul>
+            {% if pillar.missing_capabilities %}
+            {% for capability in pillar.missing_capabilities[:2] %}
+            <li><strong>{{ capability.replace('_', ' ').title() }}: 75%</strong>
+                <ul>
+                    <li>[!] Gap: Not fully implemented in current architecture</li>
+                    <li>[!] Gap: Review AWS best practices for implementation guidance</li>
+                </ul>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li><strong>Advanced {{ pillar.name }} Features: 75%</strong>
+                <ul>
+                    <li>[!] Gap: Additional capabilities recommended for enterprise-grade implementation</li>
+                    <li>[!] Gap: Consider implementing comprehensive monitoring</li>
+                </ul>
+            </li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        
+        
+        <!-- Detailed Findings by Service Layer -->
+        <h4>Detailed Findings by Service</h4>
+        
+        {% if pillar.detailed_findings %}
+        {% for layer_name, layer_data in pillar.detailed_findings.items() %}
+        <p><strong>{{ layer_name.title() }} Layer</strong></p>
+        <ul>
+            <li><strong>Strengths:</strong>
+                <ul>
+                    {% for strength in layer_data.strengths %}
+                    <li>[OK] {{ strength }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <li><strong>Recommendations:</strong>
+                <ul>
+                    {% for rec in layer_data.recommendations %}
+                    <li>[!] {{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+        {% endfor %}
+        {% else %}
+        <p><strong>Infrastructure Layer</strong></p>
+        <ul>
+            <li><strong>Strengths:</strong>
+                <ul>
+                    <li>[OK] {{ pillar.detected_capabilities[0].replace('_', ' ').title() if pillar.detected_capabilities else 'Core' }} capabilities implemented</li>
+                    <li>[OK] {% if pillar.score >= 80 %}Well-architected practices in place{% else %}Foundation established for improvement{% endif %}</li>
+                    <li>[OK] {% if pillar.score >= 70 %}Managed services reducing operational overhead{% else %}Basic infrastructure components deployed{% endif %}</li>
+                </ul>
+            </li>
+            <li><strong>Recommendations:</strong>
+                <ul>
+                    {% if pillar.recommendations %}
+                    {% for rec in pillar.recommendations[:3] %}
+                    <li>[!] {{ rec.title }}</li>
+                    {% endfor %}
+                    {% else %}
+                    <li>[!] Continue monitoring and optimization</li>
+                    <li>[!] Implement additional automation</li>
+                    {% endif %}
+                </ul>
+            </li>
+        </ul>
+        {% endif %}
+        
+        <!-- Maturity Model - Paragraph Format -->
+        <h4>{{ pillar.name }} Maturity Model</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Capability</th>
+                    <th style="text-align: center;">Current Level</th>
+                    <th style="text-align: center;">Target Level</th>
+                    <th style="text-align: center;">Gap</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if pillar.maturity_model %}
+                {% for item in pillar.maturity_model %}
+                <tr>
+                    <td>{{ item.capability }}</td>
+                    <td style="text-align: center;">{{ item.current_level }}</td>
+                    <td style="text-align: center;">{{ item.target_level }}</td>
+                    <td style="text-align: center;">{% if item.gap == 'On Target' %}On Target{% elif item.gap == 'In Progress' %}In Progress{% else %}{{ item.gap }}{% endif %}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                {% for capability in pillar.detected_capabilities[:4] if pillar.detected_capabilities %}
+                <tr>
+                    <td>{{ capability.replace('_', ' ').title() }}</td>
+                    <td style="text-align: center;">{% if pillar.score >= 85 %}Advanced{% elif pillar.score >= 70 %}Intermediate{% else %}Basic{% endif %}</td>
+                    <td style="text-align: center;">Advanced</td>
+                    <td style="text-align: center;">{% if pillar.score >= 85 %}On Target{% else %}In Progress{% endif %}</td>
+                </tr>
+                {% endfor %}
+                {% if not pillar.detected_capabilities %}
+                <tr>
+                    <td>Core {{ pillar.name }} Practices</td>
+                    <td style="text-align: center;">{% if pillar.score >= 85 %}Advanced{% elif pillar.score >= 70 %}Intermediate{% else %}Basic{% endif %}</td>
+                    <td style="text-align: center;">Advanced</td>
+                    <td style="text-align: center;">{% if pillar.score >= 85 %}On Target{% else %}In Progress{% endif %}</td>
+                </tr>
+                {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Priority Recommendations - Paragraph Format -->
+        {% if pillar.recommendations %}
+        <h4>Priority Recommendations</h4>
+        
+        {% set high_recs = pillar.recommendations | selectattr('priority', 'equalto', 'high') | list %}
+        {% set medium_recs = pillar.recommendations | selectattr('priority', 'equalto', 'medium') | list %}
+        {% set low_recs = pillar.recommendations | selectattr('priority', 'equalto', 'low') | list %}
+        
+        {% if high_recs %}
+        <p><strong>[HIGH] High Priority (Immediate - 0-30 days)</strong></p>
+        <ol>
+            {% for rec in high_recs %}
+            <li><strong>{{ rec.title }}</strong>
+                <ul>
+                    <li>[!] {{ rec.description }}</li>
+                    {% if rec.implementation_steps %}
+                    {% for step in rec.implementation_steps[:3] %}
+                    <li>[>] {{ step }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    <li>[i] Estimated Effort: {{ rec.effort | default('2-3 weeks') }}</li>
+                    <li>[+] Business Impact: {{ rec.business_impact | default('High - Critical for compliance') }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+        
+        {% if medium_recs %}
+        <p><strong>[MED] Medium Priority (30-90 days)</strong></p>
+        <ol>
+            {% for rec in medium_recs %}
+            <li><strong>{{ rec.title }}</strong>
+                <ul>
+                    <li>[!] {{ rec.description }}</li>
+                    {% if rec.implementation_steps %}
+                    {% for step in rec.implementation_steps[:2] %}
+                    <li>[>] {{ step }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    <li>[i] Estimated Effort: {{ rec.effort | default('4-6 weeks') }}</li>
+                    <li>[+] Business Impact: {{ rec.business_impact | default('Medium - Improves efficiency') }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+        
+        {% if low_recs %}
+        <p><strong>[LOW] Low Priority (90+ days)</strong></p>
+        <ol>
+            {% for rec in low_recs %}
+            <li><strong>{{ rec.title }}</strong>
+                <ul>
+                    <li>[!] {{ rec.description }}</li>
+                    <li>[i] Estimated Effort: {{ rec.effort | default('6-8 weeks') }}</li>
+                    <li>[+] Business Impact: {{ rec.business_impact | default('Optimization opportunity') }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+        
+        {% if not high_recs and not medium_recs and not low_recs %}
+        <ol>
+            {% for rec in pillar.recommendations %}
+            <li><strong>{{ rec.title }}</strong>
+                <ul>
+                    <li>{{ rec.description }}</li>
+                </ul>
+            </li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+        {% endif %}
+
+        <!-- Implementation Roadmap - Paragraph Format -->
+        <h4>Implementation Roadmap</h4>
+        {% if pillar.implementation_roadmap %}
+        <p><strong>[1] Phase 1: Foundation (Weeks 1-4)</strong></p>
+        <ul>
+            <li>[>] {{ pillar.implementation_roadmap.phase_1.focus | default('Set up baseline monitoring and alerting') }}</li>
+            <li>[>] Create basic incident response procedures</li>
+            <li>[>] Implement centralized logging</li>
+        </ul>
+        
+        <p><strong>[2] Phase 2: Enhancement (Weeks 5-12)</strong></p>
+        <ul>
+            <li>[>] {{ pillar.implementation_roadmap.phase_2.focus | default('Deploy advanced capabilities') }}</li>
+            <li>[>] Create comprehensive runbooks</li>
+            <li>[>] Implement automated testing</li>
+        </ul>
+        
+        <p><strong>[3] Phase 3: Optimization (Weeks 13-24)</strong></p>
+        <ul>
+            <li>[>] {{ pillar.implementation_roadmap.phase_3.focus | default('Add predictive monitoring') }}</li>
+            <li>[>] Implement self-healing capabilities</li>
+            <li>[>] Create advanced automation workflows</li>
+        </ul>
+        {% else %}
+        <p><strong>[1] Phase 1: Foundation (Weeks 1-4)</strong></p>
+        <ul>
+            <li>[>] {% if pillar.missing_capabilities %}Address gaps: {{ pillar.missing_capabilities[0] | replace('_', ' ') | title }}{% else %}Set up baseline monitoring and alerting{% endif %}</li>
+            <li>[>] Create basic {{ pillar.name.lower() }} procedures</li>
+            <li>[>] Implement centralized logging</li>
+        </ul>
+        
+        <p><strong>[2] Phase 2: Enhancement (Weeks 5-12)</strong></p>
+        <ul>
+            <li>[>] Deploy advanced {{ pillar.name.lower() }} capabilities</li>
+            <li>[>] Create comprehensive runbooks</li>
+            <li>[>] Implement automated testing</li>
+        </ul>
+        
+        <p><strong>[3] Phase 3: Optimization (Weeks 13-24)</strong></p>
+        <ul>
+            <li>[>] Add predictive monitoring</li>
+            <li>[>] Implement self-healing capabilities</li>
+            <li>[>] Create advanced automation workflows</li>
+        </ul>
+        {% endif %}
+        
+        <!-- Success Metrics - Paragraph Format -->
+        <h4>Success Metrics</h4>
+        <ul>
+            <li>[M] <strong>{{ pillar.name }} Score:</strong> Target {% if pillar.score >= 85 %}90%+{% else %}85%+{% endif %} (Current: {{ pillar.score }}%)</li>
+            <li>[M] <strong>Capability Coverage:</strong> Target {{ (pillar.detected_capabilities | length if pillar.detected_capabilities else 0) + (pillar.missing_capabilities | length if pillar.missing_capabilities else 2) }} capabilities (Current: {{ pillar.detected_capabilities | length if pillar.detected_capabilities else 0 }} detected)</li>
+            <li>[M] <strong>Risk Level:</strong> Target Low Risk (Current: {{ pillar.risk_level }})</li>
+            <li>[M] <strong>Implementation Timeline:</strong> Target 90 days for full compliance</li>
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- CRITICAL FINDINGS -->
+{% if critical_findings %}
+<div class="section">
+    <h2>Critical Findings</h2>
+    <p>The following issues require immediate attention:</p>
+    
+    {% for finding in critical_findings %}
+    <div class="info-box info-box-red">
+        <h4>{{ finding.title }}</h4>
+        <p><strong>Severity:</strong> <span class="risk-high">{{ finding.severity }}</span></p>
+        <p><strong>Current State:</strong> {{ finding.description }}</p>
+        <p><strong>Business Impact:</strong> {{ finding.business_impact }}</p>
+        {% if finding.technical_details %}
+        <p><strong>Technical Details:</strong> {{ finding.technical_details }}</p>
+        {% endif %}
+        <div class="recommendation-card" style="margin-top: 12px;">
+            <div class="recommendation-title">Recommended Solution</div>
+            <p>{{ finding.recommended_solution | default(finding.recommendation) }}</p>
+            <div class="recommendation-meta">
+                <strong>Effort:</strong> {{ finding.implementation_effort }} | 
+                <strong>Timeline:</strong> {{ finding.expected_timeline | default(finding.timeline) }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- IMPLEMENTATION ROADMAP -->
+<div class="section">
+    <h2>Implementation Roadmap</h2>
+    <p>Prioritized implementation plan based on risk and business impact:</p>
+    
+    {% if immediate_actions %}
+    <h3>Phase 1: Critical Items (0-30 days)</h3>
+    {% for action in immediate_actions %}
+    <div class="timeline-item">
+        <div class="timeline-number">{{ loop.index }}</div>
+        <div class="timeline-content">
+            <strong>{{ action.title }}</strong>
+            <p>{{ action.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if short_term_actions %}
+    <h3>Phase 2: High Priority (30-90 days)</h3>
+    {% for action in short_term_actions %}
+    <div class="timeline-item">
+        <div class="timeline-number">{{ loop.index }}</div>
+        <div class="timeline-content">
+            <strong>{{ action.title }}</strong>
+            <p>{{ action.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if long_term_actions %}
+    <h3>Phase 3: Optimization (90+ days)</h3>
+    {% for action in long_term_actions %}
+    <div class="timeline-item">
+        <div class="timeline-number">{{ loop.index }}</div>
+        <div class="timeline-content">
+            <strong>{{ action.title }}</strong>
+            <p>{{ action.description }}</p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if not immediate_actions and not short_term_actions and not long_term_actions %}
+    <div class="info-box info-box-blue">
+        <p>Review the pillar-specific recommendations above and prioritize based on your organization's risk tolerance and business objectives.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- SUCCESS METRICS -->
+<div class="section">
+    <h2>Success Metrics</h2>
+    <p>Target improvements for tracking implementation progress:</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 40%;">Metric</th>
+                <th style="width: 20%; text-align: center;">Current</th>
+                <th style="width: 20%; text-align: center;">Target</th>
+                <th style="width: 20%; text-align: center;">Timeline</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Overall WAFR Score</strong></td>
+                <td style="text-align: center;">{{ overall_score }}%</td>
+                <td style="text-align: center;">85%+</td>
+                <td style="text-align: center;">90 days</td>
+            </tr>
+            {% for pillar in pillars %}
+            {% if pillar.score < 80 %}
+            <tr>
+                <td>{{ pillar.name }}</td>
+                <td style="text-align: center;">{{ pillar.score }}%</td>
+                <td style="text-align: center;">80%+</td>
+                <td style="text-align: center;">60 days</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- CONCLUSION -->
+<div class="section">
+    <h2>Conclusion</h2>
+    
+    <p>This Well-Architected Framework assessment provides a comprehensive evaluation of your architecture against AWS best practices. The assessment identified <strong>{{ high_risk_findings }}</strong> critical findings that require immediate attention.</p>
+    
+    <h3>Key Takeaways</h3>
+    <ul>
+        <li>Current architecture scores <strong>{{ overall_score }}%</strong> against Well-Architected best practices</li>
+        <li>Focus on addressing high-risk pillars first to improve overall security and reliability</li>
+        <li>Implement the recommended changes following the phased roadmap</li>
+        <li>Schedule regular reassessments to track progress</li>
+    </ul>
+    
+    <h3>Immediate Next Steps</h3>
+    <ol>
+        <li>Review and prioritize critical findings with your team</li>
+        <li>Assign owners for each recommendation</li>
+        <li>Create implementation tickets in your project management system</li>
+        <li>Schedule follow-up assessment in 90 days</li>
+    </ol>
+    
+    <div class="footer-box">
+        <h4>Additional Resources</h4>
+        <p>For implementation guidance or follow-up assessments, consider engaging AWS Well-Architected partners or AWS Professional Services. The AWS Well-Architected Tool in the AWS Console provides ongoing assessment capabilities.</p>
+    </div>
+</div>
+
+</body>
+</html>

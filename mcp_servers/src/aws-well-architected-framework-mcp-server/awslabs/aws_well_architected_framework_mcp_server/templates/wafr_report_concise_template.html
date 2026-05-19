@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Well-Architected Framework Assessment</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #FF9900;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #232F3E;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header .subtitle {
+            color: #FF9900;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .grade-a { color: #28a745; }
+        .grade-b { color: #5cb85c; }
+        .grade-c { color: #ffc107; }
+        .grade-d { color: #fd7e14; }
+        .grade-f { color: #dc3545; }
+        h2 {
+            color: #232F3E;
+            border-bottom: 2px solid #FF9900;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            font-size: 20px;
+        }
+        h3 {
+            color: #FF9900;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        h4 {
+            color: #232F3E;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .pillar-section {
+            margin: 25px 0;
+            padding: 15px;
+            border-left: 4px solid #FF9900;
+            background-color: #fafafa;
+        }
+        .pillar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .pillar-score {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: white;
+        }
+        .risk-critical { background-color: #dc3545; }
+        .risk-high { background-color: #fd7e14; }
+        .risk-medium { background-color: #ffc107; color: #333; }
+        .risk-low { background-color: #28a745; }
+        .recommendation-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            border-left: 3px solid #FF9900;
+        }
+        .aws-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .aws-link:hover {
+            text-decoration: underline;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .service-item {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border-left: 3px solid #FF9900;
+            font-size: 14px;
+        }
+        .roadmap-phase {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #232F3E;
+        }
+        .best-practice {
+            margin: 10px 0;
+            padding: 12px;
+            background-color: #e7f3ff;
+            border-radius: 4px;
+            border-left: 3px solid #0066cc;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .metadata {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AWS Well-Architected Framework Assessment</h1>
+        <div class="subtitle">Comprehensive Architecture Review and Recommendations</div>
+        <div style="margin-top: 15px; color: #666;">
+            <strong>Solution:</strong> Architecture Assessment<br>
+            <strong>Assessment Date:</strong> {{ timestamp | format_timestamp if timestamp else 'Not specified' }}<br>
+            <strong>Overall Score:</strong> 
+            <span class="score-display {% if overall_score >= 90 %}grade-a{% elif overall_score >= 80 %}grade-b{% elif overall_score >= 70 %}grade-c{% elif overall_score >= 60 %}grade-d{% else %}grade-f{% endif %}">
+                {{ "%.1f"|format(overall_score) }}/100 
+                Grade: {% if overall_score >= 90 %}A{% elif overall_score >= 80 %}B{% elif overall_score >= 70 %}C{% elif overall_score >= 60 %}D{% else %}F{% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <h2>Executive Summary</h2>
+    <div class="summary-box">
+        <p>Your AWS architecture {% if overall_score >= 80 %}demonstrates strong alignment{% elif overall_score >= 60 %}requires moderate improvements{% else %}requires significant improvements{% endif %} with AWS best practices. This assessment identified {{ high_priority_actions|length if high_priority_actions else 0 }} critical issues and provides a roadmap for enhancement.</p>
+        
+        {% if overall_score < 70 %}
+        <p><strong>Key Focus Areas:</strong> Immediate attention required for 
+        {% if pillar_assessments.security.score < 70 %}Security{% endif %}
+        {% if pillar_assessments.cost_optimization.score < 70 %}{% if pillar_assessments.security.score < 70 %}, {% endif %}Cost Optimization{% endif %}
+        {% if pillar_assessments.reliability.score < 70 %}{% if pillar_assessments.security.score < 70 or pillar_assessments.cost_optimization.score < 70 %}, {% endif %}Reliability{% endif %} pillars.</p>
+        {% endif %}
+    </div>
+
+    <!-- Architecture Overview -->
+    <h2>Architecture Overview</h2>
+    <ul>
+        <li><strong>AWS Services Identified:</strong> {{ document_analysis.aws_services|length if document_analysis and document_analysis.aws_services else 0 }}</li>
+        <li><strong>Architecture Patterns:</strong> {{ document_analysis.architectural_patterns|length if document_analysis and document_analysis.architectural_patterns else 0 }}</li>
+        <li><strong>Compliance Requirements:</strong> Standard AWS compliance</li>
+    </ul>
+
+    {% if document_analysis and document_analysis.aws_services %}
+    <h3>Services:</h3>
+    <div class="services-grid">
+        {% for service in document_analysis.aws_services[:12] %}
+        <div class="service-item">
+            {{ service.name if service.name else (service.item.split('**')[1].split('**')[0] if '**' in service.item else service.item.split(' - ')[0]) }}
+        </div>
+        {% endfor %}
+        {% if document_analysis.aws_services|length > 12 %}
+        <div class="service-item">+ {{ document_analysis.aws_services|length - 12 }} more services</div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Business Context -->
+    <h2>Business Context</h2>
+    <p>{% if overall_score >= 80 %}Mature cloud architecture with optimization opportunities{% elif overall_score >= 60 %}Developing cloud architecture requiring targeted improvements{% else %}Early-stage cloud architecture requiring significant improvements{% endif %}</p>
+
+    <!-- Pillar Assessments -->
+    <h2>Pillar Assessments</h2>
+
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+    <div class="pillar-section">
+        <div class="pillar-header">
+            <h3>{{ pillar_name.replace('_', ' ').title() }}</h3>
+            <span class="pillar-score {% if pillar_data.score >= 80 %}risk-low{% elif pillar_data.score >= 60 %}risk-medium{% elif pillar_data.score >= 40 %}risk-high{% else %}risk-critical{% endif %}">
+                {{ "%.0f"|format(pillar_data.score) }}/100 
+                {% if pillar_data.score >= 80 %}LOW RISK{% elif pillar_data.score >= 60 %}MEDIUM RISK{% elif pillar_data.score >= 40 %}HIGH RISK{% else %}CRITICAL{% endif %}
+            </span>
+        </div>
+
+        <h4>Strengths:</h4>
+        <ul>
+            {% if pillar_data.detected_capabilities %}
+            {% for capability in pillar_data.detected_capabilities[:3] %}
+            <li>{{ capability.replace('_', ' ').title() }} measures in place</li>
+            {% endfor %}
+            {% else %}
+            <li>Basic {{ pillar_name.replace('_', ' ') }} measures identified</li>
+            {% endif %}
+        </ul>
+
+        <h4>Areas for Improvement:</h4>
+        <ul>
+            {% if pillar_data.score < 80 %}
+            <li>Continue monitoring {{ pillar_name.replace('_', ' ') }} metrics</li>
+            {% if pillar_data.score < 60 %}
+            <li>Implement critical {{ pillar_name.replace('_', ' ') }} controls</li>
+            {% endif %}
+            {% else %}
+            <li>Maintain current {{ pillar_name.replace('_', ' ') }} standards</li>
+            {% endif %}
+        </ul>
+
+        <h4>Recommendations:</h4>
+        {% if pillar_data.recommendations %}
+        {% for rec in pillar_data.recommendations %}
+        <div class="recommendation-item">
+            <strong>{{ rec.title }}</strong><br>
+            {{ rec.description }}<br>
+            {% if pillar_name == 'security' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html" class="aws-link" target="_blank">AWS Security Best Practices</a>
+            {% elif pillar_name == 'reliability' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html" class="aws-link" target="_blank">AWS Reliability Best Practices</a>
+            {% elif pillar_name == 'performance_efficiency' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html" class="aws-link" target="_blank">AWS Performance Best Practices</a>
+            {% elif pillar_name == 'cost_optimization' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html" class="aws-link" target="_blank">AWS Cost Optimization Best Practices</a>
+            {% elif pillar_name == 'operational_excellence' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html" class="aws-link" target="_blank">AWS Operational Excellence Best Practices</a>
+            {% elif pillar_name == 'sustainability' %}
+            <a href="https://docs.aws.amazon.com/wellarchitected/latest/sustainability-pillar/sustainability-pillar.html" class="aws-link" target="_blank">AWS Sustainability Best Practices</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <ul>
+            <li>Review {{ pillar_name.replace('_', ' ').title() }} best practices</li>
+            <li>Implement recommended improvements</li>
+            <li>Regular assessment reviews</li>
+        </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Risk Analysis -->
+    <h2>Risk Analysis</h2>
+
+    <h3>Critical Issues</h3>
+    {% set critical_issues = [] %}
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score < 50 %}
+            {% set _ = critical_issues.append(pillar_name) %}
+        {% endif %}
+    {% endfor %}
+    {% if critical_issues %}
+    <ul>
+        {% for pillar in critical_issues %}
+        <li><strong>{{ pillar.replace('_', ' ').title() }}:</strong> Score {{ "%.0f"|format(pillar_assessments[pillar].score) }}% - Immediate attention required</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No critical priority issues identified.</p>
+    {% endif %}
+
+    <h3>Medium Priority Issues</h3>
+    {% set medium_issues = [] %}
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score >= 50 and pillar_data.score < 70 %}
+            {% set _ = medium_issues.append(pillar_name) %}
+        {% endif %}
+    {% endfor %}
+    {% if medium_issues %}
+    <ul>
+        {% for pillar in medium_issues %}
+        <li><strong>{{ pillar.replace('_', ' ').title() }}:</strong> Score {{ "%.0f"|format(pillar_assessments[pillar].score) }}% - Improvement opportunities available</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No medium priority issues identified.</p>
+    {% endif %}
+
+    <h3>Low Priority Issues</h3>
+    {% set low_issues = [] %}
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score >= 70 and pillar_data.score < 80 %}
+            {% set _ = low_issues.append(pillar_name) %}
+        {% endif %}
+    {% endfor %}
+    {% if low_issues %}
+    <ul>
+        {% for pillar in low_issues %}
+        <li><strong>{{ pillar.replace('_', ' ').title() }}:</strong> Score {{ "%.0f"|format(pillar_assessments[pillar].score) }}% - Minor optimizations available</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No low priority issues identified.</p>
+    {% endif %}
+
+    <!-- Recommendations -->
+    <h2>Recommendations</h2>
+
+    <h3>Immediate Actions</h3>
+    <ol>
+        {% if pillar_assessments.security.score < 70 %}
+        <li><strong>Address Critical Security Issues</strong> - Implement IAM best practices and encryption</li>
+        {% endif %}
+        {% if pillar_assessments.reliability.score < 70 %}
+        <li><strong>Enhance Reliability</strong> - Set up multi-AZ deployments and backup strategies</li>
+        {% endif %}
+        <li><strong>Enable Monitoring</strong> - Set up CloudWatch and CloudTrail</li>
+        <li><strong>Backup Configuration</strong> - Ensure all critical data is backed up</li>
+    </ol>
+
+    <h3>Short-term Improvements</h3>
+    <ol>
+        <li><strong>Implement High Availability</strong> - Enhance reliability across availability zones</li>
+        <li><strong>Optimize Performance</strong> - Implement caching and CDN strategies</li>
+        <li><strong>Cost Optimization</strong> - Right-size resources and implement reserved instances</li>
+    </ol>
+
+    <h3>Long-term Initiatives</h3>
+    <ol>
+        <li><strong>Infrastructure as Code</strong> - Implement CloudFormation or CDK for all resources</li>
+        <li><strong>Advanced Monitoring</strong> - Set up comprehensive observability</li>
+        <li><strong>Continuous Optimization</strong> - Establish regular architecture reviews</li>
+    </ol>
+
+    <!-- Optimization Opportunities -->
+    <h2>Optimization Opportunities</h2>
+
+    <h3>Cost Optimization</h3>
+    <ul>
+        <li>Estimated 20-30% cost reduction through right-sizing and reserved instances</li>
+        <li>Automated cost monitoring to prevent budget overruns</li>
+        <li>Resource optimization for better price-performance ratio</li>
+    </ul>
+
+    <h3>Security Enhancements</h3>
+    <ul>
+        <li>Enhanced data protection through encryption and access controls</li>
+        <li>Compliance readiness for industry standards</li>
+        <li>Reduced security incidents through proactive monitoring</li>
+    </ul>
+
+    <h3>Operational Excellence</h3>
+    <ul>
+        <li>Improved deployment reliability through automation</li>
+        <li>Faster incident response with better monitoring</li>
+        <li>Reduced operational overhead through managed services</li>
+    </ul>
+
+    <h3>Performance & Reliability</h3>
+    <ul>
+        <li>Better user experience through performance optimization</li>
+        <li>Scalability improvements for handling traffic spikes</li>
+        <li>Reduced latency through global content delivery</li>
+    </ul>
+
+    <!-- Implementation Roadmap -->
+    <h2>Implementation Roadmap</h2>
+
+    <div class="roadmap-phase">
+        <h3>Phase 1: Foundation</h3>
+        <ul>
+            <li><strong>Security Hardening</strong> - Implement IAM, encryption, and monitoring</li>
+            <li><strong>Backup Strategy</strong> - Configure automated backups and disaster recovery</li>
+            <li><strong>Basic Monitoring</strong> - Set up CloudWatch dashboards and alerts</li>
+        </ul>
+    </div>
+
+    <div class="roadmap-phase">
+        <h3>Phase 2: Enhancement</h3>
+        <ul>
+            <li><strong>High Availability</strong> - Implement multi-AZ deployments</li>
+            <li><strong>Performance Optimization</strong> - Deploy caching and CDN solutions</li>
+            <li><strong>Cost Management</strong> - Implement cost optimization strategies</li>
+        </ul>
+    </div>
+
+    <div class="roadmap-phase">
+        <h3>Phase 3: Optimization</h3>
+        <ul>
+            <li><strong>Advanced Automation</strong> - Full Infrastructure as Code implementation</li>
+            <li><strong>Continuous Optimization</strong> - Automated scaling and optimization</li>
+            <li><strong>Innovation Enablement</strong> - Prepare for emerging AWS services</li>
+        </ul>
+    </div>
+
+    <!-- Best Practices -->
+    <h2>Best Practices</h2>
+
+    <h3>Security</h3>
+    <div class="best-practice">
+        <h4>Implement Identity and Access Management (IAM) Best Practices</h4>
+        <p><strong>Category:</strong> Security<br>
+        <strong>Implementation:</strong> Use IAM roles, policies, and multi-factor authentication for secure access control<br>
+        <strong>Benefits:</strong> Reduces security risks by 70-80%<br>
+        <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html" class="aws-link" target="_blank">AWS IAM Best Practices Guide</a></p>
+    </div>
+
+    <div class="best-practice">
+        <h4>Enable Encryption at Rest and in Transit</h4>
+        <p><strong>Category:</strong> Security<br>
+        <strong>Implementation:</strong> Protect data using AWS KMS and SSL/TLS encryption<br>
+        <strong>Benefits:</strong> Ensures data protection compliance<br>
+        <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html" class="aws-link" target="_blank">AWS KMS Documentation</a></p>
+    </div>
+
+    <h3>Reliability</h3>
+    <div class="best-practice">
+        <h4>Implement Multi-AZ Deployments</h4>
+        <p><strong>Category:</strong> Reliability<br>
+        <strong>Implementation:</strong> Deploy resources across multiple Availability Zones for high availability<br>
+        <strong>Benefits:</strong> 99.99% availability SLA<br>
+        <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html" class="aws-link" target="_blank">AWS Multi-AZ Guide</a></p>
+    </div>
+
+    <h3>Performance Efficiency</h3>
+    <div class="best-practice">
+        <h4>Implement Caching Strategies</h4>
+        <p><strong>Category:</strong> Performance Efficiency<br>
+        <strong>Implementation:</strong> Use ElastiCache and CloudFront for improved performance<br>
+        <strong>Benefits:</strong> 50-90% performance improvement<br>
+        <a href="https://docs.aws.amazon.com/elasticache/" class="aws-link" target="_blank">AWS ElastiCache Documentation</a></p>
+    </div>
+
+    <h3>Cost Optimization</h3>
+    <div class="best-practice">
+        <h4>Right-size Your Resources</h4>
+        <p><strong>Category:</strong> Cost Optimization<br>
+        <strong>Implementation:</strong> Use AWS Cost Explorer and Trusted Advisor for optimization<br>
+        <strong>Benefits:</strong> 20-40% cost reduction<br>
+        <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html" class="aws-link" target="_blank">AWS Cost Explorer Guide</a></p>
+    </div>
+
+    <h3>Operational Excellence</h3>
+    <ul>
+        <li>Implement Infrastructure as Code</li>
+        <li>Automate deployment processes</li>
+        <li>Monitor operational metrics</li>
+    </ul>
+
+    <h3>Sustainability</h3>
+    <ul>
+        <li>Optimize resource utilization</li>
+        <li>Use managed services</li>
+        <li>Implement auto-scaling</li>
+    </ul>
+
+    <div class="metadata">
+        <hr>
+        <p><em>Generated by AWS Well-Architected Framework Assessment Tool</em></p>
+        <p><em>For more information about the AWS Well-Architected Framework, visit: <a href="https://aws.amazon.com/architecture/well-architected/" class="aws-link" target="_blank">https://aws.amazon.com/architecture/well-architected/</a></em></p>
+        <p><em>Report generated on: {{ timestamp | format_timestamp if timestamp else 'Not specified' }}</em></p>
+    </div>
+</body>
+</html>

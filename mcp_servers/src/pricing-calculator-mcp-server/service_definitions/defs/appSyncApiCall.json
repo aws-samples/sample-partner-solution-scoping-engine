@@ -1,0 +1,183 @@
+{
+  "version": "0.0.16",
+  "serviceName": "AppSync GraphQL API Requests",
+  "serviceCode": "appSyncApiCall",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "query",
+    "graphql",
+    "api"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appsync/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "appsync",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appsync/[currency]/current/appsync.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/appsync/"
+        }
+      },
+      "cards": [
+        {
+          "title": "API Request",
+          "helpText": "AppSync GraphQL API requests are either query operations to fetch data or mutation operations to create, update, and delete data.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appsync/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of API Requests",
+                "id": "noOfSearches",
+                "options": [
+                  {
+                    "label": "exact number",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "exact number",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the number of request"
+              },
+              {
+                "type": "pricing",
+                "id": "apiQueryModificationPrice",
+                "label": "Price for api query modicfication",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appsync",
+                "meteredUnit": {
+                  "allRegions": "API Query and Data Modifications Operations"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfSearches",
+                    "apiQueryModificationPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "apiqueryOperationCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of API Requests",
+                      "variableId": "noOfSearches",
+                      "variableUnitLabel": "searches",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Price for api query modicfication",
+                      "variableId": "apiQueryModificationPrice",
+                      "variableUnitLabel": "[currency] per GraphQL API request",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for query operation",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "apiqueryOperationCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total API Call Cost",
+                  "decimalPlaces": 4,
+                  "id": "apiTotalPrice",
+                  "subTotalRefer": "apiqueryOperationCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "apiquerydatamodification"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

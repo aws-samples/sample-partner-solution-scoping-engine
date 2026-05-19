@@ -1,0 +1,281 @@
+{
+  "version": "0.0.8",
+  "serviceName": "Contains PII",
+  "serviceCode": "containsPii",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Contains PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics"
+  ],
+  "serviceDescription": "With Amazon Comprehend, you only pay for what you use. You are charged based on the amount of text processed on a monthly basis. Amazon Comprehend provides natural language processing, topic modeling, and Custom Classification capabilities, enabling a broad range of applications that can analyze text.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehend",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehend/[currency]/current/comprehend.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Contains PII",
+          "helpText": "Contains PII tells you if a document contains sensitive information. You can choose to target specific PII such as name, address and SSN.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_2_CP"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerComments_sync_PII_cp",
+                "label": "Number of documents",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text documents to be analyzed",
+                "description": "Number of text documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerChars_sync_PII_cp",
+                "label": "Average characters in a document",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text document",
+                "description": "Average number of characters in each text document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_PII_Analysis",
+                "id": "piiAnalysis_cp",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Contains PII in text requests upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Contains PII in text requests from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "Processes Contains PII in text requests from 50M to 100M"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Contains PII in text requests over 100M"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Average characters in a document",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "CustomerChars_sync_PII_cp"
+                    },
+                    {
+                      "constant": 300,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "characters",
+                  "decimalPlaces": 2,
+                  "id": "minMaxsync_PII_cp"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "NLP requests are measured in units of 100 characters, with a 3 unit (300 character) minimum charge per document. Characters per document is",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "minValue": 0,
+                  "id": "variablesyncTest_PII_cp",
+                  "referLabel": "characters",
+                  "refer": "minMaxsync_PII_cp"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_sync_PII_cp",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "minMaxsync_PII_cp",
+                      "variableLabel": "characters",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    },
+                    {
+                      "variableId": "CustomerComments_sync_PII_cp",
+                      "variableLabel": "Number of documents",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_sync_PII_cp",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest_sync_PII_cp",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": false
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_sync_PII_cp",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_sync_PII_cp",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "units rounded up",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "unitsRounded_sync_PII_cp",
+                  "inputReferLabel": "units rounded up to nearest 1 unit",
+                  "tieredPricingRefer": "piiAnalysis_cp",
+                  "tieredPricingReferLabel": "Tierd_PII_Analysis",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 2,
+                  "id": "PII_Cost_cp",
+                  "outputUnitLabel": "[currency] for month"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_2_CP",
+                    "CustomerComments_sync_PII_cp",
+                    "CustomerChars_sync_PII_cp",
+                    "piiAnalysis_cp",
+                    "minMaxsync_PII_cp",
+                    "variablesyncTest_PII_cp",
+                    "unitsPerRequest_sync_PII_cp",
+                    "unitsChar_sync_PII_cp",
+                    "unitsRounded_sync_PII_cp",
+                    "PII_Cost_cp"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] for Contains PII",
+                  "decimalPlaces": 2,
+                  "id": "PIITotCost_cp",
+                  "subTotalRefer": "PII_Cost_cp"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

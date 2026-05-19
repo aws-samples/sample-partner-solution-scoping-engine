@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Well-Architected Framework Assessment Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #FF9900;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            color: #232F3E;
+            font-size: 24px;
+            margin: 0;
+        }
+        .date {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        h2 {
+            color: #232F3E;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #FF9900;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #FF9900;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        .critical-high {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .medium-priority {
+            color: #333;
+            font-weight: normal;
+        }
+        .low-priority {
+            color: #333;
+            font-weight: normal;
+        }
+        .score-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .score-item:last-child {
+            border-bottom: none;
+        }
+        .risk-medium {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+        }
+        .action-item {
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .action-item:last-child {
+            border-bottom: none;
+        }
+        .benefit-section {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .metrics-box {
+            background-color: #f0f8f0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .summary-stats {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #232F3E;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AWS Well-Architected Framework Assessment Report</h1>
+        <div class="date">Date: {{ timestamp | format_timestamp if timestamp else 'November 21, 2025' }}</div>
+
+    </div>
+
+    <h2>Executive Summary</h2>
+    <ul>
+        <li>Architecture {% if overall_score >= 80 %}demonstrates strong alignment{% elif overall_score >= 60 %}requires moderate improvements{% else %}requires significant improvements{% endif %}</li>
+        <li>{{ high_priority_actions|length if high_priority_actions else 0 }} critical issues identified</li>
+        <li>Current state: {% if overall_score >= 80 %}Mature cloud architecture with optimization opportunities{% elif overall_score >= 60 %}Developing cloud architecture requiring targeted improvements{% else %}Early-stage cloud architecture requiring significant improvements{% endif %}</li>
+        <li>AWS Services Identified: {{ document_analysis.aws_services|length if document_analysis and document_analysis.aws_services else 'Multiple core services' }}</li>
+        <li>Architecture Patterns: {{ document_analysis.architectural_patterns|length if document_analysis and document_analysis.architectural_patterns else 5 }}</li>
+        <li>Compliance Requirements: Standard AWS compliance</li>
+    </ul>
+
+    <h2>Risk Analysis & Current Scores</h2>
+    <ul>
+        <li><strong>Overall Business Risk Level</strong>: {% if overall_score >= 80 %}LOW{% elif overall_score >= 60 %}MEDIUM{% else %}HIGH{% endif %}</li>
+        <li><strong>Pillar Scores</strong>:</li>
+        {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        <li>{{ pillar_name.replace('_', ' ').title() }}: {{ "%.0f"|format(pillar_data.score) }}%</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Critical Findings & Priorities</h2>
+
+    {% set critical_issues = [] %}
+    {% set medium_issues = [] %}
+    {% set low_issues = [] %}
+    
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score < 50 %}
+            {% set _ = critical_issues.append((pillar_name, pillar_data.score)) %}
+        {% elif pillar_data.score < 70 %}
+            {% set _ = medium_issues.append((pillar_name, pillar_data.score)) %}
+        {% else %}
+            {% set _ = low_issues.append((pillar_name, pillar_data.score)) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if critical_issues %}
+    <h3 class="critical-high">Critical Priority Issues</h3>
+    <ul>
+        {% for pillar, score in critical_issues %}
+        <li class="critical-high">{{ pillar.replace('_', ' ').title() }} ({{ "%.0f"|format(score) }}%) - Immediate attention required</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if medium_issues %}
+    <h3>Medium Priority Issues</h3>
+    <ul>
+        {% for pillar, score in medium_issues %}
+        <li>{{ pillar.replace('_', ' ').title() }} ({{ "%.0f"|format(score) }}%) - {% if score < 60 %}Significant improvement opportunities{% else %}Notable improvement opportunities{% endif %}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if low_issues %}
+    <h3>Low Priority Issues</h3>
+    <ul>
+        {% for pillar, score in low_issues %}
+        <li>{{ pillar.replace('_', ' ').title() }} ({{ "%.0f"|format(score) }}%)</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h2>Action Plan</h2>
+
+    <h3>Immediate Actions (0-30 days)</h3>
+    <ol>
+        {% set immediate_actions_shown = 0 %}
+        {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score < 70 and pillar_data.recommendations and immediate_actions_shown < 6 %}
+            {% for rec in pillar_data.recommendations[0:2] %}
+            {% if immediate_actions_shown < 6 %}
+        <li><strong>{{ rec.title if rec.title else rec.get('title', 'Improve ' + pillar_name.replace('_', ' ').title()) }}</strong>: {{ rec.description if rec.description else rec.get('description', 'Implement best practices for this pillar') }}</li>
+            {% set immediate_actions_shown = immediate_actions_shown + 1 %}
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </ol>
+
+    <h3>Short-term Improvements (30-90 days)</h3>
+    <ol>
+        {% set short_term_actions_shown = 0 %}
+        {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score >= 50 and pillar_data.score < 80 and pillar_data.recommendations and short_term_actions_shown < 4 %}
+            {% for rec in pillar_data.recommendations[2:4] %}
+            {% if short_term_actions_shown < 4 %}
+        <li><strong>{{ rec.title if rec.title else rec.get('title', 'Improve ' + pillar_name.replace('_', ' ').title()) }}</strong>: {{ rec.description if rec.description else rec.get('description', 'Implement best practices for this pillar') }}</li>
+            {% set short_term_actions_shown = short_term_actions_shown + 1 %}
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </ol>
+
+    <h3>Long-term Initiatives (90+ days)</h3>
+    <ol>
+        {% set long_term_actions_shown = 0 %}
+        {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score < 80 and pillar_data.recommendations and long_term_actions_shown < 3 %}
+            {% for rec in pillar_data.recommendations[4:6] %}
+            {% if long_term_actions_shown < 3 %}
+        <li><strong>{{ rec.title if rec.title else rec.get('title', 'Improve ' + pillar_name.replace('_', ' ').title()) }}</strong>: {{ rec.description if rec.description else rec.get('description', 'Implement best practices for this pillar') }}</li>
+            {% set long_term_actions_shown = long_term_actions_shown + 1 %}
+            {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </ol>
+
+    <h2>Expected Benefits</h2>
+
+    <h3>Cost Benefits</h3>
+    <ul>
+        {% if pillar_assessments.cost_optimization.score < 70 %}
+        <li>{{ "%.0f"|format(100 - pillar_assessments.cost_optimization.score) }}-{{ "%.0f"|format(100 - pillar_assessments.cost_optimization.score + 10) }}% cost reduction through optimization</li>
+        <li>Automated cost monitoring and alerting</li>
+        <li>Right-sizing of {{ document_analysis.aws_services|length if document_analysis and document_analysis.aws_services else 'identified' }} AWS services</li>
+        {% else %}
+        <li>10-20% additional cost optimization opportunities</li>
+        <li>Enhanced cost monitoring and governance</li>
+        <li>Improved resource utilization efficiency</li>
+        {% endif %}
+    </ul>
+
+    <h3>Performance & Reliability Benefits</h3>
+    <ul>
+        {% if (pillar_assessments.get('performance_efficiency', {}).get('score', 100) < 70) or (pillar_assessments.get('reliability', {}).get('score', 100) < 70) %}
+        <li>Enhanced user experience through performance optimization</li>
+        <li>Improved scalability for {{ document_analysis.architectural_patterns|length if document_analysis and document_analysis.architectural_patterns else 'identified' }} architecture patterns</li>
+        <li>Reduced latency and improved response times</li>
+        <li>{{ "99.9" if (pillar_assessments.get('reliability', {}).get('score', 100) < 60) else "99.99" }}% availability SLA target</li>
+        {% else %}
+        <li>Optimized performance across all services</li>
+        <li>Enhanced scalability and elasticity</li>
+        <li>Minimal latency and maximum throughput</li>
+        <li>99.99%+ availability with disaster recovery</li>
+        {% endif %}
+    </ul>
+
+    <h3>Security Enhancements</h3>
+    <ul>
+        {% if pillar_assessments.get('security', {}).get('score', 100) < 70 %}
+        <li>Enhanced data protection and encryption</li>
+        <li>Improved compliance readiness for regulatory requirements</li>
+        <li>Significant reduction in security incidents and vulnerabilities</li>
+        <li>Strengthened access controls and monitoring</li>
+        {% else %}
+        <li>Advanced threat detection and response</li>
+        <li>Comprehensive compliance framework implementation</li>
+        <li>Proactive security monitoring and incident prevention</li>
+        <li>Zero-trust architecture principles</li>
+        {% endif %}
+    </ul>
+
+    <h2>Success Metrics</h2>
+    <ul>
+        <li><strong>Overall WAFR Score:</strong> Target {{ "%.0f"|format(overall_score + 15) if overall_score < 70 else "90" }}%+ within 90 days</li>
+        {% for pillar_name, pillar_data in pillar_assessments.items() %}
+        {% if pillar_data.score < 70 %}
+        <li><strong>{{ pillar_name.replace('_', ' ').title() }} Score:</strong> Target {{ "%.0f"|format(pillar_data.score + 20) }}%+ within {{ "30" if pillar_data.score < 50 else "60" }} days</li>
+        {% endif %}
+        {% endfor %}
+        {% if pillar_assessments.get('cost_optimization', {}).get('score', 100) < 70 %}
+        <li><strong>Cost Optimization:</strong> Target {{ "%.0f"|format(100 - pillar_assessments.get('cost_optimization', {}).get('score', 70)) }}-{{ "%.0f"|format(100 - pillar_assessments.get('cost_optimization', {}).get('score', 70) + 10) }}% reduction</li>
+        {% endif %}
+        {% if pillar_assessments.get('performance_efficiency', {}).get('score', 100) < 70 %}
+        <li><strong>Performance Improvement:</strong> Target {{ "%.0f"|format(50 - (pillar_assessments.get('performance_efficiency', {}).get('score', 70) - 50)) }}% response time improvement</li>
+        {% endif %}
+        {% if pillar_assessments.get('reliability', {}).get('score', 100) < 70 %}
+        <li><strong>Availability Target:</strong> {{ "99.9" if pillar_assessments.get('reliability', {}).get('score', 100) < 60 else "99.95" }}%+ uptime within 60 days</li>
+        {% endif %}
+    </ul>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 12px;">
+        <p><em>Generated by AWS Well-Architected Framework Assessment Tool</em></p>
+        <p><em>For more information: <a href="https://aws.amazon.com/architecture/well-architected/" target="_blank">https://aws.amazon.com/architecture/well-architected/</a></em></p>
+    </div>
+</body>
+</html>

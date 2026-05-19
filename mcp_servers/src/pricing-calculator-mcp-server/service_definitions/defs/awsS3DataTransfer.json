@@ -1,0 +1,185 @@
+{
+  "version": "0.0.30",
+  "serviceName": "Data Transfer",
+  "serviceCode": "awsS3DataTransfer",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ca-central-1",
+    "me-south-1",
+    "me-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/ec2/pricing/on-demand/#Data_Transfer",
+      "overrides": {
+        "aws-cn": "https://www.amazonaws.cn/en/ec2/pricing/#Data_Transfer"
+      }
+    }
+  },
+  "serviceDescription": {
+    "aws": "The cost of transferring data at AWS for services without unique transfer costs.",
+    "aws-cn": "The cost of transferring data at Amazon for services without unique transfer costs.",
+    "aws-us-gov": "The cost of transferring data at AWS for services without unique transfer costs."
+  },
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    },
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "templates": [
+    {
+      "description": "Data transfer is used for transfer between different services and the charges apply for data transfer into the region, out of the region and with in the region.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ec2/pricing/on-demand/#Data_Transfer",
+          "overrides": {
+            "aws-cn": "https://www.amazonaws.cn/en/s3/pricing/"
+          }
+        }
+      },
+      "excludeRegion": [],
+      "cards": [
+        {
+          "title": "Data Transfer",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/on-demand/#Data_Transfer",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/s3/pricing/"
+              }
+            }
+          },
+          "cardType": "dataTransferV2",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "OUTBOUND"
+                ],
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Standard Storage First 50 TB per GB Mo"
+                },
+                "label": "pricing s3",
+                "id": "s3MUForRegions"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "_generated_0",
+                  "refer": [
+                    "dataTransfer",
+                    "s3MUForRegions"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": false,
+                  "id": "_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "_generated_2",
+                  "refer": [
+                    "_generated_1"
+                  ],
+                  "subTotalRefer": "_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "awsS3DataTransfer"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

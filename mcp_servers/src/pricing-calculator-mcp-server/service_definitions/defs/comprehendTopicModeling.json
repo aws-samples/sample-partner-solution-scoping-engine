@@ -1,0 +1,307 @@
+{
+  "version": "0.0.14",
+  "serviceName": "Topic Modeling",
+  "serviceCode": "comprehendTopicModeling",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "us-iso-east-1"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics"
+  ],
+  "serviceDescription": "With Amazon Comprehend, you only pay for what you use. You are charged based on the amount of text processed on a monthly basis. Amazon Comprehend provides natural language processing, topic modeling, and Custom Classification capabilities, enabling a broad range of applications that can analyze text.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehend",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehend/[currency]/current/comprehend.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Topic Modeling",
+          "helpText": "Topic Modeling identifies relevant terms or topics from a collection of documents stored in Amazon S3. It will identify the most common topics in the collection and organize them in groups and then map which documents belong to which topic.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/comprehend/pricing/"
+              }
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "documentSize",
+                "label": "Documents size per job",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter Document Size",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "jobsPerMonth",
+                "label": "Jobs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of jobs per month",
+                "description": "Number of Jobs per month"
+              },
+              {
+                "type": "pricing",
+                "id": "topicFlatRate",
+                "label": "Megabytes billed at a flat rate",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "comprehend",
+                "meteredUnit": {
+                  "allRegions": "Topic Modeling Comprehend-DetectTopic-Fixed"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "topicPerMbRate",
+                "label": "Billed at PerMb",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "comprehend",
+                "meteredUnit": {
+                  "allRegions": "Topic Modeling Comprehend-DetectTopic-PerMB"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalStoragePerMonth",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "documentSize",
+                      "variableLabel": "Documents size per job",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "jobsPerMonth",
+                      "variableLabel": "Jobs per month",
+                      "variableUnitLabel": "jobs",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MB per month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Flat price for first 100MB",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Megabytes billed at a flat rate",
+                  "id": "flatMbCharge",
+                  "refer": "topicFlatRate"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "mbBilledatPerMb",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "totalStoragePerMonth",
+                      "variableLabel": "MB per month",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "MB"
+                    }
+                  ],
+                  "outputUnitLabel": "billable MB",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable MB",
+                      "variableUnitLabel": "MB",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "mbBilledatPerMb"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "MB"
+                    }
+                  ],
+                  "outputUnitLabel": "MB (billable)",
+                  "decimalPlaces": 4,
+                  "id": "mbBilledatPerMb_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "mbBilledatPerMb_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "mbBilledatPerMb_1",
+                      "variableLabel": "MB (billable)",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "topicPerMbRate",
+                      "variableLabel": "Billed at PerMb",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TopicCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "mbBilledatPerMb_2",
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "flatMbCharge",
+                      "variableLabel": "Flat price for first 100MB",
+                      "variableUnitLabel": "[currency] flat price for first 100MB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for topic modeling",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1",
+                    "documentSize",
+                    "jobsPerMonth",
+                    "topicFlatRate",
+                    "topicPerMbRate",
+                    "totalStoragePerMonth",
+                    "flatMbCharge",
+                    "mbBilledatPerMb",
+                    "mbBilledatPerMb_1",
+                    "mbBilledatPerMb_2",
+                    "TopicCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] for topic modeling",
+                  "decimalPlaces": 4,
+                  "id": "topicModelingTotCost",
+                  "subTotalRefer": "TopicCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-us-gov"
+  ]
+}

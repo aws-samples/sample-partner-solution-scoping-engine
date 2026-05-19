@@ -1,0 +1,1687 @@
+{
+  "version": "0.0.21",
+  "serviceName": "WorkSpaces Pools",
+  "serviceCode": "workSpacesPools",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "displayAutomation": true,
+  "searchKeywords": [
+    "pools",
+    "appstream"
+  ],
+  "serviceDescription": "WorkSpaces Pools offers non-persistent virtual desktops, tailored for users who need access to highly-curated desktop environments hosted on ephemeral infrastructure.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/Pools2/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "workspaces",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workspaces/[currency]/current/workspaces.json"
+    },
+    {
+      "mappingDefinitionName": "workspaces-pools-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workspaces/[currency]/current/workspaces-pools-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "WorkSpacesPools",
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "Service Settings",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/workspaces-family/workspaces/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Fleet type",
+                "id": "PoolsFleet_instancePriceModel",
+                "options": [
+                  {
+                    "label": "On-Demand fleet",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "0",
+                "description": "Choose the fleet type."
+              },
+              {
+                "label": "WorkSpaces Pools Bundles",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "workspaces-pools-calc",
+                "calculationId": {
+                  "hourly": "WorkSpacesPools_ipmPrice"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Bundle": [
+                    "vCPU",
+                    "Memory",
+                    "rootVolume"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System",
+                  "License"
+                ],
+                "prioritizedKey": {
+                  "Bundle": 2401,
+                  "License": 343,
+                  "vCPU": 49,
+                  "Memory": 7
+                },
+                "row": [
+                  {
+                    "label": "Product",
+                    "type": "dropDown",
+                    "selectorId": "Product Family",
+                    "defaultValue": "Enterprise Applications",
+                    "exportValueAs": "productFamily"
+                  },
+                  {
+                    "label": "Bundle",
+                    "type": "autoSuggest",
+                    "displayLabel": "Bundle",
+                    "selectorId": "Bundle",
+                    "defaultValue": "Value",
+                    "withTags": [
+                      "vCPU",
+                      "Memory",
+                      "rootVolume"
+                    ]
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "Windows",
+                    "exportValueAs": "operatingSystem"
+                  },
+                  {
+                    "label": "License",
+                    "type": "dropDown",
+                    "dependent": "Operating System",
+                    "selectorId": "License",
+                    "defaultValue": "Included",
+                    "exportValueAs": "license"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "workspaces",
+                    "meteredUnit": "HT9L5OJl0zNlLg8Y6OplEKylrecxp749DJhUb6Ex5KM"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of users per month",
+                "id": "Pools_numberOfUsers",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "Total number of unique users launching WorkSpaces Pools in a month."
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Price per user",
+                "id": "Pools_userPrice",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "HT9L5OJl0zNlLg8Y6OplEKylrecxp749DJhUb6Ex5KM"
+                }
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "workspaces",
+                    "meteredUnit": "HT9L5OJl0zNlLg8Y6OplEKylrecxp749DJhUb6Ex5KM"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of working hours per day",
+                "id": "Pools_numberOfWorkingHours",
+                "displayInConfigSummary": false,
+                "defaultValue": 24,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": "",
+                "description": "The maximum number of hours per day that WorkSpaces Pools may be used."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "workspaces",
+                    "meteredUnit": "HT9L5OJl0zNlLg8Y6OplEKylrecxp749DJhUb6Ex5KM"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentBuffer",
+                "label": "Buffer capacity as % of concurrency",
+                "description": "Specify the percent of concurrency to maintain as buffer capacity. Buffer capacity ensures new users have an instance available.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": "10",
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price stop instance",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "NJ-hkEkh5V1OOs-3d-Y4MV4l7guLZox_BgPFPLl2eGk"
+                },
+                "id": "Pools_stopPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": []
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "Usage Pattern",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/Pools2/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Weekday usage",
+                "id": "usageWDheaderText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Days in week",
+                "description": "Number of working days in a week.",
+                "id": "daysInWD",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 7
+                },
+                "defaultValue": 0,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Peak duration (hours) per day",
+                "id": "PoolsFleet_utilization1",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": " ",
+                "description": "Number of peak hours in a day."
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "'Peak duration (hours) per day' can't exceed 'Number of working hours per day'.",
+                "label": "Peak duration exceed working hours alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "PeakDurationAlertWD",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "peak duration alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "difference between working hours and peak duration (weekday)",
+                        "variableId": "DiffWorkingPeakHoursWD"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Peak duration exceed working hours alert",
+                        "variableId": "PeakDurationAlertWD"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplayPeakWD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average off-peak concurrent users per hour",
+                "description": "Number of concurrent users during off-peak hours.",
+                "id": "baselineUsersPerHourWD",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "type": "component",
+                      "id": "Pools_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorBase"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average peak concurrent users per hour",
+                "id": "peakUsersPerHourWD",
+                "description": "Number of concurrent users during peak hours.",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "peakUsersPerHourWD"
+                    },
+                    {
+                      "type": "component",
+                      "id": "Pools_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of peak concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorPeak"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Weekend usage",
+                "id": "usageWEheaderText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Days in weekend",
+                "description": "Number of working days in a weekend.",
+                "id": "daysInWE",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 7
+                },
+                "defaultValue": 0,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Total days in a week can not exceed 7 days.",
+                "label": "total days alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "totalDaysAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "total days alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total days in a week",
+                        "variableId": "TotalDaysInWeek"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "7"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "total days alert",
+                        "variableId": "totalDaysAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Peak duration (hours) per day ",
+                "id": "PoolsFleet_utilization2",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": " ",
+                "description": "Number of peak hours in a weekend."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average off-peak concurrent users per hour ",
+                "description": "Number of concurrent users during off-peak hours in a weekend.",
+                "id": "baselineUsersPerHourWE",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "type": "component",
+                      "id": "Pools_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorBaseWE"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average peak concurrent users per hour ",
+                "id": "peakUsersPerHourWE",
+                "description": "Number of concurrent users during peak hours in a weekend.",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "peakUsersPerHourWE"
+                    },
+                    {
+                      "type": "component",
+                      "id": "Pools_numberOfUsers"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Number of users",
+                "label": "info alert",
+                "content": "Number of concurrent users cannot be greater than total number of users per month.",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "usersErrorPeakWE"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "'Peak duration (hours) per day' can't exceed 'Number of working hours per day'.",
+                "label": "Peak duration exceed working hours alert ",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "PeakDurationAlertWE",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "peak duration alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "difference between working hours and peak duration (weekend)",
+                        "variableId": "DiffWorkingPeakHoursWE"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Peak duration exceed working hours alert ",
+                        "variableId": "PeakDurationAlertWE"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplayPeakWE"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "usageWDheaderText",
+                    "daysInWD",
+                    "PoolsFleet_utilization1",
+                    "PeakDurationAlertWD",
+                    "alertDisplayPeakWD",
+                    "baselineUsersPerHourWD",
+                    "usersErrorBase",
+                    "peakUsersPerHourWD",
+                    "usersErrorPeak",
+                    "usageWEheaderText",
+                    "daysInWE",
+                    "totalDaysAlert",
+                    "alertDisplay",
+                    "PoolsFleet_utilization2",
+                    "baselineUsersPerHourWE",
+                    "usersErrorBaseWE",
+                    "peakUsersPerHourWE",
+                    "usersErrorPeakWE",
+                    "PeakDurationAlertWE",
+                    "alertDisplayPeakWE"
+                  ],
+                  "id": "PoolsFleet_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "license"
+                          },
+                          "Included"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "user licences fee for commercial",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users per month",
+                      "variableUnitLabel": "User(s)",
+                      "required": true,
+                      "variableId": "Pools_numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "Price per user",
+                      "variableUnitLabel": "[currency] per user",
+                      "required": true,
+                      "variableId": "Pools_userPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (user licences per month)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_userLicenseCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "User license cost (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "user licences fee for commercial",
+                  "id": "Pools_userLicenseCostDisplay",
+                  "refer": "Pools_userLicenseCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "daysInWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total days in a week",
+                  "decimalPlaces": 2,
+                  "id": "TotalDaysInWeek"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Pools_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Peak duration (hours) per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "PoolsFleet_utilization1"
+                    }
+                  ],
+                  "outputUnitLabel": "difference between working hours and peak duration (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "DiffWorkingPeakHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Pools_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Peak duration (hours) per day ",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "PoolsFleet_utilization2"
+                    }
+                  ],
+                  "outputUnitLabel": "difference between working hours and peak duration (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "DiffWorkingPeakHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "variableName": "Peak duration (weekday)",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak duration (hours) per day",
+                      "variableUnitLabel": "hours peak duration per day",
+                      "required": true,
+                      "variableId": "PoolsFleet_utilization1"
+                    },
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "peak hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyPeakHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "monthly working hours (weekday)",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "working hours per day",
+                      "required": true,
+                      "variableId": "Pools_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Days in week",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWD"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "working hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyWorkingHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "monthly working hours (weekday)",
+                      "variableUnitLabel": "working hours per month (weekday)",
+                      "required": true,
+                      "variableId": "MonthlyWorkingHoursWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month (weekday)",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineHoursPerMonthWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month (weekday)",
+                      "required": true,
+                      "variableId": "Pools_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineInstanceHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakInstanceHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak instance hours (weekday)",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "Pools_baselineInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekday)",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "Pools_peakInstanceHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "total weekday hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "Pools_totalUserHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekday hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total weekday hours utilized per month",
+                  "id": "Pools_totalUserHoursWDDisplay",
+                  "refer": "Pools_totalUserHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per peak hour (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakBufferInstancesWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekday)",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "Pools_peakBufferInstancesWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s)",
+                  "id": "Pools_peakBufferInstancesRoundedWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "Pools_peakBufferInstancesRoundedWD"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekday)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakBufferInstanceHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWD"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per off-peak hour (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineBufferInstancesWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekday)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "Pools_baselineBufferInstancesWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s)",
+                  "id": "Pools_baselineBufferInstancesRoundedWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "Pools_baselineBufferInstancesRoundedWD"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekday)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "Pools_baselineHoursPerMonthWD"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineBufferInstanceHoursWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekday)",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "Pools_baselineBufferInstanceHoursWD"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekday)",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "Pools_peakBufferInstanceHoursWD"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month (weekday)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_bufferHoursPerMonthWD"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "PoolsFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekday buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month (weekday)",
+                  "id": "Pools_bufferHoursPerMonth_WD_Display",
+                  "refer": "Pools_bufferHoursPerMonthWD"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "variableName": "Peak duration (weekend)",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak duration (hours) per day ",
+                      "variableUnitLabel": "hours peak duration per day",
+                      "required": true,
+                      "variableId": "PoolsFleet_utilization2"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWE"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks(730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "peak hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyPeakHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "monthly working hours (weekend)",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of working hours per day",
+                      "variableUnitLabel": "working hours per day",
+                      "required": true,
+                      "variableId": "Pools_numberOfWorkingHours"
+                    },
+                    {
+                      "variableLabel": "Days in weekend",
+                      "variableUnitLabel": "days",
+                      "required": true,
+                      "variableId": "daysInWE"
+                    },
+                    {
+                      "constant": 4.35,
+                      "constantUnitLabel": "weeks (730 hours in a month / 168 hours in a week)"
+                    }
+                  ],
+                  "outputUnitLabel": "working hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "MonthlyWorkingHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "monthly working hours (weekend)",
+                      "variableUnitLabel": "working hours per month (weekend)",
+                      "required": true,
+                      "variableId": "MonthlyWorkingHoursWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month (weekend)",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineHoursPerMonthWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour ",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month (weekend)",
+                      "required": true,
+                      "variableId": "Pools_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineInstanceHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "isZeroValid": true,
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour ",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakInstanceHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak instance hours (weekend)",
+                      "variableUnitLabel": "off-peak instance hours per month",
+                      "required": false,
+                      "variableId": "Pools_baselineInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "peak instance hours (weekend)",
+                      "variableUnitLabel": "peak instance hours per month",
+                      "required": false,
+                      "variableId": "Pools_peakInstanceHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total weekend hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "Pools_totalUserHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekend hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total weekend hours utilized per month",
+                  "id": "Pools_totalUserHoursWEDisplay",
+                  "refer": "Pools_totalUserHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average peak concurrent users per hour ",
+                      "variableUnitLabel": "peak user(s) per hour",
+                      "required": true,
+                      "variableId": "peakUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per peak hour (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakBufferInstancesWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per peak hour (weekend)",
+                      "variableUnitLabel": "peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "Pools_peakBufferInstancesWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance(s) ",
+                  "id": "Pools_peakBufferInstancesRoundedWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "peak buffer instance(s) ",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "Pools_peakBufferInstancesRoundedWE"
+                    },
+                    {
+                      "variableLabel": "Peak duration (weekend)",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": true,
+                      "variableId": "MonthlyPeakHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "peak buffer instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_peakBufferInstanceHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average off-peak concurrent users per hour ",
+                      "variableUnitLabel": "off-peak user(s) per hour",
+                      "required": true,
+                      "variableId": "baselineUsersPerHourWE"
+                    },
+                    {
+                      "variableLabel": "Buffer capacity as % of concurrency",
+                      "variableUnitLabel": "buffer factor",
+                      "required": true,
+                      "variableId": "percentBuffer"
+                    }
+                  ],
+                  "outputUnitLabel": "buffer instance(s) per off-peak hour (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineBufferInstancesWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "buffer instance(s) per off-peak hour (weekend)",
+                      "variableUnitLabel": "off-peak buffer instance(s)",
+                      "required": true,
+                      "variableId": "Pools_baselineBufferInstancesWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance(s)",
+                  "id": "Pools_baselineBufferInstancesRoundedWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "isZeroValid": true,
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance(s)",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "Pools_baselineBufferInstancesRoundedWE"
+                    },
+                    {
+                      "variableLabel": "off-peak hours per month (weekend)",
+                      "variableUnitLabel": "off-peak hours per month",
+                      "required": true,
+                      "variableId": "Pools_baselineHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "off-peak buffer instance hours (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_baselineBufferInstanceHoursWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "off-peak buffer instance hours (weekend)",
+                      "variableUnitLabel": "buffer hours (off-peak)",
+                      "required": false,
+                      "variableId": "Pools_baselineBufferInstanceHoursWE"
+                    },
+                    {
+                      "variableLabel": "peak buffer instance hours (weekend)",
+                      "variableUnitLabel": "buffer hours (peak)",
+                      "required": false,
+                      "variableId": "Pools_peakBufferInstanceHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month (weekend)",
+                  "decimalPlaces": 2,
+                  "id": "Pools_bufferHoursPerMonthWE"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "PoolsFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total weekend buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month (weekend)",
+                  "id": "Pools_bufferHoursPerMonth_WE_Display",
+                  "refer": "Pools_bufferHoursPerMonthWE"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total weekday hours utilized per month",
+                      "variableUnitLabel": "total hours utilized (weekday)",
+                      "required": false,
+                      "variableId": "Pools_totalUserHoursWD"
+                    },
+                    {
+                      "variableLabel": "total weekend hours utilized per month",
+                      "variableUnitLabel": "total hours utilized (weekend)",
+                      "required": false,
+                      "variableId": "Pools_totalUserHoursWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total hours utilized per month",
+                  "decimalPlaces": 2,
+                  "id": "Pools_totalUserHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total hours utilized (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total hours utilized per month",
+                  "id": "Pools_totalUserHoursDisplay",
+                  "refer": "Pools_totalUserHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total buffer hours per month (weekday)",
+                      "variableUnitLabel": "total buffer hours (weekday)",
+                      "required": false,
+                      "variableId": "Pools_bufferHoursPerMonthWD"
+                    },
+                    {
+                      "variableLabel": "total buffer hours per month (weekend)",
+                      "variableUnitLabel": "total buffer hours (weekend)",
+                      "required": false,
+                      "variableId": "Pools_bufferHoursPerMonthWE"
+                    }
+                  ],
+                  "outputUnitLabel": "total buffer hours per month",
+                  "decimalPlaces": 2,
+                  "id": "Pools_bufferHoursPerMonth"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "PoolsFleet_instancePriceModel"
+                          },
+                          "0"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total buffer hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total buffer hours per month",
+                  "id": "Pools_bufferHoursPerMonthDisplay",
+                  "refer": "Pools_bufferHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "total hours utilized per month",
+                      "variableUnitLabel": "utilized instance hours",
+                      "required": false,
+                      "variableId": "Pools_totalUserHours"
+                    },
+                    {
+                      "variableLabel": "total buffer hours per month",
+                      "variableUnitLabel": "buffer hours",
+                      "required": false,
+                      "variableId": "Pools_bufferHoursPerMonth"
+                    }
+                  ],
+                  "outputUnitLabel": "total instance hours per month",
+                  "decimalPlaces": 2,
+                  "id": "Pools_totalInstanceHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total instance hours (per month)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total instance hours per month",
+                  "id": "Pools_totalInstanceHoursPerMonthDisplay",
+                  "refer": "Pools_totalInstanceHoursPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "selected fleet instance price",
+                  "id": "fleet_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "WorkSpacesPools_ipmPrice"
+                  ],
+                  "subTotalRefer": "WorkSpacesPools_ipmPrice"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "PoolsFleet_instancePriceModel"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "On-Demand fleet instances cost",
+                  "operands": [
+                    {
+                      "variableId": "Pools_totalUserHours",
+                      "variableLabel": "total hours utilized per month",
+                      "variableUnitLabel": "active streaming hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "selected fleet instance price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "WorkSpacesPools_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for active On-Demand fleet instance streaming",
+                  "decimalPlaces": 2,
+                  "id": "PoolsFleet_activeOnDemandFleetCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "PoolsFleet_instancePriceModel"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Stopped On-Demand fleet instances cost",
+                  "operands": [
+                    {
+                      "variableId": "Pools_bufferHoursPerMonth",
+                      "variableLabel": "total buffer hours per month",
+                      "variableUnitLabel": "Stopped (buffer) hours per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price stop instance",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "Pools_stopPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for stopped On-Demand fleet instances",
+                  "decimalPlaces": 2,
+                  "id": "PoolsFleet_stoppedOnDemandFleetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total On-Demand fleet instance cost per month",
+                  "operands": [
+                    {
+                      "variableId": "PoolsFleet_activeOnDemandFleetCost",
+                      "variableLabel": "On-Demand fleet instances cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "PoolsFleet_stoppedOnDemandFleetCost",
+                      "variableLabel": "Stopped On-Demand fleet instances cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "PoolsFleet_OnDemandFleetCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total fleet instance cost per month",
+                  "operands": [
+                    {
+                      "variableId": "Pools_userLicenseCost",
+                      "variableLabel": "user licences fee for commercial",
+                      "variableUnitLabel": "[currency] (user licences per month) ",
+                      "required": false
+                    },
+                    {
+                      "variableId": "PoolsFleet_OnDemandFleetCost",
+                      "variableLabel": "Total On-Demand fleet instance cost per month",
+                      "variableUnitLabel": "[currency] (On-Demand fleet instances)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "PoolsFleet_totalFleetCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Pools_userLicenseCost",
+                    "Pools_userLicenseCostDisplay",
+                    "TotalDaysInWeek",
+                    "DiffWorkingPeakHoursWD",
+                    "DiffWorkingPeakHoursWE",
+                    "MonthlyPeakHoursWD",
+                    "MonthlyWorkingHoursWD",
+                    "Pools_baselineHoursPerMonthWD",
+                    "Pools_baselineInstanceHoursWD",
+                    "Pools_peakInstanceHoursWD",
+                    "Pools_totalUserHoursWD",
+                    "Pools_totalUserHoursWDDisplay",
+                    "Pools_peakBufferInstancesWD",
+                    "Pools_peakBufferInstancesRoundedWD",
+                    "Pools_peakBufferInstanceHoursWD",
+                    "Pools_baselineBufferInstancesWD",
+                    "Pools_baselineBufferInstancesRoundedWD",
+                    "Pools_baselineBufferInstanceHoursWD",
+                    "Pools_bufferHoursPerMonthWD",
+                    "Pools_bufferHoursPerMonth_WD_Display",
+                    "MonthlyPeakHoursWE",
+                    "MonthlyWorkingHoursWE",
+                    "Pools_baselineHoursPerMonthWE",
+                    "Pools_baselineInstanceHoursWE",
+                    "Pools_peakInstanceHoursWE",
+                    "Pools_totalUserHoursWE",
+                    "Pools_totalUserHoursWEDisplay",
+                    "Pools_peakBufferInstancesWE",
+                    "Pools_peakBufferInstancesRoundedWE",
+                    "Pools_peakBufferInstanceHoursWE",
+                    "Pools_baselineBufferInstancesWE",
+                    "Pools_baselineBufferInstancesRoundedWE",
+                    "Pools_baselineBufferInstanceHoursWE",
+                    "Pools_bufferHoursPerMonthWE",
+                    "Pools_bufferHoursPerMonth_WE_Display",
+                    "Pools_totalUserHours",
+                    "Pools_totalUserHoursDisplay",
+                    "Pools_bufferHoursPerMonth",
+                    "Pools_bufferHoursPerMonthDisplay",
+                    "Pools_totalInstanceHoursPerMonth",
+                    "Pools_totalInstanceHoursPerMonthDisplay",
+                    "fleet_priceVariable",
+                    "PoolsFleet_activeOnDemandFleetCost",
+                    "PoolsFleet_stoppedOnDemandFleetCost",
+                    "PoolsFleet_OnDemandFleetCost",
+                    "PoolsFleet_totalFleetCost"
+                  ],
+                  "IPMSupported": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "label": "WorkSpaces Pools cost",
+                  "id": "Pools_fleetCostDisplay",
+                  "decimalPlaces": 4,
+                  "subTotalRefer": "PoolsFleet_totalFleetCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,841 @@
+{
+  "version": "0.0.43",
+  "serviceName": "AWS Deadline Cloud",
+  "serviceCode": "awsDeadlineCloud",
+  "slug": "AWS-Deadline-cloud",
+  "type": "AWSService",
+  "searchKeywords": [
+    "Amazon Deadline Cloud",
+    "Amazon Deadline",
+    "Deadline",
+    "AWS DeadlineCloud",
+    "AWS Deadline Cloud",
+    "License",
+    "Instance"
+  ],
+  "serviceDescription": "AWS Deadline Cloud is a fully managed service that simplifies render management for teams creating computer-generated 2D/3D graphics and visual effects for films, TV shows, commercials, games, and industrial design. With Deadline Cloud, you can set up, deploy, and scale rendering projects in minutes, so you can improve the efficiency of your rendering pipelines and take on more projects.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "deadline-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/deadline/[currency]/current/deadline-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "deadline",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/deadline/[currency]/current/deadline.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/Deadline-cloud/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service-managed fleets - Spot Instances",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/deadline-cloud/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "See On-Demand and Spot instance prices in calculations below. Spot instance price fluctuates. Typical Spot instance cost is 30% of On-Demand.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "spot_info"
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "Spot instances cost",
+                "mappingDefinitionName": "deadline-calc",
+                "disableCalculation": true,
+                "calculationId": {
+                  "hourly": "spot_ipm_price"
+                },
+                "prioritizedKey": {
+                  "Instance Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Number of Instance",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000,
+                      "required": false
+                    },
+                    "defaultValue": "",
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Operating System",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "dependent": "Instance Type",
+                    "exportValueAs": "operatingSystem"
+                  }
+                ],
+                "id": "columnFormIPM2"
+              },
+              {
+                "id": "monthlyUtilization",
+                "type": "input",
+                "subType": "utilization",
+                "label": "Monthly utilization",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": false,
+                "defaultValue": 100,
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per worker",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.1,
+                  "maxValue": 2147483647
+                },
+                "defaultValue": 250,
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "storagePerWorkerSpot"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per GB of storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "deadline",
+                "meteredUnit": {
+                  "allRegions": "eEHyxBAShGmfmia187ulqwLmHS8I3v-jZjBSTCtz9_E"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "storage_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions inputs",
+                  "refer": [
+                    "spot_info",
+                    "columnFormIPM2",
+                    "monthlyUtilization",
+                    "storagePerWorkerSpot",
+                    "storage_price"
+                  ],
+                  "id": "unitConvertExecutions",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Deadline Cloud Instance Hourly Rate",
+                  "id": "DeadlineCloudInstance_hourlyRate",
+                  "decimalPlaces": 4,
+                  "IPMSupported": true,
+                  "refer": "spot_ipm_price",
+                  "subTotalRefer": "spot_ipm_price"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SpotHourlyRate",
+                  "variableName": "Spot Hourly Rate",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Deadline Cloud Instance Hourly Rate",
+                      "variableUnitLabel": "[currency] hourly On-Demand price per instance",
+                      "required": true,
+                      "variableId": "DeadlineCloudInstance_hourlyRate"
+                    },
+                    {
+                      "constant": 0.3,
+                      "constantUnitLabel": "estimated Spot cost as a percentage of On-Demand"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (estimated Hourly Spot price per instance)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SpotInstanceCost",
+                  "variableName": "Spot Instance Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Instance",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "count",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Monthly utilization",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "monthlyUtilization"
+                    },
+                    {
+                      "variableLabel": "Spot Hourly Rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SpotHourlyRate"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Spot Instance cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SpotStorageCost",
+                  "variableName": "Total Storage Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Instance",
+                      "variableUnitLabel": "worker(s)",
+                      "required": true,
+                      "variableId": "count",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Storage per worker",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storagePerWorkerSpot"
+                    },
+                    {
+                      "variableLabel": "Price per GB of storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storage_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalSpotCost",
+                  "variableName": "Total Spot Instance Cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Spot Instance Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SpotInstanceCost"
+                    },
+                    {
+                      "variableLabel": "Total Storage Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SpotStorageCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DeadlineCloudInstance_hourlyRate",
+                    "SpotHourlyRate",
+                    "SpotInstanceCost",
+                    "SpotStorageCost",
+                    "TotalSpotCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Spot cost",
+                  "decimalPlaces": 2,
+                  "id": "storageDisplay",
+                  "subTotalRefer": "TotalSpotCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Service-managed fleets - On Demand Instances",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/deadline-cloud/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "On-Demand instances cost",
+                "mappingDefinitionName": "deadline-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Instance Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Number of Instance",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 10000000,
+                      "required": false
+                    },
+                    "defaultValue": "",
+                    "exportValueAs": "count_1"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut1",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances."
+                  },
+                  {
+                    "label": "Operating System",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "dependent": "Instance Type",
+                    "exportValueAs": "operatingSystem"
+                  }
+                ],
+                "id": "columnFormIPM3"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per worker",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": "250",
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "storagePerWorker"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "columnFormIPM3",
+                    "storagePerWorker"
+                  ],
+                  "id": "deadline_generated_1",
+                  "subTotalRefer": "TotalSpotCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "On Demand Instance cost",
+                  "decimalPlaces": 2,
+                  "id": "ondemand_instance_cost",
+                  "subTotalRefer": "monthly_ipm",
+                  "IPMSupported": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "OnDemandStorageCost",
+                  "variableName": "Total Storage Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage per worker",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storagePerWorker"
+                    },
+                    {
+                      "variableLabel": "Number of Instance",
+                      "variableUnitLabel": "worker(s)",
+                      "required": true,
+                      "variableId": "count_1",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Price per GB of storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storage_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "OnDemandStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "onDemandStorageDisplay",
+                  "subTotalRefer": "OnDemandStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Customer-managed fleets - Workers",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/deadline-cloud/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of workers active in your fleet",
+                "id": "numberOfWorkers3",
+                "description": "",
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 7500
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Utilization",
+                "options": [
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "defaultValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 720
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "worker_utilization3"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per connected worker",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "deadline",
+                "meteredUnit": {
+                  "allRegions": "ruCC-y_RurLdo-FbZY-IXXbi7XABSwFASefXhamtRbs"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "connected_worker_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "_generated_3",
+                  "refer": [
+                    "numberOfWorkers3",
+                    "worker_utilization3",
+                    "connected_worker_price"
+                  ],
+                  "subTotalRefer": "OnDemandStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalWorkerCost",
+                  "variableName": "Total Worker Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workers active in your fleet",
+                      "variableUnitLabel": "workers",
+                      "required": true,
+                      "variableId": "numberOfWorkers3"
+                    },
+                    {
+                      "variableLabel": "Utilization",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "worker_utilization3"
+                    },
+                    {
+                      "variableLabel": "Price per connected worker",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "connected_worker_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] worker cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "TotalWorkerCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Worker cost",
+                  "decimalPlaces": 2,
+                  "id": "customer_managed_fleets_total_cost",
+                  "subTotalRefer": "TotalWorkerCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Usage-based Licensing",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/deadline-cloud/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "description": "",
+                "label": "License Product",
+                "id": "LicenseProduct",
+                "options": [
+                  {
+                    "label": "3ds Max",
+                    "id": "xlclZu5wgYAMvx-WqUjsQsLh8IagCoPWqopFNqZewGg"
+                  },
+                  {
+                    "label": "Arnold",
+                    "id": "opWs2Hq1IuVGdzBbt4chOEcj1BuH09RYCty1qw_oXcc"
+                  },
+                  {
+                    "label": "Houdini Engine",
+                    "id": "wXs81NrMN4E-1A9rT6NQ0dV0n9w06QIdFggcARtVjYQ"
+                  },
+                  {
+                    "label": "Karma",
+                    "id": "lnAA-t6d_PZsNpLNBCpTZ7GTeQaBCSlmOTAcai-tDDo"
+                  },
+                  {
+                    "label": "Keyshot",
+                    "id": "JUIr-aGury6IjDu9B_s9AAg5BdvXQzcdIEFNBHkQSMg"
+                  },
+                  {
+                    "label": "Mantra",
+                    "id": "EKLzjrfe8P0BvbzIPoHyK_G5G3lxQ__cMYubYae0eos"
+                  },
+                  {
+                    "label": "Maya",
+                    "id": "so0mCcIx7y2x2xV6tUp4K9UgJF2hi9XPZ49k5T_eq0o"
+                  },
+                  {
+                    "label": "Nuke",
+                    "id": "_jPkDMjWRDx_QiPVfsYNk0WHAHS5qCpH57DTNhtc3-w"
+                  }
+                ],
+                "defaultDropDownItem": "xlclZu5wgYAMvx-WqUjsQsLh8IagCoPWqopFNqZewGg",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for usage-based licensing",
+                "id": "selectedPrice",
+                "mappingDefinitionName": "deadline",
+                "refers": [
+                  {
+                    "variableLabel": "License Product",
+                    "variableId": "LicenseProduct"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Utilization",
+                "options": [
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "defaultValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 720
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "worker_utilization4"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "conversionDisplaySpark",
+                  "refer": [
+                    "LicenseProduct",
+                    "selectedPrice",
+                    "worker_utilization4"
+                  ],
+                  "subTotalRefer": "TotalWorkerCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalLicenseCost",
+                  "variableName": "Total License Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Utilization",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "worker_utilization4"
+                    },
+                    {
+                      "variableLabel": "Price for usage-based licensing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "selectedPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] license cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "TotalLicenseCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total usage-based license cost",
+                  "decimalPlaces": 2,
+                  "id": "totalLicenseProductCostDisplay",
+                  "subTotalRefer": "TotalLicenseCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

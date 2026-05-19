@@ -1,0 +1,243 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA S3 Foundation - Logging and Code Artifacts Buckets - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  # Primary logging destination bucket
+  SeraLogFilesBucket:
+    Type: AWS::S3::Bucket
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W35
+            reason: "This IS the logging bucket for other S3 buckets and application logs. Enabling access logging on the logging bucket itself would create a recursive logging loop and exponential storage growth."
+      checkov:
+        skip:
+          - id: CKV_AWS_18
+            comment: "This IS the application logging bucket where SERA writes its log files. Enabling S3 access logging on a logging bucket would create recursive logging loops and exponential storage growth."
+    Properties:
+      BucketName: !Sub '${StackPrefix}-logfiles-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !ImportValue
+                Fn::Sub: '${StackPrefix}-kms-key-id'
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: TransitionToGlacier
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-logfiles-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: Logging
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraLogFilesBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SeraLogFilesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 
+              - 's3:*'
+            Resource: 
+              - !Sub 'arn:aws:s3:::${SeraLogFilesBucket}'
+              - !Sub 'arn:aws:s3:::${SeraLogFilesBucket}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+
+  # Code artifacts bucket for CI/CD
+  SeraCodeArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-code-artifacts-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !ImportValue
+                Fn::Sub: '${StackPrefix}-kms-key-id'
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref SeraLogFilesBucket
+        LogFilePrefix: 'code-artifacts-access-logs/'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: RetainLastThreeVersions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 90
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-code-artifacts-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: CodeArtifacts
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraCodeArtifactsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SeraCodeArtifactsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 
+              - 's3:*'
+            Resource: 
+              - !Sub 'arn:aws:s3:::${SeraCodeArtifactsBucket}'
+              - !Sub 'arn:aws:s3:::${SeraCodeArtifactsBucket}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+
+  # Token usage data bucket for Bedrock auditing
+  SeraTokenUsageDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-token-usage-data-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !ImportValue
+                Fn::Sub: '${StackPrefix}-kms-key-id'
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref SeraLogFilesBucket
+        LogFilePrefix: 'token-usage-data-access-logs/'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: RetainLastThreeVersions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 90
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-token-usage-data-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: Bedrock Token usage data for auditing purposes
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  SeraTokenUsageDataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SeraTokenUsageDataBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 
+              - 's3:*'
+            Resource: 
+              - !Sub 'arn:aws:s3:::${SeraTokenUsageDataBucket}'
+              - !Sub 'arn:aws:s3:::${SeraTokenUsageDataBucket}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+
+Outputs:
+  SeraLogFilesBucketName:
+    Description: 'Name of the SERA log files bucket'
+    Value: !Ref SeraLogFilesBucket
+    Export:
+      Name: !Sub '${StackPrefix}-logfiles-bucket-name'
+
+  SeraLogFilesBucketArn:
+    Description: 'ARN of the SERA log files bucket'
+    Value: !GetAtt SeraLogFilesBucket.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-logfiles-bucket-arn'
+
+  SeraCodeArtifactsBucketName:
+    Description: 'Name of the SERA code artifacts bucket'
+    Value: !Ref SeraCodeArtifactsBucket
+    Export:
+      Name: !Sub '${StackPrefix}-code-artifacts-bucket-name'
+
+  SeraCodeArtifactsBucketArn:
+    Description: 'ARN of the SERA code artifacts bucket'
+    Value: !GetAtt SeraCodeArtifactsBucket.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-code-artifacts-bucket-arn'
+
+  SeraTokenUsageDataBucketName:
+    Description: 'Name of the SERA Token Usage Data bucket'
+    Value: !Ref SeraTokenUsageDataBucket
+    Export:
+      Name: !Sub '${StackPrefix}-token-usage-data-bucket-name'
+
+  SeraTokenUsageDataBucketArn:
+    Description: 'ARN of the SERA Token Usage Data bucket'
+    Value: !GetAtt SeraTokenUsageDataBucket.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-token-usage-data-bucket-arn'

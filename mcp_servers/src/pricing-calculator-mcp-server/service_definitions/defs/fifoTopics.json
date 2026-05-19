@@ -1,0 +1,809 @@
+{
+  "version": "0.0.44",
+  "serviceName": "FIFO Topics",
+  "serviceCode": "fifoTopics",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "excludeZeroSubTotals": true,
+  "searchKeywords": [
+    "Messaging",
+    "SNS",
+    "notification topic",
+    "publish message",
+    "subscription",
+    "text message",
+    "sms",
+    "topics",
+    "push notifications",
+    "push notification service queuing",
+    "FIFO topics"
+  ],
+  "serviceDescription": "Amazon Simple Notification Service (SNS) is a highly available, durable, secure, fully managed pub/sub messaging service that enables you to decouple microservices, distributed systems, and serverless applications",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sns/pricing/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sns-addons",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sns/[currency]/current/sns-addons.json"
+    },
+    {
+      "mappingDefinitionName": "sns",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sns/[currency]/current/sns.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "displayAutomation": true,
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Simple Notification Service (SNS)",
+      "description": "Amazon SNS has no upfront costs and you can pay as you go. You pay based on the number of notifications you publish, the number of notifications you deliver, and any additional API calls for managing topics and subscriptions.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sns/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "helpText": "FIFO topics are designed to enhance messaging between applications when the order of operations and events is critical, or where duplicates can't be tolerated, for example: fanning out messages to bank transaction logging, stock monitoring, flight tracking, inventory management, and price update systems.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sns/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Requests",
+                "id": "numberOfRequests",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000
+                },
+                "placeholder": "Enter the number of Requests"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average message size",
+                "id": "Average_message_size",
+                "dropDownSize": [
+                  {
+                    "label": "Byte",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 4,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.0009,
+                  "maxValue": 256
+                },
+                "placeholder": "Enter average message size",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "sns",
+                        "meteredUnit": "Amazon SNS FIFO Subscription Messages per Messages"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "sns",
+                        "meteredUnit": "Amazon SNS FIFO Subscription Messages Payload per GB"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_subscriptions",
+                "label": "Number of subscriptions",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "placeholder": "Enter Number of subscriptions per month",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "sns",
+                    "meteredUnit": "Amazon SNS FIFO Topics Storage per GB month"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Retention Period",
+                "dropDownDuration": [
+                  {
+                    "label": "days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "month",
+                    "value": "month"
+                  }
+                ],
+                "outputDurationUnit": "month",
+                "outputDurationLabel": "month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter retention period",
+                "description": "",
+                "id": "retentionperiod"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS FIFO API Requests per Requests"
+                },
+                "label": "pricing for Amazon SNS FIFO API Requests per Requests",
+                "id": "pricing_for_Amazon_SNS_FIFO_API_Requests_per_Requests"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS FIFO Subscription Messages per Messages"
+                },
+                "label": "pricing for Amazon SNS FIFO Subscription Messages per Messages",
+                "id": "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_per_Messages"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS FIFO Subscription Messages Payload per GB"
+                },
+                "label": "pricing for Amazon SNS FIFO Subscription Messages Payload per GB",
+                "id": "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_Payload_per_GB"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "meteredUnit": {
+                  "allRegions": "SNS FIFO Publish Payload per GB"
+                },
+                "label": "pricing for SNS FIFO Publish Payload per GB",
+                "id": "pricing_for_SNS_FIFO_Publish_Payload_per_GB"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS FIFO Topics Archive Processing per GB"
+                },
+                "label": "pricing for SNS FIFO Topics Archive Processing per GB",
+                "id": "pricing_for_SNS_FIFO_Archive_Processing_per_GB"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS FIFO Topics Storage per GB month"
+                },
+                "label": "pricing for SNS FIFO Topics Storage per GB month",
+                "id": "pricing_for_SNS_FIFO_Storage_per_GB"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfRequests",
+                    "Average_message_size",
+                    "Number_of_subscriptions",
+                    "retentionperiod",
+                    "pricing_for_Amazon_SNS_FIFO_API_Requests_per_Requests",
+                    "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_per_Messages",
+                    "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_Payload_per_GB",
+                    "pricing_for_SNS_FIFO_Publish_Payload_per_GB",
+                    "pricing_for_SNS_FIFO_Archive_Processing_per_GB",
+                    "pricing_for_SNS_FIFO_Storage_per_GB"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "fifo_unit_conv"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "Average_message_size_rounded",
+                  "operands": [
+                    {
+                      "variableId": "Average_message_size",
+                      "variableLabel": "Average message size",
+                      "variableUnitLabel": "KB rounded up",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "KB (average message size)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB (average message size)",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "Average_message_size_rounded"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (average message size)",
+                  "decimalPlaces": 6,
+                  "id": "gb_message_size"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for Amazon SNS FIFO API Requests per Requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_Amazon_SNS_FIFO_API_Requests_per_Requests"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (FIFO requests cost incoming)",
+                  "decimalPlaces": 6,
+                  "id": "FIFO_REQUEST_COST"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "GB (average message size)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gb_message_size"
+                    },
+                    {
+                      "variableLabel": "pricing for SNS FIFO Publish Payload per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_SNS_FIFO_Publish_Payload_per_GB"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (FIFO payload cost incoming)",
+                  "decimalPlaces": 6,
+                  "id": "FIFO_INCOMING_COST"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (FIFO requests cost incoming)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FIFO_REQUEST_COST"
+                    },
+                    {
+                      "variableLabel": "[currency] (FIFO payload cost incoming)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FIFO_INCOMING_COST"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total incoming cost)",
+                  "decimalPlaces": 6,
+                  "id": "total_incoming"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "FIFO Incoming cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (total incoming cost)",
+                  "id": "Incomvar",
+                  "refer": "total_incoming",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "Number of subscriptions",
+                      "variableUnitLabel": "subscriptions",
+                      "required": true,
+                      "variableId": "Number_of_subscriptions"
+                    },
+                    {
+                      "variableLabel": "pricing for Amazon SNS FIFO Subscription Messages per Messages",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_per_Messages"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (FIFO requests cost outgoing)",
+                  "decimalPlaces": 6,
+                  "id": "FIFO_REQUEST_COST_out"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "Number of subscriptions",
+                      "variableUnitLabel": "subscriptions",
+                      "required": true,
+                      "variableId": "Number_of_subscriptions"
+                    },
+                    {
+                      "variableLabel": "GB (average message size)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gb_message_size"
+                    },
+                    {
+                      "variableLabel": "pricing for Amazon SNS FIFO Subscription Messages Payload per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_Amazon_SNS_FIFO_Subscription_Messages_Payload_per_GB"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (FIFO payload cost outgoing)",
+                  "decimalPlaces": 6,
+                  "id": "FIFO_outgoing_COST"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (FIFO requests cost outgoing)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FIFO_REQUEST_COST_out"
+                    },
+                    {
+                      "variableLabel": "[currency] (FIFO payload cost outgoing)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FIFO_outgoing_COST"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total outgoing cost)",
+                  "decimalPlaces": 6,
+                  "id": "total_outgoing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "FIFO outgoing cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (total outgoing cost)",
+                  "id": "Outvar",
+                  "refer": "total_outgoing",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Retention Period",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "retentionperiod"
+                    },
+                    {
+                      "variableLabel": "Retention Period",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "retentionperiod"
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "id": "div_reten_period"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "GB (average message size)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gb_message_size"
+                    },
+                    {
+                      "variableLabel": "pricing for SNS FIFO Topics Archive Processing per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_SNS_FIFO_Archive_Processing_per_GB"
+                    },
+                    {
+                      "variableLabel": "",
+                      "variableUnitLabel": " ",
+                      "required": true,
+                      "variableId": "div_reten_period"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Archive processing cost)",
+                  "decimalPlaces": 6,
+                  "id": "Archive_processing_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberOfRequests"
+                    },
+                    {
+                      "variableLabel": "GB (average message size)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "gb_message_size"
+                    },
+                    {
+                      "variableLabel": "Retention Period",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "retentionperiod"
+                    },
+                    {
+                      "variableLabel": "pricing for SNS FIFO Topics Storage per GB month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_SNS_FIFO_Storage_per_GB"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage processing cost)",
+                  "decimalPlaces": 6,
+                  "id": "storage_processing_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Archive processing cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Archive_processing_cost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Storage processing cost)",
+                      "variableUnitLabel": "[currency] ",
+                      "required": true,
+                      "variableId": "storage_processing_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Message Archiving cost)",
+                  "decimalPlaces": 6,
+                  "id": "message_archiving_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Message Archiving cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Message Archiving cost)",
+                  "id": "archivevar",
+                  "refer": "message_archiving_cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (total incoming cost)",
+                      "variableUnitLabel": "[currency] (total incoming cost)",
+                      "required": false,
+                      "variableId": "total_incoming"
+                    },
+                    {
+                      "variableLabel": "[currency] (total outgoing cost)",
+                      "variableUnitLabel": "[currency] (total outgoing cost)",
+                      "required": false,
+                      "variableId": "total_outgoing"
+                    },
+                    {
+                      "variableLabel": "[currency] (Message Archiving cost)",
+                      "variableUnitLabel": "[currency] (Message Archiving cost)",
+                      "required": false,
+                      "variableId": "message_archiving_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6,
+                  "id": "total_final_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Average_message_size_rounded",
+                    "gb_message_size",
+                    "FIFO_REQUEST_COST",
+                    "FIFO_INCOMING_COST",
+                    "total_incoming",
+                    "Incomvar",
+                    "FIFO_REQUEST_COST_out",
+                    "FIFO_outgoing_COST",
+                    "total_outgoing",
+                    "Outvar",
+                    "div_reten_period",
+                    "Archive_processing_cost",
+                    "storage_processing_cost",
+                    "message_archiving_cost",
+                    "archivevar",
+                    "total_final_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Total cost",
+                  "decimalPlaces": 2,
+                  "id": "SNS_Fifo_Tot_Cost",
+                  "subTotalRefer": "total_final_cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "sns-addons",
+              "meteredUnit": "Amazon SNS Standard Payload Scanned Filtered per GB addon"
+            }
+          },
+          "title": "Message Filtering",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "The amount of outbound payload data scanned per month",
+                "id": "The_amount_of_outbound_payload_data_scanned_per_month",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "Enter amount of outbound payload data scanned per month",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sns-addons",
+                "meteredUnit": {
+                  "allRegions": "Amazon SNS Standard Payload Scanned Filtered per GB addon"
+                },
+                "label": "pricing for Filtered",
+                "id": "filter_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "The_amount_of_outbound_payload_data_scanned_per_month",
+                    "filter_price"
+                  ],
+                  "subTotalRefer": "total_final_cost",
+                  "id": "FilterUnitConvert"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "The amount of outbound payload data scanned per month",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "The_amount_of_outbound_payload_data_scanned_per_month"
+                    },
+                    {
+                      "variableLabel": "pricing for Filtered",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "filter_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Payload-based message filtering cost)",
+                  "decimalPlaces": 2,
+                  "id": "payloadFilterCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "payloadFilterCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "Message Filtering Cost",
+                  "decimalPlaces": 2,
+                  "id": "simpleNotificationServiceSns_FilteringCost",
+                  "subTotalRefer": "payloadFilterCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "sns_t2"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

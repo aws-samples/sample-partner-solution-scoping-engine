@@ -1,0 +1,312 @@
+{
+  "version": "0.0.34",
+  "serviceName": "AWS Application Migration Service",
+  "serviceCode": "awsApplicationMigrationSvc",
+  "slug": "appmigrationsvc",
+  "type": "AWSService",
+  "excludeZeroSubTotals": false,
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Application Migration Service",
+    "migrating applications",
+    "migration",
+    "SAP",
+    "Oracle",
+    "SQL Server",
+    "CloudEndure Migration"
+  ],
+  "serviceDescription": "AWS Application Migration Service minimizes time-intensive, error-prone manual processes by automatically converting your source servers from physical, virtual, and cloud infrastructure to run natively on AWS. It further simplifies your migration by allowing you to use the same automated process for a wide range of applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/application-migration-service/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "applicationmigrationsvc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/applicationmigrationsvc/[currency]/current/applicationmigrationsvc.json"
+    }
+  ],
+  "costType": [
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/application-migration-service/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Configure AWS Application Migration Service (MGN)",
+          "helpText": "For each source server that you want to migrate, you can use AWS Application Migration Service for a free period of 2,160 hours, which is 90 days when used continuously. Most customers complete server migration within the allotted free period, thereby benefitting from free use of AWS Application Migration Service for each server that they migrate.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/application-migration-service/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "While your source servers are actively replicating, including during the free period, you will incur charges for any AWS infrastructure that is provisioned by AWS Application Migration Service to facilitate data replication. You will also incur charges for resources that are provisioned when you launch test or cutover instances, such as compute (Amazon EC2) and storage (Amazon EBS) resources, according to your AWS pricing plan. <a href='https://aws.amazon.com/application-migration-service/pricing/'>Learn more about service pricing, here.</a>",
+                "id": "pricingText"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "Free Tier Alert",
+                "content": "This calculator only provides the fees accrued to the MGN service. Charges for EC2 and EBS resources, are not included in the cost estimates of this calculator.",
+                "alertType": "warning",
+                "isDismissable": true,
+                "id": "alertBox"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfServers",
+                "label": "Number of server/s",
+                "displayInConfigSummary": true,
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "placeholder": "Number"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfHours",
+                "label": "Number of hour/s per server",
+                "displayInConfigSummary": true,
+                "defaultValue": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "placeholder": "Number"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "serviceUsage"
+                    },
+                    {
+                      "type": "component",
+                      "id": "freeHours"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "warning alert",
+                "content": "The specified hours exceed the free migration period of 2,160 hours. You will only be charged for replication hours beyond the free period.",
+                "alertType": "warning",
+                "isDismissable": true,
+                "id": "warningAlert"
+              },
+              {
+                "type": "pricing",
+                "id": "normalPrice",
+                "label": "per hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "applicationmigrationsvc",
+                "meteredUnit": {
+                  "allRegions": "Normal Server Migration"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "serviceUsage",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfServers",
+                      "variableLabel": "Number of server/s",
+                      "variableUnitLabel": "server/s",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfHours",
+                      "variableLabel": "Number of hour/s per server",
+                      "variableUnitLabel": "hour/s",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "usage hour/s",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfHours"
+                      },
+                      2160
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "freeHours",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfServers",
+                      "variableLabel": "Number of server/s",
+                      "variableUnitLabel": "server/s",
+                      "required": true
+                    },
+                    {
+                      "constant": 2160,
+                      "constantUnitLabel": "hours"
+                    }
+                  ],
+                  "outputUnitLabel": "free hours",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "serviceUsage"
+                      },
+                      {
+                        "type": "component",
+                        "id": "freeHours"
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "remainingHours",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "serviceUsage",
+                      "variableLabel": "usage hour/s",
+                      "variableUnitLabel": "usage hour/s",
+                      "required": true
+                    },
+                    {
+                      "variableId": "freeHours",
+                      "variableLabel": "free hours",
+                      "variableUnitLabel": "free hours",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "paid hour/s",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "upFrontCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "remainingHours",
+                      "variableLabel": "paid hour/s",
+                      "variableUnitLabel": "paid hour/s",
+                      "required": true
+                    },
+                    {
+                      "variableId": "normalPrice",
+                      "variableLabel": "per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] charge",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "serviceUsage"
+                      },
+                      {
+                        "type": "component",
+                        "id": "freeHours"
+                      }
+                    ]
+                  },
+                  "type": "display",
+                  "refer": [
+                    "pricingText",
+                    "alertBox",
+                    "numberOfServers",
+                    "numberOfHours",
+                    "warningAlert",
+                    "normalPrice",
+                    "serviceUsage",
+                    "freeHours",
+                    "remainingHours",
+                    "upFrontCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "AWS Application Migration Service pricing",
+                  "decimalPlaces": 2,
+                  "id": "totalPriceDisplay",
+                  "subTotalRefer": "upFrontCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,1721 @@
+{
+  "version": "0.0.48",
+  "serviceName": "MediaLive Outputs",
+  "serviceCode": "mediaLiveOutput1",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-2",
+    "eu-central-1",
+    "ap-southeast-1",
+    "sa-east-1",
+    "us-east-2",
+    "ap-northeast-2",
+    "eu-north-1",
+    "ap-northeast-1",
+    "ap-south-1",
+    "eu-west-1",
+    "us-west-2",
+    "ap-southeast-2",
+    "eu-west-3",
+    "us-iso-east-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "streaming",
+    "media",
+    "elemental media live"
+  ],
+  "serviceDescription": "EML Output 1",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/medialive/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elementalmedialive-output-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmedialive/[currency]/current/elementalmedialive-output-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "emlOutputs1Template",
+      "volumeDiscountEligibility": false,
+      "cards": [
+        {
+          "title": "Output Configuration 1",
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput1_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput1_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput1_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput1_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput1_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput1_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 1",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput1_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlOutput1_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "exportValueAs": "emlOutput1_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "exportValueAs": "emlOutput1_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput1_videoQuality",
+                    "defaultValue": "Standard",
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput1_Res",
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput1_bitRate",
+                    "defaultValue": "<10mbps",
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput1_frameRate",
+                    "defaultValue": "<30fps",
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput1 Output Cost",
+                  "id": "emlOutput1_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput1_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput1_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput1_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput1_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput1_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 1 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput1_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput1_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput1 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput1_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput1_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput1_Text",
+                    "emlOutput1_numberOfOutputs",
+                    "emlOutput1_activeOutputHrs",
+                    "emlOutput1_activeOutputHrsReserved",
+                    "columnFormIPM",
+                    "emlOutput1_resType",
+                    "emlOutput1_pipe",
+                    "emlOutput1_out",
+                    "emlOutput1_videoQuality",
+                    "emlOutput1_Res",
+                    "emlOutput1_bitRate",
+                    "emlOutput1_frameRate",
+                    "emlOutput1_priceVariable",
+                    "emlOutput1_totalActiveHours",
+                    "emlOutput1_costMonthly"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 1 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput1_costTotal",
+                  "subTotalRefer": "emlOutput1_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Output Configuration 2",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput2_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput2_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput2_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput2_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput2_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput2_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 2",
+                "id": "columnFormIPM_emlOutput2",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput2_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput2_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput2_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput2_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput2_videoQuality",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput2_Res",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput2_bitRate",
+                    "defaultValue": "<10mbps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput2_frameRate",
+                    "defaultValue": "<30fps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput2 Output Cost",
+                  "id": "emlOutput2_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput2_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput2_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput2_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput2_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput2_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 2 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput2_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput2_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput2 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput2_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput2_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput2_Text",
+                    "emlOutput2_numberOfOutputs",
+                    "emlOutput2_activeOutputHrs",
+                    "emlOutput2_activeOutputHrsReserved",
+                    "columnFormIPM_emlOutput2",
+                    "emlOutput2_priceVariable",
+                    "emlOutput2_totalActiveHours",
+                    "emlOutput2_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 2 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput2_costTotal",
+                  "subTotalRefer": "emlOutput2_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Output Configuration 3",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput3_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput3_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput3_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput3_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput3_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput3_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 3",
+                "id": "columnFormIPM_emlOutput3",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput3_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput3_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput3_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput3_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput3_videoQuality",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput3_Res",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput3_bitRate",
+                    "defaultValue": "<10mbps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput3_frameRate",
+                    "defaultValue": "<30fps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput3 Output Cost",
+                  "id": "emlOutput3_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput3_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput3_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput3_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput3_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput3_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 3 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput3_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput3_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput3 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput3_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput3_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput3_Text",
+                    "emlOutput3_numberOfOutputs",
+                    "emlOutput3_activeOutputHrs",
+                    "emlOutput3_activeOutputHrsReserved",
+                    "columnFormIPM_emlOutput3",
+                    "emlOutput3_priceVariable",
+                    "emlOutput3_totalActiveHours",
+                    "emlOutput3_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 3 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput3_costTotal",
+                  "subTotalRefer": "emlOutput3_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Output Configuration 4",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput4_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput4_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput4_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput4_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput4_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput4_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 4",
+                "id": "columnFormIPM_emlOutput4",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput4_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput4_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput4_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput4_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput4_videoQuality",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput4_Res",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput4_bitRate",
+                    "defaultValue": "<10mbps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput4_frameRate",
+                    "defaultValue": "<30fps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput4 Output Cost",
+                  "id": "emlOutput4_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput4_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput4_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput4_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput4_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput4_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 4 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput4_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput4_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput4 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput4_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput4_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput4_Text",
+                    "emlOutput4_numberOfOutputs",
+                    "emlOutput4_activeOutputHrs",
+                    "emlOutput4_activeOutputHrsReserved",
+                    "columnFormIPM_emlOutput4",
+                    "emlOutput4_priceVariable",
+                    "emlOutput4_totalActiveHours",
+                    "emlOutput4_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 4 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput4_costTotal",
+                  "subTotalRefer": "emlOutput4_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Output Configuration 5",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput5_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput5_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput5_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput5_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput5_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput5_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 5",
+                "id": "columnFormIPM_emlOutput5",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput5_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput5_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput5_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput5_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput5_videoQuality",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput5_Res",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput5_bitRate",
+                    "defaultValue": "<10mbps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput5_frameRate",
+                    "defaultValue": "<30fps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput5 Output Cost",
+                  "id": "emlOutput5_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput5_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput5_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput5_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput5_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput5_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 5 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput5_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput5_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput5 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput5_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput5_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput5_Text",
+                    "emlOutput5_numberOfOutputs",
+                    "emlOutput5_activeOutputHrs",
+                    "emlOutput5_activeOutputHrsReserved",
+                    "columnFormIPM_emlOutput5",
+                    "emlOutput5_priceVariable",
+                    "emlOutput5_totalActiveHours",
+                    "emlOutput5_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 5 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput5_costTotal",
+                  "subTotalRefer": "emlOutput5_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Output Configuration 6",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The cost for each output for your live channel is determined by a combination of bitrate, resolution, and frame rate for AVC outputs. The cost of AVC Enhanced VQ, and HEVC outputs is determined by a combination of resolution and frame rate. You can have a total of 6 unique output configurations per estimate. However, these unique configurations can be used across multiple channel types. For example, if you have 10 HD channels that have 4 SD outputs per channel and 10 SD channels with 3 SD outputs per channel that have the same specification, you would enter 70 SD outputs of that unique configuration (10 HD channels x 4 SD outputs = 40 SD outputs) + (10 SD channels x 3 SD outputs = 30 SD outputs) = 70 SD outputs. See the <a href='https://aws.amazon.com/medialive/pricing/' target='_blank'>MediaLive pricing page</a> for full descriptions and definitions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The cost for each AVC output is determined by a combination of channel class, bitrate, resolution, and frame rate. The cost of  each AVC Enhanced VQ and HEVC output is determined by a combination of channel class, resolution and frame rate. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. You can create up to 6 unique output configurations per estimate.",
+                "id": "emlOutput6_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of outputs",
+                "id": "emlOutput6_numberOfOutputs",
+                "placeholder": "Enter number of outputs",
+                "description": "Total number of outputs across all channels. For example, if you have a 10 HD channels with 4 SD outputs on each channel, you will want to indicate 40 total SD outputs.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput6_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlOutput6_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlOutput6_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlOutput6_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an output is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Output 1",
+                "id": "columnFormIPM_emlOutput6",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-output-calc",
+                "calculationId": {
+                  "hourly": "emlOutput6_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Frame Rate",
+                  "Bit Rate",
+                  "Reserve Type",
+                  "Video Quality"
+                ],
+                "prioritizedKey": {
+                  "Output": 100
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput6_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput6_pipe"
+                  },
+                  {
+                    "label": "Output Type",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlOutput6_out"
+                  },
+                  {
+                    "label": "Video Quality",
+                    "type": "dropDown",
+                    "selectorId": "Video Quality",
+                    "exportValueAs": "emlOutput6_videoQuality",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output"
+                    ]
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlOutput6_Res",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate select",
+                    "type": "dropDown",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlOutput6_bitRate",
+                    "defaultValue": "<10mbps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  },
+                  {
+                    "label": "Frame Rate",
+                    "type": "dropDown",
+                    "selectorId": "Frame Rate",
+                    "exportValueAs": "emlOutput6_frameRate",
+                    "defaultValue": "<30fps",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Output",
+                      "Video Quality",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "emlOutput6 Output Cost",
+                  "id": "emlOutput6_priceVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlOutput6_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlOutput6_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput6_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlOutput6_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlOutput6_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 6 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlOutput6_numberOfOutputs",
+                      "variableLabel": "Number of outputs",
+                      "variableUnitLabel": "output(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlOutput6_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "emlOutput6 Output Cost",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "emlOutput6_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput6_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlOutput6_Text",
+                    "emlOutput6_numberOfOutputs",
+                    "emlOutput6_activeOutputHrs",
+                    "emlOutput6_activeOutputHrsReserved",
+                    "columnFormIPM_emlOutput6",
+                    "emlOutput6_priceVariable",
+                    "emlOutput6_totalActiveHours",
+                    "emlOutput6_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Output 6 configuration",
+                  "decimalPlaces": 2,
+                  "id": "emlOutput6_costTotal",
+                  "subTotalRefer": "emlOutput6_costMonthly"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

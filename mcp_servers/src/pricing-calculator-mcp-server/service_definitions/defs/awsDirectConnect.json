@@ -1,0 +1,546 @@
+{
+  "version": "0.0.55",
+  "serviceName": {
+    "aws": "AWS Direct Connect",
+    "aws-cn": "Amazon Direct Connect"
+  },
+  "serviceCode": "awsDirectConnect",
+  "type": "AWSService",
+  "searchKeywords": [
+    "Direct Connect",
+    "Data Transfer"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Direct Connect is a cloud service solution that makes it easy to establish a dedicated network connection from your premises to AWS.",
+    "aws-cn": "Amazon Direct Connect is a cloud service solution that makes it easy to establish a dedicated network connection from your premises to Amazon Web Services.",
+    "aws-us-gov": "AWS Direct Connect is a cloud service solution that makes it easy to establish a dedicated network connection from your premises to AWS."
+  },
+  "regions": [],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "directconnect-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/directconnect/[currency]/current/directconnect-calc/metadata.json"
+    },
+    {
+      "deniedPartitions": [
+        "aws",
+        "aws-iso",
+        "aws-cn",
+        "aws-us-gov",
+        "aws-iso-e",
+        "aws-iso-f"
+      ],
+      "mappingDefinitionName": "directconnect-calc-isob",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/directconnect/[currency]/current/directconnect-calc-isob/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/directconnect/"
+    }
+  },
+  "layout": "simple",
+  "templates": [
+    {
+      "title": {
+        "aws": "AWS Direct Connect",
+        "aws-cn": "Amazon Direct Connect"
+      },
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/directconnect/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso-b"
+          ],
+          "title": "Service settings",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "directconnect-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM",
+                "calculationId": {
+                  "hourly": "hourly_ipm",
+                  "countly": "countly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "$overridePriceKeyWith": "port:PricePerUnit"
+                      }
+                    ],
+                    "countly": [
+                      {
+                        "$overridePriceKeyWith": "price"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": "port:Direct Connect Location",
+                "secondaryKey": [
+                  "port:Connection Type",
+                  "port:Capacity"
+                ],
+                "prioritizedKey": {
+                  "port:Direct Connect Location": 16
+                },
+                "row": [
+                  {
+                    "label": "Number of ports",
+                    "description": "",
+                    "type": "textInput",
+                    "selectorId": "Number of Ports",
+                    "defaultValue": 1,
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000
+                    },
+                    "exportValueAs": "ports"
+                  },
+                  {
+                    "label": "Location",
+                    "type": "dropDown",
+                    "selectorId": "port:Direct Connect Location",
+                    "required": true,
+                    "exportValueAs": "connectLocation"
+                  },
+                  {
+                    "label": "Port type",
+                    "type": "dropDown",
+                    "selectorId": "port:Connection Type",
+                    "required": true,
+                    "exportValueAs": "type"
+                  },
+                  {
+                    "label": "Port capacity",
+                    "type": "dropDown",
+                    "selectorId": "port:Capacity",
+                    "required": true,
+                    "exportValueAs": "capacity",
+                    "dependent": "port:Connection Type"
+                  }
+                ]
+              },
+              {
+                "id": "utilization",
+                "type": "input",
+                "subType": "utilization",
+                "label": "Hours used",
+                "placeholder": "Enter number",
+                "defaultValue": 730,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "decimalPlaces": 4
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of ports",
+                      "variableUnitLabel": "ports",
+                      "required": true,
+                      "variableId": "ports",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "hourly",
+                      "variableUnitLabel": "[currency] hourly",
+                      "required": true,
+                      "variableId": "hourly_ipm",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Hours used",
+                      "variableUnitLabel": "Hours",
+                      "required": true,
+                      "variableId": "utilization"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 0,
+                  "id": "objectObject_generated_0"
+                },
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "columnFormIPM",
+                    "ports",
+                    "connectLocation",
+                    "type",
+                    "capacity",
+                    "utilization",
+                    "objectObject_generated_0"
+                  ],
+                  "subTotalRefer": "objectObject_generated_0",
+                  "id": "objectObject_generated_1"
+                },
+                {
+                  "type": "display",
+                  "refer": [],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS Direct Connect cost",
+                    "aws-cn": "Amazon Direct Connect cost"
+                  },
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "objectObject_generated_0",
+                  "id": "objectObject_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws",
+            "aws-cn",
+            "aws-us-gov",
+            "aws-iso-e",
+            "aws-iso-f"
+          ],
+          "title": "Service settings",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "directconnect-calc-isob",
+                "disableCalculation": true,
+                "id": "columnFormIPM",
+                "calculationId": {
+                  "hourly": "hourly_ipm",
+                  "countly": "countly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "$overridePriceKeyWith": "port:PricePerUnit"
+                      }
+                    ],
+                    "countly": [
+                      {
+                        "$overridePriceKeyWith": "price"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": "port:Direct Connect Location",
+                "secondaryKey": [
+                  "port:Connection Type",
+                  "port:Capacity",
+                  "port:Port Speed"
+                ],
+                "prioritizedKey": {
+                  "port:Direct Connect Location": 16
+                },
+                "remap": {
+                  "keyValue": {
+                    "BF-10G": "BiFrost-10G",
+                    "BF-100G": "BiFrost-100G"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Number of ports",
+                    "description": "",
+                    "type": "textInput",
+                    "selectorId": "Number of Ports",
+                    "defaultValue": 1,
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000
+                    },
+                    "exportValueAs": "ports"
+                  },
+                  {
+                    "label": "Location",
+                    "type": "dropDown",
+                    "selectorId": "port:Direct Connect Location",
+                    "required": true,
+                    "exportValueAs": "connectLocation"
+                  },
+                  {
+                    "label": "Port type",
+                    "type": "dropDown",
+                    "selectorId": "port:Connection Type",
+                    "required": true,
+                    "exportValueAs": "type"
+                  },
+                  {
+                    "label": "Port capacity",
+                    "type": "dropDown",
+                    "selectorId": "port:Port Speed",
+                    "required": true,
+                    "exportValueAs": "capacity",
+                    "dependent": "port:Connection Type"
+                  }
+                ]
+              },
+              {
+                "id": "utilization",
+                "type": "input",
+                "subType": "utilization",
+                "label": "Hours used",
+                "defaultDuration": "hoursPerMonth",
+                "placeholder": "Enter number",
+                "defaultValue": 100,
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "decimalPlaces": 4
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of ports",
+                      "variableUnitLabel": "ports",
+                      "required": true,
+                      "variableId": "ports",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "hourly",
+                      "variableUnitLabel": "[currency] hourly",
+                      "required": true,
+                      "variableId": "hourly_ipm",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Hours used",
+                      "variableUnitLabel": "Hours",
+                      "required": true,
+                      "variableId": "utilization"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 0,
+                  "id": "objectObject_generated_6"
+                },
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "columnFormIPM",
+                    "ports",
+                    "connectLocation",
+                    "type",
+                    "capacity",
+                    "utilization",
+                    "objectObject_generated_6"
+                  ],
+                  "subTotalRefer": "objectObject_generated_6",
+                  "id": "objectObject_generated_7"
+                },
+                {
+                  "type": "display",
+                  "refer": [],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Direct Connect cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "objectObject_generated_6",
+                  "id": "objectObject_generated_8"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data transfer",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data transfer out",
+                "id": "dataTransferOut",
+                "displayInConfigSummary": true,
+                "title": "Data transfer out",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data transfer in (free)",
+                "id": "datatransferin",
+                "displayInConfigSummary": true,
+                "title": "Data transfer in",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "title": "region to direct connect transfer size in GB",
+                  "refer": [
+                    "dataTransferOut",
+                    "datatransferin"
+                  ],
+                  "subTotalRefer": "objectObject_generated_6",
+                  "id": "objectObject_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "transferCost",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferOut"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "countly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "transferCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data transfer cost",
+                  "decimalPlaces": 2,
+                  "id": "transferCostString",
+                  "subTotalRefer": "transferCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "slug": "DirectConnect",
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

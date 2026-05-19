@@ -1,0 +1,1030 @@
+{
+  "version": "0.0.21",
+  "serviceName": "Network Load Balancer",
+  "serviceCode": "networkLoadBalancer",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "ELB",
+    "Elastic Load Balancer",
+    "Load Balancer",
+    "Application Load Balancer",
+    "Network Load Balancer",
+    "Classic Load Balancer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/elasticloadbalancing/"
+    }
+  },
+  "serviceDescription": "Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions.",
+  "helpLinks": [
+    {
+      "text": "Elastic Load Balancing product page",
+      "url": {
+        "aws": "https://aws.amazon.com/elasticloadbalancing/",
+        "aws-cn": "https://www.amazonaws.cn/en/elasticloadbalancing/"
+      }
+    },
+    {
+      "text": "Elastic Load Balancing pricing page",
+      "url": {
+        "aws": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+        "aws-cn": "https://www.amazonaws.cn/en/elasticloadbalancing/pricing/"
+      }
+    }
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elb/[currency]/current/elb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Network Load Balancer",
+      "description": "Network Load Balancer is best suited for load balancing of Transmission Control Protocol (TCP), User Datagram Protocol (UDP), and Transport Layer Security (TLS) traffic where extreme performance is required. Operating at the connection level (Layer 4), Network Load Balancer routes traffic to targets within Amazon Virtual Private Cloud (Amazon VPC) and is capable of handling millions of requests per second while maintaining ultra-low latencies. Network Load Balancer is also optimized to handle sudden and volatile traffic patterns.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/elasticloadbalancing/features/",
+          "overrides": {
+            "aws-cn": "https://www.amazonaws.cn/en/elasticloadbalancing/pricing"
+          }
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "You are charged for each hour or partial hour that a Network Load Balancer is running and the number of Load Balancer Capacity Units (LCU) used by Network Load Balancer per hour.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Network Load Balancers",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "numberOfNetworkLoadBalancers"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Network Load Balancer Hours"
+                },
+                "label": "pricing for nlb per hour",
+                "id": "networkLoadBalancer_generated_0"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "networkLoadBalancer_generated_1",
+                  "refer": [
+                    "numberOfNetworkLoadBalancers",
+                    "networkLoadBalancer_generated_0"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Network Load Balancers",
+                      "variableUnitLabel": "load balancers",
+                      "required": true,
+                      "variableId": "numberOfNetworkLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "pricing for nlb per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_0"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_2"
+                },
+                {
+                  "type": "display",
+                  "label": "Total hourly charges for all Network Load Balancers",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "networkLoadBalancer_generated_2"
+                  ],
+                  "id": "networkLoadBalancer_generated_3",
+                  "subTotalRefer": "networkLoadBalancer_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Load Capacity Units (LCUs)",
+          "description": "An LCU measures the dimensions on which the Network Load Balancer processes your traffic (averaged over an hour).",
+          "bodyText": "Please specify at least one of the following dimensions to determine LCU pricing.",
+          "helpText": "An LCU measures the dimensions on which the Network Load Balancer processes your traffic (averaged over an hour). The three dimensions measured are: new connections or flows, active connections or flows, and bandwidth. You are charged only on one of the three dimensions that has the highest usage for the hour.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "TCP Traffic",
+                "id": "networkLoadBalancer_generated_4"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes per NLB for TCP",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed.",
+                "id": "sizeOfProcessedDataPerNLBForTCP"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average number of new TCP connections",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageNumberOfNewTCPConnections"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average TCP connection duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new connection (if the duration is less than 1 second then enter 1 second).",
+                "displayInConfigSummary": true,
+                "id": "averageTCPConnectionDuration"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Network Load Balancer LCU Hours"
+                },
+                "label": "pricing for nlb lcu per hour",
+                "id": "networkLoadBalancer_LCUPricePerHour"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "UDP Traffic",
+                "id": "networkLoadBalancer_generated_6"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes per NLB for UDP",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed.",
+                "id": "sizeOfDataProcessedPerNLBForUDP"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average number of new UDP Flows",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageNumberOfNewUDPFlows"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average UDP Flow duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new Flow (if the duration is less than 1 second then enter 1 second).",
+                "displayInConfigSummary": true,
+                "id": "averageUDPFlowduration"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Network Load Balancer LCU Hours"
+                },
+                "label": "pricing for nlb lcu per hour ",
+                "id": "networkLoadBalancer_generated_7"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "TLS Traffic",
+                "id": "networkLoadBalancer_generated_8"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes per NLB for TLS",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed.",
+                "id": "sizeOfDataProcessedPerNLBForTLS"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average number of new TLS connections",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageNumberOfNewTLSConnections"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average TLS connection duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new connection (if the duration is less than 1 second then enter 1 second).",
+                "displayInConfigSummary": true,
+                "id": "averageDurationForTLSConnection"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Network Load Balancer LCU Hours"
+                },
+                "label": "pricing for nlb lcu per hour  ",
+                "id": "networkLoadBalancer_generated_9"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "networkLoadBalancer_generated_10",
+                  "refer": [
+                    "networkLoadBalancer_generated_4",
+                    "sizeOfProcessedDataPerNLBForTCP",
+                    "averageNumberOfNewTCPConnections",
+                    "averageTCPConnectionDuration",
+                    "networkLoadBalancer_LCUPricePerHour",
+                    "networkLoadBalancer_generated_6",
+                    "sizeOfDataProcessedPerNLBForUDP",
+                    "averageNumberOfNewUDPFlows",
+                    "averageUDPFlowduration",
+                    "networkLoadBalancer_generated_7",
+                    "networkLoadBalancer_generated_8",
+                    "sizeOfDataProcessedPerNLBForTLS",
+                    "averageNumberOfNewTLSConnections",
+                    "averageDurationForTLSConnection",
+                    "networkLoadBalancer_generated_9"
+                  ],
+                  "subTotalRefer": "networkLoadBalancer_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes per NLB for TCP",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfProcessedDataPerNLBForTCP"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "GB processed bytes per hour per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "TCP processed bytes LCUs",
+                  "id": "networkLoadBalancer_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new TCP connections",
+                      "variableUnitLabel": "new TCP connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewTCPConnections"
+                    },
+                    {
+                      "constant": 800,
+                      "constantUnitLabel": "connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "new TCP connections LCUs",
+                  "id": "networkLoadBalancer_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new TCP connections",
+                      "variableUnitLabel": "new TCP connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewTCPConnections"
+                    },
+                    {
+                      "variableLabel": "Average TCP connection duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "averageTCPConnectionDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "active TCP connections",
+                  "id": "networkLoadBalancer_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "active TCP connections",
+                      "variableUnitLabel": "active TCP connections ",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_13"
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "active TCP connections LCUs",
+                  "id": "networkLoadBalancer_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "TCP processed bytes LCUs",
+                      "variableUnitLabel": "TCP processed bytes LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_11"
+                    },
+                    {
+                      "variableLabel": "new TCP connections LCUs",
+                      "variableUnitLabel": "new TCP connections LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_12"
+                    },
+                    {
+                      "variableLabel": "active TCP connections LCUs",
+                      "variableUnitLabel": "active TCP connections LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_14"
+                    }
+                  ],
+                  "outputUnitLabel": "max TCP LCUs",
+                  "id": "networkLoadBalancer_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "max TCP LCUs",
+                      "variableUnitLabel": "TCP LCUs",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_15"
+                    },
+                    {
+                      "variableLabel": "pricing for nlb lcu per hour",
+                      "variableUnitLabel": "NLB LCU price",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_LCUPricePerHour"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (for TCP Traffic per Network Load Balancer)",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes per NLB for UDP",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfDataProcessedPerNLBForUDP"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "GB processed bytes per hour per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "UDP processed bytes LCUs",
+                  "id": "networkLoadBalancer_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new UDP Flows",
+                      "variableUnitLabel": "new UDP Flows",
+                      "required": true,
+                      "variableId": "averageNumberOfNewUDPFlows"
+                    },
+                    {
+                      "constant": 400,
+                      "constantUnitLabel": "new flows per sec"
+                    }
+                  ],
+                  "outputUnitLabel": "new UDP Flow LCUs",
+                  "id": "networkLoadBalancer_generated_18"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new UDP Flows",
+                      "variableUnitLabel": "new UDP Flows",
+                      "required": true,
+                      "variableId": "averageNumberOfNewUDPFlows"
+                    },
+                    {
+                      "variableLabel": "Average UDP Flow duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "averageUDPFlowduration"
+                    }
+                  ],
+                  "outputUnitLabel": "active UDP Flows",
+                  "id": "networkLoadBalancer_generated_19"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "active UDP Flows",
+                      "variableUnitLabel": "active UDP Flows ",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_19"
+                    },
+                    {
+                      "constant": 50000,
+                      "constantUnitLabel": "active flows per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "active UDP Flow LCUs",
+                  "decimalPlaces": 6,
+                  "id": "networkLoadBalancer_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "UDP processed bytes LCUs",
+                      "variableUnitLabel": "UDP processed bytes LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_17"
+                    },
+                    {
+                      "variableLabel": "new UDP Flow LCUs",
+                      "variableUnitLabel": "new UDP Flow LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_18"
+                    },
+                    {
+                      "variableLabel": "active UDP Flow LCUs",
+                      "variableUnitLabel": "active UDP Flow LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_20"
+                    }
+                  ],
+                  "outputUnitLabel": "max UDP LCUs",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_21"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "max UDP LCUs",
+                      "variableUnitLabel": "UDP LCUs",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_21"
+                    },
+                    {
+                      "variableLabel": "pricing for nlb lcu per hour ",
+                      "variableUnitLabel": "NLB LCU price",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_7"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (for UDP Traffic per Network Load Balancer)",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_22"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes per NLB for TLS",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfDataProcessedPerNLBForTLS"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "GB processed bytes per hour per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "TLS processed bytes LCUs",
+                  "id": "networkLoadBalancer_generated_23"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new TLS connections",
+                      "variableUnitLabel": "new TLS connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewTLSConnections"
+                    },
+                    {
+                      "constant": 50,
+                      "constantUnitLabel": "connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "new TLS connections LCUs",
+                  "id": "networkLoadBalancer_generated_24"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new TLS connections",
+                      "variableUnitLabel": "new TLS connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewTLSConnections"
+                    },
+                    {
+                      "variableLabel": "Average TLS connection duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "averageDurationForTLSConnection"
+                    }
+                  ],
+                  "outputUnitLabel": "active TLS connections",
+                  "id": "networkLoadBalancer_generated_25"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "active TLS connections",
+                      "variableUnitLabel": "active TLS connections",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_25"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "active connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "active TLS connections LCUs",
+                  "decimalPlaces": 6,
+                  "id": "networkLoadBalancer_generated_26"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "TLS processed bytes LCUs",
+                      "variableUnitLabel": "TLS processed bytes LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_23"
+                    },
+                    {
+                      "variableLabel": "new TLS connections LCUs",
+                      "variableUnitLabel": "new TLS connections LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_24"
+                    },
+                    {
+                      "variableLabel": "active TLS connections LCUs",
+                      "variableUnitLabel": "active TLS connections LCUs ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_26"
+                    }
+                  ],
+                  "outputUnitLabel": "max TLS LCUs",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_27"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "max TLS LCUs",
+                      "variableUnitLabel": "TLS LCUs",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_27"
+                    },
+                    {
+                      "variableLabel": "pricing for nlb lcu per hour  ",
+                      "variableUnitLabel": "NLB LCU price",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_9"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (for TLS Traffic per Network Load Balancer)",
+                  "decimalPlaces": 2,
+                  "id": "networkLoadBalancer_generated_28"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (for TCP Traffic per Network Load Balancer)",
+                      "variableUnitLabel": "[currency] (for TCP Traffic per Network Load Balancer) ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_16"
+                    },
+                    {
+                      "variableLabel": "[currency] (for UDP Traffic per Network Load Balancer)",
+                      "variableUnitLabel": "[currency] (for UDP Traffic per Network Load Balancer) ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_22"
+                    },
+                    {
+                      "variableLabel": "[currency] (for TLS Traffic per Network Load Balancer)",
+                      "variableUnitLabel": "[currency] (for TLS Traffic per Network Load Balancer) ",
+                      "required": false,
+                      "variableId": "networkLoadBalancer_generated_28"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total LCU cost per Network Load Balancer)",
+                  "id": "networkLoadBalancer_generated_29"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Network Load Balancers",
+                      "variableUnitLabel": "Network Load Balancers",
+                      "required": true,
+                      "variableId": "numberOfNetworkLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "[currency] (total LCU cost per Network Load Balancer)",
+                      "variableUnitLabel": "[currency] ",
+                      "required": true,
+                      "variableId": "networkLoadBalancer_generated_29"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "id": "networkLoadBalancer_generated_30"
+                },
+                {
+                  "type": "display",
+                  "label": "Total LCU charges for all Network Load Balancers",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "networkLoadBalancer_generated_11",
+                    "networkLoadBalancer_generated_12",
+                    "networkLoadBalancer_generated_13",
+                    "networkLoadBalancer_generated_14",
+                    "networkLoadBalancer_generated_15",
+                    "networkLoadBalancer_generated_16",
+                    "networkLoadBalancer_generated_17",
+                    "networkLoadBalancer_generated_18",
+                    "networkLoadBalancer_generated_19",
+                    "networkLoadBalancer_generated_20",
+                    "networkLoadBalancer_generated_21",
+                    "networkLoadBalancer_generated_22",
+                    "networkLoadBalancer_generated_23",
+                    "networkLoadBalancer_generated_24",
+                    "networkLoadBalancer_generated_25",
+                    "networkLoadBalancer_generated_26",
+                    "networkLoadBalancer_generated_27",
+                    "networkLoadBalancer_generated_28",
+                    "networkLoadBalancer_generated_29",
+                    "networkLoadBalancer_generated_30"
+                  ],
+                  "id": "networkLoadBalancer_generated_31",
+                  "subTotalRefer": "networkLoadBalancer_generated_30"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

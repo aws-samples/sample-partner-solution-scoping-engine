@@ -1,0 +1,261 @@
+{
+  "version": "0.0.13",
+  "serviceName": "AWS AppFabric",
+  "serviceCode": "awsAppFabric",
+  "type": "AWSService",
+  "slug": "appfabric",
+  "regions": [],
+  "searchKeywords": [
+    "AWS App Fabric"
+  ],
+  "serviceDescription": "AWS AppFabric quickly connects Software as a Service (SaaS) applications across the organization so IT and security teams can easily manage and secure applications using a standard schema, and employees can complete everyday tasks faster using generative AI.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "appfabric",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appfabric/[currency]/current/appfabric.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appfabric/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/appfabric/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "AWS AppFabric",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "free_tioer_text"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free Tier",
+                "content": "AWS AppFabric offers a 30-day free trial for first 100 users (above 100 users, standard rates apply).",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "Info_rh"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_Users",
+                "label": "Number of Users",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 100,
+                "description": "",
+                "placeholder": "Enter number of users"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_Applications",
+                "label": "Number of Applications",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 5,
+                "description": "",
+                "placeholder": "Enter number of applications"
+              },
+              {
+                "type": "pricing",
+                "label": "price for users",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appfabric",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Standard User User-Mo"
+                },
+                "id": "price_for_users"
+              },
+              {
+                "type": "pricing",
+                "label": "price for applications",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "appfabric",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Additional App per User UserApp-Mo"
+                },
+                "id": "price_for_applications"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "free_tioer_text",
+                    "Info_rh",
+                    "Number_of_Users",
+                    "Number_of_Applications",
+                    "price_for_users",
+                    "price_for_applications"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvrh"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Users",
+                      "variableUnitLabel": "user(s)",
+                      "required": true,
+                      "variableId": "Number_of_Users"
+                    },
+                    {
+                      "variableLabel": "price for users",
+                      "variableUnitLabel": "[currency] up to 30 applications",
+                      "required": true,
+                      "variableId": "price_for_users"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] ",
+                  "decimalPlaces": 2,
+                  "id": "standardUserCost"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "Number_of_Applications"
+                      },
+                      30
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Applications",
+                      "variableUnitLabel": "applications",
+                      "required": true,
+                      "variableId": "Number_of_Applications"
+                    },
+                    {
+                      "constant": "30",
+                      "constantUnitLabel": "applications"
+                    }
+                  ],
+                  "outputUnitLabel": "additional applications ",
+                  "decimalPlaces": 2,
+                  "id": "billable_applications"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Users",
+                      "variableUnitLabel": "user(s)",
+                      "required": true,
+                      "variableId": "Number_of_Users"
+                    },
+                    {
+                      "variableLabel": "additional applications ",
+                      "variableUnitLabel": "additional applications",
+                      "required": true,
+                      "variableId": "billable_applications"
+                    },
+                    {
+                      "variableLabel": "price for applications",
+                      "variableUnitLabel": "[currency] per additional app per user",
+                      "required": true,
+                      "variableId": "price_for_applications"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for additional applications",
+                  "decimalPlaces": 2,
+                  "id": "appUserCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] ",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "standardUserCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for additional applications",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "appUserCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "tot_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "standardUserCost",
+                    "billable_applications",
+                    "appUserCost",
+                    "tot_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS AppFabric cost",
+                  "decimalPlaces": 2,
+                  "id": "total_cost",
+                  "subTotalRefer": "tot_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

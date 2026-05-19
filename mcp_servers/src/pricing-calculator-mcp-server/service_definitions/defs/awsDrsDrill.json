@@ -1,0 +1,220 @@
+{
+  "version": "0.0.17",
+  "serviceName": "AWS DRS - Drill/Recovery",
+  "serviceCode": "awsDrsDrill",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "eu-west-1",
+    "ap-northeast-1",
+    "us-east-2",
+    "us-west-2",
+    "us-east-1",
+    "ap-southeast-2",
+    "eu-west-2",
+    "eu-central-1",
+    "ap-southeast-1"
+  ],
+  "searchKeywords": [
+    "disaster recovery",
+    "replicate",
+    "elastic recovery",
+    "point in time",
+    "recovery",
+    "on-premises recovery",
+    "cloud-based",
+    "affordable storage"
+  ],
+  "serviceDescription": "AWS Elastic Disaster Recovery (AWS DRS) minimizes downtime and data loss with fast, reliable recovery of on-premises and cloud-based applications using affordable storage, minimal compute, and point-in-time recovery.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/disaster-recovery/pricing/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elastic-dr",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elasticdisasterrecovery/[currency]/current/elastic-dr.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Drill/Recovery",
+      "id": "template2",
+      "description": "Your monthly cost will be comprised of the charge for AWS DRS, as well as the additional AWS resources that AWS DRS uses to maintain ongoing replication and to enable drill or recovery launches, as described below.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/disaster-recovery/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Drill/Recovery",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/"
+            }
+          },
+          "helpText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "EBS volumes",
+                "label": "info alert",
+                "content": "To estimate EBS charge for each DR drill, go to <a href='https://calculator.aws/#/createCalculator/EC2' target='_blank'>EC2 calculator</a>, following below steps:<br><ul><li>Select a region you would like to estimate from 'Region' dropdown list.</li> <p style='margin:0; padding:0'><li> Within the section 'Amazon Elastic Block Storage (EBS)', choose EBS volume type from the dropdown list. You only can choose one storage type each time.</li><p style='margin:0; padding:0'><li> You only can estimate one volume type each time. Click 'Add to my estimate' to add the cost to 'My Estimate' page. For next EBS volume type, click 'Add service' to return to the calculator main page.</li> <li>In the top search field, search for 'EC2', then click 'Configure' button to open EC2 calculator page. Repeat above steps to estimate.</li> <p style='margin:0; padding:0'><li> At the end, 'My Estimate' page will display total EBS cost for all volume types you choose.</li></ul> </p>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "EBSforDrillInfo"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "EC2 instances",
+                "label": "info alert",
+                "content": "To estimate EC2 charge for each DR drill, go to <a href='https://calculator.aws/#/createCalculator/EC2' target='_blank'>EC2 calculator</a>, reference to below example to estimate the cost per each On-Demand instance based on the launch configurations.<br/><br/>For example, of the 100 instances you launch for the drill, assume that 60 are configured to launch as low-cost t3.small EC2 instances, 30 are mid-range m5.large, and 10 are m5.4xlarge.total EC2 cost for 8-hour DR drill will be calculated: <p style='margin:0; padding:0'> ^ t3.small: 60 instances * $0.0208 per hour * 8 hours = $9.98 </p> <p style='margin:0; padding:0'>^ m5.large: 30 instances * $0.0960 per hour * 8 hours = $23.04</p> <p style='margin:0; padding:0'>^ m5.4xlarge: 10 instances * $0.7680 per hour * 8 hours = $61.44</p><p style='margin:0; padding:0'>Total EC2 cost for 8-hour DR drill: $94.46</p><br/>Similar to above EBS instruction, only one instance type can be estimated each time. Following below steps to add all EC2 instance types estimate to 'My Estimate' page: <p style='margin:0; padding:0'><ul><li> Select a region you would like to estimate from 'Region' dropdown list. </li><p style='margin:0; padding:0'><li> Within the section 'EC2 instance specifications', select 'Operating system' from the drop down.</li> <p style='margin:0; padding:0'><li> Click the radio button 'Search instances by name:', then enter the instance type in the search box for the selection (e.g. t3.small). </li> <p style='margin:0; padding:0'><li> For 'Quantity', enter the number of instance types for the drill (e.g. 60 for t3.small).</li><p style='margin:0; padding:0'><li> For 'Utilization', enter the length of drill and select 'hours/month'. The estimate will be calculated only for a drill hours.</li> <p style='margin:0; padding:0'><li>You only can estimate one instance type each time. Click 'Add to my estimate' to add the cost to 'My Estimate' page. For next EC2 instance type, click 'Add service' to return to the calculator main page. </li><li> In the top search field, search for 'EC2', then click 'Configure' button to open EC2 calculator page. Repeat above steps to estimate.</li> <p style='margin:0; padding:0'><li> At the end, 'My Estimate' page will display total EC2 instances cost for all instance types you configure for a drill. </li></ul>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "EC2forDrillInfo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "DRS_Hidden_Input1",
+                "label": "Hidden Input 1",
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1
+                },
+                "displayInConfigSummary": false,
+                "description": "This is a hidden field that never gets used. Required for estimation to work"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "DRS_Hidden_Input2",
+                "label": "Hidden Input 2",
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1
+                },
+                "displayInConfigSummary": false,
+                "description": "This is a hidden field that never gets used. Required for estimation to work"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "Hide fake inputs",
+                "id": "DRS_Hider",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "Hidden Input 1",
+                        "variableId": "DRS_Hidden_Input1"
+                      },
+                      "trigger": "equal",
+                      "triggerValue": "1"
+                    }
+                  ],
+                  "render": {
+                    "action": "hide",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Hidden Input 2",
+                        "variableId": "DRS_Hidden_Input2"
+                      },
+                      {
+                        "variableLabel": "Hidden Input 1",
+                        "variableId": "DRS_Hidden_Input1"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "elasticDrPrice",
+                "label": "Price for elastic disaster recovery",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elastic-dr",
+                "meteredUnit": {
+                  "allRegions": "Server DR Normal-Replication"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "DRS_FakePrice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "DRS_Hidden_Input1",
+                      "variableLabel": "Hidden Input 1",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableId": "DRS_Hidden_Input2",
+                      "variableLabel": "Hidden Input 2",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "Hidden Constant"
+                    }
+                  ],
+                  "outputUnitLabel": "total fake addition",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "EBSforDrillInfo",
+                    "EC2forDrillInfo",
+                    "DRS_Hidden_Input1",
+                    "DRS_Hidden_Input2",
+                    "DRS_Hider",
+                    "elasticDrPrice",
+                    "DRS_FakePrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Drill/Recovery cost",
+                  "decimalPlaces": 2,
+                  "id": "FlexMatchFakeTotalCost",
+                  "subTotalRefer": "DRS_FakePrice"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

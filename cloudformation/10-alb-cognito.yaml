@@ -1,0 +1,803 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA ALB and Cognito Infrastructure - Combined stack to resolve circular dependencies'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+  PublicReachableDomainName:
+    Type: String
+    Description: 'Primary domain name for SERA (e.g., projectsera.link)'
+
+  # External Identity Provider Configuration
+  EnableExternalIdP:
+    Type: String
+    Default: 'false'
+    AllowedValues: ['true', 'false']
+    Description: 'Enable external identity provider federation'
+  
+  IdPProviderName:
+    Type: String
+    Default: ''
+    Description: 'Identity provider display name shown on login button'
+  
+  IdPProviderType:
+    Type: String
+    Default: 'OIDC'
+    AllowedValues: ['OIDC', 'SAML']
+    Description: 'Identity provider protocol type'
+  
+  IdPClientId:
+    Type: String
+    Default: ''
+    Description: 'Client ID from your identity provider'
+  
+  IdPClientSecret:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: 'Client secret from your identity provider'
+  
+  IdPOIDCIssuer:
+    Type: String
+    Default: ''
+    Description: 'OIDC issuer URL or SAML metadata URL'
+  
+  IdPAuthorizeScopes:
+    Type: String
+    Default: 'openid email profile groups'
+    Description: 'OAuth scopes to request from IdP'
+
+Conditions:
+  UseExternalIdP: !Equals [!Ref EnableExternalIdP, 'true']
+  NoExternalIdP: !Not [!Equals [!Ref EnableExternalIdP, 'true']]
+  UseOIDC: !And
+    - !Equals [!Ref EnableExternalIdP, 'true']
+    - !Equals [!Ref IdPProviderType, 'OIDC']
+  UseSAML: !And
+    - !Equals [!Ref EnableExternalIdP, 'true']
+    - !Equals [!Ref IdPProviderType, 'SAML']
+
+Mappings:
+  ELBAccountIdMap:
+    us-east-1:
+      AccountId: '127311923021'
+    us-east-2:
+      AccountId: '033677994240'
+    us-west-1:
+      AccountId: '027434742980'
+    us-west-2:
+      AccountId: '797873946194'
+    eu-west-1:
+      AccountId: '156460612806'
+    eu-west-2:
+      AccountId: '652711504416'
+    eu-west-3:
+      AccountId: '009996457667'
+    eu-central-1:
+      AccountId: '054676820928'
+    eu-north-1:
+      AccountId: '897822967062'
+    ap-southeast-1:
+      AccountId: '114774131450'
+    ap-southeast-2:
+      AccountId: '783225319266'
+    ap-northeast-1:
+      AccountId: '582318560864'
+    ap-northeast-2:
+      AccountId: '600734575887'
+    ap-south-1:
+      AccountId: '718504428378'
+    sa-east-1:
+      AccountId: '507241528517'
+    ca-central-1:
+      AccountId: '985666609251'
+
+Resources:
+  #############################################
+  # PART 1: ALB Infrastructure (no Cognito deps)
+  #############################################
+  
+  SeraALBAccessLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-alb-access-logs-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+            BucketKeyEnabled: false
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue
+            Fn::Sub: '${StackPrefix}-logfiles-bucket-name'
+        LogFilePrefix: 'alb-access-logs-bucket-access-logs/'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldALBLogs
+            Status: Enabled
+            ExpirationInDays: 90
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb-access-logs-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  SeraALBAccessLogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SeraALBAccessLogsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 's3:*'
+            Resource: 
+              - !GetAtt SeraALBAccessLogsBucket.Arn
+              - !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+          - Sid: ALBAccessLogsPolicy
+            Effect: Allow
+            Principal:
+              AWS: !Sub 
+                - 'arn:aws:iam::${ALBServiceAccount}:root'
+                - ALBServiceAccount: !FindInMap [ELBAccountIdMap, !Ref 'AWS::Region', AccountId]
+            Action: s3:PutObject
+            Resource: !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+          - Sid: ALBAccessLogsDeliveryRolePolicy
+            Effect: Allow
+            Principal:
+              Service: delivery.logs.amazonaws.com
+            Action: 
+              - s3:PutObject
+              - s3:GetBucketAcl
+            Resource: 
+              - !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+              - !GetAtt SeraALBAccessLogsBucket.Arn
+
+  SeraFrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${StackPrefix}-frontend'
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Port: 7001
+      VpcId: !ImportValue
+            Fn::Sub: '${StackPrefix}-vpc-id'
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 7001
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-frontend-tg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  SeraBackendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${StackPrefix}-backend'
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Port: 5001
+      VpcId: !ImportValue
+            Fn::Sub: '${StackPrefix}-vpc-id'
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /api/health
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 5001
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-backend-tg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  SeraApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    DependsOn: SeraALBAccessLogsBucketPolicy
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-sg-id'
+      Subnets:
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-1-id'
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-2-id'
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-3-id'
+      LoadBalancerAttributes:
+        - Key: deletion_protection.enabled
+          Value: 'true'
+        - Key: idle_timeout.timeout_seconds
+          Value: '300'
+        - Key: routing.http2.enabled
+          Value: 'true'
+        - Key: routing.http.drop_invalid_header_fields.enabled
+          Value: 'true'
+        - Key: access_logs.s3.enabled
+          Value: 'true'
+        - Key: access_logs.s3.bucket
+          Value: !Ref SeraALBAccessLogsBucket
+        - Key: access_logs.s3.prefix
+          Value: 'access-logs'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  #############################################
+  # PART 2: Zone Apex A Records (need ALB)
+  #############################################
+  
+  SeraALBDNSRecord1:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !Ref PublicReachableDomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  SeraWWWDNSRecord1:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !Sub 'www.${PublicReachableDomainName}'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+
+  #############################################
+  # PART 3: Cognito User Pool (needs zone apex A record)
+  #############################################
+  
+  SeraUserPool:
+    Type: AWS::Cognito::UserPool
+    DependsOn: SeraALBDNSRecord1
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-COG2
+            reason: "MFA not required for PoC environment."
+    Properties:
+      UserPoolName: !Sub '${StackPrefix}-app-user-pool'
+      UserPoolTier: PLUS
+      AutoVerifiedAttributes:
+        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      UsernameConfiguration:
+        CaseSensitive: false
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: given_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: family_name
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: zoneinfo
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+        - Name: groups
+          AttributeDataType: String
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: '0'
+            MaxLength: '2048'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+      UserAttributeUpdateSettings:
+        AttributesRequireVerificationBeforeUpdate: []
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+          - Name: verified_phone_number
+            Priority: 2
+      UserPoolAddOns:
+        AdvancedSecurityMode: ENFORCED
+        AdvancedSecurityAdditionalFlows:
+          CustomAuthMode: ENFORCED
+      UserPoolTags:
+        Application: !Sub 'SERA-${StackPrefix}'
+        Name: !Sub '${StackPrefix}-app-user-pool'
+
+  SeraSalesPersonGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: sera_sales_person
+      Description: 'Sales team members'
+      UserPoolId: !Ref SeraUserPool
+      Precedence: 1
+  
+  SeraSolutionsArchitectGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: sera_solutions_architect
+      Description: 'Solutions architects'
+      UserPoolId: !Ref SeraUserPool
+      Precedence: 2
+
+  #############################################
+  # PART 4: External IdP (conditional)
+  #############################################
+
+  ExternalOIDCProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseOIDC
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: OIDC
+      ProviderDetails:
+        client_id: !Ref IdPClientId
+        client_secret: !Ref IdPClientSecret
+        authorize_scopes: !Ref IdPAuthorizeScopes
+        attributes_request_method: GET
+        oidc_issuer: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: EMAIL
+        username: sub
+        given_name: GIVEN_NAME
+        family_name: FAMILY_NAME
+        zoneinfo: zoneinfo
+        custom:groups: groups
+
+  ExternalSAMLProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: UseSAML
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ProviderName: !Ref IdPProviderName
+      ProviderType: SAML
+      ProviderDetails:
+        MetadataURL: !Ref IdPOIDCIssuer
+      AttributeMapping:
+        email: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress
+        username: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name
+        given_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname
+        family_name: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname
+
+  #############################################
+  # PART 5: User Pool Clients
+  #############################################
+
+  SeraUserPoolClientNoIdP:
+    Type: AWS::Cognito::UserPoolClient
+    Condition: NoExternalIdP
+    Properties:
+      ClientName: !Sub '${StackPrefix}-application'
+      UserPoolId: !Ref SeraUserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_AUTH
+        - ALLOW_USER_SRP_AUTH
+      SupportedIdentityProviders:
+        - COGNITO
+      CallbackURLs:
+        - !Sub 'https://${PublicReachableDomainName}/oauth2/idpresponse'
+        - !Sub 'https://${PublicReachableDomainName}/api/callback'
+      LogoutURLs:
+        - !Sub 'https://${PublicReachableDomainName}/logged-out'
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      RefreshTokenValidity: 10
+      AccessTokenValidity: 10
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: hours
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      AuthSessionValidity: 3
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - zoneinfo
+        - custom:groups
+
+  SeraUserPoolClientWithIdP:
+    Type: AWS::Cognito::UserPoolClient
+    Condition: UseExternalIdP
+    DependsOn: ExternalOIDCProvider
+    Properties:
+      ClientName: !Sub '${StackPrefix}-application'
+      UserPoolId: !Ref SeraUserPool
+      GenerateSecret: true
+      ExplicitAuthFlows:
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_AUTH
+        - ALLOW_USER_SRP_AUTH
+      SupportedIdentityProviders:
+        - !Ref IdPProviderName
+        - COGNITO
+      CallbackURLs:
+        - !Sub 'https://${PublicReachableDomainName}/oauth2/idpresponse'
+        - !Sub 'https://${PublicReachableDomainName}/api/callback'
+      LogoutURLs:
+        - !Sub 'https://${PublicReachableDomainName}/logged-out'
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+        - aws.cognito.signin.user.admin
+      RefreshTokenValidity: 10
+      AccessTokenValidity: 10
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: hours
+      PreventUserExistenceErrors: ENABLED
+      EnableTokenRevocation: true
+      AuthSessionValidity: 3
+      WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - zoneinfo
+        - custom:groups
+
+
+  #############################################
+  # PART 6: Cognito Custom Domain (needs zone apex A record)
+  #############################################
+
+  SeraUserPoolCustomDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    DependsOn: SeraALBDNSRecord1
+    Properties:
+      Domain: !Sub 'auth.${PublicReachableDomainName}'
+      UserPoolId: !Ref SeraUserPool
+      ManagedLoginVersion: "2"
+      CustomDomainConfig:
+        CertificateArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-cognito-auth-certificate-arn-1'
+
+  SeraAuthDomainRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !Sub 'auth.${PublicReachableDomainName}'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraUserPoolCustomDomain.CloudFrontDistribution
+        HostedZoneId: Z2FDTNDATAQYW2
+        EvaluateTargetHealth: false
+
+  #############################################
+  # PART 7: Risk Configuration & Branding
+  #############################################
+
+  # NOTE: SeraRiskConfiguration with email notifications requires SES setup.
+  # To enable, verify domain in SES and authorize cognito-idp.amazonaws.com to send.
+  SeraRiskConfiguration:
+    Type: AWS::Cognito::UserPoolRiskConfigurationAttachment
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+      CompromisedCredentialsRiskConfiguration:
+        Actions:
+          EventAction: BLOCK
+        EventFilter:
+          - SIGN_IN
+          - SIGN_UP
+          - PASSWORD_CHANGE
+      AccountTakeoverRiskConfiguration:
+        Actions:
+          HighAction:
+            EventAction: BLOCK
+            Notify: false
+          MediumAction:
+            EventAction: MFA_IF_CONFIGURED
+            Notify: false
+          LowAction:
+            EventAction: NO_ACTION
+            Notify: false
+
+  SeraManagedLoginBranding:
+    Type: AWS::Cognito::ManagedLoginBranding
+    DependsOn: SeraUserPoolCustomDomain
+    Properties:
+      UserPoolId: !Ref SeraUserPool
+      ClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+      UseCognitoProvidedValues: true
+
+  #############################################
+  # PART 8: Secrets Manager for Client Secret
+  #############################################
+
+  SeraCognitoClientSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${StackPrefix}/cognito/client-secret'
+      Description: 'Cognito User Pool Client Secret for SERA application'
+      SecretString: !If [UseExternalIdP, !GetAtt SeraUserPoolClientWithIdP.ClientSecret, !GetAtt SeraUserPoolClientNoIdP.ClientSecret]
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Name
+          Value: !Sub '${StackPrefix}-cognito-client-secret'
+
+  #############################################
+  # PART 9: WAF Association
+  #############################################
+
+  SeraWAFCognitoAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !GetAtt SeraUserPool.Arn
+      WebACLArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-cognito-waf-arn'
+
+
+  #############################################
+  # PART 10: ALB Listeners (need Cognito resources)
+  #############################################
+
+  SeraHTTPSListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn: SeraUserPoolCustomDomain
+    Properties:
+      LoadBalancerArn: !Ref SeraApplicationLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09
+      Certificates:
+        - CertificateArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-certificate-arn-1'
+      DefaultActions:
+        - Type: authenticate-cognito
+          Order: 1
+          AuthenticateCognitoConfig:
+            UserPoolArn: !GetAtt SeraUserPool.Arn
+            UserPoolClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+            UserPoolDomain: !Sub 'auth.${PublicReachableDomainName}'
+            OnUnauthenticatedRequest: authenticate
+            Scope: openid email profile aws.cognito.signin.user.admin
+            SessionCookieName: AWSELBAuthSessionCookie
+            SessionTimeout: 3600
+        - Type: forward
+          Order: 2
+          TargetGroupArn: !Ref SeraFrontendTargetGroup
+
+  SeraHTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref SeraApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            StatusCode: HTTP_301
+
+  SeraAPIListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref SeraHTTPSListener
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - '/api/*'
+      Actions:
+        - Type: authenticate-cognito
+          Order: 1
+          AuthenticateCognitoConfig:
+            UserPoolArn: !GetAtt SeraUserPool.Arn
+            UserPoolClientId: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+            UserPoolDomain: !Sub 'auth.${PublicReachableDomainName}'
+            OnUnauthenticatedRequest: authenticate
+            Scope: openid email profile aws.cognito.signin.user.admin
+            SessionCookieName: AWSELBAuthSessionCookie
+            SessionTimeout: 3600
+        - Type: forward
+          Order: 2
+          TargetGroupArn: !Ref SeraBackendTargetGroup
+
+  #############################################
+  # OUTPUTS
+  #############################################
+
+Outputs:
+  # ALB Outputs
+  ALBArn:
+    Description: 'Application Load Balancer ARN'
+    Value: !Ref SeraApplicationLoadBalancer
+    Export:
+      Name: !Sub '${StackPrefix}-alb-arn'
+
+  ALBDNSName:
+    Description: 'Application Load Balancer DNS Name'
+    Value: !GetAtt SeraApplicationLoadBalancer.DNSName
+    Export:
+      Name: !Sub '${StackPrefix}-alb-dns-name'
+
+  ALBCanonicalHostedZoneID:
+    Description: 'Application Load Balancer Canonical Hosted Zone ID'
+    Value: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+    Export:
+      Name: !Sub '${StackPrefix}-alb-hosted-zone-id'
+
+  FrontendTargetGroupArn:
+    Description: 'Frontend Target Group ARN'
+    Value: !Ref SeraFrontendTargetGroup
+    Export:
+      Name: !Sub '${StackPrefix}-frontend-target-group-arn'
+
+  BackendTargetGroupArn:
+    Description: 'Backend Target Group ARN'
+    Value: !Ref SeraBackendTargetGroup
+    Export:
+      Name: !Sub '${StackPrefix}-backend-target-group-arn'
+
+  TargetGroupArns:
+    Description: 'Comma-separated list of target group ARNs'
+    Value: !Sub '${SeraFrontendTargetGroup},${SeraBackendTargetGroup}'
+    Export:
+      Name: !Sub '${StackPrefix}-target-group-arns'
+
+  ALBAccessLogsBucketName:
+    Description: 'ALB Access Logs Bucket Name'
+    Value: !Ref SeraALBAccessLogsBucket
+    Export:
+      Name: !Sub '${StackPrefix}-alb-access-logs-bucket-name'
+
+  HTTPSListenerArn:
+    Description: 'HTTPS Listener ARN'
+    Value: !Ref SeraHTTPSListener
+    Export:
+      Name: !Sub '${StackPrefix}-https-listener-arn'
+
+  # Cognito Outputs
+  UserPoolId:
+    Description: 'Cognito User Pool ID'
+    Value: !Ref SeraUserPool
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-user-pool-id'
+
+  UserPoolArn:
+    Description: 'Cognito User Pool ARN'
+    Value: !GetAtt SeraUserPool.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-user-pool-arn'
+
+  UserPoolClientId:
+    Description: 'Cognito User Pool Client ID'
+    Value: !If [UseExternalIdP, !Ref SeraUserPoolClientWithIdP, !Ref SeraUserPoolClientNoIdP]
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-client-id'
+
+  CognitoDomain:
+    Description: 'Cognito Custom Domain'
+    Value: !Sub 'auth.${PublicReachableDomainName}'
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-domain'
+
+  CognitoLoginURL:
+    Description: 'Cognito Hosted UI Login URL'
+    Value: !Sub 'https://auth.${PublicReachableDomainName}/login?client_id=${SeraUserPoolClientNoIdP}&response_type=code&scope=email+openid+profile+aws.cognito.signin.user.admin&redirect_uri=https://${PublicReachableDomainName}/oauth2/idpresponse'
+    Condition: NoExternalIdP
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-login-url'
+
+  CognitoLogoutURL:
+    Description: 'Cognito Logout URL'
+    Value: !Sub 'https://auth.${PublicReachableDomainName}/logout?client_id=${SeraUserPoolClientNoIdP}&logout_uri=https://${PublicReachableDomainName}/logged-out'
+    Condition: NoExternalIdP
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-logout-url'
+
+  CognitoClientSecretArn:
+    Description: 'ARN of the Secrets Manager secret containing Cognito client credentials'
+    Value: !Ref SeraCognitoClientSecret
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-client-secret-arn'
+
+  CognitoIssuerURL:
+    Description: 'Cognito Issuer URL for JWT validation'
+    Value: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${SeraUserPool}'
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-issuer-url'
+
+  CognitoRegion:
+    Description: 'AWS Region where Cognito resources are deployed'
+    Value: !Ref AWS::Region
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-region'

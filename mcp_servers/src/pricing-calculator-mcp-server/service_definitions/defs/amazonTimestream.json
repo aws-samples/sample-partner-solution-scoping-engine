@@ -1,0 +1,2480 @@
+{
+  "version": "0.0.69",
+  "serviceName": "Amazon Timestream",
+  "serviceCode": "amazonTimestream",
+  "type": "AWSService",
+  "regions": [
+    "eu-central-1",
+    "eu-west-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-southeast-2"
+  ],
+  "searchKeywords": [
+    "timestream"
+  ],
+  "serviceDescription": "Amazon Timestream is a fast, scalable, and serverless time series database service for IoT and operational applications that makes it easy to store and analyze trillions of events per day up to 1,000 times faster and at as little as 1/10th the cost of relational databases. Amazon Timestream saves you time and cost in managing the lifecycle of time series data by keeping recent data in memory and moving historical data to a cost optimized storage tier based upon user defined policies. Amazon Timestream’s purpose-built query engine lets you access and analyze recent and historical data together, without needing to specify explicitly in the query whether the data resides in the in-memory or cost-optimized tier. Amazon Timestream has built-in time series analytics functions, helping you identify trends and patterns in your data in near real-time. Amazon Timestream is serverless and automatically scales up or down to adjust capacity and performance, so you don’t need to manage the underlying infrastructure, freeing you to focus on building your applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/timestream/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "timestream",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/timestream/[currency]/current/timestream.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/timestream/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Record details",
+          "helpText": "A record represents a time-series data point being written into Timestream. Each record contains three components : Dimensions, Measures, and a Timestamp.<br/><br/> Dimension: Represents the metadata attributes of the time series. For example, the name and Availability Zone of an EC2 instance or the name of the manufacturer of a wind turbine are dimensions.<br/> <br/> Measure name: The name of the metric/event that you want to monitor. For example, the CPU utilization of an EC2 instance.<br/> <br/> Measure Value: Represents the data attribute of the time series. For example, the CPU utilization of an EC2 instance or the RPM of a wind turbine are measures.<br/><br/> Timestamp: The timestamp of when the measure was collected and the timestamp unit, which represents the granularity of the timestamp.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/timestream/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Calculate record size",
+                "id": "writesEstimator",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "yes"
+                  },
+                  {
+                    "label": "No",
+                    "id": "no"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "no",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "no"
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Record size",
+                "id": "RecordSize",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "bytes",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter Record size",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Record type",
+                "id": "Recordtype",
+                "options": [
+                  {
+                    "label": "multi-measure record",
+                    "id": "no"
+                  },
+                  {
+                    "label": "single-measure record",
+                    "id": "yes"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "no",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of dimensions",
+                "id": "Numberofdimensions",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Number of dimensions"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Approx size of each dimension value",
+                "id": "Apxdimensionvalue",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "bytes",
+                  "frequency": "NA"
+                },
+                "outputSize": "bytes",
+                "outputSizeLabel": "Bytes",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter Record size",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of bigint, double, timestamp measures",
+                "id": "Nobigdoubtimemeasure",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Number of bigint, double, timestamp measures"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of boolean measures",
+                "id": "Nobooleanmeasures",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Number of boolean measures"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of varchar measures",
+                "id": "Novarcharmeasures",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Number of varchar measures"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "writesEstimator"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Approx size of each varchar measure value",
+                "id": "apxvarcharmeasures",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "bytes",
+                  "frequency": "NA"
+                },
+                "outputSize": "bytes",
+                "outputSizeLabel": "Bytes",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter Record size",
+                "description": "",
+                "help": ""
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "writesEstimator",
+                    "RecordSize",
+                    "Recordtype",
+                    "Numberofdimensions",
+                    "Apxdimensionvalue",
+                    "Nobigdoubtimemeasure",
+                    "Nobooleanmeasures",
+                    "Novarcharmeasures",
+                    "apxvarcharmeasures"
+                  ],
+                  "id": "timestream_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of dimensions",
+                      "variableUnitLabel": "Dimensions",
+                      "required": true,
+                      "variableId": "Numberofdimensions"
+                    },
+                    {
+                      "variableLabel": "Approx size of each dimension value",
+                      "variableUnitLabel": "Bytes",
+                      "required": true,
+                      "variableId": "Apxdimensionvalue"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "Total size of dimensions",
+                  "id": "Totalsizedim"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "writesEstimator"
+                      },
+                      "yes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total size of dimensions (Bytes)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Total size of dimensions",
+                  "id": "TotalsizedimDisplay",
+                  "refer": "Totalsizedim"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of bigint, double, timestamp measures",
+                      "variableUnitLabel": "bigint, double measures",
+                      "required": true,
+                      "variableId": "Nobigdoubtimemeasure"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "(Bytes)"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "Nobigdoubtimemeasureconstant",
+                  "id": "Nobigdoubtimemeasureconstant"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of boolean measures",
+                      "variableUnitLabel": "boolean measures",
+                      "required": true,
+                      "variableId": "Nobooleanmeasures"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "(Byte)"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "numberofboolmeasure",
+                  "id": "numberofboolmeasure"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of varchar measures",
+                      "variableUnitLabel": "varchar measures",
+                      "required": true,
+                      "variableId": "Novarcharmeasures"
+                    },
+                    {
+                      "variableLabel": "Approx size of each varchar measure value",
+                      "variableUnitLabel": "(Bytes)",
+                      "required": true,
+                      "variableId": "apxvarcharmeasures"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "numberofvarmeasure",
+                  "id": "numberofvarmeasure"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Recordtype"
+                      },
+                      "yes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of bigint, double, timestamp measures",
+                      "variableUnitLabel": "bigint, double measure(s)",
+                      "required": false,
+                      "variableId": "Nobigdoubtimemeasure"
+                    },
+                    {
+                      "variableLabel": "Number of boolean measures",
+                      "variableUnitLabel": "boolean measure(s)",
+                      "required": false,
+                      "variableId": "Nobooleanmeasures"
+                    },
+                    {
+                      "variableLabel": "Number of varchar measures",
+                      "variableUnitLabel": "varchar measure(s)",
+                      "required": false,
+                      "variableId": "Novarcharmeasures"
+                    }
+                  ],
+                  "outputUnitLabel": "measures",
+                  "variableName": "numberofmeasure",
+                  "id": "numberofmeasure"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Nobigdoubtimemeasureconstant",
+                      "variableUnitLabel": "Bytes (bigint, doubld measure)",
+                      "required": false,
+                      "variableId": "Nobigdoubtimemeasureconstant"
+                    },
+                    {
+                      "variableLabel": "Number of boolean measures",
+                      "variableUnitLabel": "Bytes (boolean measure) ",
+                      "required": false,
+                      "variableId": "Nobooleanmeasures"
+                    },
+                    {
+                      "variableLabel": "numberofvarmeasure",
+                      "variableUnitLabel": "Bytes (varchar measure) ",
+                      "required": false,
+                      "variableId": "numberofvarmeasure"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "Total size of measures",
+                  "id": "Totalmeasures"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "writesEstimator"
+                      },
+                      "yes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total size of measures(Bytes)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Total size of measures",
+                  "id": "TotalmeasuresDisplay",
+                  "refer": "Totalmeasures"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total size of dimensions",
+                      "variableUnitLabel": "Bytes",
+                      "required": true,
+                      "variableId": "Totalsizedim"
+                    },
+                    {
+                      "variableLabel": "numberofmeasure",
+                      "variableUnitLabel": "measures",
+                      "required": true,
+                      "variableId": "numberofmeasure"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes",
+                  "variableName": "multi2",
+                  "id": "multi2"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Recordtype"
+                      },
+                      "yes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "Bytes (Timestamp)"
+                    },
+                    {
+                      "variableLabel": "multi2",
+                      "variableUnitLabel": "Bytes (Total size of dimensions)",
+                      "required": false,
+                      "variableId": "multi2"
+                    },
+                    {
+                      "variableLabel": "Total size of measures",
+                      "variableUnitLabel": "Bytes (Total size of measures)",
+                      "required": false,
+                      "variableId": "Totalmeasures"
+                    }
+                  ],
+                  "outputUnitLabel": "bytes",
+                  "variableName": "Record size(Bytes) single",
+                  "id": "RecordSize(Bytes)_single"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Recordtype"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "Bytes (Timestamp)"
+                    },
+                    {
+                      "variableLabel": "Total size of dimensions",
+                      "variableUnitLabel": "Bytes (Total size of dimensions)",
+                      "required": false,
+                      "variableId": "Totalsizedim"
+                    },
+                    {
+                      "variableLabel": "Total size of measures",
+                      "variableUnitLabel": "Bytes (Total size of measures)",
+                      "required": false,
+                      "variableId": "Totalmeasures"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes (Record Size)",
+                  "variableName": "Record size(Bytes)",
+                  "id": "RecordSize(Bytes)"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Recordtype"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Record size(Bytes)",
+                      "variableUnitLabel": "Bytes",
+                      "required": true,
+                      "variableId": "RecordSize(Bytes)"
+                    },
+                    {
+                      "constant": 0.0009765625,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "variableName": "Record size multi",
+                  "id": "RecordSize_multi"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Recordtype"
+                      },
+                      "yes"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Record size(Bytes) single",
+                      "variableUnitLabel": "bytes",
+                      "required": true,
+                      "variableId": "RecordSize(Bytes)_single"
+                    },
+                    {
+                      "constant": 0.0009765625,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "variableName": "Record size single",
+                  "id": "RecordSize_single"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Record size",
+                      "variableUnitLabel": "Bytes",
+                      "required": false,
+                      "variableId": "RecordSize"
+                    },
+                    {
+                      "variableLabel": "Record size single",
+                      "variableUnitLabel": "Bytes",
+                      "required": false,
+                      "variableId": "RecordSize_single"
+                    },
+                    {
+                      "variableLabel": "Record size multi",
+                      "variableUnitLabel": "Bytes",
+                      "required": false,
+                      "variableId": "RecordSize_multi"
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "variableName": "Record size final",
+                  "id": "RecordSize_final"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Record size (KB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Record size final",
+                  "id": "RecordSizeDisplay",
+                  "refer": "RecordSize_final"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": " ",
+                  "id": "ZeroVarible"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Totalsizedim",
+                    "TotalsizedimDisplay",
+                    "Nobigdoubtimemeasureconstant",
+                    "numberofboolmeasure",
+                    "numberofvarmeasure",
+                    "numberofmeasure",
+                    "Totalmeasures",
+                    "TotalmeasuresDisplay",
+                    "multi2",
+                    "RecordSize(Bytes)_single",
+                    "RecordSize(Bytes)",
+                    "RecordSize_multi",
+                    "RecordSize_single",
+                    "RecordSize_final",
+                    "RecordSizeDisplay",
+                    "ZeroVarible"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "",
+                  "decimalPlaces": 2,
+                  "doNotDisplayForZeroValue": true,
+                  "id": "displayMathswrites",
+                  "subTotalRefer": "ZeroVarible"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Memory store writes",
+          "helpText": "The memory store charges are calculated based on the amount of time-series data stored in the memory store of each Amazon Timestream table. <br/><br/> Data batching: Batching multiple records in a single write request helps reduce the cost of writes. See batching time-series events for details. You can batch up to 100 records in a single write request. <br/> <br/> Automatic detection of repeated data: When you batch multiple records to Timestream, it will automatically recognize any repeating information in the records (ex: Dimension value such as region repeating across records ) and only charge you once for it. For conservative estimates assume 0% of the data repeated. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/timestream/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of records",
+                "id": "numberOfRecords_1",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of records"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Batch data",
+                "id": "BatchData",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "yes"
+                  },
+                  {
+                    "label": "No",
+                    "id": "no"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "BatchData"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Batch size",
+                "id": "BatchSize",
+                "defaultValue": 100,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Batch size"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "BatchData"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "RepeatedDataPerBatch",
+                "label": "% repeated data per batch",
+                "description": "",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": false,
+                "placeholder": "Enter % repeated data per batch"
+              },
+              {
+                "type": "pricing",
+                "label": "Timestream Ingestion per GB",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "timestream",
+                "meteredUnit": {
+                  "allRegions": "Timestream Ingestion per GB"
+                },
+                "id": "writesPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfRecords_1",
+                    "BatchData",
+                    "BatchSize",
+                    "RepeatedDataPerBatch",
+                    "writesPrice"
+                  ],
+                  "subTotalRefer": "ZeroVarible",
+                  "id": "unitcovnersion_memory"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB per GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB",
+                  "variableName": "RecordSizeGB",
+                  "id": "RecordSizeGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of records",
+                      "variableUnitLabel": "records per months",
+                      "required": true,
+                      "variableId": "numberOfRecords_1"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "records per hours",
+                  "variableName": "NumberOfRecordsHours",
+                  "id": "NumberOfRecordsHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "variableName": "RoundedRecordSize",
+                  "id": "RoundedRecordSize"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "BatchData"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RoundedRecordSize",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RoundedRecordSize"
+                    },
+                    {
+                      "variableLabel": "Number of records",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "numberOfRecords_1"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per month",
+                  "variableName": "writesPerMonthNo",
+                  "decimalPlaces": 2,
+                  "id": "writesPerMonthNo"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "BatchData"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "writesPerMonthNo",
+                      "variableUnitLabel": "KB per month",
+                      "required": true,
+                      "variableId": "writesPerMonthNo"
+                    },
+                    {
+                      "constant": 1e-06,
+                      "constantUnitLabel": "KB in GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "variableName": "MemorywritesGB",
+                  "decimalPlaces": 2,
+                  "id": "MemorywritesGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "% repeated data per batch",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "RepeatedDataPerBatch"
+                    }
+                  ],
+                  "outputUnitLabel": "not repeated data per batch",
+                  "variableName": "notRepeatedDataPerBatch",
+                  "decimalPlaces": 2,
+                  "isZeroValid": true,
+                  "id": "notRepeatedDataPerBatch"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "BatchSize"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "records",
+                  "variableName": "subBatchSize",
+                  "decimalPlaces": 2,
+                  "id": "subBatchSize"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "subBatchSize",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "subBatchSize"
+                    },
+                    {
+                      "variableLabel": "notRepeatedDataPerBatch",
+                      "variableUnitLabel": "not repeated data per batch",
+                      "required": true,
+                      "variableId": "notRepeatedDataPerBatch"
+                    },
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "decimalPlaces": 2,
+                  "variableName": "recordsPerBatch",
+                  "id": "recordsPerBatch"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "recordsPerBatch",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "recordsPerBatch"
+                    },
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per batch",
+                  "decimalPlaces": 2,
+                  "variableName": "unroundwrites",
+                  "id": "unroundwrites"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "unroundwrites",
+                      "variableUnitLabel": "writes",
+                      "required": true,
+                      "variableId": "unroundwrites"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per batch",
+                  "variableName": "writes_name",
+                  "id": "writes"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of records",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfRecords_1"
+                    },
+                    {
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "BatchSize"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "unroundrecordspbpm",
+                  "decimalPlaces": 2,
+                  "id": "unroundrecordspbpm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "unroundrecordspbpm",
+                      "variableUnitLabel": "writes per month",
+                      "required": true,
+                      "variableId": "unroundrecordspbpm"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "recordspbpm",
+                  "id": "recordspbpm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "recordspbpm",
+                      "variableUnitLabel": "writes per month",
+                      "required": true,
+                      "variableId": "recordspbpm"
+                    },
+                    {
+                      "variableLabel": "writes_name",
+                      "variableUnitLabel": "KB per batch",
+                      "required": true,
+                      "variableId": "writes"
+                    },
+                    {
+                      "constant": 1e-06,
+                      "constantUnitLabel": "KB in GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "variableName": "writesPerMonthyes",
+                  "decimalPlaces": 2,
+                  "id": "writesPerMonthyes"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "MemorywritesGB",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "MemorywritesGB"
+                    },
+                    {
+                      "variableLabel": "writesPerMonthyes",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "writesPerMonthyes"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "writesPerMonth",
+                  "decimalPlaces": 2,
+                  "id": "writesPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "writesPerMonth",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "writesPerMonth"
+                    },
+                    {
+                      "variableLabel": "Timestream Ingestion per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "writesPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "writespricemath",
+                  "decimalPlaces": 2,
+                  "id": "writespricemath"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "RecordSizeGB",
+                    "NumberOfRecordsHours",
+                    "RoundedRecordSize",
+                    "writesPerMonthNo",
+                    "MemorywritesGB",
+                    "notRepeatedDataPerBatch",
+                    "subBatchSize",
+                    "recordsPerBatch",
+                    "unroundwrites",
+                    "writes",
+                    "unroundrecordspbpm",
+                    "recordspbpm",
+                    "writesPerMonthyes",
+                    "writesPerMonth",
+                    "writespricemath"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Writes price",
+                  "decimalPlaces": 2,
+                  "id": "displayMathswrites_memory",
+                  "subTotalRefer": "writespricemath"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Magnetic store writes",
+          "helpText": "The magnetic store charges are calculated based on the amount of time-series data stored in the magnetic store of each Amazon Timestream table.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/timestream/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Magnetic Number of records",
+                "id": "MagneticnumberOfRecords",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of records"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Batch data",
+                "id": "MagneticBatchData",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "yes"
+                  },
+                  {
+                    "label": "No",
+                    "id": "no"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "MagneticBatchData"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Batch size",
+                "id": "MagneticBatchSize",
+                "defaultValue": 100,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter Batch size"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "MagneticBatchData"
+                    },
+                    "yes"
+                  ]
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "MagneticRepeatedDataPerBatch",
+                "label": "% repeated data per batch",
+                "description": "",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": false,
+                "placeholder": "Enter % repeated data per batch"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "MagneticnumberOfRecords",
+                    "MagneticBatchData",
+                    "MagneticBatchSize",
+                    "MagneticRepeatedDataPerBatch"
+                  ],
+                  "subTotalRefer": "writespricemath",
+                  "id": "unitcovnersion_ht"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "MagneticBatchData"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RoundedRecordSize",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RoundedRecordSize"
+                    },
+                    {
+                      "variableLabel": "Magnetic Number of records",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "MagneticnumberOfRecords"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per month",
+                  "variableName": "MagneticwritesPerMonthNo",
+                  "decimalPlaces": 2,
+                  "id": "MagneticwritesPerMonthNo"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "MagneticBatchData"
+                      },
+                      "no"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "MagneticwritesPerMonthNo",
+                      "variableUnitLabel": "KB per month",
+                      "required": true,
+                      "variableId": "MagneticwritesPerMonthNo"
+                    },
+                    {
+                      "constant": 1e-06,
+                      "constantUnitLabel": "KB in GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "variableName": "magneticWritesPerGB",
+                  "decimalPlaces": 2,
+                  "id": "magneticWritesPerGB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "% repeated data per batch",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "MagneticRepeatedDataPerBatch"
+                    }
+                  ],
+                  "outputUnitLabel": "not repeated data per batch",
+                  "variableName": "MagneticnotRepeatedDataPerBatch",
+                  "decimalPlaces": 2,
+                  "isZeroValid": true,
+                  "id": "MagneticnotRepeatedDataPerBatch"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "MagneticBatchSize"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "records",
+                  "variableName": "MagneticsubBatchSize",
+                  "decimalPlaces": 2,
+                  "id": "MagneticsubBatchSize"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "MagneticsubBatchSize",
+                      "variableUnitLabel": "records",
+                      "required": true,
+                      "variableId": "MagneticsubBatchSize"
+                    },
+                    {
+                      "variableLabel": "MagneticnotRepeatedDataPerBatch",
+                      "variableUnitLabel": "not repeated data per batch",
+                      "required": true,
+                      "variableId": "MagneticnotRepeatedDataPerBatch"
+                    },
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "decimalPlaces": 2,
+                  "variableName": "MagneticrecordsPerBatch",
+                  "id": "MagneticrecordsPerBatch"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "MagneticrecordsPerBatch",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "MagneticrecordsPerBatch"
+                    },
+                    {
+                      "variableLabel": "Record size final",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "RecordSize_final"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per batch",
+                  "decimalPlaces": 2,
+                  "variableName": "unroundMagneticwrites",
+                  "id": "unroundMagneticwrites"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "unroundMagneticwrites",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "unroundMagneticwrites"
+                    }
+                  ],
+                  "outputUnitLabel": "KB per batch",
+                  "variableName": "Magneticwrites",
+                  "id": "Magneticwrites"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Magnetic Number of records",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "MagneticnumberOfRecords"
+                    },
+                    {
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "MagneticBatchSize"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "unroundMagneticrecordspbpm",
+                  "decimalPlaces": 2,
+                  "id": "unroundMagneticrecordspbpm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "unroundMagneticrecordspbpm",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "unroundMagneticrecordspbpm"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "Magneticrecordspbpm",
+                  "id": "Magneticrecordspbpm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Magneticrecordspbpm",
+                      "variableUnitLabel": "writes per month",
+                      "required": true,
+                      "variableId": "Magneticrecordspbpm"
+                    },
+                    {
+                      "variableLabel": "Magneticwrites",
+                      "variableUnitLabel": "KB per batch",
+                      "required": true,
+                      "variableId": "Magneticwrites"
+                    },
+                    {
+                      "constant": 1e-06,
+                      "constantUnitLabel": "KB in GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "variableName": "MagneticwritesPerMonthyes",
+                  "decimalPlaces": 2,
+                  "id": "MagneticwritesPerMonthyes"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "magneticWritesPerGB",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "magneticWritesPerGB"
+                    },
+                    {
+                      "variableLabel": "MagneticwritesPerMonthyes",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "MagneticwritesPerMonthyes"
+                    }
+                  ],
+                  "outputUnitLabel": "writes per month",
+                  "variableName": "MagneticwritesPerMonth",
+                  "decimalPlaces": 2,
+                  "id": "MagneticwritesPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "MagneticwritesPerMonth",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "MagneticwritesPerMonth"
+                    },
+                    {
+                      "variableLabel": "Timestream Ingestion per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "writesPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "Magneticwritesprice",
+                  "decimalPlaces": 2,
+                  "id": "Magneticwritesprice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "MagneticwritesPerMonthNo",
+                    "magneticWritesPerGB",
+                    "MagneticnotRepeatedDataPerBatch",
+                    "MagneticsubBatchSize",
+                    "MagneticrecordsPerBatch",
+                    "unroundMagneticwrites",
+                    "Magneticwrites",
+                    "unroundMagneticrecordspbpm",
+                    "Magneticrecordspbpm",
+                    "MagneticwritesPerMonthyes",
+                    "MagneticwritesPerMonth",
+                    "Magneticwritesprice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Magnetic Writes price",
+                  "decimalPlaces": 2,
+                  "id": "magdisplayMathswrites",
+                  "subTotalRefer": "Magneticwritesprice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Queries",
+          "helpText": "Amazon Timestream for Live Analytics measures the compute capacity allocated to you for your query needs in Timestream compute unit (TCU). When you run queries in Timestream for Live Analytics, the service allocates TCUs on-demand based on the complexity of your queries and the amount of data being processed. Note that, TCU’s can execute multiple queries and the service scales when the existing TCU cannot serve the incoming queries. <br/>Assumptions in the pricing calculator: <br/> 1/ The calculator assumes a query latency of 1 second. If your actual query latency is lower (e.g., 200ms) and are spread uniformly across the minute, the same TCU can serve more queries, potentially increasing the query capacity by 5 times. <br/> 2/ For real-time queries, the calculator assumes a uniform distribution of queries across the minute. If you have a low query volume (<60 queries per minute) and send queries at a fixed interval (e.g., once a minute), you may only use the compute units for 50% of the estimated time, which could reduce your actual costs by 50%. <br/> Learn more:  <a href=https://docs.aws.amazon.com/timestream/latest/developerguide/tcu.html> Timestream developer guide</a>",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/timestream/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Real-Time queries",
+                "id": "numberOfrealtimeQueries",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of  Real-Time Queries"
+              },
+              {
+                "type": "pricing",
+                "label": "Timestream Query per TCU-hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "timestream",
+                "meteredUnit": {
+                  "allRegions": "Query TCU-hours per TCU-hour"
+                },
+                "id": "queryPrice_2"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Analytical queries",
+                "id": "Numberofanalyticalqueries",
+                "options": [
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perHour",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of Analytical queries"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfrealtimeQueries",
+                    "queryPrice_2",
+                    "Numberofanalyticalqueries"
+                  ],
+                  "subTotalRefer": "Magneticwritesprice",
+                  "id": "unitconversionmag_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Real-Time queries",
+                      "variableUnitLabel": "Queries",
+                      "required": true,
+                      "variableId": "numberOfrealtimeQueries"
+                    },
+                    {
+                      "constant": 7,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "Id": "realtime_queries2",
+                  "id": "_generated_0"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfrealtimeQueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableId": "_generated_0",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "id": "max_realtimequeries"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfrealtimeQueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "",
+                      "variableLabel": "",
+                      "required": true,
+                      "variableId": "max_realtimequeries"
+                    }
+                  ],
+                  "outputUnitLabel": " ",
+                  "id": "Roundedrealtimequeries"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfrealtimeQueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 4,
+                      "constantUnitLabel": "TCU"
+                    },
+                    {
+                      "variableLabel": " ",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Roundedrealtimequeries"
+                    }
+                  ],
+                  "outputUnitLabel": "TCU",
+                  "id": "realtimequeries_pricing_temp"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfrealtimeQueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "TCU",
+                      "variableUnitLabel": "TCU",
+                      "required": true,
+                      "variableId": "realtimequeries_pricing_temp"
+                    },
+                    {
+                      "variableLabel": "Timestream Query per TCU-hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "queryPrice_2"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for real-time queries",
+                  "id": "realtimequeries_pricing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Analytical queries",
+                      "variableUnitLabel": "Queries",
+                      "required": true,
+                      "variableId": "Numberofanalyticalqueries"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "id": "analytical_queries2"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "Numberofanalyticalqueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableId": "analytical_queries2",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "id": "max_analyticalqueries"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "Numberofanalyticalqueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "",
+                      "variableLabel": "",
+                      "required": true,
+                      "variableId": "max_analyticalqueries"
+                    }
+                  ],
+                  "outputUnitLabel": "   ",
+                  "id": "Roundedanalyticalqueries"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "Numberofanalyticalqueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "   ",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "Roundedanalyticalqueries"
+                    },
+                    {
+                      "constant": 16,
+                      "constantUnitLabel": "TCU"
+                    }
+                  ],
+                  "outputUnitLabel": "TCU  ",
+                  "id": "analyticalqueries_pricing_temp"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "Numberofanalyticalqueries"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "TCU  ",
+                      "variableUnitLabel": "TCU",
+                      "required": true,
+                      "variableId": "analyticalqueries_pricing_temp"
+                    },
+                    {
+                      "variableLabel": "Timestream Query per TCU-hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "queryPrice_2"
+                    },
+                    {
+                      "constant": 0.016,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for analytical queries",
+                  "id": "analyticalqueries_pricing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for real-time queries",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "realtimequeries_pricing"
+                    },
+                    {
+                      "variableLabel": "[currency] for analytical queries",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "analyticalqueries_pricing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for queries",
+                  "id": "totalqueries_pricing"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "_generated_0",
+                    "max_realtimequeries",
+                    "Roundedrealtimequeries",
+                    "realtimequeries_pricing_temp",
+                    "realtimequeries_pricing",
+                    "analytical_queries2",
+                    "max_analyticalqueries",
+                    "Roundedanalyticalqueries",
+                    "analyticalqueries_pricing_temp",
+                    "analyticalqueries_pricing",
+                    "totalqueries_pricing"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total queries pricing",
+                  "decimalPlaces": 2,
+                  "id": "queries_pricing_display",
+                  "subTotalRefer": "totalqueries_pricing"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "helpText": "Configure the data retention of the memory store and magnetic store to address your business need. The memory store is optimized for high throughput data ingestion and fast point-in-time queries. For instance, if you need to visualize the granular metric for the last 2 hours, set your memory store retention to 2 hours. The magnetic store is optimized for long term data storage and fast analytical queries. For instance, if you need to store the historical data for 10 years, set the magnetic store retention period to 10 years. <br/> <br/>The default value for memory store is 12 hours and magnetic store is 10 years. These default retention settings address majority of the use cases. Kindly adjust the values based on your use case. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/timestream/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Memory store retention",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 8760
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the duration you want to store your data in memory store.",
+                "id": "MemoryStoreretention"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Magnetic store retention",
+                "dropDownDuration": [
+                  {
+                    "label": "months",
+                    "value": "mon"
+                  }
+                ],
+                "outputDurationUnit": "mon",
+                "outputDurationLabel": "months",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": true,
+                  "minValue": 0,
+                  "maxValue": 2400
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the duration you want to store your data in magnetic store.",
+                "id": "MagneticStoreRetention"
+              },
+              {
+                "type": "pricing",
+                "label": "Timestream Memory Store per GB-Hours",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "timestream",
+                "meteredUnit": {
+                  "allRegions": "Timestream Memory Store per GB-Hours"
+                },
+                "id": "memoryPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "Timestream Magnetic Store per GB-Mo",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "timestream",
+                "meteredUnit": {
+                  "allRegions": "Timestream Magnetic Store per GB-Mo"
+                },
+                "id": "magneticPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "MemoryStoreretention",
+                    "MagneticStoreRetention",
+                    "memoryPrice",
+                    "magneticPrice"
+                  ],
+                  "subTotalRefer": "totalqueries_pricing",
+                  "id": "unitconversionstoreage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RecordSizeGB",
+                      "variableUnitLabel": "GB (record size)",
+                      "required": true,
+                      "variableId": "RecordSizeGB"
+                    },
+                    {
+                      "variableLabel": "Number of records",
+                      "variableUnitLabel": "records/month",
+                      "required": true,
+                      "variableId": "numberOfRecords_1"
+                    },
+                    {
+                      "variableLabel": "Memory store retention",
+                      "variableUnitLabel": "(memory store retentions)",
+                      "required": true,
+                      "variableId": "MemoryStoreretention"
+                    }
+                  ],
+                  "outputUnitLabel": "GB-hour per month",
+                  "decimalPlaces": 2,
+                  "variableName": "Memorystoreusage",
+                  "id": "Memorystoreusage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Memorystoreusage",
+                      "variableUnitLabel": "(GB-hour) per month",
+                      "required": true,
+                      "variableId": "Memorystoreusage"
+                    },
+                    {
+                      "variableLabel": "Timestream Memory Store per GB-Hours",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "memoryPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "variableName": "Memorystoreusageprice",
+                  "id": "Memorystoreusageprice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Memorystoreusage",
+                    "Memorystoreusageprice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Memory store price",
+                  "decimalPlaces": 2,
+                  "id": "displayMathsmemory",
+                  "subTotalRefer": "Memorystoreusageprice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RecordSizeGB",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "RecordSizeGB"
+                    },
+                    {
+                      "variableLabel": "Number of records",
+                      "variableUnitLabel": "records/month",
+                      "required": true,
+                      "variableId": "numberOfRecords_1"
+                    },
+                    {
+                      "variableLabel": "Magnetic store retention",
+                      "variableUnitLabel": "(magnetic store retention)",
+                      "required": true,
+                      "variableId": "MagneticStoreRetention"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "decimalPlaces": 8,
+                  "variableName": "Magmiddle",
+                  "id": "Magmiddle"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RecordSizeGB",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "RecordSizeGB"
+                    },
+                    {
+                      "variableLabel": "Magnetic Number of records",
+                      "variableUnitLabel": "magnetic records/month",
+                      "required": false,
+                      "variableId": "MagneticnumberOfRecords"
+                    },
+                    {
+                      "variableLabel": "Magnetic store retention",
+                      "variableUnitLabel": "(magnetic store retention)",
+                      "required": true,
+                      "variableId": "MagneticStoreRetention"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "decimalPlaces": 8,
+                  "variableName": "Magmiddle2",
+                  "id": "Magmiddle2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Magmiddle2",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "Magmiddle2"
+                    },
+                    {
+                      "variableLabel": "Magmiddle",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "Magmiddle"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "decimalPlaces": 2,
+                  "variableName": "Magaddition",
+                  "id": "Magaddition"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Magaddition",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "Magaddition"
+                    },
+                    {
+                      "variableLabel": "Timestream Magnetic Store per GB-Mo",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "magneticPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "variableName": "Magneticstoreusageprice",
+                  "id": "Magneticstoreusageprice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Magmiddle",
+                    "Magmiddle2",
+                    "Magaddition",
+                    "Magneticstoreusageprice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Magnetic store price",
+                  "decimalPlaces": 2,
+                  "id": "displayMathsmag",
+                  "subTotalRefer": "Magneticstoreusageprice"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "AmazonTimestream"
+    }
+  ],
+  "slug": "AmazonTimestream",
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,148 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA CloudTrail - Audit logging for security monitoring and compliance - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  # CloudWatch Logs Group for CloudTrail
+  CloudTrailLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '${StackPrefix}-cloudtrail'
+      RetentionInDays: 3653
+      KmsKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+
+  # IAM Role for CloudTrail to write to CloudWatch Logs
+  CloudTrailLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${StackPrefix}-cloudtrail-logs-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CloudTrailLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt CloudTrailLogGroup.Arn
+
+  # S3 Bucket for CloudTrail logs (long-term storage)
+  CloudTrailBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-cloudtrail-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !ImportValue
+                Fn::Sub: '${StackPrefix}-kms-key-id'
+            BucketKeyEnabled: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldLogs
+            Status: Enabled
+            ExpirationInDays: 2555  # 7 years for compliance
+            NoncurrentVersionExpirationInDays: 30
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue
+          Fn::Sub: '${StackPrefix}-logfiles-bucket-name'
+        LogFilePrefix: 'cloudtrail-bucket-logs/'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-cloudtrail'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  CloudTrailBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CloudTrailBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AWSCloudTrailAclCheck
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:GetBucketAcl
+            Resource: !GetAtt CloudTrailBucket.Arn
+          - Sid: AWSCloudTrailWrite
+            Effect: Allow
+            Principal:
+              Service: cloudtrail.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub '${CloudTrailBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                s3:x-amz-acl: bucket-owner-full-control
+
+  # CloudTrail
+  SeraCloudTrail:
+    Type: AWS::CloudTrail::Trail
+    DependsOn:
+      - CloudTrailBucketPolicy
+    Properties:
+      TrailName: !Sub '${StackPrefix}-trail'
+      S3BucketName: !Ref CloudTrailBucket
+      IncludeGlobalServiceEvents: true
+      IsLogging: true
+      IsMultiRegionTrail: true
+      EnableLogFileValidation: true
+      CloudWatchLogsLogGroupArn: !GetAtt CloudTrailLogGroup.Arn
+      CloudWatchLogsRoleArn: !GetAtt CloudTrailLogsRole.Arn
+      EventSelectors:
+        - ReadWriteType: All
+          IncludeManagementEvents: true
+          DataResources:
+            # Log S3 data events for SERA buckets
+            - Type: AWS::S3::Object
+              Values:
+                - !Sub 'arn:aws:s3:::${StackPrefix}-*/*'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-cloudtrail'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+Outputs:
+  CloudTrailArn:
+    Description: 'CloudTrail ARN'
+    Value: !GetAtt SeraCloudTrail.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-cloudtrail-arn'
+
+  CloudTrailLogGroupName:
+    Description: 'CloudWatch Logs group name for CloudTrail'
+    Value: !Ref CloudTrailLogGroup
+    Export:
+      Name: !Sub '${StackPrefix}-cloudtrail-log-group-name'
+
+  CloudTrailBucketName:
+    Description: 'S3 bucket name for CloudTrail logs'
+    Value: !Ref CloudTrailBucket
+    Export:
+      Name: !Sub '${StackPrefix}-cloudtrail-bucket-name'

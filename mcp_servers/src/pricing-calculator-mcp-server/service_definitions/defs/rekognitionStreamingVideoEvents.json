@@ -1,0 +1,268 @@
+{
+  "version": "0.0.5",
+  "serviceName": "Rekognition Streaming Video Events",
+  "serviceCode": "rekognitionStreamingVideoEvents",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rekognition",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rekognition/[currency]/current/rekognition.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "amazonRekognitionVideo",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Live Streams LabelDetection per Minutes Processed"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Live Streams per Minutes Processed"
+                }
+              }
+            ]
+          },
+          "title": "Video Pricing",
+          "helpText": "Amazon Rekognition Video charges you for video analysis performed using our APIs. When running multiple API calls against the same section of video, you will get charged separately for each API. Amazon Rekognition can analyze videos stored in Amazon S3 or live streaming video from Kinesis Video Streams.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rekognition/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "Amazon Rekognition streaming video events processes video from new or existing Kinesis Video Streams. Rekognition starts processing the Kinesis Video stream only when you send us the notification to start video analysis and can analyze up to 120 seconds of video per event. You pay only for the amount of video processed by Amazon Rekognition. Note: You will pay separately for the Amazon Kinesis Video Streams service. Please see <a href='https://aws.amazon.com/rekognition/pricing'>Amazon Rekognition Video</a> pricing page for more details.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "video_infoAlert"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Streaming Video Events</b>",
+                "id": "mediaAnalysisInput"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rekognition",
+                    "meteredUnit": "Live Streams LabelDetection per Minutes Processed"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Minutes of streaming video processed with label detection API per month",
+                "id": "StreaminglabelDetectionMin",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 0,
+                "placeholder": "Enter the amount",
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rekognition",
+                    "meteredUnit": "Live Streams per Minutes Processed"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Minutes of streaming video processed with face search API per month",
+                "id": "StreamingFaceSearchMin",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "id": "StreaminglabelDetectionRate",
+                "label": "Streaming Label Detection price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Live Streams LabelDetection per Minutes Processed"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "StreamingFaceSearchRate",
+                "label": "Streaming Fase Search price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Live Streams per Minutes Processed"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "ImageUnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "video_infoAlert",
+                    "mediaAnalysisInput",
+                    "StreaminglabelDetectionMin",
+                    "StreamingFaceSearchMin",
+                    "StreaminglabelDetectionRate",
+                    "StreamingFaceSearchRate"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rekognition",
+                      "meteredUnit": "Live Streams LabelDetection per Minutes Processed"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "StreamingLabelDetectionCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "StreaminglabelDetectionMin",
+                      "variableLabel": "Minutes of streaming video processed with label detection API per month",
+                      "variableUnitLabel": "minutes",
+                      "required": true
+                    },
+                    {
+                      "variableId": "StreaminglabelDetectionRate",
+                      "variableLabel": "Streaming Label Detection price",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "[currency] Label Detection",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rekognition",
+                      "meteredUnit": "Live Streams per Minutes Processed"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "StreamingFaceSearchCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "StreamingFaceSearchMin",
+                      "variableLabel": "Minutes of streaming video processed with face search API per month",
+                      "variableUnitLabel": "minutes",
+                      "required": true
+                    },
+                    {
+                      "variableId": "StreamingFaceSearchRate",
+                      "variableLabel": "Streaming Fase Search price",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "[currency] Face Search",
+                  "decimalPlaces": 2,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalStreamingCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "StreamingLabelDetectionCost",
+                      "variableLabel": "[currency] Label Detection",
+                      "variableUnitLabel": "[currency] Streaming Label Detection Cost",
+                      "required": false
+                    },
+                    {
+                      "variableId": "StreamingFaceSearchCost",
+                      "variableLabel": "[currency] Face Search",
+                      "variableUnitLabel": "[currency] Streaming Face Search Cost",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "display",
+                  "id": "videoCostDisp",
+                  "label": "Video pricing",
+                  "refer": [
+                    "StreamingLabelDetectionCost",
+                    "StreamingFaceSearchCost",
+                    "totalStreamingCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalStreamingCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

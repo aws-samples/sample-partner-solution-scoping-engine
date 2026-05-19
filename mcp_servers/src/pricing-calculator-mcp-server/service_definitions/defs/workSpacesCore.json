@@ -1,0 +1,1746 @@
+{
+  "version": "0.0.21",
+  "serviceName": "WorkSpaces Core",
+  "serviceCode": "workSpacesCore",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "displayAutomation": true,
+  "searchKeywords": [
+    "core",
+    "Workspaces"
+  ],
+  "serviceDescription": "Amazon WorkSpaces is a managed, secure cloud desktop service. You can use Amazon WorkSpaces to provision either Windows or Linux desktops in just a few minutes and quickly scale to provide thousands of desktops to workers across the globe.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/workspaces/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "workspaces",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workspaces/[currency]/current/workspaces.json"
+    },
+    {
+      "mappingDefinitionName": "workspaces-core-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/workspaces/[currency]/current/workspaces-core-calc/metadata.json"
+    }
+  ],
+  "hasDataTransfer": false,
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "WorkSpaces Core",
+      "description": "",
+      "id": "workspaces",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/workspaces-family/core/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "WorkSpaces Bundle Configuration",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "WorkSpaces Core allows you to pay for usage based on monthly subscriptions or hourly meters. With the monthly subscription offering, you pay a fixed monthly fee per virtual desktop for unlimited usage during the month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/workspaces-family/core/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "workspaces-core-calc",
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "monthly": [
+                      {
+                        "Running Mode": "Monthly"
+                      },
+                      {
+                        "Running Mode": "Hourly"
+                      }
+                    ],
+                    "hourly": [
+                      {
+                        "Running Mode": "Hourly",
+                        "$overridePriceKeyWith": "workspaces:PricePerUnit"
+                      }
+                    ]
+                  }
+                },
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "primaryKey": "Operating System",
+                "secondaryKey": [
+                  "rootVolume",
+                  "userVolume",
+                  "License",
+                  "Running Mode",
+                  "Bundle Description"
+                ],
+                "prioritizedKey": {
+                  "Operating System": 256,
+                  "License": 64,
+                  "Bundle Description": 16,
+                  "rootVolume": 4
+                },
+                "remap": {
+                  "keyValue": {
+                    "AlwaysOn": "Monthly",
+                    "AutoStop": "Hourly",
+                    "Any": "WorkSpaces Core Windows BYOL",
+                    "Windows": "WorkSpaces Core Windows"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Number of WorkSpaces",
+                    "type": "textInput",
+                    "selectorId": "Number of WorkSpaces",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "WorkSpaces Core Windows",
+                    "exportValueAs": "operatingSystem"
+                  },
+                  {
+                    "label": "License",
+                    "type": "dropDown",
+                    "dependent": "Operating System",
+                    "selectorId": "License",
+                    "defaultValue": "Included",
+                    "exportValueAs": "license"
+                  },
+                  {
+                    "label": "Bundle type",
+                    "type": "dropDown",
+                    "selectorId": "Bundle Description",
+                    "defaultValue": "Standard (2 vCPU, 4GB RAM)",
+                    "exportValueAs": "bundleName"
+                  },
+                  {
+                    "label": "Root volume",
+                    "type": "dropDown",
+                    "selectorId": "rootVolume",
+                    "defaultValue": "80 GB",
+                    "dependent": "Bundle Description"
+                  },
+                  {
+                    "label": "User volume",
+                    "type": "dropDown",
+                    "dependent": "rootVolume",
+                    "selectorId": "userVolume",
+                    "defaultValue": "10 GB"
+                  },
+                  {
+                    "label": "Billing option",
+                    "type": "utilization",
+                    "selectorId": "Running Mode",
+                    "exportValueAs": "utilization",
+                    "description": "Pay per month (730 hours) for always-on functionality or select hourly billing for on-demand usage",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Bundle Description",
+                      "License"
+                    ],
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Monthly"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "concat selected values",
+                "id": "concatSelectedValues",
+                "operands": [
+                  {
+                    "variableId": "bundleName"
+                  },
+                  {
+                    "variableId": "license"
+                  },
+                  {
+                    "variableId": "operatingSystem"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "replaceBundleNames2019_iso",
+                "label": "replace bundle names 2019",
+                "originalId": "concatSelectedValues",
+                "replacements": [
+                  {
+                    "originalString": "PowerPro (8 vCPU, 32GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle PowerPro Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "Performance (2 vCPU, 8GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Performance Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "Power (4 vCPU, 16GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Power Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "GraphicsPro (16 vCPU, 122GB RAM, 1 GPU, 8GB Video Memory)IncludedWindows",
+                    "replaceString": "Application Bundle GraphicsPro Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "Value (1 vCPU, 2GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Value Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "Standard (2 vCPU, 4GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Standard Plus License Included Windows Server 2019 Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "Graphics.g4dn (4 vCPU, 16GB RAM, 1 GPU, 16GB Video Memory)IncludedWindows",
+                    "replaceString": "Application Bundle graphics g4dn plus License Included Windows Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  },
+                  {
+                    "originalString": "GraphicsPro.g4dn (16 vCPU, 64GB RAM, 1 GPU, 16GB Video Memory)IncludedWindows",
+                    "replaceString": "Application Bundle GraphicsPro g4dn Plus License Included Windows Basic utilities plus 64bit Office 2019 Pro Plus AlwaysOn"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for 2019 pro plus",
+                "mappingDefinitionName": "workspaces",
+                "id": "proPlusCheck2019_iso",
+                "refers": [
+                  {
+                    "variableLabel": "replace bundle names 2019",
+                    "variableId": "replaceBundleNames2019_iso"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "replaceBundleNames2016_iso",
+                "label": "replace bundle names 2016",
+                "originalId": "concatSelectedValues",
+                "replacements": [
+                  {
+                    "originalString": "Graphics (8 vCPU, 15GB RAM, 1 GPU, 4GB Video Memory)IncludedWindows",
+                    "replaceString": "Application Bundle Graphics Plus License Included Windows Basic utilities AlwaysOn"
+                  },
+                  {
+                    "originalString": "PowerPro (8 vCPU, 32GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle PowerPro Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  },
+                  {
+                    "originalString": "Performance (2 vCPU, 8GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Performance Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  },
+                  {
+                    "originalString": "Power (4 vCPU, 16GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Power Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  },
+                  {
+                    "originalString": "GraphicsPro (16 vCPU, 122GB RAM, 1 GPU, 8GB Video Memory)IncludedWindows",
+                    "replaceString": "Application Bundle GraphicsPro Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  },
+                  {
+                    "originalString": "Value (1 vCPU, 2GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Value Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  },
+                  {
+                    "originalString": "Standard (2 vCPU, 4GB RAM)IncludedWindows",
+                    "replaceString": "Application Bundle Standard Plus License Included Windows Basic utilities plus Office 2016 AlwaysOn"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for 2016 plus",
+                "mappingDefinitionName": "workspaces",
+                "id": "proPlusCheck2016_iso",
+                "refers": [
+                  {
+                    "variableLabel": "replace bundle names 2016",
+                    "variableId": "replaceBundleNames2016_iso"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "license"
+                        },
+                        "Included"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "operatingSystem"
+                        },
+                        "WorkSpaces Core Windows"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "numberPicker",
+                "label": "Plus Application Bundle",
+                "description": "Microsoft Office Professional, Trend Micro Worry-Free Business Security Services, Utilities (Internet Explorer 11, Firefox)",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "defaultDropDownItem": "0"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "Select_Plus_Application_Bundle",
+                "label": "Select Plus Application Bundle",
+                "description": "",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "PowerPro (8 vCPU, 32GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Performance (2 vCPU, 8GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Graphics.g4dn (4 vCPU, 16GB RAM, 1 GPU, 16GB Video Memory)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "GraphicsPro.g4dn (16 vCPU, 64GB RAM, 1 GPU, 16GB Video Memory)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Standard (2 vCPU, 4GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Power (4 vCPU, 16GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Power (4 vCPU, 16GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "General Purpose (16 vCPU, 64GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "General Purpose (32 vCPU, 128GB RAM)"
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "License Included Managed Applications",
+                    "id": "LicenseBasedApps"
+                  }
+                ],
+                "defaultDropDownItem": "Application Bundle Performance Plus License Included Windows Basic utilities plus Office 2013 AlwaysOn"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "license"
+                    },
+                    "Bring Your Own License"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "numberPicker2",
+                "label": "Plus Application Bundle BYOL",
+                "description": "Microsoft Office Professional",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "defaultDropDownItem": "0"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "numberPicker2"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "id": "Select_Plus_Application_Bundle_BYOL",
+                "label": "Select Plus Application Bundle ",
+                "description": "",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "PowerPro (8 vCPU, 32GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Performance (2 vCPU, 8GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Graphics.g4dn (4 vCPU, 16GB RAM, 1 GPU, 16GB Video Memory)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "GraphicsPro.g4dn (16 vCPU, 64GB RAM, 1 GPU, 16GB Video Memory)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Standard (2 vCPU, 4GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "Power (4 vCPU, 16GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "General Purpose (16 vCPU, 64GB RAM)"
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "bundleName"
+                            },
+                            "General Purpose (32 vCPU, 128GB RAM)"
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "License Included Managed Applications",
+                    "id": "LicenseBasedApps"
+                  }
+                ],
+                "defaultDropDownItem": "License Included Managed Applications"
+              },
+              {
+                "type": "pricing",
+                "label": "price for addition bundle2",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "Application Bundle Performance Plus License BYOL Windows Office 2019 AlwaysOn"
+                },
+                "id": "additionalBundleUnitPrice2_iso"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "professionalSumID"
+                    },
+                    {
+                      "type": "component",
+                      "id": "count"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Sum of Professional workspaces can not be greater than total workspaces.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "proCountAlert"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "standardSumID"
+                    },
+                    {
+                      "type": "component",
+                      "id": "count"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Sum of Standard workspaces can not be greater than total workspaces.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "stdCountAlert"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "office2021Pro",
+                "label": "Number of workspaces for Microsoft Office 2021 professional",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for office 2021 pro license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "Ai06S6OPOrNVQlY4p4sr7a-MQsiP_eX7lqtjtcEalJk"
+                },
+                "id": "office2021Pro_included"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visio2021Pro",
+                "label": "Number of workspaces for Microsoft Visio 2021 professional",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for visio 2021 pro license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "Ai06S6OPOrNVQlY4p4sr7a-MQsiP_eX7lqtjtcEalJk"
+                },
+                "id": "visio2021Pro_included"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "id": "project2021Pro",
+                "label": "Number of workspaces for Microsoft Project 2021 professional",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for project 2021 pro license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "yG23nV3Q6_uobxDJKQdv7STyZR2jdJ4FagMoXp3i4kc"
+                },
+                "id": "project2021Pro_included"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "office2021std",
+                "label": "Number of workspaces for Microsoft Office 2021 standard",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for office 2021 std license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "kTnIvuzgvp8R02j879OaDtDGeFxQl5Hwm-wApbRhUzY"
+                },
+                "id": "office2021std_included"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "visio2021std",
+                "label": "Number of workspaces for Microsoft Visio 2021 standard",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for visio 2021 std license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "1TEkD8e0YPBCmLEPribny-x-IU9F-fcfJXPktSAT0rA"
+                },
+                "id": "visio2021std_included"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "Select_Plus_Application_Bundle_BYOL"
+                        },
+                        "LicenseBasedApps"
+                      ]
+                    }
+                  ]
+                },
+                "id": "project2021std",
+                "label": "Number of workspaces for Microsoft Project 2021 standard",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for project 2021 std license included",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "YaoGn7IhKyhKOCc3WLFOSzCZWqMECbvy_utqUsBSBKU"
+                },
+                "id": "project2021std_included"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "WorkSpaces Core cost",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "workspaces_bundle_price"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "Select_Plus_Application_Bundle_BYOL"
+                      },
+                      "proPlus2019"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "additionalBundleUnitPrice2_iso"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for additional application bundle",
+                  "decimalPlaces": 2,
+                  "id": "totalAdditionalPlusBundleCost_BYOL"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Office 2021 professional",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "office2021Pro"
+                    },
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Visio 2021 professional",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "visio2021Pro"
+                    },
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Project 2021 professional",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "project2021Pro"
+                    }
+                  ],
+                  "outputUnitLabel": "total Microsoft Professional 2021 workspaces",
+                  "decimalPlaces": 2,
+                  "id": "professionalSumID"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Office 2021 standard",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "office2021std"
+                    },
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Visio 2021 standard",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "visio2021std"
+                    },
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Project 2021 standard",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "project2021std"
+                    }
+                  ],
+                  "outputUnitLabel": "total standard 2021 workspaces",
+                  "decimalPlaces": 2,
+                  "id": "standardSumID"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Office 2021 professional",
+                      "variableUnitLabel": "WorkSpace(s) for Micorsoft Office 2021 professional",
+                      "required": true,
+                      "variableId": "office2021Pro"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price for office 2021 pro license included",
+                      "required": true,
+                      "variableId": "office2021Pro_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office 2021 professional ",
+                  "decimalPlaces": 2,
+                  "id": "totalOffice2021ProIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Visio 2021 professional",
+                      "variableUnitLabel": "WorkSpace(s) for Micorsoft Visio 2021 professional",
+                      "required": true,
+                      "variableId": "visio2021Pro"
+                    },
+                    {
+                      "variableLabel": "price for visio 2021 pro license included",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "visio2021Pro_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio 2021 professional ",
+                  "decimalPlaces": 2,
+                  "id": "totalVisio2021ProIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Project 2021 professional",
+                      "variableUnitLabel": "WorkSpace(s) for Micorsoft Project 2021 professional",
+                      "required": true,
+                      "variableId": "project2021Pro"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price for project 2021 pro license included",
+                      "required": true,
+                      "variableId": "project2021Pro_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project 2021 professional ",
+                  "decimalPlaces": 2,
+                  "id": "totalProject2021ProIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "totalPro2021",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for Microsoft Office 2021 professional ",
+                      "variableUnitLabel": "[currency] for Microsoft Office 2021 professional",
+                      "required": false,
+                      "variableId": "totalOffice2021ProIncluded"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio 2021 professional ",
+                      "variableUnitLabel": "[currency] for Microsoft Visio 2021 professional",
+                      "required": false,
+                      "variableId": "totalVisio2021ProIncluded"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] for Microsoft Project 2021 professional",
+                      "variableLabel": "[currency] for Microsoft Project 2021 professional ",
+                      "required": false,
+                      "variableId": "totalProject2021ProIncluded"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for total Microsoft Office 2021 professional",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalMSOffice2021ProCost",
+                  "label": "Professional 2021 Total cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalPro2021",
+                  "referLabel": "[currency] for total Microsoft Office 2021 professional"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Office 2021 standard",
+                      "variableUnitLabel": "WorkSpace(s) for Micorsoft Office 2021 standard",
+                      "required": true,
+                      "variableId": "office2021std"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price for office 2021 std license included",
+                      "required": true,
+                      "variableId": "office2021std_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Office 2021 standard ",
+                  "decimalPlaces": 2,
+                  "id": "totalOffice2021StdIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Visio 2021 standard",
+                      "variableUnitLabel": "WorkSpace(s) for Microsoft Visio 2021 standard",
+                      "required": true,
+                      "variableId": "visio2021std"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price for visio 2021 std license included",
+                      "required": true,
+                      "variableId": "visio2021std_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Visio 2021 standard ",
+                  "decimalPlaces": 2,
+                  "id": "totalVisio2021StdIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of workspaces for Microsoft Project 2021 standard",
+                      "variableUnitLabel": "WorkSpace(s) for Microsoft Project 2021 standard",
+                      "required": true,
+                      "variableId": "project2021std"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "variableLabel": "price for project 2021 std license included",
+                      "required": true,
+                      "variableId": "project2021std_included"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Microsoft Project 2021 standard ",
+                  "decimalPlaces": 2,
+                  "id": "totalproject2021StdIncluded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for Microsoft Office 2021 standard ",
+                      "variableUnitLabel": "[currency] for Microsoft Office 2021 standard",
+                      "required": false,
+                      "variableId": "totalOffice2021StdIncluded"
+                    },
+                    {
+                      "variableLabel": "[currency] for Microsoft Visio 2021 standard ",
+                      "variableUnitLabel": "[currency] for Microsoft Visio 2021 standard",
+                      "required": false,
+                      "variableId": "totalVisio2021StdIncluded"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] for Microsoft Project 2021 standard",
+                      "variableLabel": "[currency] for Microsoft Project 2021 standard ",
+                      "required": false,
+                      "variableId": "totalproject2021StdIncluded"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for total Microsoft Office 2021 standard",
+                  "decimalPlaces": 2,
+                  "id": "totalstd2021"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalMSOffice2021StdCost",
+                  "label": "Standard 2021 Total cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "totalstd2021",
+                  "referLabel": "[currency] for total Microsoft Office 2021 standard"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "IPMSupported": true,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for total Microsoft Office 2021 professional",
+                      "variableUnitLabel": "[currency] for total Microsoft Office 2021 professional ",
+                      "required": false,
+                      "variableId": "totalPro2021"
+                    },
+                    {
+                      "variableLabel": "[currency] for total Microsoft Office 2021 standard",
+                      "variableUnitLabel": "[currency] for Microsoft Office 2021 standard ",
+                      "required": false,
+                      "variableId": "totalstd2021"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for total workspaces",
+                  "decimalPlaces": 2,
+                  "id": "totalWorkspacesCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM",
+                    "count",
+                    "operatingSystem",
+                    "license",
+                    "bundleName",
+                    "utilization",
+                    "concatSelectedValues",
+                    "replaceBundleNames2019",
+                    "proPlusCheck2019",
+                    "replaceBundleNames2013",
+                    "proPlusCheck2013",
+                    "numberPicker",
+                    "Select_Plus_Application_Bundle",
+                    "numberPicker2",
+                    "Select_Plus_Application_Bundle_BYOL",
+                    "proCountAlert",
+                    "stdCountAlert",
+                    "office2021Pro",
+                    "office2021Pro_included",
+                    "visio2021Pro",
+                    "visio2021Pro_included",
+                    "project2021Pro",
+                    "project2021Pro_included",
+                    "office2021std",
+                    "office2021std_included",
+                    "visio2021std",
+                    "visio2021std_included",
+                    "project2021std",
+                    "project2021std_included",
+                    "additionalBundleUnitPrice2",
+                    "Price_for_windows_included_application_bundle",
+                    "totalAdditionalPlusBundleCost_included",
+                    "totalAdditionalPlusBundleCost_BYOL",
+                    "standardSumID",
+                    "professionalSumID",
+                    "totalOffice2021ProIncluded",
+                    "totalVisio2021ProIncluded",
+                    "totalProject2021ProIncluded",
+                    "totalPro2021",
+                    "totalMSOffice2021ProCost",
+                    "totalOffice2021StdIncluded",
+                    "totalVisio2021StdIncluded",
+                    "totalproject2021StdIncluded",
+                    "totalstd2021",
+                    "totalMSOffice2021StdCost",
+                    "totalvisualstudio2022professional",
+                    "totalvisualstudio2022enterprise",
+                    "totalVS2022cost",
+                    "totalVisualStudioCost",
+                    "totalWorkspacesCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "label": "Additional application bundle cost ",
+                  "decimalPlaces": 2,
+                  "id": "monthlyPlusBundlePrice",
+                  "subTotalRefer": "totalWorkspacesCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "Additional storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional storage",
+                "id": "additionalStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 2048
+                },
+                "placeholder": "Enter amount",
+                "description": "Maximum total storage available per WorkSpace is 2TB. Thus, the maximum additional storage that may be added is 2TB less the sum of the selected root and user volume storage configurations.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for additional storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "Bundle Storage License Root Volume Usage 0 GB"
+                },
+                "id": "priceForUnitStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalStorage",
+                    "priceForUnitStorage"
+                  ],
+                  "id": "workSpacesCore_generated_0",
+                  "subTotalRefer": "totalWorkspacesCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "standard",
+                  "displayInConfigSummary": false,
+                  "factor": 0.01,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableLabel": "price for additional storage",
+                      "variableId": "priceForUnitStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "id": "finalPriceForUnitStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalStorage"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "finalPriceForUnitStorage"
+                    },
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalAdditionalStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "finalPriceForUnitStorage",
+                    "totalAdditionalStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional storage cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "totalAdditionalStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-us-gov"
+          ],
+          "title": "WorkSpaces Bundle Configuration",
+          "inputSection": {
+            "components": [
+              {
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "workspaces-core-calc",
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "monthly": [
+                      {
+                        "Running Mode": "Monthly"
+                      },
+                      {
+                        "Running Mode": "Hourly"
+                      }
+                    ],
+                    "hourly": [
+                      {
+                        "Running Mode": "Hourly",
+                        "$overridePriceKeyWith": "workspaces:PricePerUnit"
+                      }
+                    ]
+                  }
+                },
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "primaryKey": "Operating System",
+                "secondaryKey": [
+                  "Bundle Group",
+                  "rootVolume",
+                  "userVolume",
+                  "License",
+                  "Running Mode",
+                  "vCPU",
+                  "Memory"
+                ],
+                "prioritizedKey": {
+                  "Bundle": 2401,
+                  "Operating System": 343,
+                  "License": 49
+                },
+                "remap": {
+                  "keyValue": {
+                    "AlwaysOn": "Monthly",
+                    "AutoStop": "Hourly",
+                    "Any": "WorkSpaces Core Windows BYOL",
+                    "Windows": "WorkSpaces Core Windows"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Number of WorkSpaces",
+                    "type": "textInput",
+                    "selectorId": "Number of WorkSpaces",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "WorkSpaces Core Windows",
+                    "exportValueAs": "operatingSystem"
+                  },
+                  {
+                    "label": "License",
+                    "type": "dropDown",
+                    "selectorId": "License",
+                    "defaultValue": "Bring Your Own License",
+                    "exportValueAs": "license"
+                  },
+                  {
+                    "label": "Bundle type",
+                    "type": "dropDown",
+                    "selectorId": "Bundle Group",
+                    "defaultValue": "Value",
+                    "exportValueAs": "bundleName"
+                  },
+                  {
+                    "label": "vCPU",
+                    "type": "dropDown",
+                    "selectorId": "vCPU",
+                    "exportValueAs": "vcpu",
+                    "dependent": "License"
+                  },
+                  {
+                    "label": "Memory",
+                    "type": "dropDown",
+                    "selectorId": "Memory",
+                    "exportValueAs": "memory",
+                    "dependent": "License"
+                  },
+                  {
+                    "label": "Root volume",
+                    "type": "dropDown",
+                    "selectorId": "rootVolume",
+                    "defaultValue": "80 GB",
+                    "dependent": "License"
+                  },
+                  {
+                    "label": "User volume",
+                    "type": "dropDown",
+                    "dependent": "rootVolume",
+                    "selectorId": "userVolume",
+                    "defaultValue": "10 GB"
+                  },
+                  {
+                    "label": "Billing option",
+                    "type": "utilization",
+                    "selectorId": "Running Mode",
+                    "exportValueAs": "utilization",
+                    "description": "Pay per month (730 hours) for always-on functionality or select hourly billing for on-demand usage",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Operating System",
+                      "License"
+                    ],
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Monthly"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "concat selected values",
+                "id": "concatSelectedValues",
+                "operands": [
+                  {
+                    "variableId": "bundleName"
+                  },
+                  {
+                    "variableId": "license"
+                  },
+                  {
+                    "variableId": "operatingSystem"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "WorkSpaces Core cost",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "workspaces_bundle_price"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-us-gov"
+          ],
+          "title": "Additional storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional storage",
+                "id": "additionalStorage_MVP",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 2048
+                },
+                "placeholder": "Enter amount",
+                "description": "Maximum total storage available per WorkSpace is 2TB. Thus, the maximum additional storage that may be added is 2TB less the sum of the selected root and user volume storage configurations.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for additional storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "workspaces",
+                "meteredUnit": {
+                  "allRegions": "Bundle Storage License Root Volume Usage 0 GB"
+                },
+                "id": "priceForUnitStorage_MVP"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalStorage_MVP",
+                    "priceForUnitStorage_MVP"
+                  ],
+                  "id": "workspaces_1_MVP",
+                  "subTotalRefer": "totalAdditionalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalStorage_MVP"
+                    },
+                    {
+                      "variableUnitLabel": "price for additional storage",
+                      "required": true,
+                      "variableId": "priceForUnitStorage_MVP"
+                    },
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 3,
+                  "id": "totalAdditionalStorageCost_MVP"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalAdditionalStorageCost_MVP"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional storage cost",
+                  "decimalPlaces": 3,
+                  "id": "totalCost_MVP",
+                  "subTotalRefer": "totalAdditionalStorageCost_MVP"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

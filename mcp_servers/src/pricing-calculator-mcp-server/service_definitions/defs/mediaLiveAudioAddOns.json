@@ -1,0 +1,997 @@
+{
+  "version": "0.0.36",
+  "serviceName": "MediaLive Add Ons",
+  "serviceCode": "mediaLiveAudioAddOns",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-2",
+    "eu-central-1",
+    "ap-southeast-1",
+    "sa-east-1",
+    "us-east-2",
+    "ap-northeast-2",
+    "eu-north-1",
+    "ap-northeast-1",
+    "ap-south-1",
+    "eu-west-1",
+    "us-west-2",
+    "ap-southeast-2",
+    "eu-west-3",
+    "us-iso-east-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "streaming",
+    "media",
+    "elemental media live"
+  ],
+  "serviceDescription": "Elemental Media Live Audio Add Ons",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/medialive/",
+      "overrides": {
+        "aws-iso": "https://awshome.ic.gov/medialive/pricing/"
+      }
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elementalmedialive-addon-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmedialive/[currency]/current/elementalmedialive-addon-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Elemental Media Live Add-On Functionality",
+      "description": "",
+      "id": "emlAddOnFunctions",
+      "volumeDiscountEligibility": false,
+      "helpText": "These rates are applied at the channel level, rather than by individual input or output. Advanced audio includes Additional Audio Encoders to support outputs for Dolby Digital (AC3), Dolby Digital Plus (EAC3), and Audio Normalization uses technology from DTS to enable monitoring and correction in accordance with the ITU-R BS.1770 standard and logging compliant with the CALM ACT (ATSC A/85).",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/medialive/",
+          "overrides": {
+            "aws-iso": "https://awshome.ic.gov/medialive/pricing/"
+          }
+        }
+      },
+      "cards": [
+        {
+          "title": "Add-On Functionality Configuration 1",
+          "helpText": "These rates are applied at the channel level, rather than by individual input or output. Motion Graphics usage is billed based on the largest input or output resolution specified in the channel. Channels with SD only inputs and outputs will be billed at the HD rate. Advanced audio includes additional audio encoders to support outputs for Dolby Digital (AC3), Dolby Digital Plus (EAC3), and Dolby Atmos (EAC3 ATMOS). Audio Normalization uses technology from DTS to enable monitoring and correction in accordance with the ITU-R BS.1770 standard and logging compliant with the CALM ACT (ATSC A/85).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/",
+              "overrides": {
+                "aws-iso-b": "https://awshome.scloud/medialive/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "These rates are applied at the channel level, rather than by individual input or output.",
+                "id": "emlAddOn1_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of channels",
+                "id": "emlAddOn1_numberOfChannels",
+                "description": "Number of channels with matching Add-On functionality configuration",
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn1_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlAddOn1_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn1_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlAddOn1_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live AddOn",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-addon-calc",
+                "calculationId": {
+                  "hourly": "emlAddOn1_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Pipeline",
+                  "Reserve Type"
+                ],
+                "row": [
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "exportValueAs": "emlAddOn1_pipe"
+                  },
+                  {
+                    "label": "Add-On functionality",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "Advanced Audio",
+                    "exportValueAs": "emlAddOn1_AddOnFunction",
+                    "dependent": [
+                      "Pipeline"
+                    ]
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlAddOn1_resType",
+                    "dependent": [
+                      "Pipeline",
+                      "Output"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Audio Cost",
+                  "id": "emlAddOn1_CostVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlAddOn1_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlAddOn1_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn1_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlAddOn1_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlAddOn1_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 1 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn1_numberOfChannels",
+                      "variableLabel": "Number of channels",
+                      "variableUnitLabel": "channel(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlAddOn1_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Audio Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "emlAddOn1_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn1_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlAddOn1_Text",
+                    "emlAddOn1_numberOfChannels",
+                    "emlAddOn1_activeOutputHrs",
+                    "emlAddOn1_activeOutputHrsReserved",
+                    "columnFormIPM",
+                    "emlAddOn1_pipe",
+                    "emlAddOn1_AddOnFunction",
+                    "emlAddOn1_resType",
+                    "emlAddOn1_CostVariable",
+                    "emlAddOn1_totalActiveHours",
+                    "emlAddOn1_costMonthly"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Add-On configuration 1",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn1_CostTotal",
+                  "subTotalRefer": "emlAddOn1_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Add-On Functionality Configuration 2",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "These rates are applied at the channel level, rather than by individual input or output. Motion Graphics usage is billed based on the largest input or output resolution specified in the channel. Channels with SD only inputs and outputs will be billed at the HD rate. Advanced audio includes additional audio encoders to support outputs for Dolby Digital (AC3), Dolby Digital Plus (EAC3), and Dolby Atmos (EAC3 ATMOS). Audio Normalization uses technology from DTS to enable monitoring and correction in accordance with the ITU-R BS.1770 standard and logging compliant with the CALM ACT (ATSC A/85).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/",
+              "overrides": {
+                "aws-iso-b": "https://awshome.scloud/medialive/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "These rates are applied at the channel level, rather than by individual input or output.",
+                "id": "emlAddOn2_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of channels",
+                "id": "emlAddOn2_numberOfChannels",
+                "description": "Number of channels with matching Add-On functionality configuration",
+                "placeholder": "enter number of channels",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn2_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlAddOn2_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn2_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlAddOn2_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live AddOn",
+                "id": "columnFormIPM_emlAddOn2",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-addon-calc",
+                "calculationId": {
+                  "hourly": "emlAddOn2_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Pipeline",
+                  "Reserve Type"
+                ],
+                "row": [
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlAddOn2_pipe"
+                  },
+                  {
+                    "label": "Add-On functionality",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "Advanced Audio",
+                    "exportValueAs": "emlAddOn2_AddOnFunction",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline"
+                    ]
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlAddOn2_resType",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline",
+                      "Output"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Audio Cost",
+                  "id": "emlAddOn2_CostVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlAddOn2_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlAddOn2_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn2_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlAddOn2_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlAddOn2_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 2 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn2_numberOfChannels",
+                      "variableLabel": "Number of channels",
+                      "variableUnitLabel": "channel(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlAddOn2_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Audio Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "emlAddOn2_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn2_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlAddOn2_Text",
+                    "emlAddOn2_numberOfChannels",
+                    "emlAddOn2_activeOutputHrs",
+                    "emlAddOn2_activeOutputHrsReserved",
+                    "columnFormIPM_emlAddOn2",
+                    "emlAddOn2_CostVariable",
+                    "emlAddOn2_totalActiveHours",
+                    "emlAddOn2_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Add-On configuration 2",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn2_CostTotal",
+                  "subTotalRefer": "emlAddOn2_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Add-On Functionality Configuration 3",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "These rates are applied at the channel level, rather than by individual input or output. Motion Graphics usage is billed based on the largest input or output resolution specified in the channel. Channels with SD only inputs and outputs will be billed at the HD rate. Advanced audio includes additional audio encoders to support outputs for Dolby Digital (AC3), Dolby Digital Plus (EAC3), and Dolby Atmos (EAC3 ATMOS). Audio Normalization uses technology from DTS to enable monitoring and correction in accordance with the ITU-R BS.1770 standard and logging compliant with the CALM ACT (ATSC A/85).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/",
+              "overrides": {
+                "aws-iso-b": "https://awshome.scloud/medialive/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "These rates are applied at the channel level, rather than by individual input or output.",
+                "id": "emlAddOn3_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of channels",
+                "id": "emlAddOn3_numberOfChannels",
+                "description": "Number of channels with matching Add-On functionality configuration",
+                "placeholder": "enter number of channels",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn3_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlAddOn3_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn3_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlAddOn3_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live AddOn",
+                "id": "columnFormIPM_emlAddOn3",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-addon-calc",
+                "calculationId": {
+                  "hourly": "emlAddOn3_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Pipeline",
+                  "Reserve Type"
+                ],
+                "row": [
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlAddOn3_pipe"
+                  },
+                  {
+                    "label": "Add-On functionality",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "Advanced Audio",
+                    "exportValueAs": "emlAddOn3_AddOnFunction",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline"
+                    ]
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlAddOn3_resType",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline",
+                      "Output"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Audio Cost",
+                  "id": "emlAddOn3_CostVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlAddOn3_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlAddOn3_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn3_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlAddOn3_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlAddOn3_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 3 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn3_numberOfChannels",
+                      "variableLabel": "Number of channels",
+                      "variableUnitLabel": "channel(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlAddOn3_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Audio Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "emlAddOn3_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn3_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlAddOn3_Text",
+                    "emlAddOn3_numberOfChannels",
+                    "emlAddOn3_activeOutputHrs",
+                    "emlAddOn3_activeOutputHrsReserved",
+                    "columnFormIPM_emlAddOn3",
+                    "emlAddOn3_CostVariable",
+                    "emlAddOn3_totalActiveHours",
+                    "emlAddOn3_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Add-On configuration 3",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn3_CostTotal",
+                  "subTotalRefer": "emlAddOn3_costMonthly"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Add-On Functionality Configuration 4",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "These rates are applied at the channel level, rather than by individual input or output. Motion Graphics usage is billed based on the largest input or output resolution specified in the channel. Channels with SD only inputs and outputs will be billed at the HD rate. Advanced audio includes additional audio encoders to support outputs for Dolby Digital (AC3), Dolby Digital Plus (EAC3), and Dolby Atmos (EAC3 ATMOS). Audio Normalization uses technology from DTS to enable monitoring and correction in accordance with the ITU-R BS.1770 standard and logging compliant with the CALM ACT (ATSC A/85).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/",
+              "overrides": {
+                "aws-iso-b": "https://awshome.scloud/medialive/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "These rates are applied at the channel level, rather than by individual input or output.",
+                "id": "emlAddOn4_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of channels",
+                "id": "emlAddOn4_numberOfChannels",
+                "description": "Number of channels with matching Add-On functionality configuration",
+                "placeholder": "enter number of channels",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn4_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlAddOn4_activeOutputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlAddOn4_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlAddOn4_activeOutputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an add on is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live AddOn",
+                "id": "columnFormIPM_emlAddOn4",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-addon-calc",
+                "calculationId": {
+                  "hourly": "emlAddOn4_ipmPrice"
+                },
+                "primaryKey": "Output",
+                "secondaryKey": [
+                  "Pipeline",
+                  "Reserve Type"
+                ],
+                "row": [
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlAddOn4_pipe"
+                  },
+                  {
+                    "label": "Add-On functionality",
+                    "type": "dropDown",
+                    "selectorId": "Output",
+                    "defaultValue": "Advanced Audio",
+                    "exportValueAs": "emlAddOn4_AddOnFunction",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline"
+                    ]
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlAddOn4_resType",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Pipeline",
+                      "Output"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Audio Cost",
+                  "id": "emlAddOn4_CostVariable",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlAddOn4_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlAddOn4_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "total active hours",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn4_activeOutputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    },
+                    {
+                      "variableId": "emlAddOn4_activeOutputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlAddOn4_totalActiveHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total Output 3 cost",
+                  "operands": [
+                    {
+                      "variableId": "emlAddOn4_numberOfChannels",
+                      "variableLabel": "Number of channels",
+                      "variableUnitLabel": "channel(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "emlAddOn4_totalActiveHours",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Audio Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "emlAddOn4_ipmPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn4_costMonthly"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlAddOn4_Text",
+                    "emlAddOn4_numberOfChannels",
+                    "emlAddOn4_activeOutputHrs",
+                    "emlAddOn4_activeOutputHrsReserved",
+                    "columnFormIPM_emlAddOn4",
+                    "emlAddOn4_CostVariable",
+                    "emlAddOn4_totalActiveHours",
+                    "emlAddOn4_costMonthly"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Add-On configuration 4",
+                  "decimalPlaces": 2,
+                  "id": "emlAddOn4_CostTotal",
+                  "subTotalRefer": "emlAddOn4_costMonthly"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

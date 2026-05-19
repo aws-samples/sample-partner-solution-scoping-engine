@@ -1,0 +1,757 @@
+{
+  "version": "0.0.26",
+  "serviceName": "Amazon Managed Blockchain",
+  "serviceCode": "amazonManagedBlockchain",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "eu-west-1",
+    "eu-west-2"
+  ],
+  "searchKeywords": [
+    "hyperledger Fabric",
+    "ethereum",
+    "blockchain",
+    "managed blockchain"
+  ],
+  "serviceDescription": "Amazon Managed Blockchain is a fully managed service that makes it easy to join public networks or create and manage scalable private networks using the popular open-source frameworks Hyperledger Fabric and Ethereum.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/managed-blockchain/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "hyperledger-fabric-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/managedblockchain/[currency]/current/hyperledger-fabric-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "ethereum-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/managedblockchain/[currency]/current/ethereum-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "managedblockchain",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/managedblockchain/[currency]/current/managedblockchain.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Hyperledger Fabric",
+      "id": "managedBlockchainHyperledgerFabric",
+      "description": "A Managed Blockchain network for Hyperledger Fabric consists of one or more members, and each member has peer nodes with local storage. Additionally, members can write data to the network.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/managed-blockchain/pricing/hyperledger/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Hyperledger Fabric",
+          "id": "managedBlockchainHyperledgerFabric",
+          "helpText": "A Managed Blockchain network for Hyperledger Fabric consists of one or more members, and each member has peer nodes with local storage. Additionally, members can write data to the network.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/managed-blockchain/pricing/hyperledger/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "<p style='margin:0; padding:0'>Recommendations:</p> Amazon Managed Blockchain for Hyperledger has two editions: Starter and Standard Editions.<br/><br/>The Starter Edition is designed for test networks and small production networks. You can have a maximum of 5 members per network and 2 peer nodes per member. Available peer node types are bc.t3.small and bc.t3.medium. You can have up to 3 Hyperledger Fabric channels per network. The ordering service provisioned in a Starter Edition network is has lower transaction throughput and availability than that in a Standard Edition network.<br/><br/>The Standard Edition network is designed for production networks. You can have a maximum of 14 members per network and 3 peer nodes per member. There are three families of instance types available for the peer nodes (bc.t3, bc.m5, and bc.c5). You can have up to 8 Hyperledger Fabric channels per network. The ordering service provisioned in a Standard Edition network has higher transaction throughput and availability compared to Starter Edition network.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "alertEditionInfo"
+              },
+              {
+                "label": "On-Demand Peer Node Instance",
+                "id": "columnFormIPM",
+                "type": "input",
+                "disableCalculation": true,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "hyperledger-fabric-calc",
+                "calculationId": {
+                  "hourly": "HyperledgerIPM"
+                },
+                "primaryKey": "Framework Type",
+                "secondaryKey": [
+                  "Instance Type"
+                ],
+                "remap": {
+                  "keyValue": {
+                    "Hyperledger Fabric - Starter": "Starter",
+                    "Hyperledger Fabric - Standard": "Standard"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Membership Edition",
+                    "type": "dropDown",
+                    "selectorId": "Framework Type",
+                    "defaultValue": "Starter",
+                    "exportValueAs": "edition"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "bc.t3.small",
+                    "dependent": [
+                      "Framework Type"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "instanceCount",
+                "label": "Number of peer node instances",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 3
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of On-Demand peer node instances",
+                "description": "Enter number of On-Demand peer node instances (max.3 per member)."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "storageHyperFabric",
+                "label": "Peer node storage (GB-month)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter peer node storage (GB-month)",
+                "description": "Enter peer node storage (GB-month)."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "dataWritten",
+                "label": "Data written (in GB)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter data written (in GB) in given month",
+                "description": "Enter data written (in GB) in given month."
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "editionMeteredUnit",
+                "label": "edition metered unit name",
+                "originalId": "edition",
+                "replacements": [
+                  {
+                    "originalString": "Starter",
+                    "replaceString": "Starter Member"
+                  },
+                  {
+                    "originalString": "Standard",
+                    "replaceString": "Standard Member"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for membership",
+                "id": "memberTypePrice",
+                "mappingDefinitionName": "managedblockchain",
+                "refers": [
+                  {
+                    "variableLabel": "edition metered unit name",
+                    "variableId": "editionMeteredUnit"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "id": "storageHyperFabricPrice",
+                "label": "Price for Storage Hyperledger Fabric",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "managedblockchain",
+                "meteredUnit": {
+                  "allRegions": "Standard Node Storage"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "dataWrittenHyperFabricPrice",
+                "label": "Price for Data Written Hyperledger Fabric",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "managedblockchain",
+                "meteredUnit": {
+                  "allRegions": "Standard Data Written"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "member"
+                    },
+                    {
+                      "variableLabel": "Price for membership",
+                      "variableUnitLabel": "[currency] hourly membership cost",
+                      "required": true,
+                      "variableId": "memberTypePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] membership cost per hour",
+                  "decimalPlaces": 2,
+                  "id": "membershipHourlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of peer node instances",
+                      "variableUnitLabel": "peer node instance(s)",
+                      "required": true,
+                      "variableId": "instanceCount"
+                    },
+                    {
+                      "variableLabel": "On-Demand Peer Node Instance",
+                      "variableUnitLabel": "[currency] hourly",
+                      "required": true,
+                      "variableId": "HyperledgerIPM",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] instance(s) cost per hour",
+                  "decimalPlaces": 2,
+                  "id": "instanceTotalHourlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] instance(s) cost per hour",
+                      "variableUnitLabel": "[currency] instance(s) cost per hour",
+                      "required": true,
+                      "variableId": "instanceTotalHourlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] membership cost per hour",
+                      "variableUnitLabel": "[currency] membership cost per hour",
+                      "required": true,
+                      "variableId": "membershipHourlyCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total membership & instance(s) cost per hour",
+                  "decimalPlaces": 2,
+                  "id": "memberInstanceHourlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] total membership & instance(s) cost per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "memberInstanceHourlyCost"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly membership & instance(s) cost",
+                  "decimalPlaces": 2,
+                  "id": "memberInstanceMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of peer node instances",
+                      "variableUnitLabel": "peer node instance(s)",
+                      "required": true,
+                      "variableId": "instanceCount"
+                    },
+                    {
+                      "variableLabel": "Peer node storage (GB-month)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageHyperFabric"
+                    },
+                    {
+                      "variableLabel": "Price for Storage Hyperledger Fabric",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageHyperFabricPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly storage cost",
+                  "decimalPlaces": 2,
+                  "id": "storageHyperFabricMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of peer node instances",
+                      "variableUnitLabel": "peer node instance(s)",
+                      "required": true,
+                      "variableId": "instanceCount"
+                    },
+                    {
+                      "variableLabel": "Data written (in GB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataWritten"
+                    },
+                    {
+                      "variableLabel": "Price for Data Written Hyperledger Fabric",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "dataWrittenHyperFabricPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly data written cost",
+                  "decimalPlaces": 2,
+                  "id": "dataWrittenHyperFabricMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] total monthly membership & instance(s) cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "memberInstanceMonthlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] total monthly storage cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageHyperFabricMonthlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] total monthly data written cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "dataWrittenHyperFabricMonthlyCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost",
+                  "decimalPlaces": 2,
+                  "id": "totalHyperledgerFabricMonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "alertEditionInfo",
+                    "columnFormIPM",
+                    "edition",
+                    "instanceCount",
+                    "storageHyperFabric",
+                    "dataWritten",
+                    "editionMeteredUnit",
+                    "memberTypePrice",
+                    "storageHyperFabricPrice",
+                    "dataWrittenHyperFabricPrice",
+                    "membershipHourlyCost",
+                    "instanceTotalHourlyCost",
+                    "memberInstanceHourlyCost",
+                    "memberInstanceMonthlyCost",
+                    "storageHyperFabricMonthlyCost",
+                    "dataWrittenHyperFabricMonthlyCost",
+                    "totalHyperledgerFabricMonthlyCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Hypderledger Fabric",
+                  "decimalPlaces": 2,
+                  "id": "hyperFabricTotalCostDisplay",
+                  "subTotalRefer": "totalHyperledgerFabricMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Standard AWS Data Transfer",
+          "expandable": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/"
+            }
+          },
+          "helpText": "You need to pay standard AWS data transfer charges for the data transferred in and out of Amazon Managed Blockchain.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "To estimate the charge for data transferred in and out of Amazon Managed Blockchain, please use AWS Data Transfer calculator to estimate.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "dataTransferInfoAlert"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Ethereum",
+      "id": "managedBlockchainEthereum",
+      "description": "Amazon Managed Blockchain for Ethereum allows you to create nodes and join them to Ethereum public networks. A node is a computer that connects to a blockchain network. A blockchain network consists of multiple parties (or peers) connected each other in a decentralized way. With Amazon Managed Blockchain, you are charged for the instance, instance storage, and the number of Ethereum requests you make.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/managed-blockchain/pricing/ethereum/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Ethereum",
+          "id": "managedBlockchainEthereum",
+          "helpText": "Amazon Managed Blockchain for Ethereum allows you to create nodes and join them to Ethereum public networks. A node is a computer that connects to a blockchain network. A blockchain network consists of multiple parties (or peers) connected each other in a decentralized way. With Amazon Managed Blockchain, you are charged for the instance, instance storage, and the number of Ethereum requests you make.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/managed-blockchain/pricing/ethereum/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "On-Demand Instance",
+                "id": "columnFormIPM",
+                "type": "input",
+                "disableCalculation": true,
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "ethereum-calc",
+                "calculationId": {
+                  "hourly": "ethereumIPM"
+                },
+                "primaryKey": "Instance Type",
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Instance type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "bc.t3.large"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "instanceCount",
+                "label": "Number of instances",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 50
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of On-Demand instances",
+                "description": "Enter number of On-Demand instances (max. 50)."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "storageEthereum",
+                "label": "Storage (GB-month)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 700,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter storage (GB-month)",
+                "description": "Testnets (Ropsten and Rinkeby) typically require 200Gb initially, while Mainnet requires approximately 800Gb."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "requestEthereum",
+                "label": "JSON-RPC requests per month (in millions)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter monthly requests (in millions)",
+                "description": "Enter monthly requests (in millions)."
+              },
+              {
+                "type": "pricing",
+                "id": "storageEthereumPrice",
+                "label": "Price for Storage Ethereum",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "managedblockchain",
+                "meteredUnit": {
+                  "allRegions": "Ethereum Public Node Storage"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "requestEthereumPrice",
+                "label": "Price for Ethereum Request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "managedblockchain",
+                "meteredUnit": {
+                  "allRegions": "Ethereum Public Request"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instance",
+                      "required": true,
+                      "variableId": "instanceCount"
+                    },
+                    {
+                      "variableLabel": "On-Demand Instance",
+                      "variableUnitLabel": "[currency] hourly",
+                      "required": true,
+                      "variableId": "ethereumIPM",
+                      "IPMSupported": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost for on-demand instance",
+                  "decimalPlaces": 2,
+                  "id": "instanceMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instance",
+                      "required": true,
+                      "variableId": "instanceCount"
+                    },
+                    {
+                      "variableLabel": "Storage (GB-month)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageEthereum"
+                    },
+                    {
+                      "variableLabel": "Price for Storage Ethereum",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageEthereumPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost for storage",
+                  "decimalPlaces": 2,
+                  "id": "storageEthereumMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Price for Ethereum Request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "requestEthereumPrice"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "unit multiplier"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per million requests",
+                  "decimalPlaces": 2,
+                  "id": "pricePerMillionRequest"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "JSON-RPC requests per month (in millions)",
+                      "variableUnitLabel": "million",
+                      "required": true,
+                      "variableId": "requestEthereum"
+                    },
+                    {
+                      "variableLabel": "[currency] per million requests",
+                      "variableUnitLabel": "[currency] per million",
+                      "required": true,
+                      "variableId": "pricePerMillionRequest"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost for requests",
+                  "decimalPlaces": 2,
+                  "id": "requestEthereumMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] total monthly cost for on-demand instance",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "instanceMonthlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] total monthly cost for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageEthereumMonthlyCost"
+                    },
+                    {
+                      "variableLabel": "[currency] total monthly cost for requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "requestEthereumMonthlyCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total monthly cost",
+                  "decimalPlaces": 2,
+                  "id": "totalEthereumMonthlyCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM",
+                    "instanceCount",
+                    "storageEthereum",
+                    "requestEthereum",
+                    "storageEthereumPrice",
+                    "requestEthereumPrice",
+                    "instanceMonthlyCost",
+                    "storageEthereumMonthlyCost",
+                    "pricePerMillionRequest",
+                    "requestEthereumMonthlyCost",
+                    "totalEthereumMonthlyCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Ethereum",
+                  "decimalPlaces": 2,
+                  "id": "totalEthereumMonthlyCostDisplay",
+                  "subTotalRefer": "totalEthereumMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Standard AWS Data Transfer",
+          "expandable": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/"
+            }
+          },
+          "helpText": "You need to pay standard AWS data transfer charges for the data transferred in and out of Amazon Managed Blockchain.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "To estimate the charge for data transferred in and out of Amazon Managed Blockchain, please use AWS Data Transfer calculator to estimate.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "dataTransferInfoAlertEthereum"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "slug": "ManagedBlockchain",
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

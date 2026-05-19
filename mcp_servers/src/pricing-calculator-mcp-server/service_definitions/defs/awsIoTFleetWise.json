@@ -1,0 +1,296 @@
+{
+  "version": "0.0.6",
+  "serviceName": "AWS IoT FleetWise",
+  "serviceCode": "awsIoTFleetWise",
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "iot",
+    "device",
+    "fleetwise",
+    "iot auto"
+  ],
+  "serviceDescription": {
+    "aws": "AWS IoT FleetWise makes it easier for you to collect, transform, and transfer vehicle data to the cloud in near real time and use that data to improve vehicle quality, safety, and autonomy."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/iot-fleetwise/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iotfleetwise",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iotfleetwise/[currency]/current/iotfleetwise.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/iot-fleetwise/"
+        }
+      },
+      "cards": [
+        {
+          "title": "AWS IoT FleetWise Monthly Vehicle Cost",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Vehicles_per_month",
+                "label": "Number of vehicles",
+                "description": "Enter the number of active vehicles per month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+26
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for vehicles per month",
+                "id": "Price_for_vehicles_per_month",
+                "mappingDefinitionName": "iotfleetwise",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000,
+                      "meteredUnit": "IoTFleetWise per Vehicles 0 to 10000"
+                    },
+                    {
+                      "startOfTier": 10001,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "IoTFleetWise per Vehicles 10000 to 1000000"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "IoTFleetWise per Vehicles 1000000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "vehicle_conn_UnitConv",
+                  "refer": [
+                    "Vehicles_per_month",
+                    "Price_for_vehicles_per_month"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredVehicleMonthlyCost",
+                  "tieredPricingRefer": "Price_for_vehicles_per_month",
+                  "tieredPricingReferLabel": "Price for vehicles per month",
+                  "inputRefer": "Vehicles_per_month",
+                  "inputReferLabel": "Number of vehicles",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "vehicles",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredVehicleMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total vehicle cost",
+                  "decimalPlaces": 2,
+                  "id": "Monthly_vehicle_cost",
+                  "subTotalRefer": "tieredVehicleMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "AWS IoT FleetWise Monthly Messaging Cost",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "To estimate your monthly messaging cost, enter the number of messages you expect to transmit per vehicle. Message size can vary and is metered in 5 KB increments, so a 7 KB message would be billed as two messages.",
+                "id": "MesgText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "Messages_per_vehicle",
+                "label": "Messages per vehicle",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "defaultValue": 10000,
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 5e+26
+                },
+                "placeholder": "",
+                "description": "Enter the number of messages transmitted between a vehicle and AWS IoT FleetWise."
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for messages per month",
+                "id": "Price_for_messages_per_month",
+                "mappingDefinitionName": "iotfleetwise",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000000,
+                      "meteredUnit": "IoTFleetWise per Messages 0 to 1000000000"
+                    },
+                    {
+                      "startOfTier": 1000000001,
+                      "endOfTier": 500000000000,
+                      "meteredUnit": "IoTFleetWise per Messages 1000000000 to 500000000000"
+                    },
+                    {
+                      "startOfTier": 500000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "IoTFleetWise per Messages 500000000000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "message_UnitConv",
+                  "refer": [
+                    "MesgText",
+                    "Messages_per_vehicle",
+                    "Price_for_messages_per_month"
+                  ],
+                  "subTotalRefer": "tieredVehicleMonthlyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "Messages_per_vehicle",
+                      "variableLabel": "Messages per vehicle",
+                      "variableUnitLabel": "messages",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "messages",
+                  "id": "msgRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredMessageMonthlyCost",
+                  "tieredPricingRefer": "Price_for_messages_per_month",
+                  "tieredPricingReferLabel": "Price for messages per month",
+                  "inputRefer": "msgRounded",
+                  "inputReferLabel": "messages",
+                  "outputUnitLabel": "[currency] messaging cost per vehicle (monthly)",
+                  "inputUnitLabel": "monthly messages per vehicle",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_Messages_per_month_from_all_vehicles",
+                  "variableName": "Total Messages per month from all vehicles",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] messaging cost per vehicle (monthly)",
+                      "variableUnitLabel": "total messaging cost per month ",
+                      "required": true,
+                      "variableId": "tieredMessageMonthlyCost"
+                    },
+                    {
+                      "variableLabel": "Number of vehicles",
+                      "variableUnitLabel": "vehicles per month",
+                      "required": true,
+                      "variableId": "Vehicles_per_month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month from all vehicles",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "msgRounded",
+                    "tieredMessageMonthlyCost",
+                    "Total_Messages_per_month_from_all_vehicles"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total messaging cost",
+                  "decimalPlaces": 2,
+                  "id": "Monthly_message_cost",
+                  "subTotalRefer": "Total_Messages_per_month_from_all_vehicles"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

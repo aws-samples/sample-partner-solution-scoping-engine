@@ -1,0 +1,372 @@
+{
+  "version": "0.0.15",
+  "serviceName": "HealthOmics Private Workflows",
+  "serviceCode": "omicsWorkflows",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "amazon HealthOmics",
+    "HealthOmics",
+    "HealthOmics Workflows"
+  ],
+  "serviceDescription": "With Amazon HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With Amazon HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. Amazon HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "omics",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/omics/[currency]/current/omics.json"
+    },
+    {
+      "mappingDefinitionName": "omics-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/omics/[currency]/current/omics-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "With Amazon HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With Amazon HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. Amazon HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/omics/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "omics",
+              "meteredUnit": "Compute Run Storage per GB-Hours"
+            }
+          },
+          "title": "HealthOmics Workflows",
+          "helpText": "With Amazon HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With Amazon HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. Amazon HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/omics/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "To calculate the monthly cost for your workflow, you will need to group your tasks that uses the same instance and have the same run time. Once those tasks are grouped, you can use the calculator to calculate the cost per grouped task for your workflow. If your workflow has more than 1 grouped tasks, you will need to save the calculation for each grouped task to determine the total monthly cost of your workflow.",
+                "id": "OmicsText"
+              },
+              {
+                "label": "Omics compute cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "omics-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Resource Type": [
+                    "Omics Instance Type",
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Omics instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Resource Type",
+                    "withTags": [
+                      "Omics Instance Type",
+                      "vCPU",
+                      "Memory"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Total_tasks_per_run",
+                "label": "Total tasks using the selected instance",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter Total tasks using the selected instance.",
+                "description": "If the tasks are running in parallel, please count it as 1 task."
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "Estimated_run_time_per_task",
+                "label": "Estimated run time per task",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDuration": "hr",
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1e-09,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter estimated run time per task.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Run storage per run",
+                "id": "Run_storage_per_run",
+                "options": [
+                  {
+                    "label": "1200 GB",
+                    "id": "1200"
+                  },
+                  {
+                    "label": "2400 GB",
+                    "id": "2400"
+                  },
+                  {
+                    "label": "4800 GB",
+                    "id": "4800"
+                  },
+                  {
+                    "label": "7200 GB",
+                    "id": "7200"
+                  },
+                  {
+                    "label": "9600 GB",
+                    "id": "9600"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1200",
+                "validations": {
+                  "required": true
+                },
+                "placeholder": "Enter run storage per run.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Total_runs_per_month",
+                "label": "Total runs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter total runs per month.",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for run storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "omics",
+                "meteredUnit": {
+                  "allRegions": "Compute Run Storage per GB-Hours"
+                },
+                "id": "price_for_run_storage"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "NOTE: If you have other tasks or grouped tasks that uses a different instance in your workflow, please save and repeat the estimation process for those tasks or grouped tasks.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "alertInstances"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected run storage",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Run storage per run",
+                  "refer": "Run_storage_per_run",
+                  "id": "selected_run_storage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total tasks using the selected instance",
+                      "variableUnitLabel": "tasks",
+                      "required": true,
+                      "variableId": "Total_tasks_per_run"
+                    },
+                    {
+                      "variableLabel": "Omics compute cost",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Estimated run time per task",
+                      "variableUnitLabel": "hours per task",
+                      "required": true,
+                      "variableId": "Estimated_run_time_per_task"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (instance cost per run)",
+                  "decimalPlaces": 2,
+                  "id": "instance_cost_per_run"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "selected run storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "selected_run_storage"
+                    },
+                    {
+                      "variableLabel": "price for run storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "price_for_run_storage"
+                    },
+                    {
+                      "variableLabel": "Total tasks using the selected instance",
+                      "variableUnitLabel": "tasks",
+                      "required": true,
+                      "variableId": "Total_tasks_per_run"
+                    },
+                    {
+                      "variableLabel": "Estimated run time per task",
+                      "variableUnitLabel": "hours per task",
+                      "required": true,
+                      "variableId": "Estimated_run_time_per_task"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "storage_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (storage cost)",
+                      "variableUnitLabel": "[currency] (storage cost)",
+                      "required": false,
+                      "variableId": "storage_cost"
+                    },
+                    {
+                      "variableLabel": "[currency] (instance cost per run)",
+                      "variableUnitLabel": "[currency] (instance cost per run)",
+                      "required": false,
+                      "variableId": "instance_cost_per_run"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (per run cost)",
+                  "decimalPlaces": 2,
+                  "id": "per_run_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total runs per month",
+                      "variableUnitLabel": "runs per month",
+                      "required": true,
+                      "variableId": "Total_runs_per_month"
+                    },
+                    {
+                      "variableLabel": "[currency] (per run cost)",
+                      "variableUnitLabel": "[currency] (per run cost)",
+                      "required": true,
+                      "variableId": "per_run_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly cost)",
+                  "decimalPlaces": 2,
+                  "id": "monthly_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "OmicsText",
+                    "columnFormIPM",
+                    "Total_tasks_per_run",
+                    "Estimated_run_time_per_task",
+                    "Run_storage_per_run",
+                    "Total_runs_per_month",
+                    "price_for_run_storage",
+                    "alertInstances",
+                    "selected_run_storage",
+                    "instance_cost_per_run",
+                    "storage_cost",
+                    "per_run_cost",
+                    "monthly_cost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Workflows cost",
+                  "decimalPlaces": 2,
+                  "id": "total_omics_instance_cost",
+                  "subTotalRefer": "monthly_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_omics_analytics"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

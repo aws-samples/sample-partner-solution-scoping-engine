@@ -1,0 +1,852 @@
+{
+  "version": "0.0.94",
+  "serviceName": "MediaLive Inputs",
+  "serviceCode": "mediaLiveInput1",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-2",
+    "eu-central-1",
+    "ap-southeast-1",
+    "sa-east-1",
+    "us-east-2",
+    "ap-northeast-2",
+    "eu-north-1",
+    "ap-northeast-1",
+    "ap-south-1",
+    "eu-west-1",
+    "us-west-2",
+    "ap-southeast-2",
+    "eu-west-3",
+    "us-iso-east-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [
+    "streaming",
+    "media",
+    "elemental media live"
+  ],
+  "serviceDescription": "EML input 1",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/medialive/pricing/",
+      "overrides": {
+        "aws": "https://aws.amazon.com/medialive/"
+      }
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elementalmedialive-input-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmedialive/[currency]/current/elementalmedialive-input-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "elementalmedialive",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elementalmedialive/[currency]/current/elementalmedialive.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "emlInputs",
+      "volumeDiscountEligibility": false,
+      "cards": [
+        {
+          "title": "Input Configuration 1",
+          "helpText": "The price for each input to your live channel is determined by a combination of codec, bitrate, and resolution of the input stream. You are only charged for two inputs when input switching is enabled on a channel. Input switching will charge for two active inputs even if more than two inputs are used. Standard channels include two redundant inputs as part of the standard input price. Separate input pricing applies when using AWS Elemental Link to send video to MediaLive. AWS Cloud Digital Interface (AWS CDI) inputs are based on resolution only. These are defined as: Standard Definition (SD) is 480i and 576i resolution up to 30 frames per second (fps). High Definition has different rates for 720p up to 60fps / 1080i up to 30fps, and 1080p up to 60fps. Ultra High Definition (UHD/4K) is up to 60fps.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price for each input is determined by a combination of channel class, codec, bitrate, and resolution of the input stream. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. AWS Cloud Digital Interface (AWS CDI) inputs are based on resolution only.",
+                "id": "emlInput1_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inputs",
+                "id": "emlInput1_numberOfInputs",
+                "placeholder": "Enter number of inputs",
+                "description": "There should be one input per channel (including Standard channels) unless input switching is enabled. Only channels with input switching enabled are charged for two inputs per channels.",
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlInput1_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlInput1_activeInputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an input is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlInput1_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlInput1_activeInputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an input is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Input 1",
+                "id": "columnFormIPM",
+                "description": "description text",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-input-calc",
+                "calculationId": {
+                  "hourly": "emlInput1_ipmPrice"
+                },
+                "primaryKey": "Input",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Bit Rate",
+                  "Reserve Type"
+                ],
+                "prioritizedKey": {
+                  "Input": 100
+                },
+                "remap": {
+                  "keyValue": {
+                    "": "NA",
+                    "NA": "AWS Elemental Link"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "exportValueAs": "emlInput1_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "exportValueAs": "emlInput1_pipe",
+                    "dependent": [
+                      "Input"
+                    ]
+                  },
+                  {
+                    "label": "Input Type",
+                    "type": "dropDown",
+                    "selectorId": "Input",
+                    "defaultValue": "AVC",
+                    "exportValueAs": "emlInput1_inputType"
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "exportValueAs": "emlInput1_Res",
+                    "dependent": [
+                      "Input"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate",
+                    "type": "dropDown",
+                    "defaultValue": "<10mbps",
+                    "selectorId": "Bit Rate",
+                    "exportValueAs": "emlInput1_bitRate",
+                    "dependent": [
+                      "Input",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price idle input",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmedialive",
+                "meteredUnit": {
+                  "allRegions": "IDLE INPUT"
+                },
+                "id": "emlInput1_priceidleInput"
+              },
+              {
+                "type": "pricing",
+                "label": "price single idle input",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmedialive",
+                "meteredUnit": {
+                  "allRegions": "Single IDLE INPUT"
+                },
+                "id": "emlInput1_priceSingleIdleInput"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions inputs",
+                  "refer": [
+                    "emlInput1_Text",
+                    "emlInput1_numberOfInputs",
+                    "emlInput1_activeInputHrs",
+                    "emlInput1_activeInputHrsReserved",
+                    "columnFormIPM",
+                    "emlInput1_resType",
+                    "emlInput1_pipe",
+                    "emlInput1_inputType",
+                    "emlInput1_Res",
+                    "emlInput1_bitRate",
+                    "emlInput1_priceidleInput",
+                    "emlInput1_priceSingleIdleInput"
+                  ],
+                  "id": "emlInput1_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Input hourly rate1",
+                  "id": "emlInput1_hourlyRate",
+                  "decimalPlaces": 4,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlInput1_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlInput1_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableID": "emlInput1_activeInputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false,
+                      "variableId": "emlInput1_activeInputHrs"
+                    },
+                    {
+                      "variableID": "emlInput1_activeInputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false,
+                      "variableId": "emlInput1_activeInputHrsReserved"
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlInput1_activeTotalHrs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableID": "emlInput1_activeTotalHrs",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true,
+                      "variableId": "emlInput1_activeTotalHrs"
+                    }
+                  ],
+                  "outputUnitLabel": "idle hours per month",
+                  "decimalPlaces": 6,
+                  "id": "emlInput1_idleInputHrsMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "emlInput1_numberOfInputs",
+                      "variableLabel": "Number of inputs",
+                      "variableUnitLabel": "input(s)",
+                      "required": true
+                    },
+                    {
+                      "variableID": "emlInput1_activeTotalHrs",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true,
+                      "variableId": "emlInput1_activeTotalHrs"
+                    },
+                    {
+                      "variableId": "emlInput1_ipmPrice",
+                      "variableLabel": "Input hourly rate1",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for active input",
+                  "decimalPlaces": 6,
+                  "id": "emlInput1_activeInputCost",
+                  "variableName": "emlInput1_activeInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elemental Media Live Active input cost (monthly)",
+                  "id": "emlInput1_activeInputSubtotal",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 4,
+                  "refer": "emlInput1_activeInputCost",
+                  "referLabel": "emlInput1_activeInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "emlInput1_numberOfInputs",
+                      "variableLabel": "Number of inputs",
+                      "variableUnitLabel": "input(s)",
+                      "required": true
+                    },
+                    {
+                      "variableID": "emlInput1_idleInputHrsMonth",
+                      "variableLabel": "idle hours per month",
+                      "variableUnitLabel": "idle resource hours per month",
+                      "required": true,
+                      "variableId": "emlInput1_idleInputHrsMonth"
+                    },
+                    {
+                      "variableId": "emlInput1_priceidleInput",
+                      "variableLabel": "price idle input",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for idle input",
+                  "decimalPlaces": 6,
+                  "id": "emlInput1_idleInputCost",
+                  "variableName": "emlInput1_idleInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elemental Media Live Idle input cost (monthly)",
+                  "id": "EML_idleInputSubtotal",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 4,
+                  "refer": "emlInput1_idleInputCost",
+                  "referLabel": "emlInput1_idleInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "emlInput1_activeInputCost",
+                      "variableLabel": "emlInput1_activeInputCost_var",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "emlInput1_idleInputCost_var",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "emlInput1_idleInputCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6,
+                  "id": "emlInput1_totalInputCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlInput1_hourlyRate",
+                    "emlInput1_activeTotalHrs",
+                    "emlInput1_idleInputHrsMonth",
+                    "emlInput1_activeInputCost",
+                    "emlInput1_activeInputSubtotal",
+                    "emlInput1_idleInputCost",
+                    "EML_idleInputSubtotal",
+                    "emlInput1_totalInputCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "label": "Elemental Media Live Input 1",
+                  "decimalPlaces": 4,
+                  "subTotalRefer": "emlInput1_totalInputCost",
+                  "id": "_generated_0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Input Configuration 2",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "The price for each input to your live channel is determined by a combination of codec, bitrate, and resolution of the input stream. You are only charged for two inputs when input switching is enabled on a channel. Input switching will charge for two active inputs even if more than two inputs are used. Standard channels include two redundant inputs as part of the standard input price. Separate input pricing applies when using AWS Elemental Link to send video to MediaLive. AWS Cloud Digital Interface (AWS CDI) inputs are based on resolution only. These are defined as: Standard Definition (SD) is 480i and 576i resolution up to 30 frames per second (fps). High Definition has different rates for 720p up to 60fps / 1080i up to 30fps, and 1080p up to 60fps. Ultra High Definition (UHD/4K) is up to 60fps.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/medialive/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price for each input is determined by a combination of channel class, codec, bitrate, and resolution of the input stream. A standard channel class includes two transcoding pipelines and single-pipeline channel includes one transcoding pipeline. AWS Cloud Digital Interface (AWS CDI) inputs are based on resolution only.",
+                "id": "emlInput2_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inputs",
+                "id": "emlInput2_numberOfInputs",
+                "placeholder": "Enter number of inputs",
+                "description": "There should be one input per channel (including Standard channels) unless input switching is enabled. Only channels with input switching enabled are charged for two inputs per channels.",
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlInput2_resType"
+                    },
+                    "On Demand"
+                  ]
+                },
+                "label": "Active hours (On Demand)",
+                "id": "emlInput2_activeInputHrs",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an input is in a running state.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "emlInput2_resType"
+                    },
+                    "1 Year"
+                  ]
+                },
+                "label": "Active hours (Reserved)",
+                "id": "emlInput2_activeInputHrsReserved",
+                "placeholder": "Enter number of hours",
+                "description": "Number of hours per month an input is in a running state. 730 hours per month fixed for 1 Year terms.",
+                "defaultValue": 730,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 730,
+                  "maxValue": 730
+                }
+              },
+              {
+                "label": "Elemental Media Live Input 2",
+                "id": "columnFormIPM_emlInput2",
+                "description": "description text",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "elementalmedialive-input-calc",
+                "calculationId": {
+                  "hourly": "emlInput2_ipmPrice"
+                },
+                "primaryKey": "Input",
+                "secondaryKey": [
+                  "Resolution",
+                  "Pipeline",
+                  "Bit Rate",
+                  "Reserve Type"
+                ],
+                "prioritizedKey": {
+                  "Input": 100
+                },
+                "remap": {
+                  "keyValue": {
+                    "": "NA",
+                    "NA": "AWS Elemental Link"
+                  }
+                },
+                "row": [
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "Reserve Type",
+                    "defaultValue": "On Demand",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlInput2_resType"
+                  },
+                  {
+                    "label": "Pipeline",
+                    "type": "dropDown",
+                    "selectorId": "Pipeline",
+                    "defaultValue": "Standard",
+                    "exportValueAs": "emlInput2_pipe",
+                    "displayInConfigSummary": false,
+                    "dependent": [
+                      "Input"
+                    ]
+                  },
+                  {
+                    "label": "Input Type",
+                    "type": "dropDown",
+                    "selectorId": "Input",
+                    "defaultValue": "AVC",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlInput2_inputType"
+                  },
+                  {
+                    "label": "Resolution",
+                    "type": "dropDown",
+                    "selectorId": "Resolution",
+                    "defaultValue": "SD",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlInput2_Res",
+                    "dependent": [
+                      "Input"
+                    ]
+                  },
+                  {
+                    "label": "Bit Rate",
+                    "type": "dropDown",
+                    "defaultValue": "<10mbps",
+                    "selectorId": "Bit Rate",
+                    "displayInConfigSummary": false,
+                    "exportValueAs": "emlInput2_bitRate",
+                    "dependent": [
+                      "Input",
+                      "Resolution"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price idle input",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmedialive",
+                "meteredUnit": {
+                  "allRegions": "IDLE INPUT"
+                },
+                "id": "emlInput2_priceidleInput"
+              },
+              {
+                "type": "pricing",
+                "label": "price single idle input",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elementalmedialive",
+                "meteredUnit": {
+                  "allRegions": "Single IDLE INPUT"
+                },
+                "id": "emlInput2_priceSingleIdleInput"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions inputs",
+                  "refer": [
+                    "emlInput2_Text",
+                    "emlInput2_numberOfInputs",
+                    "emlInput2_activeInputHrs",
+                    "emlInput2_activeInputHrsReserved",
+                    "columnFormIPM_emlInput2",
+                    "emlInput2_priceidleInput",
+                    "emlInput2_priceSingleIdleInput"
+                  ],
+                  "id": "emlInput2_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "emlInput1_totalInputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Input hourly rate2",
+                  "id": "emlInput2_hourlyRate",
+                  "decimalPlaces": 4,
+                  "IPMSupported": true,
+                  "refer": [
+                    "emlInput2_ipmPrice"
+                  ],
+                  "subTotalRefer": "emlInput2_ipmPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableID": "emlInput2_activeInputHrs",
+                      "variableLabel": "Active hours (On Demand)",
+                      "variableUnitLabel": "active hours",
+                      "required": false,
+                      "variableId": "emlInput2_activeInputHrs"
+                    },
+                    {
+                      "variableID": "emlInput2_activeInputHrsReserved",
+                      "variableLabel": "Active hours (Reserved)",
+                      "variableUnitLabel": "active hours",
+                      "required": false,
+                      "variableId": "emlInput2_activeInputHrsReserved"
+                    }
+                  ],
+                  "outputUnitLabel": "total active hours",
+                  "decimalPlaces": 0,
+                  "id": "emlInput2_activeTotalHrs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableID": "emlInput2_activeTotalHrs",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true,
+                      "variableId": "emlInput2_activeTotalHrs"
+                    }
+                  ],
+                  "outputUnitLabel": "idle hours per month",
+                  "decimalPlaces": 6,
+                  "id": "emlInput2_idleInputHrsMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "emlInput2_numberOfInputs",
+                      "variableLabel": "Number of inputs",
+                      "variableUnitLabel": "input(s)",
+                      "required": true
+                    },
+                    {
+                      "variableID": "emlInput2_activeTotalHrs",
+                      "variableLabel": "total active hours",
+                      "variableUnitLabel": "active hours",
+                      "required": true,
+                      "variableId": "emlInput2_activeTotalHrs"
+                    },
+                    {
+                      "variableId": "emlInput2_ipmPrice",
+                      "variableLabel": "Input hourly rate2",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for active input",
+                  "decimalPlaces": 6,
+                  "id": "emlInput2_activeInputCost",
+                  "variableName": "emlInput2_activeInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elemental Media Live Active input cost (monthly)",
+                  "id": "emlInput2_activeInputSubtotal",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 4,
+                  "refer": "emlInput2_activeInputCost",
+                  "referLabel": "emlInput2_activeInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "emlInput2_numberOfInputs",
+                      "variableLabel": "Number of inputs",
+                      "variableUnitLabel": "input(s)",
+                      "required": true
+                    },
+                    {
+                      "variableID": "emlInput2_idleInputHrsMonth",
+                      "variableLabel": "idle hours per month",
+                      "variableUnitLabel": "idle resource hours per month",
+                      "required": true,
+                      "variableId": "emlInput2_idleInputHrsMonth"
+                    },
+                    {
+                      "variableId": "emlInput2_priceidleInput",
+                      "variableLabel": "price idle input",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for idle input",
+                  "decimalPlaces": 6,
+                  "id": "emlInput2_idleInputCost",
+                  "variableName": "emlInput2_idleInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elemental Media Live Idle input cost (monthly)",
+                  "id": "EML2_idleInputSubtotal",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 4,
+                  "refer": "emlInput2_idleInputCost",
+                  "referLabel": "emlInput2_idleInputCost_var"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "emlInput2_activeInputCost",
+                      "variableLabel": "emlInput2_activeInputCost_var",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "emlInput2_idleInputCost_var",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "emlInput2_idleInputCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6,
+                  "id": "emlInput2_totalInputCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "emlInput2_hourlyRate",
+                    "emlInput2_activeTotalHrs",
+                    "emlInput2_idleInputHrsMonth",
+                    "emlInput2_activeInputCost",
+                    "emlInput2_activeInputSubtotal",
+                    "emlInput2_idleInputCost",
+                    "EML2_idleInputSubtotal",
+                    "emlInput2_totalInputCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "required": false,
+                  "costType": "Monthly",
+                  "label": "Elemental Media Live Input 2",
+                  "decimalPlaces": 4,
+                  "subTotalRefer": "emlInput2_totalInputCost",
+                  "id": "_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

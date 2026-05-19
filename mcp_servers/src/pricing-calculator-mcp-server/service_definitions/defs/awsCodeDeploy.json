@@ -1,0 +1,259 @@
+{
+  "version": "0.0.32",
+  "serviceName": {
+    "aws": "AWS CodeDeploy",
+    "aws-cn": "Amazon CodeDeploy"
+  },
+  "serviceCode": "awsCodeDeploy",
+  "type": "AWSService",
+  "disableRegionSupport": {
+    "aws": false,
+    "aws-cn": false,
+    "aws-iso": true,
+    "aws-iso-b": true,
+    "aws-us-gov": false,
+    "aws-iso-e": false,
+    "aws-iso-f": false
+  },
+  "disableAddToEstimate": {
+    "aws": false,
+    "aws-cn": false,
+    "aws-iso": true,
+    "aws-iso-b": true,
+    "aws-us-gov": false,
+    "aws-iso-e": false,
+    "aws-iso-f": false
+  },
+  "regions": [],
+  "searchKeywords": [
+    "codedeploy",
+    "CodeDeploy",
+    "deployment"
+  ],
+  "excludeZeroSubTotals": true,
+  "serviceDescription": {
+    "aws": "AWS CodeDeploy is a fully managed deployment service that automates software deployments to a variety of compute services such as Amazon EC2, AWS Fargate, AWS Lambda, and your on-premises servers.",
+    "aws-cn": "Amazon CodeDeploy is a fully managed deployment service that automates software deployments to a variety of compute services such as Amazon EC2, Amazon Fargate, Amazon Lambda, and your on-premises servers."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codedeploy/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "deniedPartitions": [
+        "aws-iso",
+        "aws-iso-b"
+      ],
+      "mappingDefinitionName": "codedeploy",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codedeploy/[currency]/current/codedeploy.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/codedeploy/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "CodeDeploy On-Premises",
+          "helpText": {
+            "aws": "For CodeDeploy on EC2/Lambda: There is no additional charge for code deployments to Amazon EC2 or AWS Lambda through AWS CodeDeploy. For CodeDeploy On-Premises: You pay $0.02 per on-premises instance update using AWS CodeDeploy. There are no minimum fees and no upfront commitments. For example, a deployment to three instances equals three instance updates. You will only be charged if CodeDeploy performs an update to an instance. You will not be charged for any instances skipped during the deployment. You pay for any other AWS resources (e.g. S3 buckets) you may use in conjunction with CodeDeploy to store and run your application. You only pay for what you use, as you use it; there are no minimum fees and no upfront commitments.",
+            "aws-cn": "For CodeDeploy on EC2/Lambda: There is no additional charge for code deployments to Amazon EC2 or Amazon Lambda through Amazon CodeDeploy. For CodeDeploy On-Premises: You pay $0.02 per on-premises instance update using Amazon CodeDeploy. There are no minimum fees and no upfront commitments. For example, a deployment to three instances equals three instance updates. You will only be charged if CodeDeploy performs an update to an instance. You will not be charged for any instances skipped during the deployment. You pay for any other Amazon resources (e.g. S3 buckets) you may use in conjunction with CodeDeploy to store and run your application. You only pay for what you use, as you use it; there are no minimum fees and no upfront commitments."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codedeploy/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "For CodeDeploy you only pay for executing deployments to on-premises instances.",
+                "id": "codeDeploy_bodyText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfOnPremInstances",
+                "label": "Number of on-premise instances",
+                "displayInConfigSummary": true,
+                "defaultValue": 10,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of deployments",
+                "id": "numberOfDeployments",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "defaultValue": 4,
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter number of code deployments",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "codeDeploy_onPremPrice",
+                "label": "Price for on prem update",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codedeploy",
+                "meteredUnit": {
+                  "allRegions": "On Premises"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Monthly total of instance update deployments",
+                  "refer": [
+                    "codeDeploy_bodyText",
+                    "numberOfOnPremInstances",
+                    "numberOfDeployments",
+                    "codeDeploy_onPremPrice"
+                  ],
+                  "id": "codeDeploy_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "codeDeploy_totalPrice",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfOnPremInstances",
+                      "variableLabel": "Number of on-premise instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfDeployments",
+                      "variableLabel": "Number of deployments",
+                      "variableUnitLabel": "deployment(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "codeDeploy_onPremPrice",
+                      "variableLabel": "Price for on prem update",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for CodeDeploy",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "codeDeploy_totalPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total CodeDeploy cost",
+                  "decimalPlaces": 2,
+                  "id": "CDTotalPrice",
+                  "subTotalRefer": "codeDeploy_totalPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-cn",
+            "aws-us-gov",
+            "aws-iso-e",
+            "aws-iso-f"
+          ],
+          "title": "AWS CodeDeploy Pricing",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codedeploy/pricing/"
+            }
+          },
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "For CodeDeploy on EC2: There is no additional charge for code deployments to Amazon EC2 instances through AWS CodeDeploy. You pay for any other AWS resources (e.g. S3 buckets) you may use in conjunction with CodeDeploy to store and run your application. You only pay for what you use, as you use it; there are no minimum fees and no upfront commitments.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "noPriceMVP_infoAlert"
+              }
+            ]
+          }
+        }
+      ],
+      "id": "CodeDeployTemplate"
+    }
+  ],
+  "slug": "CodeDeploy",
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

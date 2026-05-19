@@ -1,0 +1,504 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA Load Balancer Infrastructure - ALB, Target Groups, Listeners, and DNS Records - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+  PublicReachableDomainName:
+    Type: String
+    Description: 'Primary domain name for SERA (e.g., projectsera.link)'
+
+  SecondDomainName:
+    Type: String
+    Default: ''
+    Description: 'Optional second domain name (leave empty if not used)'
+
+  ThirdDomainName:
+    Type: String
+    Default: ''
+    Description: 'Optional third domain name (leave empty if not used)'
+
+Conditions:
+  HasSecondDomain: !Not [!Equals [!Ref SecondDomainName, '']]
+  HasThirdDomain: !Not [!Equals [!Ref ThirdDomainName, '']]
+
+Mappings:
+  # ELB Service Account IDs by Region for ALB Access Logs
+  ELBAccountIdMap:
+    us-east-1:
+      AccountId: '127311923021'
+    us-east-2:
+      AccountId: '033677994240'
+    us-west-1:
+      AccountId: '027434742980'
+    us-west-2:
+      AccountId: '797873946194'
+    eu-west-1:
+      AccountId: '156460612806'
+    eu-west-2:
+      AccountId: '652711504416'
+    eu-west-3:
+      AccountId: '009996457667'
+    eu-central-1:
+      AccountId: '054676820928'
+    eu-north-1:
+      AccountId: '897822967062'
+    ap-southeast-1:
+      AccountId: '114774131450'
+    ap-southeast-2:
+      AccountId: '783225319266'
+    ap-northeast-1:
+      AccountId: '582318560864'
+    ap-northeast-2:
+      AccountId: '600734575887'
+    ap-south-1:
+      AccountId: '718504428378'
+    sa-east-1:
+      AccountId: '507241528517'
+    ca-central-1:
+      AccountId: '985666609251'
+
+Resources:
+  # Dedicated S3 Bucket for ALB Access Logs
+  SeraALBAccessLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-alb-access-logs-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+            BucketKeyEnabled: false
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue
+            Fn::Sub: '${StackPrefix}-logfiles-bucket-name'
+        LogFilePrefix: 'alb-access-logs-bucket-access-logs/'
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldALBLogs
+            Status: Enabled
+            ExpirationInDays: 90
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb-access-logs-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: ALBAccessLogs
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # ALB Access Logs Bucket Policy
+  SeraALBAccessLogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref SeraALBAccessLogsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 's3:*'
+            Resource: 
+              - !GetAtt SeraALBAccessLogsBucket.Arn
+              - !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+          - Sid: ALBAccessLogsPolicy
+            Effect: Allow
+            Principal:
+              AWS: !Sub 
+                - 'arn:aws:iam::${ALBServiceAccount}:root'
+                - ALBServiceAccount: !FindInMap [ELBAccountIdMap, !Ref 'AWS::Region', AccountId]
+            Action: 
+              - s3:PutObject
+            Resource: !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+          - Sid: ALBAccessLogsDeliveryRolePolicy
+            Effect: Allow
+            Principal:
+              Service: delivery.logs.amazonaws.com
+            Action: 
+              - s3:PutObject
+              - s3:GetBucketAcl
+            Resource: 
+              - !Sub '${SeraALBAccessLogsBucket.Arn}/*'
+              - !GetAtt SeraALBAccessLogsBucket.Arn
+
+  # Target Group for Frontend (port 7001)
+  SeraFrontendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${StackPrefix}-frontend'
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Port: 7001
+      VpcId: !ImportValue
+            Fn::Sub: '${StackPrefix}-vpc-id'
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 7001
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-frontend-tg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Target Group for Backend (port 5001)
+  SeraBackendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${StackPrefix}-backend'
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Port: 5001
+      VpcId: !ImportValue
+            Fn::Sub: '${StackPrefix}-vpc-id'
+      TargetType: instance
+      HealthCheckEnabled: true
+      HealthCheckPath: /api/health
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 5001
+      HealthCheckIntervalSeconds: 30
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: '200'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-backend-tg'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Application Load Balancer
+  SeraApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    DependsOn: SeraALBAccessLogsBucketPolicy
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      SecurityGroups:
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-sg-id'
+      Subnets:
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-1-id'
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-2-id'
+        - !ImportValue
+            Fn::Sub: '${StackPrefix}-public-subnet-3-id'
+      LoadBalancerAttributes:
+        - Key: deletion_protection.enabled
+          Value: 'true'
+        - Key: idle_timeout.timeout_seconds
+          Value: '300'  # Increased to 5 minutes for streaming responses
+        - Key: routing.http2.enabled
+          Value: 'true'
+        - Key: routing.http.drop_invalid_header_fields.enabled
+          Value: 'true'
+        - Key: access_logs.s3.enabled
+          Value: 'true'
+        - Key: access_logs.s3.bucket
+          Value: !Ref SeraALBAccessLogsBucket
+        - Key: access_logs.s3.prefix
+          Value: 'access-logs'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+  # HTTPS Listener for ALB with Multiple Certificates
+  SeraALBHTTPSListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref SeraApplicationLoadBalancer
+      Protocol: HTTPS
+      Port: 443
+      Certificates:
+        - CertificateArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-certificate-arn-1'
+        - !If
+          - HasSecondDomain
+          - CertificateArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-certificate-arn-2'
+          - !Ref 'AWS::NoValue'
+        - !If
+          - HasThirdDomain
+          - CertificateArn: !ImportValue
+            Fn::Sub: '${StackPrefix}-alb-certificate-arn-3'
+          - !Ref 'AWS::NoValue'
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig:
+            StatusCode: '403'
+            ContentType: 'text/plain'
+            MessageBody: 'Forbidden'
+
+  # Listener Rule for API traffic with Cognito Authentication
+  SeraAPIListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref SeraALBHTTPSListener
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - '/api/*'
+      Actions:
+        - Type: authenticate-cognito
+          Order: 1
+          AuthenticateCognitoConfig:
+            UserPoolArn: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-user-pool-arn'
+            UserPoolClientId: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-client-id'
+            UserPoolDomain: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-domain'
+            OnUnauthenticatedRequest: authenticate
+            Scope: openid email profile aws.cognito.signin.user.admin
+        - Type: forward
+          Order: 2
+          TargetGroupArn: !Ref SeraBackendTargetGroup
+
+  # Listener Rule for Host Header matching - All Domains with Cognito Authentication
+  SeraHostHeaderListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref SeraALBHTTPSListener
+      Priority: 2
+      Conditions:
+        - Field: host-header
+          Values:
+            - !Ref PublicReachableDomainName
+            - !Sub 'www.${PublicReachableDomainName}'
+            - !If
+              - HasSecondDomain
+              - !Ref SecondDomainName
+              - !Ref 'AWS::NoValue'
+            - !If
+              - HasSecondDomain
+              - !Sub 'www.${SecondDomainName}'
+              - !Ref 'AWS::NoValue'
+            - !If
+              - HasThirdDomain
+              - !Ref ThirdDomainName
+              - !Ref 'AWS::NoValue'
+            - !If
+              - HasThirdDomain
+              - !Sub 'www.${ThirdDomainName}'
+              - !Ref 'AWS::NoValue'
+      Actions:
+        - Type: authenticate-cognito
+          Order: 1
+          AuthenticateCognitoConfig:
+            UserPoolArn: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-user-pool-arn'
+            UserPoolClientId: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-client-id'
+            UserPoolDomain: !ImportValue
+              Fn::Sub: '${StackPrefix}-cognito-domain'
+            OnUnauthenticatedRequest: authenticate
+            Scope: openid email profile aws.cognito.signin.user.admin
+            SessionTimeout: 43200
+        - Type: forward
+          Order: 2
+          TargetGroupArn: !Ref SeraFrontendTargetGroup
+
+  # HTTP to HTTPS Redirect Listener
+  SeraALBHTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W56
+            reason: "HTTP listener is configured to redirect all traffic to HTTPS (port 443) with HTTP 301 status. This is a security best practice to ensure all traffic is encrypted. No actual HTTP content is served - only redirects to HTTPS."
+    Properties:
+      LoadBalancerArn: !Ref SeraApplicationLoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: 443
+            StatusCode: HTTP_301
+
+  # Route 53 Records for ALB - Primary Domain
+  SeraALBDNSRecord1:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !Ref PublicReachableDomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  # Route 53 Records for ALB - Secondary Domain
+  SeraALBDNSRecord2:
+    Type: AWS::Route53::RecordSet
+    Condition: HasSecondDomain
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-2'
+      Name: !Ref SecondDomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  # Route 53 Records for ALB - Tertiary Domain
+  SeraALBDNSRecord3:
+    Type: AWS::Route53::RecordSet
+    Condition: HasThirdDomain
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-3'
+      Name: !Ref ThirdDomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  # Route 53 Record for www subdomain - Primary Domain
+  SeraWWWDNSRecord1:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Name: !Sub 'www.${PublicReachableDomainName}'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  # Route 53 Record for www subdomain - Secondary Domain
+  SeraWWWDNSRecord2:
+    Type: AWS::Route53::RecordSet
+    Condition: HasSecondDomain
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-2'
+      Name: !Sub 'www.${SecondDomainName}'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+  # Route 53 Record for www subdomain - Tertiary Domain
+  SeraWWWDNSRecord3:
+    Type: AWS::Route53::RecordSet
+    Condition: HasThirdDomain
+    Properties:
+      HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-3'
+      Name: !Sub 'www.${ThirdDomainName}'
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt SeraApplicationLoadBalancer.DNSName
+        HostedZoneId: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: false
+
+Outputs:
+  # ALB Access Logs Bucket Outputs
+  SeraALBAccessLogsBucketName:
+    Description: 'Name of the SERA ALB access logs bucket'
+    Value: !Ref SeraALBAccessLogsBucket
+    Export:
+      Name: !Sub '${StackPrefix}-alb-access-logs-bucket-name'
+
+  SeraALBAccessLogsBucketArn:
+    Description: 'ARN of the SERA ALB access logs bucket'
+    Value: !GetAtt SeraALBAccessLogsBucket.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-alb-access-logs-bucket-arn'
+
+  # Load Balancer Outputs
+  SeraALBArn:
+    Description: 'ARN of the SERA Application Load Balancer'
+    Value: !Ref SeraApplicationLoadBalancer
+    Export:
+      Name: !Sub '${StackPrefix}-alb-arn'
+
+  SeraALBDNSName:
+    Description: 'DNS name of the SERA Application Load Balancer'
+    Value: !GetAtt SeraApplicationLoadBalancer.DNSName
+    Export:
+      Name: !Sub '${StackPrefix}-alb-dns-name'
+
+  SeraALBCanonicalHostedZoneID:
+    Description: 'Canonical hosted zone ID of the SERA Application Load Balancer'
+    Value: !GetAtt SeraApplicationLoadBalancer.CanonicalHostedZoneID
+    Export:
+      Name: !Sub '${StackPrefix}-alb-canonical-hosted-zone-id'
+
+  # Target Group Outputs
+  SeraFrontendTargetGroupArn:
+    Description: 'ARN of the SERA Frontend Target Group'
+    Value: !Ref SeraFrontendTargetGroup
+    Export:
+      Name: !Sub '${StackPrefix}-frontend-target-group-arn'
+
+  SeraBackendTargetGroupArn:
+    Description: 'ARN of the SERA Backend Target Group'
+    Value: !Ref SeraBackendTargetGroup
+    Export:
+      Name: !Sub '${StackPrefix}-backend-target-group-arn'
+
+  # DNS Outputs
+  SeraApplicationURL:
+    Description: 'SERA Application URL'
+    Value: !Sub 'https://${PublicReachableDomainName}'
+    Export:
+      Name: !Sub '${StackPrefix}-application-url'
+
+  SeraAPIURL:
+    Description: 'SERA API URL'
+    Value: !Sub 'https://${PublicReachableDomainName}/api'
+    Export:
+      Name: !Sub '${StackPrefix}-api-url'

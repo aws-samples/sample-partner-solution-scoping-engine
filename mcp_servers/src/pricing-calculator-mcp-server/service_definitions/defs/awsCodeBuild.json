@@ -1,0 +1,1359 @@
+{
+  "version": "0.0.44",
+  "serviceName": {
+    "aws": "AWS CodeBuild",
+    "aws-cn": "Amazon CodeBuild"
+  },
+  "serviceCode": "awsCodeBuild",
+  "slug": "codebuild",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "CodeBuild",
+    "Code",
+    "code build"
+  ],
+  "serviceDescription": {
+    "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+    "aws-cn": "Amazon CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "codebuild",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-calc-lambda",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-calc-lambda/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-calc-sandbox",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-calc-sandbox/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-calc-reserved",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-calc-reserved/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-reserved-ec2-attributes",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-reserved-ec2-attributes/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "codebuild-docker-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codebuild/[currency]/current/codebuild-docker-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codebuild/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/codebuild/"
+        }
+      },
+      "cards": [
+        {
+          "title": {
+            "aws": "AWS CodeBuild Compute Type",
+            "aws-cn": "Amazon CodeBuild Compute Type"
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "computeType",
+                "label": {
+                  "aws": "AWS CodeBuild Compute Type",
+                  "aws-cn": "Amazon CodeBuild Compute Type"
+                },
+                "options": [
+                  {
+                    "label": "On-Demand EC2",
+                    "id": "ondemandec2"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "codebuild",
+                        "meteredUnit": "D6BHhHs2Qn2fcXF3J0ZMBi1qCjgvLy0PdgnAkVAG92M"
+                      }
+                    },
+                    "label": "On-Demand Lambda",
+                    "id": "ondemandlambda"
+                  },
+                  {
+                    "label": "Reserved Capacity EC2",
+                    "id": "ondemandreserved"
+                  },
+                  {
+                    "label": "Sandbox",
+                    "id": "sandbox"
+                  },
+                  {
+                    "label": "Reserved EC2 Attributes",
+                    "id": "reserved_ec2"
+                  },
+                  {
+                    "label": "Docker Image Server",
+                    "id": "docker"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "ondemandec2",
+                "description": ""
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "ondemandec2"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": "Amazon CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "buildsinaMonth",
+                "label": "Number of builds in a month",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "AvgBuildTime",
+                "label": "Average build duration (minutes)",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "Hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "Minutes",
+                "defaultValue": 10,
+                "defaultDuration": "min",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000000
+                }
+              },
+              {
+                "label": "CodeBuild Instances",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "computeInst"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "os"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://www.amazonaws.cn/en/codebuild/pricing'target='_blank'> pricing page</a>."
+                },
+                "id": "EdgeManagerContactUsText"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of builds in a month",
+                      "variableUnitLabel": "builds per month",
+                      "required": false,
+                      "variableId": "buildsinaMonth"
+                    },
+                    {
+                      "variableLabel": "Average build duration (minutes)",
+                      "variableUnitLabel": "minutes",
+                      "required": false,
+                      "variableId": "AvgBuildTime"
+                    }
+                  ],
+                  "outputUnitLabel": "billed minutes (monthly)",
+                  "decimalPlaces": 6,
+                  "id": "billedmins"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billed minutes (monthly)",
+                      "variableUnitLabel": "minutes",
+                      "required": false,
+                      "variableId": "billedmins"
+                    },
+                    {
+                      "variableLabel": "CodeBuild Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalCodeBuildCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "buildsinaMonth",
+                    "AvgBuildTime",
+                    "columnFormIPM",
+                    "computeInst",
+                    "os",
+                    "EdgeManagerContactUsText",
+                    "billedmins",
+                    "finalCodeBuildCost"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "FinalCostCodeBuild",
+                  "subTotalRefer": "finalCodeBuildCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "ondemandlambda"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "buildsinaMonth_lambda",
+                "label": "Number of builds in a month",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "AvgBuildTime_lambda",
+                "label": "Average build duration (seconds)",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "Hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "Seconds",
+                "defaultValue": 10,
+                "defaultDuration": "sec",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000000
+                }
+              },
+              {
+                "label": "CodeBuild Instances",
+                "id": "columnFormIPM_lambda",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-calc-lambda",
+                "calculationId": {
+                  "hourly": "monthly_ipm_lambda"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "compute_lambda"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "operating_lambda"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": ""
+                },
+                "id": "EdgeManagerContactUsText_lambda"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of builds in a month",
+                      "variableUnitLabel": "builds per month",
+                      "required": false,
+                      "variableId": "buildsinaMonth_lambda"
+                    },
+                    {
+                      "variableLabel": "Average build duration (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": false,
+                      "variableId": "AvgBuildTime_lambda"
+                    }
+                  ],
+                  "outputUnitLabel": "billed seconds (monthly)",
+                  "decimalPlaces": 6,
+                  "id": "billedmins_lambda"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billed seconds (monthly)",
+                      "variableUnitLabel": "seconds",
+                      "required": false,
+                      "variableId": "billedmins_lambda"
+                    },
+                    {
+                      "variableLabel": "CodeBuild Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "monthly_ipm_lambda",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalCodeBuildCost_lambda"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "buildsinaMonth_lambda",
+                    "AvgBuildTime_lambda",
+                    "columnFormIPM_lambda",
+                    "EdgeManagerContactUsText_lambda",
+                    "billedmins_lambda",
+                    "finalCodeBuildCost_lambda"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "FinalCostCodeBuild_lambda",
+                  "subTotalRefer": "finalCodeBuildCost_lambda"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "ondemandreserved"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": "Amazon CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "id": "numberOfInstances",
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of instances",
+                "description": "",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "defaultValue": 1
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "instanceRunningTime",
+                "label": "Instance running time",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "Hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "Mins",
+                "defaultValue": 1,
+                "defaultDuration": "day",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 60,
+                  "maxValue": 10000000000000000
+                }
+              },
+              {
+                "label": "CodeBuild Instances",
+                "id": "columnFormIPM_reserved",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-calc-reserved",
+                "calculationId": {
+                  "hourly": "monthly_ipm_reserved"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "computetype1"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "operatingsystem"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": ""
+                },
+                "id": "EdgeManagerContactUsText_reserved"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Instance minutes",
+                  "refer": [
+                    "numberOfInstances",
+                    "instanceRunningTime",
+                    "columnFormIPM_reserved",
+                    "EdgeManagerContactUsText_reserved"
+                  ],
+                  "id": "unitConvertREC2",
+                  "subTotalRefer": "finalCodeBuildCost_lambda"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": false,
+                      "variableId": "numberOfInstances"
+                    },
+                    {
+                      "variableLabel": "Instance running time",
+                      "variableUnitLabel": "minutes",
+                      "required": false,
+                      "variableId": "instanceRunningTime"
+                    },
+                    {
+                      "variableLabel": "CodeBuild Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "monthly_ipm_reserved",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalCodeBuildCost_reserved"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "finalCodeBuildCost_reserved"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "FinalCostCodeBuild_reserved",
+                  "subTotalRefer": "finalCodeBuildCost_reserved"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "sandbox"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": "Amazon CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "buildsinaMonths",
+                "label": "Number of sandboxes",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "AvgBuildTimes",
+                "label": "Sandbox run time",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "Seconds",
+                "defaultValue": 10,
+                "defaultDuration": "sec",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000000
+                }
+              },
+              {
+                "label": "CodeBuild Instances",
+                "id": "columnFormIPMs",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-calc-sandbox",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "compute"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "operating"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://www.amazonaws.cn/en/codebuild/pricing'target='_blank'> pricing page</a>."
+                },
+                "id": "EdgeManagerContactUsTexts"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of sandboxes",
+                      "variableUnitLabel": "sandboxes per month",
+                      "required": false,
+                      "variableId": "buildsinaMonths"
+                    },
+                    {
+                      "variableLabel": "Sandbox run time",
+                      "variableUnitLabel": "seconds",
+                      "required": false,
+                      "variableId": "AvgBuildTimes"
+                    }
+                  ],
+                  "outputUnitLabel": "billed seconds (monthly)",
+                  "decimalPlaces": 6,
+                  "id": "billedminss"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billed seconds (monthly)",
+                      "variableUnitLabel": "seconds",
+                      "required": false,
+                      "variableId": "billedminss"
+                    },
+                    {
+                      "variableLabel": "CodeBuild Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalCodeBuildCosts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "buildsinaMonths",
+                    "AvgBuildTimes",
+                    "columnFormIPMs",
+                    "EdgeManagerContactUsTexts",
+                    "billedminss",
+                    "finalCodeBuildCosts"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "FinalCostCodeBuilds",
+                  "subTotalRefer": "finalCodeBuildCosts"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "reserved_ec2"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": "Amazon CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "ec2_reserved_instances",
+                "label": "Number of instances",
+                "disableCalculation": "true",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "ec2_running_time",
+                "label": "EC2 reserved instance run time",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "Hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "Minutes",
+                "defaultValue": 10,
+                "defaultDuration": "min",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "EC2 Reserved Instances",
+                "id": "columnFormIPMs_ec2_reserved",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-reserved-ec2-attributes",
+                "calculationId": {
+                  "hourly": "ec2_reserved_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "comp"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "operating_system"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": ""
+                },
+                "id": "EdgeManagerContactUsText_ec2"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "ec2_reserved_instances"
+                    },
+                    {
+                      "variableLabel": "EC2 reserved instance run time",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "ec2_running_time"
+                    },
+                    {
+                      "variableLabel": "EC2 Reserved Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "ec2_reserved_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalEC2ReservedCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ec2_reserved_instances",
+                    "ec2_running_time",
+                    "columnFormIPMs_ec2_reserved",
+                    "EdgeManagerContactUsText_ec2",
+                    "finalEC2ReservedCost"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "totalEC2ReservedCost",
+                  "subTotalRefer": "finalEC2ReservedCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "computeType"
+              },
+              "docker"
+            ]
+          },
+          "title": {
+            "aws": "AWS CodeBuild",
+            "aws-cn": "Amazon CodeBuild"
+          },
+          "helpText": {
+            "aws": "AWS CodeBuild is a fully managed continuous integration service that compiles source code, runs tests, and produces software packages that are ready to deploy.",
+            "aws-cn": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codebuild/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "docker_instances",
+                "label": "Number of instances",
+                "disableCalculation": "true",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "docker_running_time",
+                "label": "Docker run time",
+                "description": "",
+                "dropDownDuration": [
+                  {
+                    "label": "Seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "Minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "Hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "Minutes",
+                "defaultValue": 10,
+                "defaultDuration": "min",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "label": "Docker Instances",
+                "id": "columnFormIPMs_docker",
+                "disableCalculation": true,
+                "mappingDefinitionName": "codebuild-docker-calc",
+                "calculationId": {
+                  "hourly": "docker_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Compute Type": 100,
+                  "Operating System": 50
+                },
+                "primaryKey": {
+                  "Compute Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "row": [
+                  {
+                    "label": "Search Instance Type",
+                    "type": "autoSuggest",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "selectorId": "Compute Type",
+                    "exportValueAs": "instance"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "exportValueAs": "system"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "Learn more about the CPU and Memory of each instance type on the CodeBuild <a href='https://aws.amazon.com/codebuild/pricing/'target='_blank'> pricing page</a>.",
+                  "aws-cn": ""
+                },
+                "id": "EdgeManagerContactUsText_docker"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "docker_instances"
+                    },
+                    {
+                      "variableLabel": "Docker run time",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "docker_running_time"
+                    },
+                    {
+                      "variableLabel": "Docker Instances",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "docker_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "finalDockerCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "docker_instances",
+                    "docker_running_time",
+                    "columnFormIPMs_docker",
+                    "EdgeManagerContactUsText_docker",
+                    "finalDockerCost"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": {
+                    "aws": "AWS CodeBuild cost",
+                    "aws-cn": "Amazon CodeBuild cost"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "totalDockerCost",
+                  "subTotalRefer": "finalDockerCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-iso-e",
+    "aws-iso-f"
+  ]
+}

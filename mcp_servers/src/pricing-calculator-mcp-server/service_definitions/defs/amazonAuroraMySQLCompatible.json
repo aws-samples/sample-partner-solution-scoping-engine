@@ -1,0 +1,4319 @@
+{
+  "version": "0.0.154",
+  "serviceName": "Amazon Aurora MySQL-Compatible",
+  "serviceCode": "amazonAuroraMySQLCompatible",
+  "type": "AWSService",
+  "slug": "AuroraMySQL",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Database",
+    "Aurora",
+    "MySQL",
+    "MariaDB",
+    "Postgres",
+    "Oracle",
+    "SQL Server",
+    "Database",
+    "PostgreSQL",
+    "Microsoft SQL Server",
+    "Relational Database Service",
+    "Database",
+    "database hosting",
+    "hosted database",
+    "Managed database"
+  ],
+  "serviceDescription": "Amazon Aurora MySQL Compatible relational database is built for the cloud, that combines  performance and availability of traditional enterprise databases with the simplicity and cost-effectiveness of open source databases.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rds-aurora-mysql-compatible-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-aurora-mysql-compatible-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "s3",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    },
+    {
+      "mappingDefinitionName": "rds-storage-ops",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-storage-ops.json"
+    },
+    {
+      "mappingDefinitionName": "rds-aurora-storage",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-aurora-storage.json"
+    },
+    {
+      "mappingDefinitionName": "rds-aurora-iooptimization-mysql-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-aurora-iooptimization-mysql-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "rds-proxy",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-proxy.json"
+    },
+    {
+      "mappingDefinitionName": "cloudwatch",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cloudwatch/[currency]/current/cloudwatch.json"
+    }
+  ],
+  "helpUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/rds/aurora"
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Aurora MySQL-Compatible",
+      "description": "The database is provisioned with the instance type you select.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/rds/aurora/pricing"
+        }
+      },
+      "id": "auroraMySQLCompatible",
+      "cards": [
+        {
+          "title": "Cluster Configuration Option",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "description": "Database instance, storage and IO charges will vary based on the configuration. Review <a href='https://aws.amazon.com/rds/aurora/pricing/'>Amazon Aurora pricing</a> for more information",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "edition",
+                "label": "Aurora MySQL Cluster Configuration Option",
+                "options": [
+                  {
+                    "label": "Aurora Standard",
+                    "id": "auroraStandard"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "rds-aurora-storage",
+                        "meteredUnit": "Aurora PostgreSQL IO Optimized Aurora"
+                      }
+                    },
+                    "label": "Aurora I/O-Optimized",
+                    "id": "auroraIOoptimized"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "auroraStandard",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "auroraStandard"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Cost effective pricing for many applications with moderate I/O usage (I/O costs <25% of total database costs). <br>Pay-per-request I/O charges apply. DB instance and storage prices don't include I/O usage.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraStandard"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "auroraIOoptimized"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Predictable pricing for all applications. Improved price-performance for I/O-intensive applications (I/O costs >25% of total database costs). <br>No additional charges for read/write I/O operations. DB instance and storage prices includes I/O usage. <br>Aurora automatically accounts for the price difference between the Aurora Standard and Aurora I/O-Optimized Reserved Instances. To learn more, visit <a href='https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_WorkingWithReservedDBInstances.html#USER_WorkingWithReservedDBInstances.BillingExample'>Aurora reserved DB instance billing examples</a> in the Aurora User Guide.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraIOoptimized"
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "auroraStandard"
+            ]
+          },
+          "title": "Select Aurora MySQL Compatible instances",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "rds-aurora-mysql-compatible-calc",
+                "id": "columnFormIPM",
+                "calculationId": {
+                  "monthly": "monthly_ipm",
+                  "upfront": "upfront_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "Memory",
+                    "vCPU",
+                    "Network Performance"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "Units",
+                  "LeaseContractLength",
+                  "PurchaseOption"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "description": "",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance Type",
+                    "selectorId": "Instance Type",
+                    "type": "autoSuggest",
+                    "isInstanceType": true,
+                    "withTags": [
+                      "vCPU",
+                      "Memory",
+                      "Network Performance"
+                    ],
+                    "exportTagsAsValue": {
+                      "vCPU": {
+                        "id": "vCPU",
+                        "label": "vCPU"
+                      }
+                    },
+                    "required": true,
+                    "defaultValue": "db.r6g.large"
+                  },
+                  {
+                    "label": "Utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Instance Family",
+                    "type": "dropDown",
+                    "selectorId": "Instance Family",
+                    "required": true,
+                    "exportValueAs": "deploymentStrategy"
+                  },
+                  {
+                    "label": "Pricing Model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    },
+                    "required": true
+                  },
+                  {
+                    "label": "Lease Offering Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "exportValueAs": "term"
+                  },
+                  {
+                    "label": "Purchase Option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "dependent": "LeaseContractLength",
+                    "exportValueAs": "purchaseOption"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "costType": "Monthly",
+                  "label": "Amazon Aurora MySQL Compatible instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "auroraMySqlCompatible_generated_0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Amazon Aurora MySQL Compatible instances cost var",
+                  "id": "auroraMySQLCompatibleCostVar",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "Amazon Aurora MySQL Compatible instances cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm",
+                  "id": "auroraMySqlCompatible_generated_1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "auroraIOoptimized"
+            ]
+          },
+          "title": "Select Aurora MySQL I/O-Optimized Compatible instances",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "rds-aurora-iooptimization-mysql-calc",
+                "id": "columnFormIPMIOOptimized",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "Memory",
+                    "vCPU",
+                    "Network Performance"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "Units",
+                  "LeaseContractLength",
+                  "PurchaseOption"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "description": "",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance Type",
+                    "selectorId": "Instance Type",
+                    "type": "autoSuggest",
+                    "isInstanceType": true,
+                    "withTags": [
+                      "vCPU",
+                      "Memory",
+                      "Network Performance"
+                    ],
+                    "exportTagsAsValue": {
+                      "vCPU": {
+                        "id": "vCPU",
+                        "label": "vCPU"
+                      }
+                    },
+                    "required": true,
+                    "defaultValue": ""
+                  },
+                  {
+                    "label": "Utilization",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Instance Family",
+                    "type": "dropDown",
+                    "selectorId": "Instance Family",
+                    "required": true,
+                    "exportValueAs": "deploymentStrategy"
+                  },
+                  {
+                    "label": "Pricing Model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    },
+                    "required": true
+                  },
+                  {
+                    "label": "Lease Offering Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "exportValueAs": "term"
+                  },
+                  {
+                    "label": "Purchase Option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "dependent": "LeaseContractLength",
+                    "exportValueAs": "purchaseOption"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "costType": "Monthly",
+                  "label": "Monthly Cost for Amazon Aurora MySQL I/O-Optimized Compatible",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "auroraMySqlCompatible_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly Cost for Amazon Aurora MySQL I/O-Optimized Compatible (monthly)",
+                  "id": "auroraMySQLIOOptimizedCompatibleCostVar",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "RDS Proxy",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be creating an RDS Proxy with the database?",
+                "id": "createRDSProxy",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-proxy",
+                "meteredUnit": {
+                  "allRegions": "o8WAHE-JAwPaTTUfqztzIP7x5XE5J33yYZk_Km-6a1s"
+                },
+                "label": "price for Aurora MySQL Compatible RDS Proxy",
+                "id": "auroraMySqlCompatible_RDSProxyPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "createRDSProxy",
+                    "auroraMySqlCompatible_RDSProxyPrice"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_33",
+                  "subTotalRefer": "auroraMySQLIOOptimizedCompatibleCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "id": "maxVCPUs",
+                  "outputUnitLabel": "vCPUs",
+                  "decimalPlaces": 0,
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableId": "vCPU",
+                      "variableUnitLabel": "vCPUs",
+                      "minValue": 0
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 2
+                    }
+                  ]
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "createRDSProxy"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableLabel": "vCPUs",
+                      "variableUnitLabel": "vCPU",
+                      "required": true,
+                      "variableId": "maxVCPUs"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for Aurora MySQL Compatible RDS Proxy",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraMySqlCompatible_RDSProxyPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_RDSProxyCost",
+                  "variableName": "Aurora MySQL Compatible Proxy Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "maxVCPUs",
+                    "auroraMySqlCompatible_RDSProxyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly Cost for RDS Proxy",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_ProxyTotalCost",
+                  "subTotalRefer": "auroraMySqlCompatible_RDSProxyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "auroraStandard"
+            ]
+          },
+          "title": "Database Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Storage consumed by your Amazon Aurora database is billed in per GB-month increments and IOs consumed are billed in per million request increments.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Total Storage Size of the Aurora Cluster",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Baseline IO rate",
+                "id": "totalReads_BaseIO",
+                "description": "Enter the number of IOs per second that your workload consumes during off-peak periods.",
+                "placeholder": "Enter the number of IOs",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0.0166,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Peak IO rate",
+                "id": "totalWrites_PeakIO",
+                "description": "Enter the maximum number of IOs per second your workload consumes during peak periods.",
+                "placeholder": "Enter the number of IOs",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0.0166,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "and": [
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "baselinePeakDifference"
+                        },
+                        0
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "durationPeakWriteId"
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "header": "",
+                "label": "Usage alert",
+                "content": "Peak IO rate must be greater than or equal to Baseline IO rate",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "baselineAlertId"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Duration of peak IO activity",
+                "id": "durationPeakWriteId",
+                "description": "Enter the number of hours per month when your cluster or instance workload operates at peak.",
+                "placeholder": "Enter the number of hours",
+                "options": [
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Database Storage DB Engine Aurora PostgreSQL General Purpose Aurora"
+                },
+                "id": "auroraMySqlCompatible_generated_2"
+              },
+              {
+                "type": "pricing",
+                "label": "price for iops",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "System Operation Aurora I O Operation"
+                },
+                "id": "auroraMySqlCompatible_generated_3"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "storageAmount",
+                    "totalReads_BaseIO",
+                    "totalWrites_PeakIO",
+                    "baselineAlertId",
+                    "durationPeakWriteId",
+                    "auroraMySqlCompatible_generated_2",
+                    "auroraMySqlCompatible_generated_3"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_4",
+                  "subTotalRefer": "auroraMySqlCompatible_RDSProxyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Peak IO rate",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "totalWrites_PeakIO"
+                    },
+                    {
+                      "variableLabel": "Baseline IO rate",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "totalReads_BaseIO"
+                    }
+                  ],
+                  "outputUnitLabel": "peak difference",
+                  "decimalPlaces": 2,
+                  "id": "baselinePeakDifference"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraMySqlCompatible_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Database Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableUnitLabel": "peak hours per month",
+                      "required": false,
+                      "variableId": "durationPeakWriteId"
+                    }
+                  ],
+                  "outputUnitLabel": "baseline hours per month",
+                  "decimalPlaces": 4,
+                  "id": "durationBaselineWriteHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "baseline IOs",
+                      "required": false,
+                      "variableId": "totalReads_BaseIO"
+                    },
+                    {
+                      "variableUnitLabel": "baseline hours per month",
+                      "required": false,
+                      "variableId": "durationBaselineWriteHours"
+                    }
+                  ],
+                  "outputUnitLabel": "(Monthly Baseline IOs)",
+                  "id": "baselineMonthlyIOs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "(Monthly Baseline IOs)",
+                      "required": false,
+                      "variableId": "baselineMonthlyIOs"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraMySqlCompatible_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Baseline IOs Cost)",
+                  "id": "baselineIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak IO rate",
+                      "variableUnitLabel": "peak IOs",
+                      "required": false,
+                      "variableId": "totalWrites_PeakIO"
+                    },
+                    {
+                      "variableLabel": "Duration of peak IO activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": false,
+                      "variableId": "durationPeakWriteId"
+                    }
+                  ],
+                  "outputUnitLabel": "(Monthly Peak IOs)",
+                  "id": "peakMonthlyIOs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "(Monthly Peak IOs)",
+                      "required": false,
+                      "variableId": "peakMonthlyIOs"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraMySqlCompatible_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Peak IOs Cost)",
+                  "id": "peakIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency] (Baseline IO Cost)",
+                      "required": false,
+                      "variableId": "baselineIOCost"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] (Peak IO Cost)",
+                      "required": false,
+                      "variableId": "peakIOCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOs Rate Cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency] (Database Storage Cost)",
+                      "required": true,
+                      "variableId": "auroraMySqlCompatible_generated_5"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] (IOs Rate Cost)",
+                      "required": false,
+                      "variableId": "totalIOCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_7"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "baselinePeakDifference",
+                    "auroraMySqlCompatible_generated_5",
+                    "durationBaselineWriteHours",
+                    "baselineMonthlyIOs",
+                    "baselineIOCost",
+                    "peakMonthlyIOs",
+                    "peakIOCost",
+                    "totalIOCost",
+                    "auroraMySqlCompatible_generated_7"
+                  ],
+                  "subTotalRefer": "auroraMySqlCompatible_generated_7",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_8"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "auroraIOoptimized"
+            ]
+          },
+          "title": "Database Storage - Aurora I/O-Optimized",
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Storage consumed by your Amazon Aurora database is billed in per GB-month increments and IOs consumed are billed in per million request increments.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmountIOoptimized",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Total Storage Size of the Aurora Cluster",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Aurora PostgreSQL IO Optimized Aurora"
+                },
+                "id": "auroraMySqlCompatible_generated_17"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "storageAmountIOoptimized",
+                    "auroraMySqlCompatible_generated_17"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_18",
+                  "subTotalRefer": "auroraMySqlCompatible_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmountIOoptimized"
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraMySqlCompatible_generated_17"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Database Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_19"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraMySqlCompatible_generated_19"
+                  ],
+                  "subTotalRefer": "auroraMySqlCompatible_generated_19",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_20"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "cloudwatch",
+                  "meteredUnit": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                }
+              }
+            ]
+          },
+          "title": "CloudWatch Database Insights Pricing for RDS Provisioned Instances ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "cloudwatch",
+                    "meteredUnit": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                  }
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be enabling Database Insights with the database?",
+                "id": "DatabaseInsightsSelected",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudwatch",
+                "meteredUnit": {
+                  "allRegions": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                },
+                "label": "Price for vCPU-hour monitored by Database Insights",
+                "id": "priceVCPUHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "DatabaseInsightsSelected",
+                    "priceVCPUHour"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_21",
+                  "subTotalRefer": "auroraMySqlCompatible_generated_19"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selectedProxyOption",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Would you be creating an RDS Proxy with the database?",
+                  "refer": "createRDSProxy",
+                  "id": "DBSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "id": "maxVCPUs2",
+                  "outputUnitLabel": "vCPUs ",
+                  "decimalPlaces": 0,
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableId": "vCPU",
+                      "variableUnitLabel": "vCPUs",
+                      "minValue": 0
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 2
+                    }
+                  ]
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "DatabaseInsightsSelected"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Nodes",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableLabel": "vCPUs ",
+                      "variableUnitLabel": "vCPU",
+                      "required": true,
+                      "variableId": "maxVCPUs2"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Price for vCPU-hour monitored by Database Insights",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "priceVCPUHour",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "CloudwatchDatabaseInsightsCost",
+                  "variableName": "RDS for PostgreSQL Proxy Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DBSelected",
+                    "maxVCPUs2",
+                    "CloudwatchDatabaseInsightsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Database Insights Pricing for RDS Provisioned Instances",
+                  "decimalPlaces": 2,
+                  "id": "DatabaseInsightsTotalCost",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Performance Insights Aurora MySQL ProvisionedAMR vCPU Months"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Performance Insights Aurora MySQL ProvisionedFMR vCPU Months"
+                }
+              }
+            ]
+          },
+          "title": "RDS Performance Insights",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/performance-insights/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Retention period for performance insights",
+                "id": "retentionPeriod",
+                "options": [
+                  {
+                    "label": "7 days (free tier)",
+                    "id": "0"
+                  },
+                  {
+                    "label": "1 month",
+                    "id": "1"
+                  },
+                  {
+                    "label": "2 months",
+                    "id": "2"
+                  },
+                  {
+                    "label": "3 months",
+                    "id": "3"
+                  },
+                  {
+                    "label": "4 months",
+                    "id": "4"
+                  },
+                  {
+                    "label": "5 months",
+                    "id": "5"
+                  },
+                  {
+                    "label": "6 months",
+                    "id": "6"
+                  },
+                  {
+                    "label": "7 months",
+                    "id": "7"
+                  },
+                  {
+                    "label": "8 months",
+                    "id": "8"
+                  },
+                  {
+                    "label": "9 months",
+                    "id": "9"
+                  },
+                  {
+                    "label": "10 months",
+                    "id": "10"
+                  },
+                  {
+                    "label": "11 months",
+                    "id": "11"
+                  },
+                  {
+                    "label": "12 months",
+                    "id": "12"
+                  },
+                  {
+                    "label": "13 months",
+                    "id": "13"
+                  },
+                  {
+                    "label": "14 months",
+                    "id": "14"
+                  },
+                  {
+                    "label": "15 months",
+                    "id": "15"
+                  },
+                  {
+                    "label": "16 months",
+                    "id": "16"
+                  },
+                  {
+                    "label": "17 months",
+                    "id": "17"
+                  },
+                  {
+                    "label": "18 months",
+                    "id": "18"
+                  },
+                  {
+                    "label": "19 months",
+                    "id": "19"
+                  },
+                  {
+                    "label": "20 months",
+                    "id": "20"
+                  },
+                  {
+                    "label": "21 months",
+                    "id": "21"
+                  },
+                  {
+                    "label": "22 months",
+                    "id": "22"
+                  },
+                  {
+                    "label": "23 months",
+                    "id": "23"
+                  },
+                  {
+                    "label": "24 months",
+                    "id": "24"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights Aurora MySQL ProvisionedAMR vCPU Months"
+                },
+                "label": "price for RDSPI provisionedAMR",
+                "id": "RDSPI_ProvisionedAMR"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights Aurora MySQL ProvisionedFMR vCPU Months"
+                },
+                "label": "price for RDSPI provisionedFMR",
+                "id": "RDSPI_ProvisionedFMR"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "retentionPeriod",
+                    "RDSPI_ProvisionedAMR",
+                    "RDSPI_ProvisionedFMR"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_6",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "numberOfMonths",
+                  "label": "Number of Months",
+                  "outputUnitLabel": "months",
+                  "displayInConfigSummary": false,
+                  "refer": "retentionPeriod",
+                  "referLabel": "Retention period for performance insights"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforFMR",
+                  "label": "Cost for one month of retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency] per vCPU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "RDSPI_ProvisionedFMR",
+                  "referLabel": "price for RDSPI provisionedFMR"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforAMR",
+                  "label": "Cost for each additional month of retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency] per vCPU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "RDSPI_ProvisionedAMR",
+                  "referLabel": "price for RDSPI provisionedAMR"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      2
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalMonths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "months",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "numberOfMonths"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "month"
+                    }
+                  ],
+                  "outputUnitLabel": "additional month(s)",
+                  "displayInConfigSummary": false,
+                  "allowDecimals": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RDSPI_AMRCostTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "additional month(s)",
+                      "variableUnitLabel": "additional month(s)",
+                      "required": true,
+                      "variableId": "additionalMonths"
+                    },
+                    {
+                      "variableLabel": "price for RDSPI provisionedAMR",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedAMR"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Additional Month Retention Cost"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCostRetention",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "price for RDSPI provisionedFMR",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedFMR"
+                    },
+                    {
+                      "variableLabel": "Additional Month Retention Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "RDSPI_AMRCostTotal"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Total Cost of Retention"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costOfRetentionTotal",
+                  "label": "Cost for total retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency]",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "totalCostRetention",
+                  "referLabel": "Total Cost of Retention"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableUnitLabel": "vCPUs",
+                      "required": true,
+                      "variableId": "vCPU"
+                    },
+                    {
+                      "variableLabel": "Total Cost of Retention",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "totalCostRetention"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost",
+                  "variableName": "RDS Performance Insights Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberOfMonths",
+                    "costforFMR",
+                    "costforAMR",
+                    "additionalMonths",
+                    "RDSPI_AMRCostTotal",
+                    "totalCostRetention",
+                    "costOfRetentionTotal",
+                    "RDSPI_Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost for RDS Performance Insights",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost_Display",
+                  "subTotalRefer": "RDSPI_Cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "rds-aurora-storage",
+              "meteredUnit": "VcxihrvR15cx1IgQzYfiiS1S4GF9cr4ARSGThtpfWY8"
+            }
+          },
+          "title": "RDS Extended Support",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Note: You will not be charged for RDS Extended Support until the  Extended Support pricing start date for your database major version. To check the pricing start date for your engine, please refer to the <a href='https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.VersionPolicy.html#Aurora.VersionPolicy.MajorVersions'>Aurora MySQL</a> user guide.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "RDSES_Note"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Do you plan on running an Extended Support major version (e.g. MySQL 5.7 or higher)?",
+                "id": "addRDSExtendedSupport",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of hours running on Amazon RDS Extended Support",
+                "id": "numberOfHoursOnES",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "VcxihrvR15cx1IgQzYfiiS1S4GF9cr4ARSGThtpfWY8"
+                },
+                "label": "price for Aurora MySQL Compatible RDS Extended Support",
+                "id": "auroraMySqlCompatible_RDSExtendedSupport"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "RDSES_Note",
+                    "addRDSExtendedSupport",
+                    "numberOfHoursOnES",
+                    "auroraMySqlCompatible_RDSExtendedSupport"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_ES",
+                  "subTotalRefer": "RDSPI_Cost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "addRDSExtendedSupport"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableUnitLabel": "vCPUs",
+                      "required": true,
+                      "variableId": "vCPU"
+                    },
+                    {
+                      "variableLabel": "Number of hours running on Amazon RDS Extended Support",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "numberOfHoursOnES"
+                    },
+                    {
+                      "variableLabel": "price for Aurora MySQL Compatible RDS Extended Support",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraMySqlCompatible_RDSExtendedSupport",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_RDSESCost",
+                  "variableName": "Aurora MySQL Compatible Extended Support Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraMySqlCompatible_RDSESCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost for RDS Extended Support",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_RDSESTotalCost",
+                  "subTotalRefer": "auroraMySqlCompatible_RDSESCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backup Storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Backup storage for Amazon Aurora is the storage associated with your automated database backups and any customer-initiated DB cluster snapshots.There is no additional charge for backup storage of up to 100% of your total Aurora database storage for each Aurora DB cluster. There is also no additional charge for backup storage if your backup retention period is 1 day and you don’t have any snapshots beyond the retention period.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "additionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Aurora MySQL"
+                },
+                "id": "auroraMySqlCompatible_generated_9"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalBackupStorage",
+                    "auroraMySqlCompatible_generated_9"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_10",
+                  "subTotalRefer": "auroraMySqlCompatible_RDSESCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalBackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraMySqlCompatible_generated_9"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_11"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraMySqlCompatible_generated_11"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_12",
+                  "subTotalRefer": "auroraMySqlCompatible_generated_11"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Snapshot Export",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Amazon Relational Database Service (RDS) Snapshot Export provides an automated method to export data within an Amazon RDS or Aurora snapshot to Amazon S3 in Parquet format.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/#Snapshot_Export"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Amazon S3 charges for the exported file are extra and not included in this calculation",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "Alert"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total Size of Backup Processed for Export (GB)",
+                "id": "snapshotExport",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Snapshot Export",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "RDS Snapshot Export Aurora MySQL"
+                },
+                "id": "rds_SnapshotExport"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Alert",
+                    "snapshotExport",
+                    "rds_SnapshotExport"
+                  ],
+                  "id": "rds_unitConversion",
+                  "subTotalRefer": "auroraMySqlCompatible_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Size of Backup Processed for Export (GB)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "snapshotExport"
+                    },
+                    {
+                      "variableLabel": "price for Snapshot Export",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "rds_SnapshotExport"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4,
+                  "id": "snapshotExport_math"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "snapshotExport_math"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Snapshot Export cost",
+                  "decimalPlaces": 2,
+                  "id": "snapshotExport_price",
+                  "subTotalRefer": "snapshotExport_math"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backtrack",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "helpText": "Backtrack lets you quickly move an Aurora database to a prior point in time without needing to restore data from a backup. This lets you quickly recover from user errors, such as dropping the wrong table or deleting the wrong row. This feature is currently available for the MySQL-compatible edition of Aurora.",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average statements",
+                "id": "averageStatements",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "defaultValue": 100,
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter query count",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Change records per statement",
+                "id": "changeRecordsPerStatement",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "defaultValue": 0.38,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Target Backtrack window",
+                "id": "targetBacktrackDuration",
+                "dropDownDuration": [
+                  {
+                    "label": "hour",
+                    "value": "hour"
+                  }
+                ],
+                "outputDurationUnit": "hour",
+                "outputDurationLabel": "hour",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 72
+                },
+                "placeholder": "Enter amount",
+                "description": "The duration window for which Aurora will support rewinding the DB cluster to a specific point in time."
+              },
+              {
+                "type": "pricing",
+                "label": "price for backtrack",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "System Operation Aurora Backtrack"
+                },
+                "id": "auroraMySqlCompatible_generated_13"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "averageStatements",
+                    "changeRecordsPerStatement",
+                    "targetBacktrackDuration",
+                    "auroraMySqlCompatible_generated_13"
+                  ],
+                  "id": "auroraMySqlCompatible_generated_34",
+                  "subTotalRefer": "snapshotExport_math"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average statements",
+                      "variableUnitLabel": "average statements",
+                      "required": true,
+                      "variableId": "averageStatements"
+                    },
+                    {
+                      "variableLabel": "Change records per statement",
+                      "variableUnitLabel": "change records",
+                      "required": true,
+                      "variableId": "changeRecordsPerStatement"
+                    },
+                    {
+                      "variableLabel": "Target Backtrack window",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "targetBacktrackDuration"
+                    },
+                    {
+                      "variableLabel": "price for backtrack",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraMySqlCompatible_generated_13"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Backtrack cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_15"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraMySqlCompatible_generated_15"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Backtrack cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraMySqlCompatible_generated_16",
+                  "subTotalRefer": "auroraMySqlCompatible_generated_15"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Aurora Serverless MySQL-Compatible",
+      "description": "Database capacity automatically scales up or down to meet your application needs.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/rds/aurora/pricing/"
+        }
+      },
+      "id": "auroraServerlessMySQLCompatible",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Aurora MySQL Serverless"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Aurora MySQL ServerlessV2"
+                }
+              }
+            ]
+          },
+          "title": "Cluster Configuration Option",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "description": "Database instance, storage and IO charges will vary based on the configuration. Review <a href='https://aws.amazon.com/rds/aurora/pricing/'>Amazon Aurora pricing</a> for more information",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "editionServerless",
+                "label": "Aurora MySQL Cluster Configuration Options",
+                "options": [
+                  {
+                    "label": "Aurora Standard",
+                    "id": "auroraStandard"
+                  },
+                  {
+                    "label": "Aurora I/O-Optimized",
+                    "id": "auroraIOoptimized"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "auroraStandard",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "editionServerless"
+                    },
+                    "auroraStandard"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Cost effective pricing for many applications with moderate I/O usage (I/O costs <25% of total database costs). <br>Pay-per-request I/O charges apply. DB instance and storage prices don't include I/O usage.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraStandard"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "editionServerless"
+                    },
+                    "auroraIOoptimized"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Predictable pricing for all applications. Improved price-performance for I/O-intensive applications (I/O costs >25% of total database costs). <br>No additional charges for read/write I/O operations. DB instance and storage prices includes I/O usage. <br>Aurora automatically accounts for the price difference between the Aurora Standard and Aurora I/O-Optimized Reserved Instances. To learn more, visit <a href='https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_WorkingWithReservedDBInstances.html#USER_WorkingWithReservedDBInstances.BillingExample'>Aurora reserved DB instance billing examples</a> in the Aurora User Guide.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraIOoptimized"
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "editionServerless"
+                  },
+                  "auroraStandard"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "editionServerless"
+                  },
+                  "auroraIOoptimized"
+                ]
+              }
+            ]
+          },
+          "title": "Aurora Serverless settings",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Aurora Serverless Version",
+                "id": "auroraServerlessVersion",
+                "options": [
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-aurora-storage",
+                            "meteredUnit": "Aurora MySQL Serverless"
+                          }
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "editionServerless"
+                            },
+                            "auroraStandard"
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Aurora Serverless v1",
+                    "id": "V1"
+                  },
+                  {
+                    "displayIf": {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rds-aurora-storage",
+                            "meteredUnit": "Aurora MySQL ServerlessV2"
+                          }
+                        },
+                        {
+                          "or": [
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "editionServerless"
+                                },
+                                "auroraStandard"
+                              ]
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "editionServerless"
+                                },
+                                "auroraIOoptimized"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Aurora Serverless v2",
+                    "id": "V2"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "V2",
+                "validations": {
+                  "required": false
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "concat serverless metered unit",
+                "id": "concatServerlessMeteredUnit",
+                "operands": [
+                  {
+                    "constant": "Aurora MySQL Serverless"
+                  },
+                  {
+                    "variableId": "auroraServerlessVersion"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "replaceServerlessMeteredUnitName",
+                "label": "replace metered unit name",
+                "originalId": "concatServerlessMeteredUnit",
+                "replacements": [
+                  {
+                    "originalString": "Aurora MySQL ServerlessV1",
+                    "replaceString": "Aurora MySQL Serverless"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Aurora Capacity Units (ACUs)",
+                "id": "numberOfAuroraCapacityUnit",
+                "options": [
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perHour",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.5,
+                  "maxValue": 256
+                },
+                "delegate": [
+                  {
+                    "==": [
+                      {
+                        "id": "auroraServerlessVersion",
+                        "type": "component"
+                      },
+                      "V1"
+                    ],
+                    "validations": {
+                      "allowDecimals": true,
+                      "minValue": 1,
+                      "maxValue": 256
+                    }
+                  }
+                ],
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for Aurora Serverless",
+                "id": "priceForAuroraServerless",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "refers": [
+                  {
+                    "variableLabel": "replace metered unit name",
+                    "variableId": "replaceServerlessMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for Serverless V2 I/O-optimized",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Aurora MySQL ServerlessV2 Aurora IO Optimization Mode"
+                },
+                "id": "auroraServerlessV2IOOptimizedPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "auroraServerlessVersion",
+                    "concatServerlessMeteredUnit",
+                    "replaceServerlessMeteredUnitName",
+                    "numberOfAuroraCapacityUnit",
+                    "priceForAuroraServerless",
+                    "auroraServerlessV2IOOptimizedPrice"
+                  ],
+                  "subTotalRefer": "auroraMySqlCompatible_generated_15",
+                  "id": "auroraServerlessMySqlCompatible_generated_18"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "editionServerless"
+                      },
+                      "auroraStandard"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Aurora Capacity Units (ACUs)",
+                      "variableUnitLabel": "ACU per hour",
+                      "required": true,
+                      "variableId": "numberOfAuroraCapacityUnit"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for Aurora Serverless",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForAuroraServerless"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_19",
+                  "variableName": "Aurora Serverless Cost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "editionServerless"
+                      },
+                      "auroraIOoptimized"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Aurora Capacity Units (ACUs)",
+                      "variableUnitLabel": "ACU per hour",
+                      "required": true,
+                      "variableId": "numberOfAuroraCapacityUnit"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for Serverless V2 I/O-optimized",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraServerlessV2IOOptimizedPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_IOOptimizedCost",
+                  "variableName": "Aurora Serverless V2 IO Optimized Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "Aurora Serverless Cost",
+                      "required": false,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_19"
+                    },
+                    {
+                      "variableUnitLabel": "Aurora Serverless V2 IO Optimized Cost",
+                      "required": false,
+                      "variableId": "auroraServerlessMySqlCompatible_IOOptimizedCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalServerlessV2cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraServerlessMySqlCompatible_generated_19",
+                    "auroraServerlessMySqlCompatible_IOOptimizedCost",
+                    "totalServerlessV2cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Aurora Serverless with MySQL-Compatible cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_20",
+                  "subTotalRefer": "totalServerlessV2cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "auroraServerlessVersion"
+                  },
+                  "V2"
+                ]
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-proxy",
+                  "meteredUnit": "RDSProxy Aurora MySQL ACU-Hr"
+                }
+              }
+            ]
+          },
+          "title": "RDS Proxy",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be creating an RDS Proxy with the database?",
+                "id": "createRDSProxy",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for Aurora Serverless MySQL Compatible RDS Proxy",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-proxy",
+                "meteredUnit": {
+                  "allRegions": "RDSProxy Aurora MySQL ACU-Hr"
+                },
+                "id": "auroraServerlessMySqlCompatible_RDSProxyPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "createRDSProxy",
+                    "auroraServerlessMySqlCompatible_RDSProxyPrice"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_0",
+                  "subTotalRefer": "totalServerlessV2cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "id": "maxACUs",
+                  "outputUnitLabel": "ACUs",
+                  "decimalPlaces": 0,
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableId": "numberOfAuroraCapacityUnit",
+                      "variableUnitLabel": "ACU per hour",
+                      "minValue": 0
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 8
+                    }
+                  ]
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "createRDSProxy"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "ACUs",
+                      "variableUnitLabel": "ACU per hour",
+                      "required": true,
+                      "variableId": "maxACUs"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for Aurora Serverless MySQL Compatible RDS Proxy",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraServerlessMySqlCompatible_RDSProxyPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_RDSProxyCost",
+                  "variableName": "Aurora Serverless Proxy Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "maxACUs",
+                    "auroraServerlessMySqlCompatible_RDSProxyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly Cost for RDS Proxy",
+                  "decimalPlaces": 2,
+                  "id": "auroraSERVERLESSMySqlCompatible_ProxyTotalCost",
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_RDSProxyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "or": [
+                  {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rds-aurora-storage",
+                      "meteredUnit": "Aurora MySQL Serverless"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rds-aurora-storage",
+                      "meteredUnit": "Aurora MySQL ServerlessV2"
+                    }
+                  }
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "editionServerless"
+                  },
+                  "auroraStandard"
+                ]
+              }
+            ]
+          },
+          "title": "Database Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Storage consumed by your Amazon Aurora database is billed in per GB-month increments and IOs consumed are billed in per million request increments.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rds-aurora-storage",
+                    "meteredUnit": "Database Storage DB Engine Aurora PostgreSQL General Purpose Aurora"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Total Storage Size of the Aurora Cluster",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rds-aurora-storage",
+                    "meteredUnit": "System Operation Aurora I O Operation"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Baseline IO rate",
+                "id": "totalReads_BaseIO",
+                "description": "Enter the number of IOs per second that your workload consumes during off-peak periods.",
+                "placeholder": "Enter the number of IOs",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0.0166,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rds-aurora-storage",
+                    "meteredUnit": "System Operation Aurora I O Operation"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Peak IO rate",
+                "id": "totalWrites_PeakIO",
+                "description": "Enter the maximum number of IOs per second your workload consumes during peak periods.",
+                "placeholder": "Enter the number of IOs",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per hour",
+                  "id": "perHour"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0.0166,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "displayIf": {
+                  "and": [
+                    {
+                      "<": [
+                        {
+                          "type": "component",
+                          "id": "baselinePeakDifference"
+                        },
+                        0
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "durationPeakWriteId"
+                        },
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "header": "",
+                "label": "Usage alert",
+                "content": "Peak IO rate must be greater than or equal to Baseline IO rate",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "baselineAlertId"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Duration of peak IO activity",
+                "id": "durationPeakWriteId",
+                "description": "Enter the number of hours per month when your cluster or instance workload operates at peak.",
+                "placeholder": "Enter the number of hours",
+                "options": [
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Database Storage DB Engine Aurora PostgreSQL General Purpose Aurora"
+                },
+                "id": "auroraServerlessMySqlCompatible_generated_21"
+              },
+              {
+                "type": "pricing",
+                "label": "price for iops",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "System Operation Aurora I O Operation"
+                },
+                "id": "auroraServerlessMySqlCompatible_generated_22"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "storageAmount",
+                    "totalReads_BaseIO",
+                    "totalWrites_PeakIO",
+                    "baselineAlertId",
+                    "durationPeakWriteId",
+                    "auroraServerlessMySqlCompatible_generated_21",
+                    "auroraServerlessMySqlCompatible_generated_22"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_23",
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_RDSProxyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Peak IO rate",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "totalWrites_PeakIO"
+                    },
+                    {
+                      "variableLabel": "Baseline IO rate",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "totalReads_BaseIO"
+                    }
+                  ],
+                  "outputUnitLabel": "peak difference",
+                  "decimalPlaces": 2,
+                  "id": "baselinePeakDifference"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_21"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Database Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_24"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableUnitLabel": "peak hours per month",
+                      "required": false,
+                      "variableId": "durationPeakWriteId"
+                    }
+                  ],
+                  "outputUnitLabel": "baseline hours per month",
+                  "decimalPlaces": 4,
+                  "id": "durationBaselineWriteHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "baseline IOs",
+                      "required": false,
+                      "variableId": "totalReads_BaseIO"
+                    },
+                    {
+                      "variableUnitLabel": "baseline hours per month",
+                      "required": false,
+                      "variableId": "durationBaselineWriteHours"
+                    }
+                  ],
+                  "outputUnitLabel": "(Monthly Baseline IOs)",
+                  "id": "baselineMonthlyIOs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "(Monthly Baseline IOs)",
+                      "required": false,
+                      "variableId": "baselineMonthlyIOs"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_22"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Baseline IOs Cost)",
+                  "id": "baselineIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Peak IO rate",
+                      "variableUnitLabel": "peak IOs",
+                      "required": false,
+                      "variableId": "totalWrites_PeakIO"
+                    },
+                    {
+                      "variableLabel": "Duration of peak IO activity",
+                      "variableUnitLabel": "peak hours per month",
+                      "required": false,
+                      "variableId": "durationPeakWriteId"
+                    }
+                  ],
+                  "outputUnitLabel": "(Monthly Peak IOs)",
+                  "id": "peakMonthlyIOs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "(Monthly Peak IOs)",
+                      "required": false,
+                      "variableId": "peakMonthlyIOs"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_22"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Peak IOs Cost)",
+                  "id": "peakIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency] (Baseline IO Cost)",
+                      "required": false,
+                      "variableId": "baselineIOCost"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] (Peak IO Cost)",
+                      "required": false,
+                      "variableId": "peakIOCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOs Rate Cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalIOCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency] (Database Storage Cost)",
+                      "required": true,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_24"
+                    },
+                    {
+                      "variableUnitLabel": "[currency] (IOs Rate Cost)",
+                      "required": false,
+                      "variableId": "totalIOCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_26"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "baselinePeakDifference",
+                    "auroraServerlessMySqlCompatible_generated_24",
+                    "durationBaselineWriteHours",
+                    "baselineMonthlyIOs",
+                    "baselineIOCost",
+                    "peakMonthlyIOs",
+                    "peakIOCost",
+                    "totalIOCost",
+                    "auroraServerlessMySqlCompatible_generated_26"
+                  ],
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_generated_26",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_27"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "editionServerless"
+              },
+              "auroraIOoptimized"
+            ]
+          },
+          "title": "Database Storage - Aurora I/O-optimized",
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Storage consumed by your Amazon Aurora database is billed in per GB-month increments and IOs consumed are billed in per million request increments.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmountIOoptimized",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Total Storage Size of the Aurora Cluster",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Aurora MySQL ServerlessV2 Aurora IO Optimization Mode"
+                },
+                "id": "auroraServerlessMySqlCompatible_generated_25"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "storageAmountIOoptimized",
+                    "auroraServerlessMySqlCompatible_generated_25"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_32",
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_generated_26"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmountIOoptimized"
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_25"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Database Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_33"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraServerlessMySqlCompatible_generated_33"
+                  ],
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_generated_33",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_34"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "cloudwatch",
+                  "meteredUnit": "B-lmBv-xDaupECybc55iU4pC-aNK-BqVjf2QHJynCj0"
+                }
+              }
+            ]
+          },
+          "title": "Database Insights Pricing for Aurora Serverless v2 Instances",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "cloudwatch",
+                    "meteredUnit": "B-lmBv-xDaupECybc55iU4pC-aNK-BqVjf2QHJynCj0"
+                  }
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be enabling Database Insights with the database?",
+                "id": "DatabaseInsightsServerlessSelected",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Sum of Standard workspaces can not be greater than total workspaces.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "stdCountAlert"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudwatch",
+                "meteredUnit": {
+                  "allRegions": "B-lmBv-xDaupECybc55iU4pC-aNK-BqVjf2QHJynCj0"
+                },
+                "label": "Price for ACU-hour monitored by Database Insights",
+                "id": "priceACUHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "DatabaseInsightsServerlessSelected",
+                    "stdCountAlert",
+                    "priceACUHour"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_1",
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_generated_33"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selectedDatabaseInsightsOption",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Would you be enabling Database Insights with the database?",
+                  "refer": "DatabaseInsightsServerlessSelected",
+                  "id": "DBSelected"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "DatabaseInsightsServerlessSelected"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Aurora Capacity Units (ACUs)",
+                      "variableUnitLabel": "ACUs(s)",
+                      "required": true,
+                      "variableId": "numberOfAuroraCapacityUnit"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Price for ACU-hour monitored by Database Insights",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "priceACUHour",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "CloudwatchDatabaseInsightsServerlessCost",
+                  "variableName": "DB for Aurora Serverless v2 Instances cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DBSelected",
+                    "CloudwatchDatabaseInsightsServerlessCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Database Insights for Aurora Serverless v2 Instances cost",
+                  "decimalPlaces": 2,
+                  "id": "DatabaseInsightsServerlessTotalCost",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsServerlessCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Performance Insights Aurora MySQL ServerlessAMR ACU Months"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Performance Insights Aurora MySQL ServerlessFMR ACU Months"
+                }
+              },
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "auroraServerlessVersion"
+                  },
+                  "V2"
+                ]
+              }
+            ]
+          },
+          "title": "RDS Performance Insights",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/performance-insights/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Retention period for performance insights",
+                "id": "retentionPeriod",
+                "options": [
+                  {
+                    "label": "7 days (free tier)",
+                    "id": "0"
+                  },
+                  {
+                    "label": "1 month",
+                    "id": "1"
+                  },
+                  {
+                    "label": "2 months",
+                    "id": "2"
+                  },
+                  {
+                    "label": "3 months",
+                    "id": "3"
+                  },
+                  {
+                    "label": "4 months",
+                    "id": "4"
+                  },
+                  {
+                    "label": "5 months",
+                    "id": "5"
+                  },
+                  {
+                    "label": "6 months",
+                    "id": "6"
+                  },
+                  {
+                    "label": "7 months",
+                    "id": "7"
+                  },
+                  {
+                    "label": "8 months",
+                    "id": "8"
+                  },
+                  {
+                    "label": "9 months",
+                    "id": "9"
+                  },
+                  {
+                    "label": "10 months",
+                    "id": "10"
+                  },
+                  {
+                    "label": "11 months",
+                    "id": "11"
+                  },
+                  {
+                    "label": "12 months",
+                    "id": "12"
+                  },
+                  {
+                    "label": "13 months",
+                    "id": "13"
+                  },
+                  {
+                    "label": "14 months",
+                    "id": "14"
+                  },
+                  {
+                    "label": "15 months",
+                    "id": "15"
+                  },
+                  {
+                    "label": "16 months",
+                    "id": "16"
+                  },
+                  {
+                    "label": "17 months",
+                    "id": "17"
+                  },
+                  {
+                    "label": "18 months",
+                    "id": "18"
+                  },
+                  {
+                    "label": "19 months",
+                    "id": "19"
+                  },
+                  {
+                    "label": "20 months",
+                    "id": "20"
+                  },
+                  {
+                    "label": "21 months",
+                    "id": "21"
+                  },
+                  {
+                    "label": "22 months",
+                    "id": "22"
+                  },
+                  {
+                    "label": "23 months",
+                    "id": "23"
+                  },
+                  {
+                    "label": "24 months",
+                    "id": "24"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights Aurora MySQL ServerlessAMR ACU Months"
+                },
+                "label": "price for RDSPI provisionedAMR ACU",
+                "id": "RDSPI_ProvisionedAMRACU"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights Aurora MySQL ServerlessFMR ACU Months"
+                },
+                "label": "price for RDSPI provisionedFMR ACU",
+                "id": "RDSPI_ProvisionedFMRACU"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "retentionPeriod",
+                    "RDSPI_ProvisionedAMRACU",
+                    "RDSPI_ProvisionedFMRACU"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_7",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsServerlessCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "numberOfMonths",
+                  "label": "Number of Months",
+                  "outputUnitLabel": "months",
+                  "displayInConfigSummary": false,
+                  "refer": "retentionPeriod",
+                  "referLabel": "Retention period for performance insights"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalACUs",
+                  "label": "Total number of ACUs for time period",
+                  "outputUnitLabel": "ACUs",
+                  "displayInConfigSummary": false,
+                  "useCurrency": false,
+                  "displayInCalculationString": false,
+                  "refer": "numberOfAuroraCapacityUnit",
+                  "referLabel": "Number of Aurora Capacity Units (ACUs)"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforFMR",
+                  "label": "Cost for one month of retention (per ACU per month)",
+                  "outputUnitLabel": "[currency] per ACU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "decimalPlaces": 2,
+                  "refer": "RDSPI_ProvisionedFMRACU",
+                  "referLabel": "price for RDSPI provisionedFMR ACU"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforAMR",
+                  "label": "Cost for each additional month of retention (per ACU per month)",
+                  "outputUnitLabel": "[currency] per ACU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "RDSPI_ProvisionedAMRACU",
+                  "referLabel": "price for RDSPI provisionedAMR ACU"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      2
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalMonths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "months",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "numberOfMonths"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "month"
+                    }
+                  ],
+                  "outputUnitLabel": "additional month(s)",
+                  "displayInConfigSummary": false,
+                  "allowDecimals": false
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "retentionPeriod"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RDSPI_AMRCostTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "additional month(s)",
+                      "variableUnitLabel": "additional month(s)",
+                      "required": true,
+                      "variableId": "additionalMonths"
+                    },
+                    {
+                      "variableLabel": "price for RDSPI provisionedAMR ACU",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedAMRACU"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Additional Month Retention Cost"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "retentionPeriod"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCostRetention",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "price for RDSPI provisionedFMR ACU",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedFMRACU"
+                    },
+                    {
+                      "variableLabel": "Additional Month Retention Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "RDSPI_AMRCostTotal"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Total Cost of Retention"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "retentionPeriod"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costOfRetentionTotal",
+                  "label": "Cost for total retention (per ACU per month)",
+                  "outputUnitLabel": "[currency]",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "totalCostRetention",
+                  "referLabel": "Total Cost of Retention"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Aurora Capacity Units (ACUs)",
+                      "variableUnitLabel": "ACUs",
+                      "required": true,
+                      "variableId": "numberOfAuroraCapacityUnit"
+                    },
+                    {
+                      "variableLabel": "Total Cost of Retention",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "totalCostRetention"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost",
+                  "variableName": "RDS Performance Insights Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberOfMonths",
+                    "totalACUs",
+                    "costforFMR",
+                    "costforAMR",
+                    "additionalMonths",
+                    "RDSPI_AMRCostTotal",
+                    "totalCostRetention",
+                    "costOfRetentionTotal",
+                    "RDSPI_Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost for RDS Performance Insights",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost_Display",
+                  "subTotalRefer": "RDSPI_Cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "or": [
+                  {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rds-aurora-storage",
+                      "meteredUnit": "Aurora MySQL Serverless"
+                    }
+                  },
+                  {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "rds-aurora-storage",
+                      "meteredUnit": "Aurora MySQL ServerlessV2"
+                    }
+                  }
+                ]
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-aurora-storage",
+                  "meteredUnit": "Storage Snapshot Aurora MySQL"
+                }
+              }
+            ]
+          },
+          "title": "Backup Storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Backup storage for Amazon Aurora is the storage associated with your automated database backups and any customer-initiated DB cluster snapshots.There is no additional charge for backup storage of up to 100% of your total Aurora database storage for each Aurora DB cluster. There is also no additional charge for backup storage if your backup retention period is 1 day and you don’t have any snapshots beyond the retention period.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/aurora/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "additionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-aurora-storage",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Aurora MySQL"
+                },
+                "id": "auroraServerlessMySqlCompatible_generated_28"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalBackupStorage",
+                    "auroraServerlessMySqlCompatible_generated_28"
+                  ],
+                  "id": "auroraServerlessMySqlCompatible_generated_29",
+                  "subTotalRefer": "RDSPI_Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalBackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "auroraServerlessMySqlCompatible_generated_28"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_30"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "auroraServerlessMySqlCompatible_generated_30"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "auroraServerlessMySqlCompatible_generated_31",
+                  "subTotalRefer": "auroraServerlessMySqlCompatible_generated_30"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

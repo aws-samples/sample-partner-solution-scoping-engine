@@ -1,0 +1,468 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA Bedrock Guardrail Configuration with Content Filters and PII Protection - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  SeraBedrockGuardrail:
+    Type: AWS::Bedrock::Guardrail
+    Properties:
+      Name: !Sub '${StackPrefix}-sa-gdrl'
+      Description: !Sub '${StackPrefix} Solutions Assistant Guardrail with comprehensive content filtering and PII protection'
+      KmsKeyArn: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+      
+      # Blocked messaging configuration
+      BlockedInputMessaging: 'I apologize, but I am unable to respond. This may be due to content that I am not allowed to discuss, or data input that I am not allowed to process.'
+      BlockedOutputsMessaging: 'I apologize, but I am unable to respond. This may be due to content that I am not allowed to discuss, or data input that I am not allowed to process.'
+      
+      # Content policy configuration with harmful categories
+      ContentPolicyConfig:
+        FiltersConfig:
+          # Hate filter
+          - Type: HATE
+            InputStrength: HIGH
+            OutputStrength: HIGH
+          
+          # Insults filter  
+          - Type: INSULTS
+            InputStrength: HIGH
+            OutputStrength: HIGH
+          
+          # Sexual filter
+          - Type: SEXUAL
+            InputStrength: HIGH
+            OutputStrength: HIGH
+          
+          # Violence filter
+          - Type: VIOLENCE
+            InputStrength: HIGH
+            OutputStrength: HIGH
+          
+          # Misconduct filter
+          - Type: MISCONDUCT
+            InputStrength: HIGH
+            OutputStrength: HIGH
+          
+          # Prompt attacks filter (OutputStrength must be NONE - Bedrock API requirement)
+          - Type: PROMPT_ATTACK
+            InputStrength: HIGH
+            OutputStrength: NONE
+
+      # Word policy configuration (Profanity filter enabled)
+      WordPolicyConfig:
+        ManagedWordListsConfig:
+          - Type: PROFANITY
+            InputAction: BLOCK
+            InputEnabled: true
+            OutputAction: BLOCK 
+            OutputEnabled: true
+
+      # Sensitive information policy (All 30 PII types)
+      SensitiveInformationPolicyConfig:
+        PiiEntitiesConfig:
+          - Type: ADDRESS
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: AGE
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: AWS_ACCESS_KEY
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: AWS_SECRET_KEY
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: CA_HEALTH_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: CA_SOCIAL_INSURANCE_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: CREDIT_DEBIT_CARD_CVV
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: CREDIT_DEBIT_CARD_EXPIRY
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: CREDIT_DEBIT_CARD_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: DRIVER_ID
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: EMAIL
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: INTERNATIONAL_BANK_ACCOUNT_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: IP_ADDRESS
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: LICENSE_PLATE
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: MAC_ADDRESS
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: NAME
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: PASSWORD
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: PHONE
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: PIN
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: SWIFT_CODE
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: UK_NATIONAL_HEALTH_SERVICE_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: UK_NATIONAL_INSURANCE_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: URL
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: US_BANK_ACCOUNT_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: US_BANK_ROUTING_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: US_PASSPORT_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: US_SOCIAL_SECURITY_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: USERNAME
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+          - Type: VEHICLE_IDENTIFICATION_NUMBER
+            Action: ANONYMIZE
+            InputAction: ANONYMIZE
+            InputEnabled: true
+            OutputAction: ANONYMIZE
+            OutputEnabled: true
+
+      # Contextual grounding check configuration
+      ContextualGroundingPolicyConfig:
+        FiltersConfig:
+          - Type: GROUNDING
+            Threshold: 0.7
+            Action: NONE
+            Enabled: true
+          - Type: RELEVANCE
+            Threshold: 0.7
+            Action: NONE
+            Enabled: true
+
+      # Tags
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-sa-gdrl'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+  # Create a guardrail version
+  SeraBedrockGuardrailVersion:
+    Type: AWS::Bedrock::GuardrailVersion
+    Properties:
+      GuardrailIdentifier: !Ref SeraBedrockGuardrail
+      Description: !Sub 'Initial version of ${StackPrefix} Bedrock Guardrail'
+
+  # S3 Bucket for Bedrock Model Invocation Logs
+  BedrockModelInvocationLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${StackPrefix}-bedrock-invocation-logs-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !ImportValue
+                Fn::Sub: '${StackPrefix}-kms-key-arn'
+            BucketKeyEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !ImportValue
+          Fn::Sub: '${StackPrefix}-logfiles-bucket-name'
+        LogFilePrefix: 'bedrock-logs-access-logs/'
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToIA
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
+          - Id: TransitionToGlacier
+            Status: Enabled
+            Transitions:
+              - TransitionInDays: 90
+                StorageClass: GLACIER
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-bedrock-invocation-logs-bucket'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: BedrockModelInvocationLogs
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # S3 Bucket Policy for Bedrock Model Invocation Logs
+  BedrockModelInvocationLogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref BedrockModelInvocationLogsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyNonSsl
+            Effect: Deny
+            Action: 's3:*'
+            Resource: 
+              - !GetAtt BedrockModelInvocationLogsBucket.Arn
+              - !Sub '${BedrockModelInvocationLogsBucket.Arn}/*'
+            Principal: '*'
+            Condition: 
+              Bool:
+                aws:SecureTransport: 'false'
+          - Sid: AmazonBedrockLogsWrite
+            Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action:
+              - s3:PutObject
+              - s3:GetBucketLocation
+            Resource: 
+              - !GetAtt BedrockModelInvocationLogsBucket.Arn
+              - !Sub '${BedrockModelInvocationLogsBucket.Arn}/*'
+            Condition: 
+              StringEquals: 
+                'aws:SourceAccount': !Ref 'AWS::AccountId'
+              ArnLike:
+                'aws:SourceArn': !Sub 'arn:aws:bedrock:*:${AWS::AccountId}:*'
+
+  # IAM Role for Bedrock Model Invocation Logging
+  BedrockLoggingServiceRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-IAM5
+            reason: 'Bedrock service requires wildcard permissions for S3 object operations and KMS key operations'
+            appliesTo:
+              - 'Resource::<BedrockModelInvocationLogsBucket.Arn>/*'
+              - 'Action::kms:ReEncrypt*'
+              - 'Action::kms:GenerateDataKey*'
+    Properties:
+      RoleName: !Sub '${StackPrefix}-bedrock-logging-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                'aws:SourceAccount': !Ref 'AWS::AccountId'
+              ArnLike:
+                'aws:SourceArn': 
+                  - !Sub 'arn:aws:bedrock:us-east-1:${AWS::AccountId}:*'
+                  - !Sub 'arn:aws:bedrock:us-east-2:${AWS::AccountId}:*'
+                  - !Sub 'arn:aws:bedrock:us-west-2:${AWS::AccountId}:*'
+      Policies:
+        - PolicyName: !Sub '${StackPrefix}BedrockLoggingPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                Resource: 
+                  - !GetAtt BedrockModelInvocationLogsBucket.Arn
+                  - !Sub '${BedrockModelInvocationLogsBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - kms:Encrypt
+                  - kms:Decrypt
+                  - kms:ReEncrypt*
+                  - kms:GenerateDataKey*
+                  - kms:DescribeKey
+                Resource: !ImportValue
+                  Fn::Sub: '${StackPrefix}-kms-key-arn'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-bedrock-logging-role'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+Outputs:
+  GuardrailId:
+    Description: 'ID of the SERA Bedrock Guardrail'
+    Value: !GetAtt SeraBedrockGuardrail.GuardrailId
+    Export:
+      Name: !Sub '${StackPrefix}-aws-sa-bedrock-guardrail-id'
+
+  GuardrailArn:
+    Description: 'ARN of the SERA Bedrock Guardrail'
+    Value: !GetAtt SeraBedrockGuardrail.GuardrailArn
+    Export:
+      Name: !Sub '${StackPrefix}-aws-sa-bedrock-guardrail-arn'
+
+  GuardrailVersion:
+    Description: 'Version of the SERA Bedrock Guardrail'
+    Value: !GetAtt SeraBedrockGuardrailVersion.Version
+    Export:
+      Name: !Sub '${StackPrefix}-aws-sa-bedrock-guardrail-version'
+
+  CrossRegionGuardrailId:
+    Description: 'Cross-region guardrail identifier for use in other regions'
+    Value: !Sub '${SeraBedrockGuardrail}:${SeraBedrockGuardrailVersion.Version}'
+    Export:
+      Name: !Sub '${StackPrefix}-aws-sa-bedrock-guardrail-cross-region-id'
+
+  BedrockModelInvocationLogsBucketName:
+    Description: 'S3 Bucket for Bedrock Model Invocation Logs (use in manual configuration)'
+    Value: !Ref BedrockModelInvocationLogsBucket
+    Export:
+      Name: !Sub '${StackPrefix}-bedrock-invocation-logs-bucket-name'
+
+  BedrockModelInvocationLogsBucketArn:
+    Description: 'S3 Bucket ARN for Bedrock Model Invocation Logs'
+    Value: !GetAtt BedrockModelInvocationLogsBucket.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-bedrock-invocation-logs-bucket-arn'
+
+  BedrockLoggingServiceRoleArn:
+    Description: 'IAM Role ARN for Bedrock Model Invocation Logging (use in manual configuration)'
+    Value: !GetAtt BedrockLoggingServiceRole.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-bedrock-logging-role-arn'

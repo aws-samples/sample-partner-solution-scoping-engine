@@ -1,0 +1,1173 @@
+{
+  "version": "0.0.27",
+  "serviceName": "AWS Diode",
+  "serviceCode": "diode",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "data transfer",
+    "cds",
+    "messaging",
+    "transfer",
+    "low",
+    "high",
+    "software",
+    "cross",
+    "domain",
+    "cross-domain"
+  ],
+  "serviceDescription": "With AWS Diode, you pay only for the volume of data you successfully transmit through the service. There are no set up fees or upfront commitments. AWS Diode is a pay-as-you-go service with no minimum fee for transferring data.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/diode/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "shift",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/shift/[currency]/current/shift.json"
+    },
+    {
+      "mappingDefinitionName": "shift-iso-b",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/shift/[currency]/current/shift-iso-b.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/diode/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Diode Object Transfer (DOT) Low to High (L2H)",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Pricing is based on volume of data transferred via AWS Diode, which is calculated as the total size of all files that successfully transferred.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/diode/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Pricing is based on volume of data transferred via AWS Diode, which is calculated as the total size of all files that successfully transferred.",
+                "id": "diodeText"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedInbound",
+                "label": "Data transfer",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "day",
+                    "id": "day"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.001,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "tiered pricing inbound data transfer",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "shift",
+                "meteredUnit": {
+                  "allRegions": "ArBj3dQlAuVN_1ykgMYqMV040oKMdQuLiLpiUHjHiqQ"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "tierInboundDataPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertShift",
+                  "refer": [
+                    "diodeText",
+                    "dataTransferedInbound",
+                    "tierInboundDataPrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "tieredMathDataTransfer",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data transfer",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferedInbound"
+                    },
+                    {
+                      "variableLabel": "tiered pricing inbound data transfer",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "tierInboundDataPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data transfer inter region inbound)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMathDataTransfer"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Diode price",
+                  "decimalPlaces": 2,
+                  "id": "shiftPriceDisplay",
+                  "subTotalRefer": "tieredMathDataTransfer"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso-b"
+          ],
+          "title": "Diode Object Transfer (DOT) High to Low (H2L)",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Pricing is based on volume of data transferred via AWS Diode, which is calculated as the total size of all files that successfully transferred.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/diode/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedInbound_2",
+                "label": "Data transfer ",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "day",
+                    "id": "day"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.001,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of messages",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "messages per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfMessages"
+              },
+              {
+                "type": "pricing",
+                "label": "high to low transfer price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "shift",
+                "meteredUnit": {
+                  "allRegions": "ArBj3dQlAuVN_1ykgMYqMV040oKMdQuLiLpiUHjHiqQ"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "high_to_low_price"
+              },
+              {
+                "type": "pricing",
+                "label": "message price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "shift",
+                "meteredUnit": {
+                  "allRegions": "a7fkkLU4J9PGdIG8FnF-F3IMTg_Zzu9KUWmPVpX3fEo"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "message_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertShift_3",
+                  "refer": [
+                    "dataTransferedInbound_2",
+                    "numberOfMessages",
+                    "high_to_low_price",
+                    "message_price"
+                  ],
+                  "subTotalRefer": "tieredMathDataTransfer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "low_to_high_transfer_cost",
+                  "variableName": "Low to High transfer cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data transfer ",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferedInbound_2"
+                    },
+                    {
+                      "variableLabel": "high to low transfer price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "high_to_low_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data Transfer cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messaging_cost",
+                  "variableName": "Messaging cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of messages",
+                      "variableUnitLabel": "messages",
+                      "required": true,
+                      "variableId": "numberOfMessages"
+                    },
+                    {
+                      "variableLabel": "message price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "message_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Messaging cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_high_to_low_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Low to High transfer cost",
+                      "variableUnitLabel": "[currency] (Data transfer cost)",
+                      "required": false,
+                      "variableId": "low_to_high_transfer_cost"
+                    },
+                    {
+                      "variableLabel": "Messaging cost",
+                      "variableUnitLabel": "[currency] (Messaging cost)",
+                      "required": false,
+                      "variableId": "messaging_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "low_to_high_transfer_cost",
+                    "messaging_cost",
+                    "total_high_to_low_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Diode price (Diode object transfer low to high)",
+                  "decimalPlaces": 2,
+                  "id": "shiftPriceDisplay_3",
+                  "subTotalRefer": "total_high_to_low_cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso"
+          ],
+          "title": "Diode Object Transfer (DOT) High to Low (H2L)",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Pricing is based on volume of data transferred via AWS Diode, which is calculated as the total size of all files that successfully transferred.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/diode/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransferedInbound_2",
+                "label": "Data transfer ",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "day",
+                    "id": "day"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.001,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of messages",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "messages per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfMessages"
+              },
+              {
+                "type": "pricing",
+                "label": "high to low transfer price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "shift",
+                "meteredUnit": {
+                  "allRegions": "ArBj3dQlAuVN_1ykgMYqMV040oKMdQuLiLpiUHjHiqQ"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "high_to_low_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertShift_3",
+                  "refer": [
+                    "dataTransferedInbound_2",
+                    "numberOfMessages",
+                    "high_to_low_price"
+                  ],
+                  "subTotalRefer": "total_high_to_low_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "low_to_high_transfer_cost",
+                  "variableName": "Low to High transfer cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data transfer ",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataTransferedInbound_2"
+                    },
+                    {
+                      "variableLabel": "high to low transfer price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "high_to_low_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data Transfer cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messaging_cost",
+                  "variableName": "Messaging cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of messages",
+                      "variableUnitLabel": "messages",
+                      "required": true,
+                      "variableId": "numberOfMessages"
+                    },
+                    {
+                      "constant": 0.0025,
+                      "constantUnitLabel": "[currency]"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Messaging cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_high_to_low_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Low to High transfer cost",
+                      "variableUnitLabel": "[currency] (Data transfer cost)",
+                      "required": false,
+                      "variableId": "low_to_high_transfer_cost"
+                    },
+                    {
+                      "variableLabel": "Messaging cost",
+                      "variableUnitLabel": "[currency] (Messaging cost)",
+                      "required": false,
+                      "variableId": "messaging_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "low_to_high_transfer_cost",
+                    "messaging_cost",
+                    "total_high_to_low_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Diode price (Diode object transfer low to high)",
+                  "decimalPlaces": 2,
+                  "id": "shiftPriceDisplay_3",
+                  "subTotalRefer": "total_high_to_low_cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso"
+          ],
+          "title": "Diode Messaging",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Pricing is based on connection time as well as payload size for the corresponding request/response query.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/diode/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "AWS bills for the use of Diode Messaging for both connection time and data transfer.",
+                "id": "diodeMessagingText"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shift-iso-b",
+                        "meteredUnit": "PayloadSize US East N Virginia from 0 to 2500000 Megabytes"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shift-iso-b",
+                        "meteredUnit": "PayloadSize US East N Virginia from 2500000 to Inf Megabytes"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransfer",
+                "label": "Data transfer (MB)",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.001,
+                  "maxValue": 10000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shift-iso-b",
+                        "meteredUnit": "ConnectionTime US East N Virginia from 0 to 10000000 Second"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shift-iso-b",
+                        "meteredUnit": "ConnectionTime US East N Virginia from 10000000 to Inf Second"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "id": "connectionTime",
+                "label": "Connection Time (seconds)",
+                "placeholder": "connection time",
+                "options": [
+                  {
+                    "label": "seconds per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand seconds per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "hundred thousand seconds per month",
+                    "id": "hundredThousandPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "seconds per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing data transfer",
+                "id": "tierDataTransferPrice",
+                "mappingDefinitionName": "shift-iso-b",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 2500000,
+                      "meteredUnit": "PayloadSize US East N Virginia from 0 to 2500000 Megabytes"
+                    },
+                    {
+                      "startOfTier": 2500001,
+                      "endOfTier": -1,
+                      "meteredUnit": "PayloadSize US East N Virginia from 2500000 to Inf Megabytes"
+                    }
+                  ]
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing connection time",
+                "id": "tierConnectionPrice",
+                "mappingDefinitionName": "shift-iso-b",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "ConnectionTime US East N Virginia from 0 to 10000000 Second"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ConnectionTime US East N Virginia from 10000000 to Inf Second"
+                    }
+                  ]
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertDataTransfer",
+                  "refer": [
+                    "diodeMessagingText",
+                    "dataTransfer",
+                    "connectionTime",
+                    "tierDataTransferPrice",
+                    "tierConnectionPrice"
+                  ],
+                  "subTotalRefer": "total_high_to_low_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing data transfer",
+                  "tieredPricingRefer": "tierDataTransferPrice",
+                  "inputReferLabel": "Data transfer (MB)",
+                  "inputRefer": "dataTransfer",
+                  "inputUnitLabel": "MB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] Data transfer",
+                  "id": "tieredMathDataTransfer2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "tieredMathDataTransferVariable",
+                  "label": "Data transfer price",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "tieredMathDataTransfer2",
+                  "referLabel": "[currency] Data transfer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing connection time",
+                  "tieredPricingRefer": "tierConnectionPrice",
+                  "inputReferLabel": "Connection Time (seconds)",
+                  "inputRefer": "connectionTime",
+                  "inputUnitLabel": "seconds per month",
+                  "decimalPlaces": 0,
+                  "outputUnitLabel": "[currency] connection time",
+                  "id": "tieredMathConnection"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "tieredMathConnectionVariable",
+                  "label": "Connection time price",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "tieredMathConnection",
+                  "referLabel": "[currency] connection time"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "TieredMathAdded",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] Data transfer",
+                      "variableUnitLabel": "[currency] Data transfer",
+                      "required": false,
+                      "variableId": "tieredMathDataTransfer2"
+                    },
+                    {
+                      "variableLabel": "[currency] connection time",
+                      "variableUnitLabel": "[currency] Connection time",
+                      "required": false,
+                      "variableId": "tieredMathConnection"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Total price",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMathDataTransfer2",
+                    "tieredMathDataTransferVariable",
+                    "tieredMathConnection",
+                    "tieredMathConnectionVariable",
+                    "TieredMathAdded"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total price",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferPriceDisplay",
+                  "subTotalRefer": "TieredMathAdded"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso-b"
+          ],
+          "title": "Diode Messaging",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Pricing is based on connection time as well as payload size for the corresponding request/response query.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/diode/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "AWS bills for the use of Diode Messaging for both connection time and data transfer.",
+                "id": "diodeMessagingText_2"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataTransfer_2",
+                "label": "Data transfer (MB)",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.001,
+                  "maxValue": 10000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "connectionTime_2",
+                "label": "Connection Time (seconds)",
+                "placeholder": "connection time",
+                "options": [
+                  {
+                    "label": "seconds per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand seconds per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "hundred thousand seconds per month",
+                    "id": "hundredThousandPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "seconds per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing data transfer",
+                "id": "tierDataTransferPrice_2",
+                "mappingDefinitionName": "shift-iso-b",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 2500000,
+                      "meteredUnit": "PayloadSize US ISOB East Ohio from 0 to 2500000 Megabytes"
+                    },
+                    {
+                      "startOfTier": 2500001,
+                      "endOfTier": -1,
+                      "meteredUnit": "PayloadSize US ISOB East Ohio from 2500000 to Inf Megabytes"
+                    }
+                  ]
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing connection time",
+                "id": "tierConnectionPrice_2",
+                "mappingDefinitionName": "shift-iso-b",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "ConnectionTime US ISOB East Ohio from 0 to 10000000 Second"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ConnectionTime US ISOB East Ohio from 10000000 to Inf Second"
+                    }
+                  ]
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "unitConvertDataTransfer",
+                  "refer": [
+                    "diodeMessagingText_2",
+                    "dataTransfer_2",
+                    "connectionTime_2",
+                    "tierDataTransferPrice_2",
+                    "tierConnectionPrice_2"
+                  ],
+                  "subTotalRefer": "TieredMathAdded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing data transfer",
+                  "tieredPricingRefer": "tierDataTransferPrice_2",
+                  "inputReferLabel": "Data transfer (MB)",
+                  "inputRefer": "dataTransfer_2",
+                  "inputUnitLabel": "MB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] Data transfer",
+                  "id": "tieredMathDataTransfer3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "tieredMathDataTransferVariable",
+                  "label": "Data transfer price",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "tieredMathDataTransfer3",
+                  "referLabel": "[currency] Data transfer"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing connection time",
+                  "tieredPricingRefer": "tierConnectionPrice_2",
+                  "inputReferLabel": "Connection Time (seconds)",
+                  "inputRefer": "connectionTime_2",
+                  "inputUnitLabel": "seconds per month",
+                  "decimalPlaces": 0,
+                  "outputUnitLabel": "[currency] connection time",
+                  "id": "tieredMathConnection_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "tieredMathConnectionVariable_2",
+                  "label": "Connection time price ",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "tieredMathConnection_2",
+                  "referLabel": "[currency] connection time"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "TieredMathAdded_3",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] Data transfer",
+                      "variableUnitLabel": "[currency] Data transfer",
+                      "required": false,
+                      "variableId": "tieredMathDataTransfer3"
+                    },
+                    {
+                      "variableLabel": "[currency] connection time",
+                      "variableUnitLabel": "[currency] Connection time",
+                      "required": false,
+                      "variableId": "tieredMathConnection_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Total price",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMathDataTransfer3",
+                    "tieredMathDataTransferVariable",
+                    "tieredMathConnection_2",
+                    "tieredMathConnectionVariable_2",
+                    "TieredMathAdded_3"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total price",
+                  "decimalPlaces": 2,
+                  "id": "dataTransferPriceDisplay",
+                  "subTotalRefer": "TieredMathAdded_3"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "Diode"
+    }
+  ],
+  "partitions": [
+    "aws-iso",
+    "aws-iso-b"
+  ],
+  "slug": "Diode"
+}

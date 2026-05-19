@@ -1,0 +1,835 @@
+{
+  "version": "0.0.15",
+  "serviceName": "Comprehend Custom Entities",
+  "serviceCode": "comprehendCustomEntities",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "serviceDescription": "With Amazon Comprehend, you only pay for what you use. You are charged based on the amount of text processed on a monthly basis. Amazon Comprehend provides natural language processing, topic modeling, and Custom Classification capabilities, enabling a broad range of applications that can analyze text.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehend",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehend/[currency]/current/comprehend.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Custom Entities Asynchronous API",
+          "helpText": "Custom Entities allows you to customize Amazon Comprehend to identify terms that are specific to your domain.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/comprehend/pricing/"
+              }
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1",
+                "partitions": [
+                  "aws"
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "modelTrainingRunTime",
+                "label": "Model training run time",
+                "description": "Time to train model",
+                "placeholder": "Enter time to train model",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "Seconds",
+                "displayInConfigSummary": true,
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false
+                },
+                "infoText": "Enter time to train model"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "modelRetentionTime",
+                "label": "Model retention",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of models you plan to retain per month",
+                "description": "Number of models you plan to retain per month"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Inference",
+                "id": "CCTextHeader1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "documentsPerMin",
+                "label": "Documents",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of documents",
+                "description": "Number of documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "charsPerDoc",
+                "label": "Characters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter average number of characters per document",
+                "description": "Average number of characters per document"
+              },
+              {
+                "type": "pricing",
+                "id": "inferenceCostsForUnit",
+                "label": "[currency] for Inference Costs",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "comprehend",
+                "meteredUnit": {
+                  "allRegions": "Processes Custom Entity text request"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "modelTrainingRuntimeCost",
+                "label": "[currency] for model training runtime",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "comprehend",
+                "meteredUnit": {
+                  "allRegions": "Processes Custom Entity model training request"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "modelStorageCost",
+                "label": "[currency] for model storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "comprehend",
+                "meteredUnit": {
+                  "allRegions": "Processes Custom Entity model storage request"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions custom entity asynchronous",
+                  "refer": [
+                    "NLP_Services_1",
+                    "modelTrainingRunTime",
+                    "modelRetentionTime",
+                    "CCTextHeader1",
+                    "documentsPerMin",
+                    "charsPerDoc",
+                    "inferenceCostsForUnit",
+                    "modelTrainingRuntimeCost",
+                    "modelStorageCost"
+                  ],
+                  "id": "custentUnitAsync",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "modelTrainingTimeCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "modelTrainingRunTime",
+                      "variableLabel": "Model training run time",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "variableId": "modelTrainingRuntimeCost",
+                      "variableLabel": "[currency] for model training runtime",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for model training",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Model training runtime cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "variablemodelTrainingaSyncDisplay",
+                  "referLabel": "[currency] for model training",
+                  "refer": "modelTrainingTimeCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "modelStorageCost_tot",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "modelRetentionTime",
+                      "variableLabel": "Model retention",
+                      "variableUnitLabel": "models",
+                      "required": true
+                    },
+                    {
+                      "variableId": "modelStorageCost",
+                      "variableLabel": "[currency] for model storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] model storage cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Model storage cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "variablemodelStorageaSyncDisplay",
+                  "referLabel": "[currency] model storage cost",
+                  "refer": "modelStorageCost_tot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requests_tot",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "documentsPerMin",
+                      "variableLabel": "Documents",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "charsPerDoc",
+                      "variableLabel": "Characters",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "characters",
+                      "variableUnitLabel": "total characters",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "requests_tot"
+                    },
+                    {
+                      "constant": 300,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "total characters",
+                  "decimalPlaces": 0,
+                  "id": "roundup_300"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "NLP requests are measured in units of 100 characters, with a 3 unit (300 character) minimum charge per request. Characters per request is",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "minValue": 0,
+                  "id": "variableasyncDisplay",
+                  "referLabel": "total characters",
+                  "refer": "roundup_300"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "roundup_300",
+                      "variableLabel": "total characters",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "roundedAsync",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "rounded up to nearest 1 units",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inferenceCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "roundedAsync",
+                      "variableLabel": "units rounded up to nearest 1 unit",
+                      "variableUnitLabel": "units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inferenceCostsForUnit",
+                      "variableLabel": "[currency] for Inference Costs",
+                      "variableUnitLabel": "[currency] per Unit",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for model inference",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Model inference cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "variableInfaSyncDisplay",
+                  "referLabel": "[currency] for model inference",
+                  "refer": "inferenceCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totAsyncCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "inferenceCost",
+                      "variableLabel": "[currency] for model inference",
+                      "variableUnitLabel": "[currency] inference cost",
+                      "required": false
+                    },
+                    {
+                      "variableId": "modelTrainingTimeCost",
+                      "variableLabel": "[currency] for model training",
+                      "variableUnitLabel": "[currency] model runtime cost",
+                      "required": false
+                    },
+                    {
+                      "variableId": "modelStorageCost_tot",
+                      "variableLabel": "[currency] model storage cost",
+                      "variableUnitLabel": "[currency] model storage cost",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total asynchronous entity API Cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "modelTrainingTimeCost",
+                    "variablemodelTrainingaSyncDisplay",
+                    "modelStorageCost_tot",
+                    "variablemodelStorageaSyncDisplay",
+                    "requests_tot",
+                    "roundup_300",
+                    "variableasyncDisplay",
+                    "unitsPerRequest",
+                    "roundedAsync",
+                    "inferenceCost",
+                    "variableInfaSyncDisplay",
+                    "totAsyncCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] total asynchronous entity API Cost",
+                  "decimalPlaces": 4,
+                  "id": "AsyncCost",
+                  "subTotalRefer": "totAsyncCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Custom Entities Synchronous API",
+          "helpText": "Custom Entities allows you to customize Amazon Comprehend to identify terms that are specific to your domain.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/comprehend/pricing/"
+              }
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_text2",
+                "partitions": [
+                  "aws"
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "modelTrainingRunTime_1",
+                "label": "Model training run time",
+                "description": "Time to train model",
+                "placeholder": "Enter time to train model",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "Seconds",
+                "displayInConfigSummary": true,
+                "defaultDuration": "hours",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false
+                },
+                "infoText": "Enter time to train model"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "modelRetentionTime_1",
+                "label": "Model retention",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of models you plan to retain per month",
+                "description": "Number of models you plan to retain per month"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Inference",
+                "id": "CCTextHeader2"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "documentsPerMin_1",
+                "label": "Documents/min",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Average number of documents to be analyzed per minute",
+                "description": "Average number of documents per minute"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "charsPerDoc_1",
+                "label": "Characters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Average number of characters per document to be analyzed",
+                "description": "Average number of characters per document"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for provisioned endpoint",
+                "id": "endpointActiveDuration",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "defaultValue": 12,
+                "defaultDuration": "hours",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false
+                },
+                "placeholder": "Duration of provisioned endpoint",
+                "description": "Average time the endpoint stays active per month"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions custom entity synchronous",
+                  "refer": [
+                    "NLP_Services_text2",
+                    "modelTrainingRunTime_1",
+                    "modelRetentionTime_1",
+                    "CCTextHeader2",
+                    "documentsPerMin_1",
+                    "charsPerDoc_1",
+                    "endpointActiveDuration"
+                  ],
+                  "id": "custentUnitsync",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totAsyncCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requestsPermin",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "documentsPerMin_1",
+                      "variableLabel": "Documents/min",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Characters",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "variableId": "charsPerDoc_1"
+                    }
+                  ],
+                  "outputUnitLabel": "characters per minute",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requestsPerSec",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "requestsPermin",
+                      "variableLabel": "characters per minute",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "characters per second",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inferenceUnit",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "requestsPerSec",
+                      "variableLabel": "characters per second",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "units"
+                    }
+                  ],
+                  "outputUnitLabel": "inference units (IU)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "roundedIUs",
+                  "operands": [
+                    {
+                      "variableId": "inferenceUnit",
+                      "variableLabel": "inference units (IU)",
+                      "variableUnitLabel": "rounded up to nearest 1 inference units(IU)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "rounded up to nearest 1 inference units (IU)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Inference units (IUs) you would need to provision is",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "minValue": 0,
+                  "id": "IUVar",
+                  "referLabel": "rounded up to nearest 1 inference units (IU)",
+                  "refer": "roundedIUs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "modelTrainingTimeCost_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "modelTrainingRunTime_1",
+                      "variableLabel": "Model training run time",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "variableId": "modelTrainingRuntimeCost",
+                      "variableLabel": "[currency] for model training runtime",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] model training runtime cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Model training runtime cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "modelRuntimeVar",
+                  "referLabel": "[currency] model training runtime cost",
+                  "refer": "modelTrainingTimeCost_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "modelStorageCost_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "modelRetentionTime_1",
+                      "variableLabel": "Model retention",
+                      "variableUnitLabel": "models",
+                      "required": true
+                    },
+                    {
+                      "variableId": "modelStorageCost",
+                      "variableLabel": "[currency] for model storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] model storage cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Model storage cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "modelStorageVar",
+                  "referLabel": "[currency] model storage cost",
+                  "refer": "modelStorageCost_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "IUPrice",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "roundedIUs",
+                      "variableLabel": "rounded up to nearest 1 inference units (IU)",
+                      "variableUnitLabel": "IUs",
+                      "required": true
+                    },
+                    {
+                      "variableId": "endpointActiveDuration",
+                      "variableLabel": "Duration for provisioned endpoint",
+                      "variableUnitLabel": "seconds endpoint is active",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inferenceCostsForUnit",
+                      "variableLabel": "[currency] for Inference Costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Charges will continue to incur from the time you start the endpoint until it is deleted even if no documents are analyzed. Inference cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "minValue": 0,
+                  "id": "modelinfVar",
+                  "referLabel": "[currency]",
+                  "refer": "IUPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totsyncCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "IUPrice",
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency] inference cost",
+                      "required": false
+                    },
+                    {
+                      "variableId": "modelTrainingTimeCost_1",
+                      "variableLabel": "[currency] model training runtime cost",
+                      "variableUnitLabel": "[currency] model runtime cost",
+                      "required": false
+                    },
+                    {
+                      "variableId": "modelStorageCost_2",
+                      "variableLabel": "[currency] model storage cost",
+                      "variableUnitLabel": "[currency] model storage cost",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total synchronous entity API Cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "requestsPermin",
+                    "requestsPerSec",
+                    "inferenceUnit",
+                    "roundedIUs",
+                    "IUVar",
+                    "modelTrainingTimeCost_1",
+                    "modelRuntimeVar",
+                    "modelStorageCost_2",
+                    "modelStorageVar",
+                    "IUPrice",
+                    "modelinfVar",
+                    "totsyncCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] total synchronous entity API Cost",
+                  "decimalPlaces": 4,
+                  "id": "syncCost",
+                  "subTotalRefer": "totsyncCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso"
+  ]
+}

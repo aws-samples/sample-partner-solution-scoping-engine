@@ -1,0 +1,869 @@
+{
+  "version": "0.0.6",
+  "serviceName": "Amazon FinSpace Dataset Browser",
+  "serviceCode": "awsFinSpace",
+  "slug": "FinSpace",
+  "type": "AWSService",
+  "excludeZeroSubTotals": false,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ca-central-1",
+    "eu-west-1"
+  ],
+  "searchKeywords": [
+    "data management",
+    "analytics",
+    "clusters",
+    "users",
+    "data",
+    "storage",
+    "financial"
+  ],
+  "serviceDescription": "Amazon FinSpace Dataset Browser provides a notebook for (FSI) customers such as hedge funds, asset management firms, insurance companies, and investment banks to store, catalog, prepare, and analyze data at petabyte scale. The calculator does not yet support the new Amazon FinSpace with Managed kdb Insights.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/finspace/features/dataset-browser/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "finspace",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/finspace/[currency]/current/finspace.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/finspace/features/dataset-browser/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Users",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/finspace/pricing/#Users"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "You are charged $150 per month for each registered user in FinSpace.",
+                "id": "UserCardBodyText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfUsers",
+                "label": "Number of users",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "Cost per User",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "UserEnabled"
+                },
+                "id": "CostperUser"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "User cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "variableLabel": "Cost per User",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "CostperUser"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (User cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalUserCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "UserCardBodyText",
+                    "numberOfUsers",
+                    "CostperUser",
+                    "totalUserCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "User cost",
+                  "decimalPlaces": 2,
+                  "id": "final_user_cost",
+                  "subTotalRefer": "totalUserCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/finspace/pricing/#Storage"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "You are charged $0.14 per month for each GB of data you store in FinSpace.",
+                "id": "StorageCardBodyText"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "As part of the AWS Free Usage Tier, you get the first 150 GB of storage for free every month.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "FreeTierAlert"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of data to be stored",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount",
+                "id": "datastored"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "id": "StoragePrice",
+                "label": "Storage Price",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "DataStored from 150 to Inf"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "storageunitconversion",
+                  "refer": [
+                    "StorageCardBodyText",
+                    "FreeTierAlert",
+                    "datastored",
+                    "StoragePrice"
+                  ],
+                  "subTotalRefer": "totalUserCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "FreeTierStorage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "datastored",
+                      "variableLabel": "Size of data to be stored",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 150,
+                      "constantUnitLabel": "free GB per month"
+                    }
+                  ],
+                  "outputUnitLabel": "billable GB",
+                  "decimalPlaces": 0,
+                  "minValue": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "FinalStorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "FreeTierStorage",
+                      "variableLabel": "billable GB",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableId": "StoragePrice",
+                      "variableLabel": "Storage Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "FreeTierStorage",
+                    "FinalStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "total_storage_cost",
+                  "subTotalRefer": "FinalStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "FinSpace Clusters",
+          "cardType": "dataTransferV2",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/finspace/pricing/#Clusters"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "You are charged per minute for the compute used to prepare and analyze data. You can choose from five cluster sizes based on your data processing needs.",
+                "id": "ClusterCardBodyText"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Small Cluster",
+                "id": "SmallCluster_headerText"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "SmallTotalTime"
+                    },
+                    {
+                      "type": "component",
+                      "id": "TotalClusterMinutes"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "ALERT",
+                "label": "error alert",
+                "content": "The total time spent using Small Cluster should not exceed number of users registered * 730 (hours in a month)",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "SmallCluster_error_alert"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "SmallTotalTime",
+                "label": "Total time spent: Small cluster (across all users)",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours per month",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes per month",
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Cost for Small Cluster",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "RunCluster Small"
+                },
+                "id": "SmallClusterCost"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Medium Cluster",
+                "id": "MediumCluster_headerText"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "MediumTotalTime"
+                    },
+                    {
+                      "type": "component",
+                      "id": "TotalClusterMinutes"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "ALERT",
+                "label": "error alert",
+                "content": "The total time spent using Medium Cluster should not exceed number of users registered * 730 (hours in a month)",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "MediumCluster_error_alert"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "MediumTotalTime",
+                "label": "Total time spent: Medium cluster (across all users)",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours per month",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes per month",
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Cost for Medium Cluster",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "RunCluster Medium"
+                },
+                "id": "MediumClusterCost"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Large Cluster",
+                "id": "LargeCluster_headerText"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "LargeTotalTime"
+                    },
+                    {
+                      "type": "component",
+                      "id": "TotalClusterMinutes"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "ALERT",
+                "label": "error alert",
+                "content": "The total time spent using Large Cluster should not exceed number of users registered * 730 (hours in a month)",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "LargeCluster_error_alert"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "LargeTotalTime",
+                "label": "Total time spent: Large cluster (across all users)",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours per month",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes per month",
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Cost for Large Cluster",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "RunCluster Large"
+                },
+                "id": "LargeClusterCost"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "X-Large Cluster",
+                "id": "XLargeCluster_headerText"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "XLargeTotalTime"
+                    },
+                    {
+                      "type": "component",
+                      "id": "TotalClusterMinutes"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "ALERT",
+                "label": "error alert",
+                "content": "The total time spent using X-Large Cluster should not exceed number of users registered * 730 (hours in a month)",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "X-LargeCluster_error_alert"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "XLargeTotalTime",
+                "label": "Total time spent: X-Large cluster (across all users)",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours per month",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes per month",
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Cost for XLarge Cluster",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "RunCluster XLarge"
+                },
+                "id": "XLargeClusterCost"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "XX-Large Cluster",
+                "id": "XXLargeCluster_headerText"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "XXLargeTotalTime"
+                    },
+                    {
+                      "type": "component",
+                      "id": "TotalClusterMinutes"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "ALERT",
+                "label": "error alert",
+                "content": "The total time spent using XX-Large Cluster should not exceed number of users registered * 730 (hours in a month)",
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "XX-LargeCluster_error_alert"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "XXLargeTotalTime",
+                "label": "Total time spent: XX-Large cluster (across all users)",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours per month",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes per month",
+                "defaultDuration": "hr",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Cost for XXLarge Cluster",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "finspace",
+                "meteredUnit": {
+                  "allRegions": "RunCluster XXLarge"
+                },
+                "id": "XXLargeClusterCost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalClusterMinutes",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of users",
+                      "variableUnitLabel": "users",
+                      "required": true,
+                      "variableId": "numberOfUsers"
+                    },
+                    {
+                      "constant": 43800,
+                      "constantUnitLabel": "total available minutes per cluster"
+                    }
+                  ],
+                  "outputUnitLabel": "total available minutes per cluster",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "label": "Cluster Unit Conversion",
+                  "subType": "conversionDisplay",
+                  "id": "ClusterUnitConversion",
+                  "refer": [
+                    "ClusterCardBodyText",
+                    "SmallCluster_headerText",
+                    "SmallCluster_error_alert",
+                    "SmallTotalTime",
+                    "SmallClusterCost",
+                    "MediumCluster_headerText",
+                    "MediumCluster_error_alert",
+                    "MediumTotalTime",
+                    "MediumClusterCost",
+                    "LargeCluster_headerText",
+                    "LargeCluster_error_alert",
+                    "LargeTotalTime",
+                    "LargeClusterCost",
+                    "XLargeCluster_headerText",
+                    "X-LargeCluster_error_alert",
+                    "XLargeTotalTime",
+                    "XLargeClusterCost",
+                    "XXLargeCluster_headerText",
+                    "XX-LargeCluster_error_alert",
+                    "XXLargeTotalTime",
+                    "XXLargeClusterCost",
+                    "TotalClusterMinutes"
+                  ],
+                  "subTotalRefer": "TotalClusterMinutes"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Finspace Small cluster cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Total time spent: Small cluster (across all users)",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "SmallTotalTime"
+                    },
+                    {
+                      "variableLabel": "Cost for Small Cluster",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SmallClusterCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Small cluster cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalSmallcost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Finspace Medium cluster cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Total time spent: Medium cluster (across all users)",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "MediumTotalTime"
+                    },
+                    {
+                      "variableLabel": "Cost for Medium Cluster",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "MediumClusterCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Medium cluster cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalMediumcost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Finspace Large cluster cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Total time spent: Large cluster (across all users)",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "LargeTotalTime"
+                    },
+                    {
+                      "variableLabel": "Cost for Large Cluster",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "LargeClusterCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Large cluster cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalLargecost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "variableName": "Finspace XLarge cluster cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total time spent: X-Large cluster (across all users)",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "XLargeTotalTime"
+                    },
+                    {
+                      "variableLabel": "Cost for XLarge Cluster",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "XLargeClusterCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (XLarge cluster cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalXLargecost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Finspace XXLarge cluster cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Total time spent: XX-Large cluster (across all users)",
+                      "variableUnitLabel": "min",
+                      "required": true,
+                      "variableId": "XXLargeTotalTime"
+                    },
+                    {
+                      "variableLabel": "Cost for XXLarge Cluster",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "XXLargeClusterCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (XXLarge cluster cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalXXLargecost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total cluster cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Finspace Small cluster cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalSmallcost"
+                    },
+                    {
+                      "variableLabel": "Finspace Medium cluster cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalMediumcost"
+                    },
+                    {
+                      "variableLabel": "Finspace Large cluster cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalLargecost"
+                    },
+                    {
+                      "variableLabel": "Finspace XLarge cluster cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalXLargecost"
+                    },
+                    {
+                      "variableLabel": "Finspace XXLarge cluster cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalXXLargecost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalClustercost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalSmallcost",
+                    "totalMediumcost",
+                    "totalLargecost",
+                    "totalXLargecost",
+                    "totalXXLargecost",
+                    "totalClustercost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cluster cost",
+                  "decimalPlaces": 2,
+                  "id": "final_cluster_cost",
+                  "subTotalRefer": "totalClustercost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "FinSpace"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,384 @@
+{
+  "version": "0.0.9",
+  "serviceName": "RStudio on SageMaker",
+  "serviceCode": "sageMakerRStudioOnSageMaker",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-rstudio-session-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-rstudio-session-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "sagemaker-rstudio-server-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-rstudio-server-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "RStudio App",
+      "description": "RStudio on SageMaker offers on-demand cloud compute resources to accelerate model development and improve productivity. You are charged for the instance types you choose to run the RStudio Session app and the RStudio Server Pro app.",
+      "id": "sagemakerRstudio",
+      "helpText": "RStudio on SageMaker offers on-demand cloud compute resources to accelerate model development and improve productivity. You are charged for the instance types you choose to run the RStudio Session app and the RStudio Server Pro app.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "RStudio Session App",
+          "helpText": "RStudio on SageMaker offers on-demand cloud compute resources to accelerate model development and improve productivity. You are charged for the instance types you choose to run the RStudio Session app and the RStudio Server Pro app.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "DataScientistsPerMonth_RSession",
+                "label": "Number of data scientist(s)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of data scientist(s) per month",
+                "description": "Number of data scientist(s)"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numRSessionInstance",
+                "label": "Number of RStudio Session instances per data scientist",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of RStudio Session instances per data scientist per month",
+                "description": "Number of RStudio Session instances"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "RSessionHrsPerDay",
+                "label": "RStudio Session hour(s) per day",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.01,
+                  "maxValue": 24
+                },
+                "placeholder": "Enter the number of hours RStudio Session are used per day",
+                "description": "Number of hours RStudio Session are being used per day"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "RSessionDaysPerMonth",
+                "label": "RStudio Session day(s) per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 31
+                },
+                "placeholder": "Enter the number of days RStudio Session are used per month",
+                "description": "Number of days RStudio Session are being used per month"
+              },
+              {
+                "label": "SageMaker RStudio Sessions",
+                "id": "columnFormIPM_RSession",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "sagemaker-rstudio-session-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm_rsession"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "Compute Type",
+                    "V CPU",
+                    "Memory",
+                    "Clock Speed",
+                    "GPU",
+                    "Network Performance",
+                    "Storage",
+                    "GPU Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Component"
+                ],
+                "row": [
+                  {
+                    "label": "Instance name",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "Compute Type",
+                      "V CPU",
+                      "Memory",
+                      "Clock Speed",
+                      "GPU",
+                      "Network Performance",
+                      "Storage",
+                      "GPU Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "DataScientistsPerMonth_RSession",
+                      "variableLabel": "Number of data scientist(s)",
+                      "variableUnitLabel": "data scientist(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numRSessionInstance",
+                      "variableLabel": "Number of RStudio Session instances per data scientist",
+                      "variableUnitLabel": "RStudio RSession instance(s) per data scientist",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "RStudio RSession instance(s)",
+                  "decimalPlaces": 6,
+                  "id": "sageMakerRSessionInstances"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sageMakerRSessionInstances",
+                      "variableLabel": "RStudio RSession instance(s)",
+                      "variableUnitLabel": "RStudio RSession instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "RSessionHrsPerDay",
+                      "variableLabel": "RStudio Session hour(s) per day",
+                      "variableUnitLabel": "hours per day",
+                      "required": true
+                    },
+                    {
+                      "variableId": "RSessionDaysPerMonth",
+                      "variableLabel": "RStudio Session day(s) per month",
+                      "variableUnitLabel": "days per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "SageMaker RStudio RSession hours per month",
+                  "decimalPlaces": 6,
+                  "id": "sageMakerRSessionHrsPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "SageMaker RStudio RSession hours per month",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "sageMakerRSessionHrsPerMonth"
+                    },
+                    {
+                      "variableLabel": "SageMaker RStudio Sessions",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm_rsession",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency](monthly On-Demand cost)",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerRSessionTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DataScientistsPerMonth_RSession",
+                    "numRSessionInstance",
+                    "RSessionHrsPerDay",
+                    "RSessionDaysPerMonth",
+                    "columnFormIPM_RSession",
+                    "sageMakerRSessionInstances",
+                    "sageMakerRSessionHrsPerMonth",
+                    "sageMakerRSessionTotalCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for RStudio RSession",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerRSessionTotalCostDisplay",
+                  "subTotalRefer": "sageMakerRSessionTotalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "RStudio Server Pro App",
+          "helpText": "RStudio on SageMaker offers on-demand cloud compute resources to accelerate model development and improve productivity. You are charged for the instance types you choose to run the RStudio Session app and the RStudio Server Pro app.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "bodyText": "The RServer is running 24/7 no matter whether there is running RSessions or not. If the admin chooses “Small” (ml.t3.medium), then it is free of charge. If the admin chooses “Medium” (ml.c5.4xlarge) or “Large” (ml.c5.9xlarge), then it is charged hourly as far as RStudio is enabled for the SageMaker Domain.",
+          "inputSection": {
+            "components": [
+              {
+                "label": "SageMaker RStudio Server",
+                "id": "columnFormIPM_RServer",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "sagemaker-rstudio-server-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm_rserver"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "Compute Type",
+                    "V CPU",
+                    "Memory",
+                    "Clock Speed",
+                    "GPU",
+                    "Network Performance",
+                    "Storage",
+                    "GPU Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Component"
+                ],
+                "row": [
+                  {
+                    "label": "Instance name",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "Compute Type",
+                      "V CPU",
+                      "Memory",
+                      "Clock Speed",
+                      "GPU",
+                      "Network Performance",
+                      "Storage",
+                      "GPU Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "SageMaker RStudio Server",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm_rserver",
+                      "IPMSupported": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency](monthly cost)",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerRServerTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "columnFormIPM_RServer",
+                    "sageMakerRServerTotalCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for RStudio Server Pro",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerRServerTotalCostDisplay",
+                  "subTotalRefer": "sageMakerRServerTotalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

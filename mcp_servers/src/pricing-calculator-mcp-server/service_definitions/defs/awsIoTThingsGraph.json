@@ -1,0 +1,410 @@
+{
+  "version": "0.0.4",
+  "serviceName": "AWS IoT Things Graph",
+  "serviceCode": "awsIoTThingsGraph",
+  "type": "AWSService",
+  "slug": "IoTThingsGraph",
+  "regions": [
+    "ap-northeast-2",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-west-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "IoT",
+    "Things",
+    "graph",
+    "IoT Things Graph"
+  ],
+  "serviceDescription": "AWS IoT Things Graph makes it easy to rapidly build IoT applications by connecting devices and web services from different vendors that speak different protocols.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iotthingsgraph",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iotthingsgraph/[currency]/current/iotthingsgraph.json"
+    }
+  ],
+  "linkUrl": {
+    "aws": "https://aws.amazon.com/iot-things-graph/"
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "",
+      "description": "",
+      "id": "awsIoTThingsGraph",
+      "helpText": "",
+      "helpUrl": {
+        "aws": ""
+      },
+      "cards": [
+        {
+          "title": "Cloud Deployment",
+          "description": "",
+          "helpUrl": {
+            "aws": "https://aws.amazon.com/iot-things-graph/pricing/"
+          },
+          "helpText": "When running flows in the cloud, you pay for the number of steps executed in your flow. You are charged per step executed above the Free Tier. See Cloud and Edge Flows Pricing Table for details.",
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of flows",
+                "id": "numberOfFlows",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "id": "numberOfExecutionsperFlow",
+                "subType": "frequency",
+                "label": "Number of executions per flow",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of steps executed per flow",
+                "id": "numberOfStepsExecutedperFlow",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per step executed",
+                "id": "StepPrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotthingsgraph",
+                "meteredUnit": {
+                  "allRegions": "Steps Executed"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "IotTG_unitConvert",
+                  "decimalPlaces": 0,
+                  "refer": [
+                    "numberOfFlows",
+                    "numberOfExecutionsperFlow",
+                    "numberOfStepsExecutedperFlow",
+                    "StepPrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "executionPerFlowRounded",
+                  "operands": [
+                    {
+                      "variableId": "numberOfExecutionsperFlow",
+                      "variableLabel": "Number of executions per flow",
+                      "variableUnitLabel": "executons per flow (rounded)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "executions per flow",
+                  "decimalPlaces": 0,
+                  "displayInConfigSummary": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "NumberofFlowsExecuted",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of flows",
+                      "variableId": "numberOfFlows",
+                      "variableUnitLabel": "flows",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "executions per flow",
+                      "variableId": "executionPerFlowRounded",
+                      "variableUnitLabel": "executions per flow (rounded to the nearest whole number)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total flow executions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "NumberofStepsPerFlowExecuted ",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of steps executed per flow",
+                      "variableId": "numberOfStepsExecutedperFlow",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "total flow executions",
+                      "variableId": "NumberofFlowsExecuted",
+                      "variableUnitLabel": "flow executions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total steps executed",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "CostforStepsExecuted",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total steps executed",
+                      "variableId": "NumberofStepsPerFlowExecuted ",
+                      "variableUnitLabel": "steps executed",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per step executed",
+                      "variableId": "StepPrice",
+                      "variableUnitLabel": "[currency] per step executed",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for steps",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "executionPerFlowRounded",
+                    "NumberofFlowsExecuted",
+                    "NumberofStepsPerFlowExecuted ",
+                    "CostforStepsExecuted"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total step charges",
+                  "decimalPlaces": 2,
+                  "id": "IoTStepDisplay",
+                  "subTotalRefer": "CostforStepsExecuted"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Edge Deployment",
+          "description": "",
+          "helpUrl": {
+            "aws": "https://aws.amazon.com/iot-things-graph/pricing/"
+          },
+          "helpText": "You are charged only when you deploy a new or updated flow to AWS IoT Greengrass devices. You can run flows on an AWS IoT Greengrass device at no cost. A flow deployed to one AWS IoT Greengrass device is metered as one deployment. See Cloud and Edge Flows Pricing Table for details.",
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of locations",
+                "id": "numberOfLocations",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "id": "numberOfDeploymentsperLocation",
+                "subType": "frequency",
+                "label": "Average number of deployments per location",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for edge deployment per flow",
+                "id": "EdgeDeploymentPrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "iotthingsgraph",
+                "meteredUnit": {
+                  "allRegions": "Deployments"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "IotTG_unitConvert",
+                  "decimalPlaces": 0,
+                  "refer": [
+                    "numberOfLocations",
+                    "numberOfDeploymentsperLocation",
+                    "EdgeDeploymentPrice"
+                  ],
+                  "subTotalRefer": "CostforStepsExecuted"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "depPerLocationRounded",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDeploymentsperLocation",
+                      "variableLabel": "Average number of deployments per location",
+                      "variableUnitLabel": "deployments per location (rounded)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "deployments per location (rounded)",
+                  "decimalPlaces": 0,
+                  "displayInConfigSummary": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalDeployments",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of locations",
+                      "variableId": "numberOfLocations",
+                      "variableUnitLabel": "locations",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "deployments per location (rounded)",
+                      "variableId": "depPerLocationRounded",
+                      "variableUnitLabel": "deployments per location (rounded to the nearest whole number)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total deployments at the edge",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "CostforEdgeDeployments",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total deployments at the edge",
+                      "variableId": "totalDeployments",
+                      "variableUnitLabel": "deployments at the edge",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for edge deployment per flow",
+                      "variableId": "EdgeDeploymentPrice",
+                      "variableUnitLabel": "[currency] for edge deployment per flow",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for deployments",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "depPerLocationRounded",
+                    "totalDeployments",
+                    "CostforEdgeDeployments"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total deployment charges",
+                  "decimalPlaces": 2,
+                  "id": "IoTDeployment",
+                  "subTotalRefer": "CostforEdgeDeployments"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,412 @@
+{
+  "version": "0.0.33",
+  "serviceName": "Amazon Elastic Container Registry",
+  "serviceCode": "amazonElasticContainerRegistry",
+  "displayAutomation": true,
+  "type": "AWSService",
+  "serviceDescription": "Amazon Elastic Container Registry (ECR) is a fully-managed Docker container registry that makes it easy for developers to store, manage, and deploy Docker container images. Amazon ECR eliminates the need to operate your own container repositories or worry about scaling the underlying infrastructure. With Amazon ECR, there are no upfront fees or commitments. You pay only for the amount of data you store in your repositories and data transferred to the Internet.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/ecr/"
+    }
+  },
+  "regions": [],
+  "searchKeywords": [
+    "ECR",
+    "ecr",
+    "Elastic Container Registry",
+    "Amazon ECR",
+    "container registry",
+    "container",
+    "registry"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "ecr",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ecr/[currency]/current/ecr.json"
+    },
+    {
+      "deniedPartitions": [
+        "aws-iso",
+        "aws-iso-b"
+      ],
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ecr/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage settings",
+          "helpText": "With Amazon Elastic Container Registry, there are no upfront fees or commitments. You pay only for the amount of data you store in your repositories and data transferred to the Internet. Amazon ECR includes a Free Tier of 500MB-month of storage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ecr/",
+              "overrides": {
+                "aws": "https://aws.amazon.com/ecr/pricing/",
+                "aws-us-gov": "https://aws.amazon.com/ecr/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "To estimate your monthly cost, enter the amount of data you will store in your repositories. The calculations below exclude Free Tier discounts.",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov"
+                ],
+                "id": "ECRText"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "amountofdatastored",
+                "label": "Amount of data stored",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.0009765625,
+                  "maxValue": 102400000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "id": "storageMonthlyPrice",
+                "label": "Price for storage per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ecr",
+                "meteredUnit": {
+                  "allRegions": "EC2 Container Registry"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "dataUnitConversion",
+                  "refer": [
+                    "ECRText",
+                    "amountofdatastored",
+                    "storageMonthlyPrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "amountofdatastored",
+                      "variableLabel": "Amount of data stored",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "storageMonthlyPrice",
+                      "variableLabel": "Price for storage per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storageMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Elastic Container Registry pricing",
+                  "decimalPlaces": 4,
+                  "id": "serviceTotalPrice",
+                  "subTotalRefer": "storageMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Transfer",
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "helpText": "Data transfer “in” and “out” refers to transfer into and out of Amazon Elastic Container Registry. Data transferred between Amazon Elastic Container Registry and Amazon EC2 within a single region is free of charge (i.e., $0.00 per GB). Data transferred between Amazon Elastic Container Registry and Amazon EC2 in different regions will be charged at Internet Data Transfer rates on both sides of the transfer. For Data Transfer exceeding 500TB/Month please Contact Us.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ecr/pricing/"
+            }
+          },
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "_generated_0",
+                  "refer": [
+                    "dataTransfer"
+                  ],
+                  "subTotalRefer": "storageMonthlyCost"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 4,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "_generated_2",
+                  "refer": [
+                    "_generated_1"
+                  ],
+                  "subTotalRefer": "_generated_1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Encryption",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ecr/pricing/"
+            }
+          },
+          "helpText": "",
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": {
+                  "aws": "Amazon ECR offers three options for encryption of images– SSE-S3, SSE-KMS, DSSE-KMS. By default, Amazon ECR uses server-side encryption with Amazon S3-managed encryption keys (SSE-S3). This is offered at no additional charge. <br>For SSE-KMS, you pay AWS KMS charges to generate or retrieve the data key used for encryption and decryption. For pricing on AWS KMS, visit the <a href='https://aws.amazon.com/kms/pricing/'>AWS KMS pricing Page</a>. <br>For DSSE-KMS, in addition to the charges for AWS KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data.",
+                  "aws-iso": "Amazon ECR offers three options for encryption of images– SSE-S3, SSE-KMS, DSSE-KMS. By default, Amazon ECR uses server-side encryption with Amazon S3-managed encryption keys (SSE-S3). This is offered at no additional charge. <br>For SSE-KMS, you pay AWS KMS charges to generate or retrieve the data key used for encryption and decryption. <br>For DSSE-KMS, in addition to the charges for AWS KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data.",
+                  "aws-iso-b": "Amazon ECR offers three options for encryption of images– SSE-S3, SSE-KMS, DSSE-KMS. By default, Amazon ECR uses server-side encryption with Amazon S3-managed encryption keys (SSE-S3). This is offered at no additional charge. <br>For SSE-KMS, you pay AWS KMS charges to generate or retrieve the data key used for encryption and decryption. <br>For DSSE-KMS, in addition to the charges for AWS KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data.",
+                  "aws-cn": "Amazon ECR offers three options for encryption of images– SSE-S3, SSE-KMS, DSSE-KMS. By default, Amazon ECR uses server-side encryption with Amazon S3-managed encryption keys (SSE-S3). This is offered at no additional charge. <br>For SSE-KMS, you pay Amazon KMS charges to generate or retrieve the data key used for encryption and decryption. For pricing on AWS KMS, visit the <a href='https://www.amazonaws.cn/en/kms/pricing/'>Amazon KMS pricing Page</a>. <br>For DSSE-KMS, in addition to the charges for Amazon KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data."
+                },
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-iso",
+                  "aws-iso-b",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "ecrEncription"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of data encrypted and decrypted",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "help": "",
+                "id": "Size_of_data_encrypted_and_decrypted"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ecr",
+                "meteredUnit": {
+                  "allRegions": "EC2 Container Registry ECR-DSSE-Encryption Bytes encrypted using dual-layer server-side encryption"
+                },
+                "label": "price for ecr Encryption",
+                "id": "priceecrEncryption"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "id_disp",
+                  "refer": [
+                    "ecrEncription",
+                    "Size_of_data_encrypted_and_decrypted",
+                    "priceecrEncryption"
+                  ],
+                  "subTotalRefer": "_generated_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size of data encrypted and decrypted",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "Size_of_data_encrypted_and_decrypted"
+                    },
+                    {
+                      "variableLabel": "price for ecr Encryption",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceecrEncryption"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "id": "ecrEncryptionCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ecrEncryptionCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "ECR encryption cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "ecrEncryptionTotal",
+                  "subTotalRefer": "ecrEncryptionCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "slug": "ECR",
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

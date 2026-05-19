@@ -1,0 +1,1237 @@
+{
+  "version": "0.0.55",
+  "serviceName": "WebRTC Media",
+  "serviceCode": "webRtcMedia",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-southeast-1",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "eu-central-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "Amazon Chime lets you meet, chat, and collaborate with the security of AWS. You can work seamlessly on your devices, and meet from your desk or on the go - ensuring you always stay connected.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/chime/chime-sdk/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "chimefeatures",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimefeatures/[currency]/current/chimefeatures.json"
+    },
+    {
+      "mappingDefinitionName": "chime",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chime/[currency]/current/chime.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Chime SDK",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/chime/chime-sdk/"
+        }
+      },
+      "id": "template_webRTCmedia",
+      "cards": [
+        {
+          "title": "Media Sessions",
+          "helpText": "The Amazon Chime SDK allows you to add real-time audio, video, screen sharing, and messaging capabilities to your applications. You can simplify operations, and build these features without managing real-time communication infrastructure services.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "WebRTC media sessions are billed per minute for each “attendee” (i.e. an instance of your application) while connected to the session, regardless of which media modalities (screen share, screen view, two-way audio, one-way audio, two-way video, or one-way video) are used.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of attendees",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of attendees",
+                "id": "attendees"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of average session",
+                "id": "durationMins",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of sessions per month",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of sessions per month",
+                "id": "numberOfEventsPerMonth"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of average session with echo reduction",
+                "id": "echoReductionDuration",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Chime sdk",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chime",
+                "meteredUnit": {
+                  "allRegions": "AmazonChime minutes sdk"
+                },
+                "id": "amazonChime_sdk_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for echo reduction",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime EchoReduction per minutes"
+                },
+                "id": "amazonChime_echoReduction_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "attendees",
+                    "durationMins",
+                    "numberOfEventsPerMonth",
+                    "echoReductionDuration",
+                    "amazonChime_sdk_price",
+                    "amazonChime_echoReduction_price"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "unitConvChimeSDK"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of attendees",
+                      "variableUnitLabel": "attendees",
+                      "required": true,
+                      "variableId": "attendees"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "durationMins"
+                    },
+                    {
+                      "variableLabel": "Number of sessions per month",
+                      "variableUnitLabel": "sessions per month",
+                      "required": true,
+                      "variableId": "numberOfEventsPerMonth"
+                    },
+                    {
+                      "variableLabel": "price for Chime sdk",
+                      "variableUnitLabel": "per attendee-minute",
+                      "required": true,
+                      "variableId": "amazonChime_sdk_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for media session",
+                  "decimalPlaces": 2,
+                  "id": "SDKTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of attendees",
+                      "variableUnitLabel": "attendees",
+                      "required": false,
+                      "variableId": "attendees"
+                    },
+                    {
+                      "variableLabel": "Duration of average session with echo reduction",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "echoReductionDuration"
+                    },
+                    {
+                      "variableLabel": "Number of sessions per month",
+                      "variableUnitLabel": "sessions per month",
+                      "required": false,
+                      "variableId": "numberOfEventsPerMonth"
+                    },
+                    {
+                      "variableLabel": "price for echo reduction",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonChime_echoReduction_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for echo reduction",
+                  "decimalPlaces": 2,
+                  "id": "echoReductionTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] per month for media session",
+                      "variableUnitLabel": "minutes",
+                      "required": false,
+                      "variableId": "SDKTot"
+                    },
+                    {
+                      "variableLabel": "[currency] per month for echo reduction",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "echoReductionTot"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2,
+                  "id": "mediaSessionFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "SDKTot",
+                    "echoReductionTot",
+                    "mediaSessionFinal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Media Session pricing",
+                  "decimalPlaces": 2,
+                  "id": "SDKTot_Final",
+                  "subTotalRefer": "mediaSessionFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Media Replication",
+          "helpText": "The Amazon Chime SDK allows you to add real-time audio, video, screen sharing, and messaging capabilities to your applications. You can simplify operations, and build these features without managing real-time communication infrastructure services.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "bodyText": "Media replication is billed minute for each destination WebRTC media sessions, regardless of the number attendees connected to the session. Media replication is billed in addition to the attendee minutes billed for attendees connected to both the destination WebRTC media sessions.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of primary sessions",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of media replication",
+                "id": "noOfMediaReplication"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of media replication per primary session",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of media replication",
+                "id": "mediareplicationCount"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of media replication per primary session",
+                "id": "mediareplicationdurationMins",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for media Replication",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime ReplicaMeeting per minutes"
+                },
+                "id": "amazonChime_mediareplica_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfMediaReplication",
+                    "mediareplicationCount",
+                    "mediareplicationdurationMins",
+                    "amazonChime_mediareplica_price"
+                  ],
+                  "subTotalRefer": "mediaSessionFinal",
+                  "id": "unitConvMediaReplication"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of primary sessions",
+                      "variableUnitLabel": "primary sessions",
+                      "required": true,
+                      "variableId": "noOfMediaReplication"
+                    },
+                    {
+                      "variableLabel": "Average number of media replication per primary session",
+                      "variableUnitLabel": "total media replication",
+                      "required": true,
+                      "variableId": "mediareplicationCount"
+                    },
+                    {
+                      "variableLabel": "Duration of media replication per primary session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediareplicationdurationMins"
+                    },
+                    {
+                      "variableLabel": "price for media Replication",
+                      "variableUnitLabel": "per minute",
+                      "required": true,
+                      "variableId": "amazonChime_mediareplica_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per presentation session with replica session",
+                  "decimalPlaces": 2,
+                  "id": "mediaReplicationTot"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "mediaReplicationTot"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Media Replication pricing",
+                  "decimalPlaces": 2,
+                  "id": "Media_replication_Final",
+                  "subTotalRefer": "mediaReplicationTot"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime ContentCapture per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime VideoCapture per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime AudioCapture per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime ActiveSpeakerCapture per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime Compositing-Recording-FHD per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime Compositing-Recording-HD per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime Concatenation per minutes"
+                }
+              }
+            ]
+          },
+          "title": "Media Pipelines",
+          "helpText": "The media capture pipeline feature captures meeting audio, video, and content share streams at a per minute per stream rate* and uploads the contents to the designated S3 bucket. Events and data messages are also uploaded, but there is not a separate charge for capturing these items.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of active speaker video and combined audio streams per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfActiveSpeaker"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of content streams per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfcontentStream"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of combined audio streams per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfcombinedAudio"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of combined video streams per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfcombinedVideo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of composited HD (720P) media stream including combined audio, video, and content share per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfCompositeHD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of composited FHD (1080) media stream including combined audio, video, and content share per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfCompositeFHD"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of media stream concatenation including individual video, combined audio, or composited media per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfMediaStreamConcat"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of average session",
+                "id": "mediaPipelinedurationMins",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for content Capture",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime ContentCapture per minutes"
+                },
+                "id": "amazonChime_contentCapture_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for media video Capture",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime VideoCapture per minutes"
+                },
+                "id": "amazonChime_videoCapture_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for media audio Capture",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime AudioCapture per minutes"
+                },
+                "id": "amazonChime_audioCapture_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for media combined capture",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime ActiveSpeakerCapture per minutes"
+                },
+                "id": "amazonChime_activeSpeakerCapture_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for composite FHD Recording",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime Compositing-Recording-FHD per minutes"
+                },
+                "id": "amazonChime_compositeFHD_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for composite HD Recording",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime Compositing-Recording-HD per minutes"
+                },
+                "id": "amazonChime_compositeHD_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for media stream concatination",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime Concatenation per minutes"
+                },
+                "id": "amazonChime_concate_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfActiveSpeaker",
+                    "noOfcontentStream",
+                    "noOfcombinedAudio",
+                    "noOfcombinedVideo",
+                    "noOfCompositeHD",
+                    "noOfCompositeFHD",
+                    "noOfMediaStreamConcat",
+                    "mediaPipelinedurationMins",
+                    "amazonChime_contentCapture_price",
+                    "amazonChime_videoCapture_price",
+                    "amazonChime_audioCapture_price",
+                    "amazonChime_activeSpeakerCapture_price",
+                    "amazonChime_compositeFHD_price",
+                    "amazonChime_compositeHD_price",
+                    "amazonChime_concate_price"
+                  ],
+                  "subTotalRefer": "mediaReplicationTot",
+                  "id": "unitConvMediaPipeline"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of active speaker video and combined audio streams per month",
+                      "variableUnitLabel": "active apeaker video combined audio streams",
+                      "required": true,
+                      "variableId": "noOfActiveSpeaker"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for media combined capture",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_activeSpeakerCapture_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per media combined",
+                  "decimalPlaces": 2,
+                  "id": "mediaCombinedTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of content streams per month",
+                      "variableUnitLabel": "content streams",
+                      "required": true,
+                      "variableId": "noOfcontentStream"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for content Capture",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_contentCapture_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for content capture",
+                  "decimalPlaces": 2,
+                  "id": "mediaContentCaptureTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of combined audio streams per month",
+                      "variableUnitLabel": "audio streams",
+                      "required": true,
+                      "variableId": "noOfcombinedAudio"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for media audio Capture",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_audioCapture_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for media audio capture",
+                  "decimalPlaces": 2,
+                  "id": "mediaAudioCaptureTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of combined video streams per month",
+                      "variableUnitLabel": "video streams",
+                      "required": true,
+                      "variableId": "noOfcombinedVideo"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for media video Capture",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_videoCapture_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for media video capture",
+                  "decimalPlaces": 2,
+                  "id": "mediaVideoCaptureTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of composited HD (720P) media stream including combined audio, video, and content share per month",
+                      "variableUnitLabel": "composited HD media stream",
+                      "required": true,
+                      "variableId": "noOfCompositeHD"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for composite HD Recording",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_compositeHD_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for composited HD media stream",
+                  "decimalPlaces": 2,
+                  "id": "compHDMedTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of composited FHD (1080) media stream including combined audio, video, and content share per month",
+                      "variableUnitLabel": "composited FHD media stream",
+                      "required": true,
+                      "variableId": "noOfCompositeFHD"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for composite FHD Recording",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_compositeFHD_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for composited FHD media stream",
+                  "decimalPlaces": 2,
+                  "id": "compFHDMedTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of media stream concatenation including individual video, combined audio, or composited media per month",
+                      "variableUnitLabel": "media stream concatenation",
+                      "required": true,
+                      "variableId": "noOfMediaStreamConcat"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "mediaPipelinedurationMins"
+                    },
+                    {
+                      "variableLabel": "price for media stream concatination",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_concate_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for media stream concatenation",
+                  "decimalPlaces": 2,
+                  "id": "mediaStreamConcatTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] per media combined",
+                      "variableUnitLabel": "media combined",
+                      "required": false,
+                      "variableId": "mediaCombinedTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for content capture",
+                      "variableUnitLabel": "content capture",
+                      "required": false,
+                      "variableId": "mediaContentCaptureTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for media audio capture",
+                      "variableUnitLabel": "media audio capture",
+                      "required": false,
+                      "variableId": "mediaAudioCaptureTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for media video capture",
+                      "variableUnitLabel": "media video capture",
+                      "required": false,
+                      "variableId": "mediaVideoCaptureTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for composited HD media stream",
+                      "variableUnitLabel": "composited HD media stream",
+                      "required": false,
+                      "variableId": "compHDMedTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for composited FHD media stream",
+                      "variableUnitLabel": "composited FHD media stream",
+                      "required": false,
+                      "variableId": "compFHDMedTot"
+                    },
+                    {
+                      "variableLabel": "[currency] for media stream concatenation",
+                      "variableUnitLabel": "media stream concatenation",
+                      "required": false,
+                      "variableId": "mediaStreamConcatTot"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for media pipelines",
+                  "decimalPlaces": 2,
+                  "id": "mediaPipelinesFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "mediaCombinedTot",
+                    "mediaContentCaptureTot",
+                    "mediaAudioCaptureTot",
+                    "mediaVideoCaptureTot",
+                    "compHDMedTot",
+                    "compFHDMedTot",
+                    "mediaStreamConcatTot",
+                    "mediaPipelinesFinal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Media pipelines pricing",
+                  "decimalPlaces": 2,
+                  "id": "Media_pipelines_Final",
+                  "subTotalRefer": "mediaPipelinesFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime Compositing-Live-Connector-FHD per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "chimefeatures",
+                  "meteredUnit": "Chime Compositing-Live-Connector-HD per minutes"
+                }
+              }
+            ]
+          },
+          "title": "Live Connector",
+          "helpText": "Live connector enables you to live stream media from Amazon Chime SDK meetings by sending video to streaming platforms such as Amazon Interactive Video Service (IVS), Amazon Elemental MediaLive, Wowza, Facebook Live, and YouTube Live for distribution to a large audience.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of composited HD (720P) media stream including combined audio, video, and content share to one destination per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfCompositeHD_Live"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of composited FHD (1080P) media stream including combined audio, video, and content share to one destination per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "",
+                "id": "noOfCompositeFHD_Live"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration of average session",
+                "id": "liveConnctordurationMins",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for composite live FHD",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime Compositing-Live-Connector-FHD per minutes"
+                },
+                "id": "amazonChime_compositeFHDLive_price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for composite live HD",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Chime Compositing-Live-Connector-HD per minutes"
+                },
+                "id": "amazonChime_compositeHDLive_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfCompositeHD_Live",
+                    "noOfCompositeFHD_Live",
+                    "liveConnctordurationMins",
+                    "amazonChime_compositeFHDLive_price",
+                    "amazonChime_compositeHDLive_price"
+                  ],
+                  "subTotalRefer": "mediaPipelinesFinal",
+                  "id": "unitConvLiveConnector"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of composited HD (720P) media stream including combined audio, video, and content share to one destination per month",
+                      "variableUnitLabel": "composited HD media stream to one destination",
+                      "required": true,
+                      "variableId": "noOfCompositeHD_Live"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "liveConnctordurationMins"
+                    },
+                    {
+                      "variableLabel": "price for composite live HD",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_compositeHDLive_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for composited HD media stream to one destination",
+                  "decimalPlaces": 2,
+                  "id": "liveHDMedTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of composited FHD (1080P) media stream including combined audio, video, and content share to one destination per month",
+                      "variableUnitLabel": "composited FHD media stream to one destination",
+                      "required": true,
+                      "variableId": "noOfCompositeFHD_Live"
+                    },
+                    {
+                      "variableLabel": "Duration of average session",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "liveConnctordurationMins"
+                    },
+                    {
+                      "variableLabel": "price for composite live FHD",
+                      "variableUnitLabel": "per stream-minute",
+                      "required": false,
+                      "variableId": "amazonChime_compositeFHDLive_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] composited FHD media stream to one destination",
+                  "decimalPlaces": 2,
+                  "id": "liveFHDMedTot"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for composited HD media stream to one destination",
+                      "variableUnitLabel": "composited HD media stream to one destination",
+                      "required": false,
+                      "variableId": "liveHDMedTot"
+                    },
+                    {
+                      "variableLabel": "[currency] composited FHD media stream to one destination",
+                      "variableUnitLabel": "composited FHD media stream to one destination",
+                      "required": false,
+                      "variableId": "liveFHDMedTot"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for live connector",
+                  "decimalPlaces": 2,
+                  "id": "liveConnectorTot"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "liveHDMedTot",
+                    "liveFHDMedTot",
+                    "liveConnectorTot"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Live connector pricing",
+                  "decimalPlaces": 2,
+                  "id": "live_connector_Final",
+                  "subTotalRefer": "liveConnectorTot"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,44 @@
+[Unit]
+Description=SERA Frontend Web Server
+Documentation=https://github.com/your-org/sera
+After=network.target sera-backend.service
+Wants=sera-backend.service
+
+[Service]
+Type=exec
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/sera-version/frontend
+Environment=NODE_ENV=production
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/ec2-user
+
+# Start command (build should be done separately)
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/serve -s dist -l 7001 --no-clipboard -c ../serve.json
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+# Process management
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStartSec=60
+TimeoutStopSec=30
+RestartSec=10
+Restart=always
+RestartPreventExitStatus=255
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sera-frontend
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1057 @@
+{
+  "version": "0.0.14",
+  "serviceName": "Amazon Managed Workflows for Apache Airflow",
+  "serviceCode": "amazonManagedWorkflowsForApacheAirflow",
+  "type": "AWSService",
+  "slug": "MWAA",
+  "excludeZeroSubTotals": true,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "sa-east-1"
+  ],
+  "searchKeywords": [
+    "MWAA",
+    "Workflows",
+    "Apache Airflow",
+    "Managed Workflows for Apache Airflow"
+  ],
+  "serviceDescription": "Amazon Managed Workflows for Apache Airflow (MWAA) is a managed orchestration service for Apache Airflow1 that makes it easier to set up and operate end-to-end data pipelines in the cloud at scale. Apache Airflow is an open-source tool used to programmatically author, schedule, and monitor sequences of processes and tasks referred to as “workflows.” With Managed Workflows, you can use Airflow and Python to create workflows without having to manage the underlying infrastructure for scalability, availability, and security.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/managed-workflows-for-apache-airflow/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "mwaa",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/mwaa/[currency]/current/mwaa.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/managed-workflows-for-apache-airflow/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Managed workflows pricing",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/managed-workflows-for-apache-airflow/pricing/"
+            }
+          },
+          "helpText": "With Amazon Managed Workflows for Apache Airflow (MWAA) you pay only for what you use. There are no minimum fees or upfront commitments. You pay for the time your Airflow Environment runs plus any additional auto-scaling to provide more worker or web server capacity.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Select an environment",
+                "mappingDefinitionName": "mwaa",
+                "id": "environmentType",
+                "options": [
+                  {
+                    "label": "Small",
+                    "id": "Small"
+                  },
+                  {
+                    "label": "Medium",
+                    "id": "Medium"
+                  },
+                  {
+                    "label": "Large",
+                    "id": "Large"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "mwaa",
+                        "meteredUnit": "Environment XLarge per Hrs"
+                      }
+                    },
+                    "label": "XL",
+                    "id": "XLarge"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "mwaa",
+                        "meteredUnit": "Environment 2XLarge per Hrs"
+                      }
+                    },
+                    "label": "2XL",
+                    "id": "2XLarge"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Minimum workers",
+                "id": "minWorkers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 25
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Maximum workers",
+                "id": "maxWorkers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 25
+                },
+                "defaultValue": 2,
+                "displayInConfigSummary": true,
+                "description": "Enter value greater than Minimum workers"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Enter value greater than Minimum workers",
+                "label": "Min alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "minAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "worker/s",
+                        "variableId": "MinMaxDiff"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Min alert",
+                        "variableId": "minAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Hours at maximum workers",
+                "id": "numberOfUsageHours",
+                "defaultValue": 1,
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter the number of management events"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Minimum web servers",
+                "id": "Minimum_web_servers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 2,
+                  "maxValue": 25
+                },
+                "defaultValue": 2,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Maximum web servers",
+                "id": "Maximum_web_servers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "maxValue": 5
+                },
+                "defaultValue": 3,
+                "displayInConfigSummary": true,
+                "description": "Enter value greater than Minimum web servers"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Enter value greater than Minimum web servers",
+                "label": "Min alert web",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "minWebAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component web",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "servers",
+                        "variableId": "MinMaxDiff_web"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Min alert web",
+                        "variableId": "minWebAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1Web"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Hours at maximum web servers",
+                "id": "Hours_at_maximum_web_servers",
+                "defaultValue": 1,
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter the number of management events"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of schedulers",
+                "id": "numberOfSchedulers",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 2,
+                  "maxValue": 5
+                },
+                "defaultValue": 2,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data storage size",
+                "id": "dataStorageSize",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "defaultValue": 1,
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for environment",
+                "id": "environmentMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Environment "
+                  },
+                  {
+                    "variableId": "environmentType"
+                  },
+                  {
+                    "constant": " per Hrs"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Environment price",
+                "id": "EnvPrice",
+                "mappingDefinitionName": "mwaa",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for environment",
+                    "variableId": "environmentMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for worker",
+                "id": "workerMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Worker "
+                  },
+                  {
+                    "variableId": "environmentType"
+                  },
+                  {
+                    "constant": " per Hrs"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for webserver",
+                "id": "webMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "WebServer "
+                  },
+                  {
+                    "variableId": "environmentType"
+                  },
+                  {
+                    "constant": " per Hrs"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Worker price",
+                "id": "workerPrice",
+                "mappingDefinitionName": "mwaa",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for worker",
+                    "variableId": "workerMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "webserver price",
+                "id": "webserver_price",
+                "mappingDefinitionName": "mwaa",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for webserver",
+                    "variableId": "webMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit name for scheduler",
+                "id": "schedulerMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Scheduler "
+                  },
+                  {
+                    "variableId": "environmentType"
+                  },
+                  {
+                    "constant": " per Hrs"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Scheduler price",
+                "id": "schedulerPrice",
+                "mappingDefinitionName": "mwaa",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit name for scheduler",
+                    "variableId": "schedulerMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "mwaa",
+                "meteredUnit": {
+                  "allRegions": "Standard per Gigabyte Month"
+                },
+                "id": "storage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "environmentType",
+                    "minWorkers",
+                    "maxWorkers",
+                    "minAlert",
+                    "alertDisplay1",
+                    "numberOfUsageHours",
+                    "Minimum_web_servers",
+                    "Maximum_web_servers",
+                    "minWebAlert",
+                    "alertDisplay1Web",
+                    "Hours_at_maximum_web_servers",
+                    "numberOfSchedulers",
+                    "dataStorageSize",
+                    "environmentMeteredUnitName",
+                    "EnvPrice",
+                    "workerMeteredUnitName",
+                    "webMeteredUnitName",
+                    "workerPrice",
+                    "webserver_price",
+                    "schedulerMeteredUnitName",
+                    "schedulerPrice",
+                    "storage"
+                  ],
+                  "id": "",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Maximum workers",
+                      "variableUnitLabel": "maximum workers",
+                      "required": true,
+                      "variableId": "maxWorkers"
+                    },
+                    {
+                      "variableLabel": "Minimum workers",
+                      "variableUnitLabel": "minimum workers",
+                      "required": true,
+                      "variableId": "minWorkers"
+                    }
+                  ],
+                  "outputUnitLabel": "worker/s",
+                  "decimalPlaces": 0,
+                  "displayInCalculationString": false,
+                  "id": "MinMaxDiff"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Maximum web servers",
+                      "variableUnitLabel": "maximum web servers",
+                      "required": true,
+                      "variableId": "Maximum_web_servers"
+                    },
+                    {
+                      "variableLabel": "Minimum web servers",
+                      "variableUnitLabel": "minimum web servers",
+                      "required": true,
+                      "variableId": "Minimum_web_servers"
+                    }
+                  ],
+                  "outputUnitLabel": "servers",
+                  "decimalPlaces": 0,
+                  "displayInCalculationString": false,
+                  "id": "MinMaxDiff_web"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Environment price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "EnvPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "envCostS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "envCostVar",
+                  "label": "Environment monthly costs",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "envCostS",
+                  "referLabel": "[currency]"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Minimum workers",
+                      "variableUnitLabel": "minimum workers",
+                      "required": true,
+                      "variableId": "minWorkers"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": " included with environment"
+                    }
+                  ],
+                  "outputUnitLabel": "billable minimum workers",
+                  "decimalPlaces": 0,
+                  "id": "billableMinWorker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable minimum workers",
+                      "variableUnitLabel": "minimum workers",
+                      "required": true,
+                      "variableId": "billableMinWorker"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "minimum worker hours",
+                  "decimalPlaces": 2,
+                  "id": "MinWorkerHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Maximum workers",
+                      "variableUnitLabel": "maximum workers",
+                      "required": false,
+                      "variableId": "maxWorkers"
+                    },
+                    {
+                      "variableLabel": "Minimum workers",
+                      "variableUnitLabel": "minimum workers",
+                      "required": false,
+                      "variableId": "minWorkers"
+                    }
+                  ],
+                  "outputUnitLabel": "billable maximum workers",
+                  "decimalPlaces": 0,
+                  "id": "billableMaxWorker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable maximum workers",
+                      "variableUnitLabel": "maximum workers",
+                      "required": false,
+                      "variableId": "billableMaxWorker"
+                    },
+                    {
+                      "variableLabel": "Hours at maximum workers",
+                      "variableUnitLabel": "hours at max",
+                      "required": false,
+                      "variableId": "numberOfUsageHours"
+                    }
+                  ],
+                  "outputUnitLabel": "maximum worker hours",
+                  "decimalPlaces": 2,
+                  "id": "MaxWorkerHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "minimum worker hours",
+                      "variableUnitLabel": "minimum worker hours",
+                      "required": false,
+                      "variableId": "MinWorkerHours"
+                    },
+                    {
+                      "variableLabel": "maximum worker hours",
+                      "variableUnitLabel": "maximum worker hours",
+                      "required": false,
+                      "variableId": "MaxWorkerHours"
+                    }
+                  ],
+                  "outputUnitLabel": "total worker hours",
+                  "decimalPlaces": 2,
+                  "id": "totalWorkerHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total worker hours",
+                      "variableUnitLabel": "worker hours",
+                      "required": false,
+                      "variableId": "totalWorkerHours"
+                    },
+                    {
+                      "variableLabel": "Worker price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": false,
+                      "variableId": "workerPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "WorkerCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "workerCostVar",
+                  "label": "Worker monthly costs",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "WorkerCost",
+                  "referLabel": "[currency]"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Minimum web servers",
+                      "variableUnitLabel": "minimum web servers",
+                      "required": true,
+                      "variableId": "Minimum_web_servers"
+                    },
+                    {
+                      "constant": 2,
+                      "constantUnitLabel": " included with environment"
+                    }
+                  ],
+                  "outputUnitLabel": "billable minimum web servers",
+                  "decimalPlaces": 0,
+                  "id": "billable_minimum_web_servers"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable minimum web servers",
+                      "variableUnitLabel": "minimum web servers",
+                      "required": true,
+                      "variableId": "billable_minimum_web_servers"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "minimum web server hours",
+                  "decimalPlaces": 2,
+                  "id": "minimum_web_server_hours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Maximum web servers",
+                      "variableUnitLabel": "maximum web servers",
+                      "required": false,
+                      "variableId": "Maximum_web_servers"
+                    },
+                    {
+                      "variableLabel": "Minimum web servers",
+                      "variableUnitLabel": "minimum web servers",
+                      "required": false,
+                      "variableId": "Minimum_web_servers"
+                    }
+                  ],
+                  "outputUnitLabel": "billable maximum web servers",
+                  "decimalPlaces": 0,
+                  "id": "billable_maximum_web_servers"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable maximum web servers",
+                      "variableUnitLabel": "maximum web servers",
+                      "required": false,
+                      "variableId": "billable_maximum_web_servers"
+                    },
+                    {
+                      "variableLabel": "Hours at maximum web servers",
+                      "variableUnitLabel": "hours at max",
+                      "required": false,
+                      "variableId": "Hours_at_maximum_web_servers"
+                    }
+                  ],
+                  "outputUnitLabel": "maximum web server hours",
+                  "decimalPlaces": 2,
+                  "id": "maximum_web_server_hours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "minimum web server hours",
+                      "variableUnitLabel": "minimum web server hours",
+                      "required": false,
+                      "variableId": "minimum_web_server_hours"
+                    },
+                    {
+                      "variableLabel": "maximum web server hours",
+                      "variableUnitLabel": "maximum web server hours",
+                      "required": false,
+                      "variableId": "maximum_web_server_hours"
+                    }
+                  ],
+                  "outputUnitLabel": "total web server hours",
+                  "decimalPlaces": 2,
+                  "id": "total_web_server_hours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total web server hours",
+                      "variableUnitLabel": "web server hours",
+                      "required": false,
+                      "variableId": "total_web_server_hours"
+                    },
+                    {
+                      "variableLabel": "webserver price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": false,
+                      "variableId": "webserver_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "WebserverCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "webserverCostVar",
+                  "label": "Web server monthly costs",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "WebserverCost",
+                  "referLabel": "[currency]"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of schedulers",
+                      "variableUnitLabel": "schedulers",
+                      "required": true,
+                      "variableId": "numberOfSchedulers"
+                    },
+                    {
+                      "constant": 2,
+                      "constantUnitLabel": " included with environment"
+                    }
+                  ],
+                  "outputUnitLabel": "billable scheduler instances",
+                  "decimalPlaces": 0,
+                  "id": "billableScheduler"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable scheduler instances",
+                      "variableUnitLabel": "scheduler instances",
+                      "required": true,
+                      "variableId": "billableScheduler"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    },
+                    {
+                      "variableLabel": "Scheduler price",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "schedulerPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "schedulerCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "schedulerCostVar",
+                  "label": "Scheduler monthly costs",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "schedulerCost",
+                  "referLabel": "[currency]"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data storage size",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataStorageSize"
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency] per GB-Month",
+                      "required": true,
+                      "variableId": "storage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "storageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "storageCostVar",
+                  "label": "Meta database monthly costs",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "storageCost",
+                  "referLabel": "[currency]"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Environment monthly costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "envCostVar"
+                    },
+                    {
+                      "variableLabel": "Worker monthly costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "workerCostVar"
+                    },
+                    {
+                      "variableLabel": "Web server monthly costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "webserverCostVar"
+                    },
+                    {
+                      "variableLabel": "Scheduler monthly costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "schedulerCostVar"
+                    },
+                    {
+                      "variableLabel": "Meta database monthly costs",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageCostVar"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalMWAACost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "MinMaxDiff",
+                    "MinMaxDiff_web",
+                    "envCostS",
+                    "envCostVar",
+                    "billableMinWorker",
+                    "MinWorkerHours",
+                    "billableMaxWorker",
+                    "MaxWorkerHours",
+                    "totalWorkerHours",
+                    "WorkerCost",
+                    "workerCostVar",
+                    "billable_minimum_web_servers",
+                    "minimum_web_server_hours",
+                    "billable_maximum_web_servers",
+                    "maximum_web_server_hours",
+                    "total_web_server_hours",
+                    "WebserverCost",
+                    "webserverCostVar",
+                    "billableScheduler",
+                    "schedulerCost",
+                    "schedulerCostVar",
+                    "storageCost",
+                    "storageCostVar",
+                    "totalMWAACost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Managed Workflows with Apache Airflow costs",
+                  "decimalPlaces": 2,
+                  "id": "mwaaTotalCostDisplay",
+                  "subTotalRefer": "totalMWAACost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "mwaa"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

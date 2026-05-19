@@ -1,0 +1,319 @@
+{
+  "version": "0.0.4",
+  "serviceName": "AgentCore Gateway",
+  "serviceCode": "agentCoreGateway",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Agentcore"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrockagentcore",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrockagentcore/[currency]/current/bedrockagentcore.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "runtime",
+      "description": "figure out what to add",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/bedrock/agentcore/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Gateway",
+          "helpText": {
+            "aws": "AgentCore Gateway provides a secure way for agents to discover and use tools along with easy transformation of APIs, Lambda functions, and existing services into agent-compatible tools."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/agentcore/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_agentsessions_per_month",
+                "label": "Number of agent sessions per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The total number of agent sessions expected to run per month."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Total_number_of_tools",
+                "label": "Total Number of tools defined",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000000000
+                },
+                "description": "Total number of tools that agent can access and use to perform real-world tasks"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_search_API_requests_per_session",
+                "label": "Average number of Search API requests invoked per session",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "description": "The average number of times agent invokes a Search API within a single session"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_tool_invocations_per_session",
+                "label": "Average number of tool invocations per session",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "description": "The average number of times agent calls a tool API (includes ListTools and InvokeTool) within a single session"
+              },
+              {
+                "type": "pricing",
+                "id": "index_cost",
+                "label": "Price for index",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "ZuAYvJWOZeT7mGUW3LDKe7wdOVcXjYj74KoPWDjs0Xg"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "search_cost",
+                "label": "Price for search",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "gwWGURzXTn0tekTm8Z3Yb0HQiHxS_lQy4ko4iHbgGKE"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "api_cost",
+                "label": "Price for API",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "kxPakXJpBcRxhevi4KeDTYBTYYcJsYQfOHmMskmvnec"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions Standard Workflows",
+                  "refer": [
+                    "Number_of_agentsessions_per_month",
+                    "Total_number_of_tools",
+                    "Average_search_API_requests_per_session",
+                    "Average_tool_invocations_per_session",
+                    "index_cost",
+                    "search_cost",
+                    "api_cost"
+                  ],
+                  "id": "unitConvertExecutions",
+                  "decimalPlaces": 7,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_search_requests",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_search_API_requests_per_session",
+                      "variableLabel": "Average number of Search API requests invoked per session",
+                      "variableUnitLabel": "requests",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly search requests",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_API_invocations",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_tool_invocations_per_session",
+                      "variableLabel": "Average number of tool invocations per session",
+                      "variableUnitLabel": "invocations",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly API invocations",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_tool_indexing_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Total_number_of_tools",
+                      "variableLabel": "Total Number of tools defined",
+                      "variableUnitLabel": "tools",
+                      "required": true
+                    },
+                    {
+                      "variableId": "index_cost",
+                      "variableLabel": "Price for index",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly tool indexing cost",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_search_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Total_monthly_search_requests",
+                      "variableLabel": "Total monthly search requests",
+                      "variableUnitLabel": "requests",
+                      "required": true
+                    },
+                    {
+                      "variableId": "search_cost",
+                      "variableLabel": "Price for search",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly search API cost",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_API_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Total_monthly_API_invocations",
+                      "variableLabel": "Total monthly API invocations",
+                      "variableUnitLabel": "invocations",
+                      "required": true
+                    },
+                    {
+                      "variableId": "api_cost",
+                      "variableLabel": "Price for API",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly API invocations cost",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_monthly_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "Total_monthly_tool_indexing_cost",
+                      "variableLabel": "Total monthly tool indexing cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Total_monthly_search_cost",
+                      "variableLabel": "Total monthly search API cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Total_monthly_API_cost",
+                      "variableLabel": "Total monthly API invocations cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly cost",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Total_monthly_search_requests",
+                    "Total_monthly_API_invocations",
+                    "Total_monthly_tool_indexing_cost",
+                    "Total_monthly_search_cost",
+                    "Total_monthly_API_cost",
+                    "Total_monthly_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Gaetway cost",
+                  "decimalPlaces": 7,
+                  "id": "tot_cost_runtime",
+                  "subTotalRefer": "Total_monthly_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

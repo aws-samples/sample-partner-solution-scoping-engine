@@ -1,0 +1,177 @@
+{
+  "version": "0.0.12",
+  "serviceName": "SageMaker Autopilot",
+  "serviceCode": "sageMakerAutopilot",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist",
+    "Auto ML",
+    "AML",
+    "Autopilot"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-autopilot",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-autopilot.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/autopilot/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "SageMaker Autopilot",
+      "description": "",
+      "id": "sagemakerAutopilot",
+      "helpText": "Amazon SageMaker Autopilot eliminates the heavy lifting of building ML models. You simply provide a tabular dataset and select the target column to predict, and SageMaker Autopilot will automatically explore different solutions to find the best model. You then can directly deploy the model to production with just one click or iterate on the recommended solutions to further improve the model quality.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/autopilot/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon SageMaker Autopilot",
+          "helpText": "Amazon SageMaker Autopilot eliminates the heavy lifting of building ML models. You simply provide a tabular dataset and select the target column to predict, and SageMaker Autopilot will automatically explore different solutions to find the best model. You then can directly deploy the model to production with just one click or iterate on the recommended solutions to further improve the model quality.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/autopilot/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "content": "<b>Note:</b> Autopilot takes a usage-based billing approach. The exact cost for an Autopilot job is calculated based on the utilization of the compute resources, i.e. the number of instances used by Autopilot for the duration of the AutoML training job. The resource usage largely depends on your training dataset (such as number of rows and columns) and job attributes (such as problem type, training mode, max runtime, etc.). The estimation logic provided below is derived based on the costs associated with historical Autopilot job runs, and does not accurately reflect the actual bill amount for your Autopilot jobs.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "apAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_Autopilot_Jobs_per_month",
+                "label": "Number of Autopilot Jobs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of Autopilot Jobs per month",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_training_hours_per_autopilot_job",
+                "label": "Number of training hours per Autopilot job",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1e-18,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter Number of training hours per autopilot job",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for sagemaker autopilot",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-autopilot",
+                "meteredUnit": {
+                  "allRegions": "M0VAjEzFoOs0tYoD9_3MmsItOSxV3BhU_Q-xye8pmj4"
+                },
+                "id": "price_for_sagemaker_autopilot"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "autoPilotUnitConv",
+                  "refer": [
+                    "apAlert",
+                    "Number_of_Autopilot_Jobs_per_month",
+                    "Number_of_training_hours_per_autopilot_job",
+                    "price_for_sagemaker_autopilot"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Autopilot Jobs per month",
+                      "variableUnitLabel": "Autopilot job(s) per month",
+                      "required": true,
+                      "variableId": "Number_of_Autopilot_Jobs_per_month"
+                    },
+                    {
+                      "variableId": "Number_of_training_hours_per_autopilot_job",
+                      "variableLabel": "Number of training hours per Autopilot job",
+                      "variableUnitLabel": "training hours per Autopilot job(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "price_for_sagemaker_autopilot",
+                      "variableLabel": "price for sagemaker autopilot",
+                      "variableUnitLabel": "[currency] estimated per training hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total estimated monthly Autopilot cost)",
+                  "decimalPlaces": 4,
+                  "id": "tot_autopilot"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tot_autopilot"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total estimated cost for Autopilot",
+                  "decimalPlaces": 2,
+                  "id": "tot_autopilot_final",
+                  "subTotalRefer": "tot_autopilot"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

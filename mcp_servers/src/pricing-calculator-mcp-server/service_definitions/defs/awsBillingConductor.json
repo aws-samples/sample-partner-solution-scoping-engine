@@ -1,0 +1,330 @@
+{
+  "version": "0.0.8",
+  "serviceName": "AWS Billing Conductor",
+  "serviceCode": "awsBillingConductor",
+  "type": "AWSService",
+  "slug": "billingconductor",
+  "regions": [],
+  "searchKeywords": [
+    "AWS Billing Conductor"
+  ],
+  "serviceDescription": "With AWS Billing Conductor, you only pay for the pro forma billing records you generate. AWS Billing Conductor gives you the ability to model your billing in a way that more closely matches your organizational structure while retaining the existing billing relationship you have with AWS. To achieve this alternative view of your billing data, the AWS Billing Conductor generates a second, pro forma version of your billing records, consistent with your desired account segmentation, rate management, and custom line items.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "billingconductor",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/billingconductor/[currency]/current/billingconductor.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/aws-cost-management/aws-billing-conductor/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/aws-cost-management/aws-billing-conductor/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "AWS Billing Conductor",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "62-day free trial",
+                "content": "You can get started with AWS Billing Conductor by using the 62-day (2 month) free trial. During the trial, there is no charge for the accounts you assign to a billing group. Once the trial ends, you will be charged based on the aggregate number of accounts within your billing group(s).",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "Info_bc"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of accounts",
+                "id": "Number_of_Accounts",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 50000
+                },
+                "placeholder": "Enter number of accounts",
+                "description": "Accounts assigned to proforma billing groups."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Calculate percentage of total AWS cost?",
+                "description": "",
+                "options": [
+                  {
+                    "label": "No",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "validations": {
+                  "required": false
+                },
+                "id": "awsPctCost"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "awsPctCost"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total monthly AWS cost",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "description": "",
+                "id": "Total_AWS_Cost"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "bc_cost"
+                    },
+                    {
+                      "type": "component",
+                      "id": "Total_AWS_Cost"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid inputs",
+                "label": "info alert",
+                "content": "Your estimated costs for AWS Billing Conductor exceed your projected monthly costs. Please review your inputs and try again.",
+                "alertType": "error",
+                "isDismissable": true,
+                "allowSaveEstimateOnAlert": true,
+                "id": "maxAlert"
+              },
+              {
+                "type": "pricing",
+                "id": "Pricing_for_billing_condcutor",
+                "label": "Pricing for billing condcutor",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "billingconductor",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 500,
+                      "meteredUnit": "AWS Billing Conductor proforma-accounts 0 to 500"
+                    },
+                    {
+                      "startOfTier": 501,
+                      "endOfTier": 2000,
+                      "meteredUnit": "AWS Billing Conductor proforma-accounts 500 to 2000"
+                    },
+                    {
+                      "startOfTier": 2001,
+                      "endOfTier": -1,
+                      "meteredUnit": "AWS Billing Conductor proforma-accounts 2000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Info_bc",
+                    "Number_of_Accounts",
+                    "awsPctCost",
+                    "Total_AWS_Cost",
+                    "maxAlert",
+                    "Pricing_for_billing_condcutor"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvBC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "Number_of_Accounts",
+                  "inputReferLabel": "Number of accounts",
+                  "tieredPricingRefer": "Pricing_for_billing_condcutor",
+                  "tieredPricingReferLabel": "Pricing for billing condcutor",
+                  "inputUnitLabel": "accounts",
+                  "decimalPlaces": 2,
+                  "id": "bc_cost",
+                  "outputUnitLabel": "[currency] for accounts evaluated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for accounts evaluated",
+                      "variableUnitLabel": "[currency] for accounts evaluated ",
+                      "required": true,
+                      "variableId": "bc_cost"
+                    },
+                    {
+                      "variableLabel": "Number of accounts",
+                      "variableUnitLabel": "accounts",
+                      "required": true,
+                      "variableId": "Number_of_Accounts"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] average cost per account (monthly)",
+                  "decimalPlaces": 2,
+                  "id": "Average_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Average cost per account (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] average cost per account (monthly)",
+                  "id": "avg_cst_var",
+                  "refer": "Average_cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for accounts evaluated",
+                      "variableUnitLabel": "[currency] for accounts evaluated ",
+                      "required": true,
+                      "variableId": "bc_cost"
+                    },
+                    {
+                      "variableLabel": "Total monthly AWS cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Total_AWS_Cost"
+                    }
+                  ],
+                  "outputUnitLabel": "fractional cost",
+                  "decimalPlaces": 5,
+                  "id": "tot_pct_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "fractional cost",
+                      "variableUnitLabel": "fractional cost ",
+                      "required": true,
+                      "variableId": "tot_pct_cost"
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "percent"
+                    }
+                  ],
+                  "outputUnitLabel": "% of total AWS cost",
+                  "decimalPlaces": 2,
+                  "id": "pct_of_tot_cst"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "% of total cost",
+                  "displayInCalculationString": false,
+                  "useCurrency": false,
+                  "referLabel": "% of total AWS cost",
+                  "id": "pct_var",
+                  "refer": "pct_of_tot_cst",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly cost for accounts evaluated",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for accounts evaluated",
+                  "id": "to_cst_var",
+                  "refer": "bc_cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "bc_cost",
+                    "Average_cost",
+                    "avg_cst_var",
+                    "tot_pct_cost",
+                    "pct_of_tot_cst",
+                    "pct_var",
+                    "to_cst_var"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Billing Conductor cost",
+                  "decimalPlaces": 3,
+                  "id": "SolutionDisplay2",
+                  "subTotalRefer": "to_cst_var"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

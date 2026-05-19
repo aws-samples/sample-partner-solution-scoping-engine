@@ -1,0 +1,199 @@
+{
+  "version": "0.0.15",
+  "serviceName": {
+    "aws": "AWS Glue Data Catalog Statistics",
+    "aws-cn": "Amazon Glue Data Catalog Statistics"
+  },
+  "serviceCode": "awsGlueDataCatalogStatistics",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "glue",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glue/[currency]/current/glue.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Data Catalog Statistics",
+      "id": "glueOptimization",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/glue/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "glue",
+              "meteredUnit": "ojtqQX0mv8kbJtc24eHZQb2Na73RLc9y4DGsFWivvkE"
+            }
+          },
+          "title": "Data Catalog Statistics",
+          "defaultExpansion": true,
+          "expandable": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Workers",
+                "description": "A single Data Processing Unit (DPU) provides 4 vCPU and 16 GB of memory.",
+                "id": "numberOfDPU",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 2,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for statistics collection",
+                "description": "You are billed in increments of 1 second, rounded up to the nearest second, with a 1-minute minimum duration for each statistics collection.",
+                "id": "durationForWorker",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hour",
+                "decimalPlaces": 2,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for Worker",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "ojtqQX0mv8kbJtc24eHZQb2Na73RLc9y4DGsFWivvkE"
+                },
+                "id": "Glue_worker"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfDPU",
+                    "durationForWorker",
+                    "Glue_worker"
+                  ],
+                  "subTotalRefer": "",
+                  "id": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Duration for statistics collection",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "durationForWorker"
+                    },
+                    {
+                      "constant": 0.02,
+                      "constantUnitLabel": "hours (minimum billable duration)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "hours (billable duration)",
+                  "decimalPlaces": 2,
+                  "id": "workerDuration"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDPU",
+                      "variableLabel": "Number of Workers",
+                      "variableUnitLabel": "workers",
+                      "required": true
+                    },
+                    {
+                      "variableId": "workerDuration",
+                      "variableLabel": "hours (billable duration)",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Glue_worker",
+                      "variableLabel": "Price for Worker",
+                      "variableUnitLabel": "[currency] per DPU-hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "GlueWorker_Charge"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "workerDuration",
+                    "GlueWorker_Charge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data Catalog Statistics cost",
+                  "decimalPlaces": 2,
+                  "id": "GlueWorkers_Disp",
+                  "subTotalRefer": "GlueWorker_Charge"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

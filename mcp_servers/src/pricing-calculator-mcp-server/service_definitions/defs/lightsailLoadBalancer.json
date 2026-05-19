@@ -1,0 +1,188 @@
+{
+  "version": "0.0.4",
+  "serviceName": "Lightsail Load Balancer",
+  "serviceCode": "lightsailLoadBalancer",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Load Balancer",
+      "id": "lightsailLoadBalancer",
+      "cards": [
+        {
+          "title": "Load Balancer",
+          "helpText": "No need to monitor bandwidth or connections. Lightsail load balancers are one simple price, per month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "",
+                "id": "lightsailLoadBalancerText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "loadBalancerUsage",
+                "label": "Load Balancer usage",
+                "options": [
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "defaultValue": 730,
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 730
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "lightsailLoadBalancerPrice",
+                "label": "Price lightsail load balancer",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lightsail",
+                "meteredUnit": {
+                  "allRegions": "Lightsail Load Balancer per Hrs"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "lightsailLoadBalancerText",
+                    "loadBalancerUsage",
+                    "lightsailLoadBalancerPrice"
+                  ],
+                  "id": "unitConvertBlockStorage",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "lightsailLoadBalancerCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "loadBalancerUsage",
+                      "variableLabel": "Load Balancer usage",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "lightsailLoadBalancerPrice",
+                      "variableLabel": "Price lightsail load balancer",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Lightsail load balancer",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "lightsailLoadBalancerCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lightsail Load Balancer cost",
+                  "decimalPlaces": 2,
+                  "id": "lightsailLoadBalancerCostDisplay",
+                  "subTotalRefer": "lightsailLoadBalancerCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

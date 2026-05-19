@@ -1,0 +1,594 @@
+{
+  "version": "0.0.24",
+  "serviceName": "Amazon Healthlake",
+  "serviceCode": "amazonHealthlake",
+  "slug": "HealthLake",
+  "type": "AWSService",
+  "excludeZeroSubTotals": true,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "FHIR",
+    "HIPAA",
+    "NLP"
+  ],
+  "serviceDescription": "Amazon HealthLake is a HIPAA-eligible service offering healthcare and life sciences companies a complete view of individual or patient population health data for query and analytics at scale.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/healthlake/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "healthlake",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/healthlake/[currency]/current/healthlake.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "Amazon HealthLake is a HIPAA-eligible service offering healthcare and life sciences companies a complete view of individual or patient population health data for query and analytics at scale.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/healthlake/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "healthlake",
+                  "meteredUnit": "FHIRDataStorage per GB-Mo from 0 to 10"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "healthlake",
+                  "meteredUnit": "FHIRDataStorage per GB-Mo from 10 to Inf"
+                }
+              }
+            ]
+          },
+          "title": "Data Store and Data Storage Settings",
+          "helpText": "The Data Store helps you index all your information in the FHIR format for easy querying. Data import and your first 10 GB of storage are included across all of your Data Stores.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/healthlake/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Data Store Pricing",
+                "label": "info alert",
+                "content": "<p style='padding: 20'>The Data Store is always running, offering you the ability to query the information anytime, so you are charged by the hour.Data Store price is calculated based on average hours per month.</p>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "freeTierAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "dataStoreSize",
+                "label": "Additional Data Storage",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Storage Amount in GB",
+                "description": "Data import and your first 10 GB of FHIR and index storage are included per Data Store."
+              },
+              {
+                "type": "pricing",
+                "id": "dataStorePrice",
+                "label": "Price for data Store per hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "healthlake",
+                "meteredUnit": {
+                  "allRegions": "FHIRDataStore per hours"
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tiered Storage Price",
+                "id": "storageTieredPrice",
+                "mappingDefinitionName": "healthlake",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10,
+                      "meteredUnit": "AdvancedDataStorage per GB-Mo from 0 to 10"
+                    },
+                    {
+                      "startOfTier": 11,
+                      "endOfTier": -1,
+                      "meteredUnit": "AdvancedDataStorage per GB-Mo from 10 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "freeTierAlert",
+                    "dataStoreSize",
+                    "dataStorePrice",
+                    "storageTieredPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataStoreMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "Average Hours per month"
+                    },
+                    {
+                      "variableId": "dataStorePrice",
+                      "variableLabel": "Price for data Store per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for Data Store",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional Data Storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataStoreSize"
+                    }
+                  ],
+                  "outputUnitLabel": "rounded GB",
+                  "id": "storageSizeRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "storageSizeRounded",
+                  "inputReferLabel": "rounded GB",
+                  "tieredPricingRefer": "storageTieredPrice",
+                  "tieredPricingReferLabel": "Tiered Storage Price",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 6,
+                  "id": "storageCost",
+                  "outputUnitLabel": "[currency] per Month for Additional Data Storage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] per Month for Data Store",
+                      "variableId": "dataStoreMonthlyCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] per Month for Additional Data Storage",
+                      "variableId": "storageCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "dataStoreMonthlyCost",
+                    "storageSizeRounded",
+                    "storageCost",
+                    "totalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Data Store and Storage Cost",
+                  "decimalPlaces": 2,
+                  "id": "dataStoreTotalPrice",
+                  "subTotalRefer": "totalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "healthlake",
+                  "meteredUnit": "FHIRQueries per Queries from 0 to 2520000"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "healthlake",
+                  "meteredUnit": "FHIRQueries per Queries from 2520000 to Inf"
+                }
+              }
+            ]
+          },
+          "title": "FHIR Query Settings",
+          "helpText": "The included FHIR queries are calculated on a per query per month basis at the end of monthly billing cycle. The first 3,500 queries per hour are included across your Data Stores.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/healthlake/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "querySize",
+                "label": "Total Number Of Queries per Month",
+                "options": [
+                  {
+                    "label": "exact numbers",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "millions",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billions",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "exact numbers",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of Queries",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tiered Query Price",
+                "id": "queryTieredPrice",
+                "mappingDefinitionName": "healthlake",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 2520000,
+                      "meteredUnit": "FHIRQueries per Queries from 0 to 2520000"
+                    },
+                    {
+                      "startOfTier": 2520001,
+                      "endOfTier": -1,
+                      "meteredUnit": "FHIRQueries per Queries from 2520000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "querySize",
+                    "queryTieredPrice"
+                  ],
+                  "subTotalRefer": "totalCost",
+                  "id": "queryCapConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Tiered Query Price",
+                  "tieredPricingRefer": "queryTieredPrice",
+                  "inputReferLabel": "Total Number Of Queries per Month",
+                  "inputRefer": "querySize",
+                  "inputUnitLabel": "query",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] for Query Capacity",
+                  "id": "tieredMathStandard"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMathStandard"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Query cost",
+                  "decimalPlaces": 2,
+                  "id": "queCap",
+                  "subTotalRefer": "tieredMathStandard"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Integrated NLP Settings",
+          "helpText": "With integrated medical NLP, you can automatically extract entities (e.g., medical procedures, medications), entity relationships (e.g., a medication and its dosage), entity traits (e.g., positive or negative test result, time of procedure), and Protected Health Information (PHI) data from your medical text.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/healthlake/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number Of NLP Characters",
+                "id": "numberOfCharacters",
+                "options": [
+                  {
+                    "label": "exact characters",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "millions",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billions",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "exact characters",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter Number of Characters",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "NLPPrice",
+                "label": "Price per Unit",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "healthlake",
+                "meteredUnit": {
+                  "allRegions": "IntegratedMedicalNLP per Units"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfCharacters",
+                    "NLPPrice"
+                  ],
+                  "subTotalRefer": "tieredMathStandard",
+                  "id": "NLPSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 100,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Number Of NLP Characters",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "variableId": "numberOfCharacters"
+                    }
+                  ],
+                  "outputUnitLabel": "rounded Characters",
+                  "id": "NLPCharSizeRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "NLPMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "NLPCharSizeRounded",
+                      "variableLabel": "rounded Characters",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.01,
+                      "constantUnitLabel": "unit"
+                    },
+                    {
+                      "variableId": "NLPPrice",
+                      "variableLabel": "Price per Unit",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for Integrated NLP",
+                  "decimalPlaces": 9
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLPCharSizeRounded",
+                    "NLPMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total NLP Cost",
+                  "decimalPlaces": 4,
+                  "id": "NLPTotalPrice",
+                  "subTotalRefer": "NLPMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Export settings",
+          "helpText": "You are charged for exporting the newly structured data in FHIR format from the Amazon HealthLake Data Store to Amazon S3.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/healthlake/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "exportSize",
+                "label": "Exported Data per GB",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "placeholder": "Enter Export Amount in GB"
+              },
+              {
+                "type": "pricing",
+                "id": "exportPrice",
+                "label": "Price for export per GB",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "healthlake",
+                "meteredUnit": {
+                  "allRegions": "FHIRDataExport per GB"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "exportMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "exportSize",
+                      "variableLabel": "Exported Data per GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "exportPrice",
+                      "variableLabel": "Price for export per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] For data export",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "exportSize",
+                    "exportPrice",
+                    "exportMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Data Export Cost",
+                  "decimalPlaces": 2,
+                  "id": "exportTotalPrice",
+                  "subTotalRefer": "exportMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "healthlake"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

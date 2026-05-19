@@ -1,0 +1,2111 @@
+{
+  "version": "0.0.109",
+  "serviceName": "Amazon RDS for SQL server",
+  "serviceCode": "amazonRDSForSQLServer",
+  "type": "AWSService",
+  "slug": "RDSSQLServer",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Database",
+    "Aurora",
+    "MySQL",
+    "MariaDB",
+    "Postgres",
+    "Oracle",
+    "SQL Server",
+    "Database",
+    "PostgreSQL",
+    "Microsoft SQL Server",
+    "Relational Database Service",
+    "Database",
+    "database hosting",
+    "hosted database",
+    "Managed database",
+    "microsoft",
+    "sql",
+    "msft",
+    "Managed Service",
+    "MS",
+    "Managed",
+    "win"
+  ],
+  "serviceDescription": "SQL Server is a relational database management system developed by Microsoft. Amazon RDS for SQL Server makes it easy to set up, operate, and scale SQL Server deployments in the cloud.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rds-sqlserver-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-sqlserver-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "rds-sqlserver-ondemand",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-sqlserver-ondemand.json"
+    },
+    {
+      "mappingDefinitionName": "rds-proxy",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-proxy.json"
+    },
+    {
+      "mappingDefinitionName": "cloudwatch",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cloudwatch/[currency]/current/cloudwatch.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/rds/"
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "RDS for SQL server",
+      "description": "",
+      "id": "rdsForOracle",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/rds/sqlserver/pricing/",
+          "overrides": {
+            "aws-cn": "https://www.amazonaws.cn/en/rds/pricing/"
+          }
+        }
+      },
+      "cards": [
+        {
+          "title": "Select RDS for SQL server instances",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "alert",
+                "content": {
+                  "aws": "Qualified customers may receive promotional credits,<a href='https://aws.amazon.com/migration-acceleration-program/'>AWS Investment through AWS Migration Acceleration Program (MAP)</a> or other discounts for Amazon RDS for SQL Server. Contact sales to learn about these programs.",
+                  "aws-cn": "Qualified customers may receive promotional credits,<a href='https://amazonaws.cn/migration-acceleration-program/'>Investment through Migration Acceleration Program (MAP)</a> or other discounts for Amazon RDS for SQL Server. Contact sales to learn about these programs."
+                },
+                "alertType": "info",
+                "isDismissable": false,
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-us-gov"
+                ],
+                "id": "alertId"
+              },
+              {
+                "label": "RDS for SQL Server",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "rds-sqlserver-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm",
+                  "upfront": "upfront_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand",
+                        "PurchaseOption": ""
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "TermType",
+                  "Deployment Option",
+                  "License Model",
+                  "Database Edition",
+                  "LeaseContractLength",
+                  "PurchaseOption"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "description": "Enter the number of DB instances that you need.",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "exportTagsAsValue": {
+                      "vCPU": {
+                        "id": "vCPU",
+                        "label": "vCPU"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Deployment option",
+                    "type": "dropDown",
+                    "selectorId": "Deployment Option",
+                    "dependent": "TermType",
+                    "exportValueAs": "deploymentStrategy"
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "exportValueAs": "term"
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "selectorId": "PurchaseOption",
+                    "dependent": "LeaseContractLength",
+                    "exportValueAs": "purchaseOption"
+                  },
+                  {
+                    "label": "License",
+                    "selectorId": "License Model",
+                    "type": "dropDown"
+                  },
+                  {
+                    "label": "Database edition",
+                    "selectorId": "Database Edition",
+                    "type": "dropDown",
+                    "dependent": [
+                      "Deployment Option",
+                      "TermType",
+                      "License Model"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "RDS for SQL server cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "rdsForSqlServer_generated_0"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "RDS for SQL server cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm",
+                  "id": "rdsForSqlServer_generated_1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "RDS Proxy",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be creating an RDS Proxy with the database?",
+                "id": "createRDSProxy",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-proxy",
+                "meteredUnit": {
+                  "allRegions": "RDSProxy Aurora MySQL Hrs"
+                },
+                "label": "price for SQL Server RDS Proxy",
+                "id": "sqlServer_RDSProxyPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "createRDSProxy",
+                    "sqlServer_RDSProxyPrice"
+                  ],
+                  "id": "rdsForSqlServer_generated_13",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "id": "maxVCPUs",
+                  "outputUnitLabel": "vCPUs",
+                  "decimalPlaces": 0,
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableId": "vCPU",
+                      "variableUnitLabel": "vCPUs",
+                      "minValue": 0
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 2
+                    }
+                  ]
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "createRDSProxy"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableLabel": "vCPUs",
+                      "variableUnitLabel": "vCPU",
+                      "required": true,
+                      "variableId": "maxVCPUs"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for SQL Server RDS Proxy",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "sqlServer_RDSProxyPrice",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "sqlServer_RDSProxyCost",
+                  "variableName": "RDS for SQL Server Proxy Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "maxVCPUs",
+                    "sqlServer_RDSProxyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly Cost for RDS Proxy",
+                  "decimalPlaces": 2,
+                  "id": "sqlServer_ProxyTotalCost",
+                  "subTotalRefer": "sqlServer_RDSProxyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "description": "Enter the amount of storage you'd like for each instance.",
+          "helpText": "Amazon RDS provides you the ability to select from 20 GiB to 64 TiB of associated General Purpose (SSD) storage capacity for your primary data set. With General Purpose (SSD), you will be charged for storage you provision. However, you will not be charged for the I/Os you consume. Amazon RDS provides you the ability to provision the I/O capacity your database needs. You can provision and scale from 1,000 IOPS to 80,000 IOPS and 100 GiB to 64 TiB of storage. Note that maximum realized IOPS will vary by database workload. With Provisioned IOPS SSD storage, you will be charged for the IOPS and storage you provision.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/sqlserver/pricing/#Database_Storage",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/rds/pricing"
+              }
+            }
+          },
+          "cardType": "rds",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage for each RDS instance",
+                "id": "storageType",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Multi AZ SQL Server Mirror General Purpose"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Multi-AZ"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Single AZ General Purpose"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Single-AZ"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "General Purpose"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Multi AZ SQL Server Mirror General Purpose-GP3"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Multi-AZ"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Single AZ General Purpose-GP3"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Single-AZ"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "General Purpose SSD (gp3)",
+                    "id": "General Purpose-GP3"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Multi AZ SQL Server Mirror Provisioned IOPS"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Multi-AZ"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Single AZ Provisioned IOPS"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Single-AZ"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Provisioned IOPS SSD (io1)",
+                    "id": "Provisioned IOPS"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Multi AZ SQL Server Mirror Provisioned IOPS-IO2"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Multi-AZ"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Single AZ Provisioned IOPS-IO2"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Single-AZ"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Provisioned IOPS SSD (io2)",
+                    "id": "Provisioned IOPS-IO2"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Multi AZ SQL Server Mirror Magnetic"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Multi-AZ"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "and": [
+                            {
+                              "exists": {
+                                "type": "meteredUnit",
+                                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                                "meteredUnit": "Database Storage Single AZ Magnetic"
+                              }
+                            },
+                            {
+                              "==": [
+                                {
+                                  "type": "component",
+                                  "id": "deploymentStrategy"
+                                },
+                                "Single-AZ"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Magnetic (previous generation)",
+                    "id": "Magnetic"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "General Purpose",
+                "validations": {
+                  "required": true
+                },
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Provisioned IOPS"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "provisioningIOPS",
+                "label": "Provisioning IOPS",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1000,
+                  "maxValue": 256000
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Provisioned IOPS-IO2"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "provisionedIOPSIO2",
+                "label": "Provisioned IOPS IO2",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1000,
+                  "maxValue": 256000
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 100,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 20,
+                  "maxValue": 16384
+                },
+                "delegate": [
+                  {
+                    "==": [
+                      {
+                        "id": "storageType",
+                        "type": "component"
+                      },
+                      "Provisioned IOPS-IO2"
+                    ],
+                    "validations": {
+                      "minValue": 20,
+                      "maxValue": 65536
+                    }
+                  },
+                  {
+                    "==": [
+                      {
+                        "id": "storageType",
+                        "type": "component"
+                      },
+                      "Magnetic"
+                    ],
+                    "validations": {
+                      "minValue": 20,
+                      "maxValue": 3072
+                    }
+                  }
+                ],
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "General Purpose-GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "General Purpose SSD (gp3) - IOPS",
+                "apiDescription": "Required only if the storageType is General Purpose SSD (gp3)",
+                "id": "gp3Iops",
+                "defaultValue": 3000,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 3000,
+                  "maxValue": 16000
+                },
+                "delegate": {
+                  "==": [
+                    {
+                      "id": "storageType",
+                      "type": "component"
+                    },
+                    "General Purpose-GP3"
+                  ],
+                  "validations": {
+                    "required": true,
+                    "minValue": 3000,
+                    "maxValue": 16000
+                  }
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "gp3 supports a max of 16,000 IOPS per volume"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "General Purpose-GP3"
+                  ]
+                },
+                "type": "input",
+                "subType": "throughput",
+                "label": "General Purpose SSD (gp3) - Throughput",
+                "options": [
+                  {
+                    "label": "MiBps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "defaultValue": 125,
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MiBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 125,
+                  "maxValue": 1000
+                },
+                "description": "gp3 supports a max of 1000 MiBps per volume",
+                "id": "gp3Throughput"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "gp3StorageRatioChecker"
+                        },
+                        500
+                      ]
+                    },
+                    {
+                      ">": [
+                        {
+                          "type": "component",
+                          "id": "gp3ThroughputRatioChecker"
+                        },
+                        0.25
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid IOPS to Provisioned Throughput ratio",
+                "label": "info alert",
+                "content": {
+                  "aws": "This calculator does not enforce the IOPS to GB or IOPS to Provisioned Throughput ratios for gp3. The maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GiB. The maximum ratio of provisioned throughput to provisioned IOPS is .25 MiBs per IOPS. For more information, see the General Purpose (gp3). For more information, see the General Purpose (gp3) <a href='https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html#gp3-storage'>user guide</a>.",
+                  "aws-cn": "This calculator does not enforce the IOPS to GB or IOPS to Provisioned Throughput ratios for gp3. The maximum ratio of provisioned IOPS to provisioned volume size is 500 IOPS per GiB. The maximum ratio of provisioned throughput to provisioned IOPS is .25 MiBs per IOPS. For more information, see the General Purpose (gp3). For more information, see the General Purpose (gp3) <a href='https://docs.amazonaws.cn/AmazonRDS/latest/UserGuide/CHAP_Storage.html#gp3-storage'>user guide</a>."
+                },
+                "alertType": "error",
+                "isDismissable": true,
+                "id": "ebsThroughputRatioAlert"
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "rdsStorageType",
+                "originalId": "deploymentStrategy",
+                "replacements": [
+                  {
+                    "originalString": "Single-AZ",
+                    "replaceString": "Single AZ"
+                  },
+                  {
+                    "originalString": "Multi-AZ",
+                    "replaceString": "Multi AZ SQL Server Mirror"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "rdsStorageTypeNonSQLServerMirror",
+                "originalId": "deploymentStrategy",
+                "replacements": [
+                  {
+                    "originalString": "Single-AZ",
+                    "replaceString": "Single AZ"
+                  },
+                  {
+                    "originalString": "Multi-AZ",
+                    "replaceString": "Multi AZ"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "RDS storage type",
+                "id": "rdsStorageTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Database Storage "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  },
+                  {
+                    "constant": " "
+                  },
+                  {
+                    "variableId": "storageType"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "price for iops metered unit name",
+                "id": "iopsMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "metered unit for iops-io2",
+                "id": "iopsio2MeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned IO2 IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageType"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "meteredunit for gp3 iops",
+                "id": "gp3IopsTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned GP3 IOPS "
+                  },
+                  {
+                    "variableId": "rdsStorageTypeNonSQLServerMirror"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "meteredunit for provisioned throughput",
+                "id": "provisionedThroughputTypeMeteredUnitName",
+                "operands": [
+                  {
+                    "constant": "Provisioned Throughput "
+                  },
+                  {
+                    "variableId": "rdsStorageTypeNonSQLServerMirror"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for RDS storage",
+                "id": "priceForRdsStorage",
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "RDS storage type",
+                    "variableId": "rdsStorageTypeMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for iops",
+                "id": "priceForIOPS",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "price for iops metered unit name",
+                    "variableId": "iopsMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for iops io2",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "metered unit for iops-io2",
+                    "variableId": "iopsio2MeteredUnitName"
+                  }
+                ],
+                "id": "priceForIopsIo2"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for gp3 iops",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "meteredunit for gp3 iops",
+                    "variableId": "gp3IopsTypeMeteredUnitName"
+                  }
+                ],
+                "id": "priceForGp3Iops"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for provisioned throughput",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "refers": [
+                  {
+                    "variableLabel": "meteredunit for provisioned throughput",
+                    "variableId": "provisionedThroughputTypeMeteredUnitName"
+                  }
+                ],
+                "id": "priceForProvisionedThroughput"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "rdsForSqlServer_generated_3",
+                  "refer": [
+                    "storageType",
+                    "provisioningIOPS",
+                    "provisionedIOPSIO2",
+                    "storageAmount",
+                    "gp3Iops",
+                    "gp3Throughput",
+                    "ebsThroughputRatioAlert",
+                    "rdsStorageType",
+                    "rdsStorageTypeNonSQLServerMirror",
+                    "rdsStorageTypeMeteredUnitName",
+                    "iopsMeteredUnitName",
+                    "iopsio2MeteredUnitName",
+                    "gp3IopsTypeMeteredUnitName",
+                    "provisionedThroughputTypeMeteredUnitName",
+                    "priceForRdsStorage",
+                    "priceForIOPS",
+                    "priceForIopsIo2",
+                    "priceForGp3Iops",
+                    "priceForProvisionedThroughput"
+                  ],
+                  "subTotalRefer": "sqlServer_RDSProxyCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    },
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to GB ratio (gp3)",
+                  "decimalPlaces": 2,
+                  "id": "gp3StorageRatioChecker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    }
+                  ],
+                  "outputUnitLabel": "IOPS to Throughput ratio",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputRatioChecker"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "storageAmount",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for RDS storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForRdsStorage"
+                    },
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "iopsCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS",
+                      "variableUnitLabel": "Provisioned IOPS",
+                      "required": true,
+                      "variableId": "provisioningIOPS"
+                    },
+                    {
+                      "variableLabel": "price for iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForIOPS"
+                    },
+                    {
+                      "variableId": "count",
+                      "variableUnitLabel": "instances",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOPS Cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageType"
+                      },
+                      "Provisioned IOPS-IO2"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "iopsio2Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioned IOPS IO2",
+                      "variableId": "provisionedIOPSIO2",
+                      "variableUnitLabel": "Provisioned IOPS IO2",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for iops io2",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForIopsIo2"
+                    },
+                    {
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (IOPS IO2 Cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "Baseline IOPS (free)"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 IOPS",
+                  "decimalPlaces": 2,
+                  "id": "billableGp3IOPS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "gp3IOPSCost",
+                  "variableName": "gp3 iops cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 IOPS",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "billableGp3IOPS"
+                    },
+                    {
+                      "variableLabel": "price for gp3 iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForGp3Iops"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "constant": 125,
+                      "constantUnitLabel": "Baseline Throughput (free)"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 throughput",
+                  "decimalPlaces": 2,
+                  "id": "billableGp3Throughput"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "provisionedThroughputCost",
+                  "variableName": "provisioned throughput cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 throughput",
+                      "variableUnitLabel": "MiBps",
+                      "required": true,
+                      "variableId": "billableGp3Throughput"
+                    },
+                    {
+                      "variableLabel": "price for provisioned throughput",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForProvisionedThroughput"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalStorageCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Storage Cost)",
+                      "variableId": "storageCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency] (IOPS Cost)",
+                      "variableId": "iopsCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "gp3 iops cost",
+                      "variableId": "gp3IOPSCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "provisioned throughput cost",
+                      "variableId": "provisionedThroughputCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] (IOPS IO2 Cost)",
+                      "variableId": "iopsio2Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "gp3StorageRatioChecker",
+                    "gp3ThroughputRatioChecker",
+                    "storageCost",
+                    "iopsCost",
+                    "iopsio2Cost",
+                    "billableGp3IOPS",
+                    "gp3IOPSCost",
+                    "billableGp3Throughput",
+                    "provisionedThroughputCost",
+                    "totalStorageCost"
+                  ],
+                  "subTotalRefer": "totalStorageCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage pricing",
+                  "decimalPlaces": 2,
+                  "id": "rdsForSqlServer_generated_4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "cloudwatch",
+                  "meteredUnit": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                }
+              }
+            ]
+          },
+          "title": "CloudWatch Database Insights Pricing for RDS Provisioned Instances ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/proxy/pricing/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "cloudwatch",
+                    "meteredUnit": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                  }
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Would you be enabling Database Insights with the database?",
+                "id": "DatabaseInsightsSelected",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudwatch",
+                "meteredUnit": {
+                  "allRegions": "cfPcjsy2d3f8kLCBeP8QsIF0SvU50bsYUf368abX4VQ"
+                },
+                "label": "Price for vCPU-hour monitored by Database Insights",
+                "id": "priceVCPUHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "DatabaseInsightsSelected",
+                    "priceVCPUHour"
+                  ],
+                  "id": "rdsForSqlServer_generated_2",
+                  "subTotalRefer": "totalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selectedProxyOption",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Would you be creating an RDS Proxy with the database?",
+                  "refer": "createRDSProxy",
+                  "id": "DBSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "id": "maxVCPUs2",
+                  "outputUnitLabel": "vCPUs ",
+                  "decimalPlaces": 0,
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableId": "vCPU",
+                      "variableUnitLabel": "vCPUs",
+                      "minValue": 0
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 2
+                    }
+                  ]
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "DatabaseInsightsSelected"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Nodes",
+                      "variableUnitLabel": "instances",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableLabel": "vCPUs ",
+                      "variableUnitLabel": "vCPU",
+                      "required": true,
+                      "variableId": "maxVCPUs2"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Price for vCPU-hour monitored by Database Insights",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "priceVCPUHour",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "CloudwatchDatabaseInsightsCost",
+                  "variableName": "RDS for PostgreSQL Proxy Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DBSelected",
+                    "maxVCPUs2",
+                    "CloudwatchDatabaseInsightsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly Cost for RDS MySQL Database Insights",
+                  "decimalPlaces": 2,
+                  "id": "DatabaseInsightsTotalCost",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-sqlserver-ondemand",
+                  "meteredUnit": "Performance Insights ProvisionedAMR vCPU-Months"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rds-sqlserver-ondemand",
+                  "meteredUnit": "Performance Insights ProvisionedFMR vCPU-Months"
+                }
+              }
+            ]
+          },
+          "title": "RDS Performance Insights",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/performance-insights/"
+            }
+          },
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Retention period for performance insights",
+                "id": "retentionPeriod",
+                "options": [
+                  {
+                    "label": "7 days (free tier)",
+                    "id": "0"
+                  },
+                  {
+                    "label": "1 month",
+                    "id": "1"
+                  },
+                  {
+                    "label": "2 months",
+                    "id": "2"
+                  },
+                  {
+                    "label": "3 months",
+                    "id": "3"
+                  },
+                  {
+                    "label": "4 months",
+                    "id": "4"
+                  },
+                  {
+                    "label": "5 months",
+                    "id": "5"
+                  },
+                  {
+                    "label": "6 months",
+                    "id": "6"
+                  },
+                  {
+                    "label": "7 months",
+                    "id": "7"
+                  },
+                  {
+                    "label": "8 months",
+                    "id": "8"
+                  },
+                  {
+                    "label": "9 months",
+                    "id": "9"
+                  },
+                  {
+                    "label": "10 months",
+                    "id": "10"
+                  },
+                  {
+                    "label": "11 months",
+                    "id": "11"
+                  },
+                  {
+                    "label": "12 months",
+                    "id": "12"
+                  },
+                  {
+                    "label": "13 months",
+                    "id": "13"
+                  },
+                  {
+                    "label": "14 months",
+                    "id": "14"
+                  },
+                  {
+                    "label": "15 months",
+                    "id": "15"
+                  },
+                  {
+                    "label": "16 months",
+                    "id": "16"
+                  },
+                  {
+                    "label": "17 months",
+                    "id": "17"
+                  },
+                  {
+                    "label": "18 months",
+                    "id": "18"
+                  },
+                  {
+                    "label": "19 months",
+                    "id": "19"
+                  },
+                  {
+                    "label": "20 months",
+                    "id": "20"
+                  },
+                  {
+                    "label": "21 months",
+                    "id": "21"
+                  },
+                  {
+                    "label": "22 months",
+                    "id": "22"
+                  },
+                  {
+                    "label": "23 months",
+                    "id": "23"
+                  },
+                  {
+                    "label": "24 months",
+                    "id": "24"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "Yes",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights ProvisionedAMR vCPU-Months"
+                },
+                "label": "price for RDSPI provisionedAMR",
+                "id": "RDSPI_ProvisionedAMR"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "meteredUnit": {
+                  "allRegions": "Performance Insights ProvisionedFMR vCPU-Months"
+                },
+                "label": "price for RDSPI provisionedFMR",
+                "id": "RDSPI_ProvisionedFMR"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "retentionPeriod",
+                    "RDSPI_ProvisionedAMR",
+                    "RDSPI_ProvisionedFMR"
+                  ],
+                  "id": "rdsForSqlServer_generated_6",
+                  "subTotalRefer": "CloudwatchDatabaseInsightsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "numberOfMonths",
+                  "label": "Number of Months",
+                  "outputUnitLabel": "months",
+                  "displayInConfigSummary": false,
+                  "refer": "retentionPeriod",
+                  "referLabel": "Retention period for performance insights"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforFMR",
+                  "label": "Cost for one month of retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency] per vCPU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "RDSPI_ProvisionedFMR",
+                  "referLabel": "price for RDSPI provisionedFMR"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costforAMR",
+                  "label": "Cost for each additional month of retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency] per vCPU per month",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "RDSPI_ProvisionedAMR",
+                  "referLabel": "price for RDSPI provisionedAMR"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      2
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalMonths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "months",
+                      "variableUnitLabel": "months",
+                      "required": true,
+                      "variableId": "numberOfMonths"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "month"
+                    }
+                  ],
+                  "outputUnitLabel": "additional month(s)",
+                  "displayInConfigSummary": false,
+                  "allowDecimals": false
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RDSPI_AMRCostTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "additional month(s)",
+                      "variableUnitLabel": "additional month(s)",
+                      "required": true,
+                      "variableId": "additionalMonths"
+                    },
+                    {
+                      "variableLabel": "price for RDSPI provisionedAMR",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedAMR"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "displayInConfigSummary": false,
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Additional Month Retention Cost"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCostRetention",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "price for RDSPI provisionedFMR",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "RDSPI_ProvisionedFMR"
+                    },
+                    {
+                      "variableLabel": "Additional Month Retention Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "RDSPI_AMRCostTotal"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false,
+                  "variableName": "Total Cost of Retention"
+                },
+                {
+                  "displayIf": {
+                    ">=": [
+                      {
+                        "type": "component",
+                        "id": "numberOfMonths"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "costOfRetentionTotal",
+                  "label": "Cost for total retention (per vCPU per month)",
+                  "outputUnitLabel": "[currency]",
+                  "displayInConfigSummary": true,
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "totalCostRetention",
+                  "referLabel": "Total Cost of Retention"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "count"
+                    },
+                    {
+                      "variableUnitLabel": "vCPUs",
+                      "required": true,
+                      "variableId": "vCPU"
+                    },
+                    {
+                      "variableLabel": "Total Cost of Retention",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "totalCostRetention"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost",
+                  "variableName": "RDS Performance Insights Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberOfMonths",
+                    "costforFMR",
+                    "costforAMR",
+                    "additionalMonths",
+                    "RDSPI_AMRCostTotal",
+                    "totalCostRetention",
+                    "costOfRetentionTotal",
+                    "RDSPI_Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Cost for RDS Performance Insights",
+                  "decimalPlaces": 2,
+                  "id": "RDSPI_Cost_Display",
+                  "subTotalRefer": "RDSPI_Cost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Backup Storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Backup storage for Amazon RDS is the storage associated with your automated database backups and any customer-initiated DB cluster snapshots.There is no additional charge for backup storage of up to 100% of your totaldatabase storage in the destination region.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/postgresql/pricing/#Backup_Storage",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/rds/sqlserver/pricing/#Backup_Storage",
+                "aws-iso-b": "https://awshome.scloud/rds/sqlserver/pricing/#Backup_Storage",
+                "aws-cn": "https://www.amazonaws.cn/en/rds/pricing"
+              }
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "additionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-sqlserver-ondemand",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot"
+                },
+                "id": "priceForUnitBackupStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalBackupStorage",
+                    "priceForUnitBackupStorage"
+                  ],
+                  "id": "rdsForSqlServer_generated_5",
+                  "subTotalRefer": "RDSPI_Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalBackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForUnitBackupStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalBackupStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalBackupStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "totalBackupStorageCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

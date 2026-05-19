@@ -1,0 +1,1222 @@
+{
+  "version": "0.0.30",
+  "serviceName": "S3 Vectors",
+  "serviceCode": "s3Vector",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage",
+    "S3",
+    "s3"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "S3 Vectors",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "",
+          "helpText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "These calculations will provide the monthly costs for S3 Vectors, as well as initial PUT costs.",
+                "id": "BodyText"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Storage Parameters",
+                "id": "StorageHeader"
+              },
+              {
+                "type": "display",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "This calculator includes a conservative estimated key size of 0.2 KB per vector in the storage and query calculations.",
+                "id": "KeySizeInfo"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of indexes",
+                "id": "number_of_indexes",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 50000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of indexes",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of vectors per index",
+                "id": "number_of_vectors",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 50000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter Number of vectors per index",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Vector Dimensions",
+                "id": "vector_dimensions",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 4096
+                },
+                "defaultValue": 1024,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number",
+                "description": "Dimensions of your vector embeddings"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Filterable metadata (KB) per vector",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 2
+                },
+                "defaultValue": 1,
+                "placeholder": "Enter amount",
+                "description": "Metadata per vector that can be used for filtering (KB)",
+                "help": "",
+                "id": "filterable_metadata"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Non-filterable metadata (KB) per vector",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 40
+                },
+                "placeholder": "Enter amount",
+                "description": "Additional metadata per vector (KB) used to return as part of query results at no additional cost",
+                "help": "",
+                "id": "non_filterable_metadata"
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "metadataSUM"
+                    },
+                    40
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Sum of filterable and non-filterable metadata should not be more than 40 KB",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "proCountAlert"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percent_vectors_replaced",
+                "description": "This percentage calculates the amount of data PUT per month based on the % of your vector data you plan to refresh. Cost estimates assume each PUT request exceeds the 128KB minimum charge per PUT request. For the lowest cost we recommend batching multiple vectors per PUT request.",
+                "placeholder": "Field value",
+                "label": "Percentage of vectors overwritten per month",
+                "placeholderText": "Enter %",
+                "validations": {
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 16.7,
+                "displayInConfigSummary": true,
+                "infoText": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Price per GB-Mo of Storage in Vectors",
+                "id": "pricePerGBStorageinVector",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "pwB2w8C-8XZjPEfyfHR2dgaG5Zz2bvgyqfO0U6RLEPw"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Put rate",
+                "id": "putRate",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Qg78x03DdHQsUM5a8U--CZXG6IGEjOdEls1VXaDsY00"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Query Parameters",
+                "id": "QueryHeader"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Query charges include a per API charge in addition to a $/TB charge based on the average vector size, including vector data, key, and filterable metadata, multiplied by the number of vectors in the index you’re querying.  At larger scale, you benefit from lower $/TB query pricing above 100,000 vectors in your vector index.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "queryTierInfo"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "zmfzKag2DJylTdx481M1QhF4uPq6lo2xLSxQ3sWX3_U"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of queries per month (across all indexes)",
+                "id": "number_of_queries",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "queries_max_calculation"
+                    },
+                    500000000
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "Total number of queries should not exceed 500 million per index.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "queryMaxAlert"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Query rate",
+                "id": "query_rate",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "zmfzKag2DJylTdx481M1QhF4uPq6lo2xLSxQ3sWX3_U"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Query Tier 1 rate",
+                "id": "query_Tier_rate_1",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "vYS0p7yWhlSt_94j1B8bc9XtLiBWXEbJOYRRxfAGhzc"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "label": "Query Tier 2 rate",
+                "id": "query_Tier_rate_2",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "I_zH86rMNWY2-Q00YeaYLCPYXkCyy54lIj96a2A_TOM"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "OL_UnitConv_1",
+                  "refer": [
+                    "BodyText",
+                    "StorageHeader",
+                    "number_of_indexes",
+                    "number_of_vectors",
+                    "vector_dimensions",
+                    "filterable_metadata",
+                    "non_filterable_metadata",
+                    "proCountAlert",
+                    "percent_vectors_replaced",
+                    "pricePerGBStorageinVector",
+                    "putRate",
+                    "QueryHeader",
+                    "queryTierInfo",
+                    "number_of_queries",
+                    "queryMaxAlert",
+                    "query_rate",
+                    "query_Tier_rate_1",
+                    "query_Tier_rate_2"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Filterable metadata (KB) per vector",
+                      "variableUnitLabel": "KB (Filterable meta-data)",
+                      "required": true,
+                      "variableId": "filterable_metadata"
+                    },
+                    {
+                      "variableLabel": "Non-filterable metadata (KB) per vector",
+                      "variableUnitLabel": "KB (Non-filterable meta-data)",
+                      "required": true,
+                      "variableId": "non_filterable_metadata"
+                    }
+                  ],
+                  "outputUnitLabel": "total metadata",
+                  "decimalPlaces": 0,
+                  "id": "metadataSUM"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "allowZero": true,
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of queries per month (across all indexes)",
+                      "variableUnitLabel": "queries (across all indexes)",
+                      "required": true,
+                      "variableId": "number_of_queries"
+                    },
+                    {
+                      "variableLabel": "Number of indexes",
+                      "variableUnitLabel": "index(s)",
+                      "required": true,
+                      "variableId": "number_of_indexes"
+                    }
+                  ],
+                  "outputUnitLabel": "(queries per index)",
+                  "decimalPlaces": 0,
+                  "id": "queries_max_calculation"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "VectorSizeCalc1",
+                  "variableName": "Vector Size Calculation 1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 4,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Vector Dimensions",
+                      "variableUnitLabel": "dimensions",
+                      "required": true,
+                      "variableId": "vector_dimensions"
+                    }
+                  ],
+                  "outputUnitLabel": "Bytes (size per vector)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "VectorSizeCalc2",
+                  "variableName": "Vector Size Calculation 2",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Size Calculation 1",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "VectorSizeCalc1"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "KB (size per vector)",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SizePerVector",
+                  "variableName": "Size per Vector",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Size Calculation 2",
+                      "variableUnitLabel": "KB (vector data)",
+                      "required": true,
+                      "variableId": "VectorSizeCalc2"
+                    },
+                    {
+                      "constant": 0.2,
+                      "constantUnitLabel": "KB (key size)"
+                    },
+                    {
+                      "variableLabel": "Filterable metadata (KB) per vector",
+                      "variableUnitLabel": "KB (filterable metadata)",
+                      "required": false,
+                      "variableId": "filterable_metadata"
+                    },
+                    {
+                      "variableLabel": "Non-filterable metadata (KB) per vector",
+                      "variableUnitLabel": "KB (non-filterable metadata)",
+                      "required": false,
+                      "variableId": "non_filterable_metadata"
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "decimalPlaces": 5
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Size per vector (KB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "refer": "SizePerVector",
+                  "referLabel": "Size per Vector",
+                  "id": "SizePerVectorVariable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SizePerVector_GB",
+                  "variableName": "Size Per Vector GB Calculation",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Size per Vector",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "SizePerVector"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "GB (size per vector)",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SizePerIndex",
+                  "variableName": "Size per Index",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size Per Vector GB Calculation",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "SizePerVector_GB"
+                    },
+                    {
+                      "variableLabel": "Number of vectors per index",
+                      "variableUnitLabel": "vectors",
+                      "required": true,
+                      "variableId": "number_of_vectors"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (size per index)",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_Index_Size",
+                  "variableName": "Total Index Size",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of indexes",
+                      "variableUnitLabel": "index(s)",
+                      "required": true,
+                      "variableId": "number_of_indexes"
+                    },
+                    {
+                      "variableLabel": "Size per Index",
+                      "variableUnitLabel": "GB (size per index)",
+                      "required": true,
+                      "variableId": "SizePerIndex"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total size of all indexes) ",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storage_cost",
+                  "variableName": "Storage cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Index Size",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "Total_Index_Size"
+                    },
+                    {
+                      "variableLabel": "Price per GB-Mo of Storage in Vectors",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricePerGBStorageinVector"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Storage Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "storage_cost",
+                  "referLabel": "Storage cost",
+                  "id": "totalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "put_cost",
+                  "variableName": "PUT charges",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Index Size",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "Total_Index_Size"
+                    },
+                    {
+                      "variableLabel": "Percentage of vectors overwritten per month",
+                      "variableUnitLabel": "(% of vectors replaced)",
+                      "required": true,
+                      "variableId": "percent_vectors_replaced"
+                    },
+                    {
+                      "variableLabel": "Put rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "putRate"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "PUT Charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "put_cost",
+                  "referLabel": "PUT charges",
+                  "id": "PUTChargesVariable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "query_cost",
+                  "variableName": "Query cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of queries per month (across all indexes)",
+                      "variableUnitLabel": "queries (across all indexes)",
+                      "required": true,
+                      "variableId": "number_of_queries"
+                    },
+                    {
+                      "variableLabel": "Query rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "query_rate"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Query API Request Charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "query_cost",
+                  "referLabel": "Query cost",
+                  "id": "queryRequestChargeVariable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SizePerVectorQueried",
+                  "variableName": "Size per Vector Queried",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Size Calculation 2",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "VectorSizeCalc2"
+                    },
+                    {
+                      "constant": 0.2,
+                      "constantUnitLabel": "KB (key Size)"
+                    },
+                    {
+                      "variableLabel": "Filterable metadata (KB) per vector",
+                      "variableUnitLabel": "KB (filterable metadata)",
+                      "required": true,
+                      "variableId": "filterable_metadata"
+                    }
+                  ],
+                  "outputUnitLabel": "KB (size per vector queried)",
+                  "decimalPlaces": 5
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SizePerVectorQueried_GB",
+                  "variableName": "Size per Vector Queried (GB)",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Size per Vector Queried",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "SizePerVectorQueried"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "GB (size per vector queried)",
+                  "decimalPlaces": 7
+                },
+                {
+                  "displayIf": {
+                    "<": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100001"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "VectorDataProcessedPerQueryTier1",
+                  "variableName": "Vector Data Processed Per Query Tier 1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size per Vector Queried (GB)",
+                      "variableUnitLabel": "GB (size per vector queried)",
+                      "required": true,
+                      "variableId": "SizePerVectorQueried_GB"
+                    },
+                    {
+                      "variableLabel": "Number of vectors per index",
+                      "variableUnitLabel": "vectors in Tier 1",
+                      "required": true,
+                      "variableId": "number_of_vectors"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (vector data processed in Tier 1 per query)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "<": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100001"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Tier1QueryCharges",
+                  "variableName": "Tier 1 Query Charges",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Data Processed Per Query Tier 1",
+                      "variableUnitLabel": "GB (vector data processed per query)",
+                      "required": true,
+                      "variableId": "VectorDataProcessedPerQueryTier1"
+                    },
+                    {
+                      "variableLabel": "Total number of queries per month (across all indexes)",
+                      "variableUnitLabel": "queries (across all indexes)",
+                      "required": true,
+                      "variableId": "number_of_queries"
+                    },
+                    {
+                      "variableLabel": "Query Tier 1 rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "query_Tier_rate_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Tier 1 Query Charges)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "<": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100001"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "Tier1QueryCharges_Variable",
+                  "label": "Tier 1 Query Charges ",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "Tier1QueryCharges",
+                  "referLabel": "Tier 1 Query Charges"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "VectorDataProcessedPerQueryTier1_2",
+                  "variableName": "Vector Data Processed Per Query Tier 1_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size per Vector Queried (GB)",
+                      "variableUnitLabel": "GB (size per vector queried)",
+                      "required": true,
+                      "variableId": "SizePerVectorQueried_GB"
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "vectors"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (vector data processed in Tier 1 per query)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Tier1QueryCharges_2",
+                  "variableName": "Tier 1 Query Charges_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Data Processed Per Query Tier 1_2",
+                      "variableUnitLabel": "GB (vector data processed per query)",
+                      "required": true,
+                      "variableId": "VectorDataProcessedPerQueryTier1_2"
+                    },
+                    {
+                      "variableLabel": "Total number of queries per month (across all indexes)",
+                      "variableUnitLabel": "queries (across all indexes)",
+                      "required": true,
+                      "variableId": "number_of_queries"
+                    },
+                    {
+                      "variableLabel": "Query Tier 1 rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "query_Tier_rate_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Tier 1 Query Charges)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Tier 1 Query Charges  ",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "Tier1QueryCharges_2",
+                  "referLabel": "Tier 1 Query Charges_2",
+                  "id": "Tier1QueryCharges_Variable2"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "NumberOfTier2Queries",
+                  "variableName": "Number of Tier 2 Queries",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of vectors per index",
+                      "variableUnitLabel": "vectors",
+                      "required": true,
+                      "variableId": "number_of_vectors"
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "vectors"
+                    }
+                  ],
+                  "outputUnitLabel": "(vectors processed in Tier 2)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "VectorDataProcessedPerQueryTier2",
+                  "variableName": "Vector Data Processed Per Query Tier 2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size per Vector Queried (GB)",
+                      "variableUnitLabel": "GB (size per vector queried)",
+                      "required": true,
+                      "variableId": "SizePerVectorQueried_GB"
+                    },
+                    {
+                      "variableLabel": "Number of Tier 2 Queries",
+                      "variableUnitLabel": "(vectors processed in Tier 2)",
+                      "required": true,
+                      "variableId": "NumberOfTier2Queries"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (vector data processed in Tier 2 per query)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Tier2QueryCharges",
+                  "variableName": "Tier 2 Query Charges",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Vector Data Processed Per Query Tier 2",
+                      "variableUnitLabel": "GB (vector data processed per query)",
+                      "required": true,
+                      "variableId": "VectorDataProcessedPerQueryTier2"
+                    },
+                    {
+                      "variableLabel": "Total number of queries per month (across all indexes)",
+                      "variableUnitLabel": "queries (across all indexes)",
+                      "required": true,
+                      "variableId": "number_of_queries"
+                    },
+                    {
+                      "variableLabel": "Query Tier 2 rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "query_Tier_rate_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Tier 2 Query Charges)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "number_of_vectors"
+                      },
+                      "100000"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Tier 2 Query Charges ",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "Tier2QueryCharges",
+                  "referLabel": "Tier 2 Query Charges",
+                  "id": "Tier2QueryCharges_Variable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_s3_vector_cost",
+                  "variableName": "Total S3 Vector cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage cost",
+                      "variableUnitLabel": "[currency] (Storage charge)",
+                      "required": false,
+                      "variableId": "storage_cost"
+                    },
+                    {
+                      "variableLabel": "PUT charges",
+                      "variableUnitLabel": "[currency] (Put charge)",
+                      "required": false,
+                      "variableId": "put_cost"
+                    },
+                    {
+                      "variableLabel": "Query cost",
+                      "variableUnitLabel": "[currency] (Query API Request charges)",
+                      "required": false,
+                      "variableId": "query_cost"
+                    },
+                    {
+                      "variableLabel": "Tier 1 Query Charges",
+                      "variableUnitLabel": "[currency] (Tier 1 Query charges)",
+                      "required": false,
+                      "variableId": "Tier1QueryCharges"
+                    },
+                    {
+                      "variableLabel": "Tier 1 Query Charges_2",
+                      "variableUnitLabel": "[currency] (Tier 1 Query charges)",
+                      "required": false,
+                      "variableId": "Tier1QueryCharges_2"
+                    },
+                    {
+                      "variableLabel": "Tier 2 Query Charges",
+                      "variableUnitLabel": "[currency] (Tier 2 Query charges)",
+                      "required": false,
+                      "variableId": "Tier2QueryCharges"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "metadataSUM",
+                    "queries_max_calculation",
+                    "VectorSizeCalc1",
+                    "VectorSizeCalc2",
+                    "SizePerVector",
+                    "SizePerVectorVariable",
+                    "SizePerVector_GB",
+                    "SizePerIndex",
+                    "Total_Index_Size",
+                    "storage_cost",
+                    "totalStorageCost",
+                    "put_cost",
+                    "PUTChargesVariable",
+                    "query_cost",
+                    "queryRequestChargeVariable",
+                    "SizePerVectorQueried",
+                    "SizePerVectorQueried_GB",
+                    "VectorDataProcessedPerQueryTier1",
+                    "Tier1QueryCharges",
+                    "Tier1QueryCharges_Variable",
+                    "VectorDataProcessedPerQueryTier1_2",
+                    "Tier1QueryCharges_2",
+                    "Tier1QueryCharges_Variable2",
+                    "NumberOfTier2Queries",
+                    "VectorDataProcessedPerQueryTier2",
+                    "Tier2QueryCharges",
+                    "Tier2QueryCharges_Variable",
+                    "total_s3_vector_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Storage, PUTs, and Queries",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "s3_vector_cost_display",
+                  "subTotalRefer": "total_s3_vector_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "UpfrontPutCost",
+                  "variableName": "Upfront Put Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Index Size",
+                      "variableUnitLabel": "GB (total size of all indexes) ",
+                      "required": true,
+                      "variableId": "Total_Index_Size"
+                    },
+                    {
+                      "variableLabel": "Put rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "putRate"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "UpfrontPutCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 Vectors PUT cost",
+                  "decimalPlaces": 3,
+                  "id": "VectorsPUTCostUpfront",
+                  "subTotalRefer": "UpfrontPutCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

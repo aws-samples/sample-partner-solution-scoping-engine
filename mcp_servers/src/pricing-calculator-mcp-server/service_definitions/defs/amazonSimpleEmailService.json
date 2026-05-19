@@ -1,0 +1,1594 @@
+{
+  "version": "0.0.52",
+  "serviceName": "Amazon Simple Email Service (SES)",
+  "serviceCode": "amazonSimpleEmailService",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "SES",
+    "Email",
+    "Amazon Simple Email Service",
+    "Simple Email Service"
+  ],
+  "serviceDescription": "Amazon Simple Email Service (Amazon SES) is a cloud-based email sending service designed to help digital marketers and application developers send marketing, notification, and transactional emails.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/ses/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "ses",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ses/[currency]/current/ses.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Simple Email Service",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ses/"
+        }
+      },
+      "id": "simpleEmailService",
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "ses",
+              "meteredUnit": "ZcsMlbLPPDbjE3qd-zSVm4HrUSmMvEM_W51k4Lw7JUU"
+            }
+          },
+          "title": "Open Ingress Endpoints",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ses/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Open Ingress Endpoint(s)",
+                "id": "number_of_endpoints",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "endpoints per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter number of endpoints",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price per dedicated ingress endpoint subscription",
+                "id": "endpoint_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "qg_cpm0rFW3zt8FGFArS7mlxxKEwOWwCnsqCpQIgxw0"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "conversionDisplaySpark",
+                  "refer": [
+                    "number_of_endpoints",
+                    "endpoint_price"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalEndpointCost",
+                  "operation": "multiplication",
+                  "variableName": "Total spark execution monthly cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Open Ingress Endpoint(s)",
+                      "variableUnitLabel": "endpoints per month",
+                      "required": true,
+                      "variableId": "number_of_endpoints"
+                    },
+                    {
+                      "variableLabel": "Price per dedicated ingress endpoint subscription",
+                      "variableUnitLabel": "[currency] per endpoint",
+                      "required": true,
+                      "variableId": "endpoint_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "TotalEndpointCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Open Ingress Endpoint cost",
+                  "decimalPlaces": 2,
+                  "id": "EndpointFinalCost",
+                  "subTotalRefer": "TotalEndpointCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "ses",
+              "meteredUnit": "ZcsMlbLPPDbjE3qd-zSVm4HrUSmMvEM_W51k4Lw7JUU"
+            }
+          },
+          "title": "Email Processing",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ses/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "ZcsMlbLPPDbjE3qd-zSVm4HrUSmMvEM_W51k4Lw7JUU"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Emails processed by Mail Manager",
+                "id": "number_of_emails",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "emails per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter number of emails",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price per incoming email",
+                "id": "incoming_email_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "ZcsMlbLPPDbjE3qd-zSVm4HrUSmMvEM_W51k4Lw7JUU"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "conversionDisplay2",
+                  "refer": [
+                    "number_of_emails",
+                    "incoming_email_price"
+                  ],
+                  "subTotalRefer": "TotalEndpointCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalIncomingEmailCost",
+                  "operation": "multiplication",
+                  "variableName": "Total incoming email cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Emails processed by Mail Manager",
+                      "variableUnitLabel": "endpoints per month",
+                      "required": true,
+                      "variableId": "number_of_emails"
+                    },
+                    {
+                      "variableLabel": "Price per incoming email",
+                      "variableUnitLabel": "[currency] per email",
+                      "required": true,
+                      "variableId": "incoming_email_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "TotalIncomingEmailCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Open Ingress Endpoint cost",
+                  "decimalPlaces": 2,
+                  "id": "EmailFinalCost",
+                  "subTotalRefer": "TotalIncomingEmailCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Service settings",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ses/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "simpleEmailService_generated_0"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Email sent from AmazonEC2 to an external recipient"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Email messages sent from EC2",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "messages per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1e+21
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "numberOfEmailMessagesSentFromEC2"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Charged for attachments sent"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Attachment data sent from EC2",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  },
+                  {
+                    "label": "day",
+                    "id": "day"
+                  },
+                  {
+                    "label": "week",
+                    "id": "week"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1e+24
+                },
+                "placeholder": "Enter size of attachments",
+                "id": "averageSizeOfEmailAttachmentSentFromEC2"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Email sent to an external recipient"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Email messages sent from email client",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "messages per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1e+21
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "numberOfEmailMessagesSentFromEmailClient"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Charged for attachments sent"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Attachment data sent from email client",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  },
+                  {
+                    "label": "day",
+                    "id": "day"
+                  },
+                  {
+                    "label": "week",
+                    "id": "week"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                },
+                "placeholder": "Enter size of attachments",
+                "id": "averageSizeOfEmailAttachmentSentFromEmailClient"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Received e mail communication"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Email messages received",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "messages per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1e+21
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "numberOfEmailMessagesReceived"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Received e mail communication"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Charged for chunks of 256 KB applicable to incoming mail"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of email processed by Mail Manager",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter size",
+                "description": "",
+                "id": "averageSizeOfEmailReceived"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Dedicated IPs managed from 0 to 10000000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Dedicated IPs managed from 10000000 to 50000000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Dedicated IPs managed from 50000000 to 100000000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "Dedicated IPs managed from 100000000 to Inf"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Email message sent via dedicated IPs (managed)",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "emails per month",
+                  "id": "perMonth"
+                },
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1e+21
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter amount",
+                "id": "numberOfEmailSentDedicatedIPs"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "Dedicated IPs"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of dedicated IP(standard) addresses",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter amount",
+                "id": "numberOfDedicatedIPAddresses"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "ucfEFSErZ3P68U-qReQs5BaQ-JmWlV6k91FjZgd-ems"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "MSvDvfZqqp_fURFcAHaUDmSjtxYWpvrZhIRPYUlMoOI"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ses",
+                        "meteredUnit": "GCnl2bLU1hihcbyBcOdPfNlTgpvNKRUuZgHSfca0gho"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Virtual Delivery Manager",
+                "id": "virtualDeliveryManagerOption",
+                "options": [
+                  {
+                    "label": "Disable",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Enable",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "0",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for email sent from EC2",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Email sent from AmazonEC2 to an external recipient"
+                },
+                "id": "simpleEmailService_generated_1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for email sent from email client",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Email sent to an external recipient"
+                },
+                "id": "simpleEmailService_generated_2"
+              },
+              {
+                "type": "pricing",
+                "label": "price for attachments sent",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "vuAA7vIM8k3uCaCrWpWxRzxeEaQtTrZo648TkZmekXA"
+                },
+                "id": "simpleEmailService_generated_3"
+              },
+              {
+                "type": "pricing",
+                "label": "price for chunks received in email",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Charged for chunks of 256 KB applicable to incoming mail"
+                },
+                "id": "simpleEmailService_generated_4"
+              },
+              {
+                "type": "pricing",
+                "label": "price for messages received",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Received e mail communication"
+                },
+                "id": "simpleEmailService_generated_5"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Dedicated IPs",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Dedicated IPs"
+                },
+                "id": "simpleEmailService_generated_6"
+              },
+              {
+                "type": "pricing",
+                "label": "price for subscription",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "Dedicated IPs managed from subscription per Month"
+                },
+                "id": "simpleEmailService_subscription"
+              },
+              {
+                "type": "pricing",
+                "id": "kopE_OXc__sui9Ygkvte1SJY8KPpIT_yQC1rKgp7JpU",
+                "label": "price for virtual delivery manager",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "ucfEFSErZ3P68U-qReQs5BaQ-JmWlV6k91FjZgd-ems"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "MSvDvfZqqp_fURFcAHaUDmSjtxYWpvrZhIRPYUlMoOI"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "GCnl2bLU1hihcbyBcOdPfNlTgpvNKRUuZgHSfca0gho"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "tieredEmailSentPrice",
+                "label": "price for email message sent via Dedicated IPs",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "ses",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Dedicated IPs managed from 0 to 10000000"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Dedicated IPs managed from 10000000 to 50000000"
+                    },
+                    {
+                      "startOfTier": 50000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "Dedicated IPs managed from 50000000 to 100000000"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Dedicated IPs managed from 100000000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "simpleEmailService_generated_7",
+                  "refer": [
+                    "simpleEmailService_generated_0",
+                    "numberOfEmailMessagesSentFromEC2",
+                    "averageSizeOfEmailAttachmentSentFromEC2",
+                    "numberOfEmailMessagesSentFromEmailClient",
+                    "averageSizeOfEmailAttachmentSentFromEmailClient",
+                    "numberOfEmailMessagesReceived",
+                    "averageSizeOfEmailReceived",
+                    "numberOfEmailSentDedicatedIPs",
+                    "numberOfDedicatedIPAddresses",
+                    "virtualDeliveryManagerOption",
+                    "simpleEmailService_generated_1",
+                    "simpleEmailService_generated_2",
+                    "simpleEmailService_generated_3",
+                    "simpleEmailService_generated_4",
+                    "simpleEmailService_generated_5",
+                    "simpleEmailService_generated_6",
+                    "simpleEmailService_subscription",
+                    "kopE_OXc__sui9Ygkvte1SJY8KPpIT_yQC1rKgp7JpU",
+                    "tieredEmailSentPrice"
+                  ],
+                  "subTotalRefer": "TotalIncomingEmailCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Email messages sent from EC2",
+                      "variableUnitLabel": "messages per month",
+                      "required": true,
+                      "variableId": "numberOfEmailMessagesSentFromEC2"
+                    },
+                    {
+                      "variableLabel": "price for email sent from EC2",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Messages sent from EC2 cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Attachment data sent from EC2",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "averageSizeOfEmailAttachmentSentFromEC2"
+                    },
+                    {
+                      "variableLabel": "price for attachments sent",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EC2 message attachment data cost)",
+                  "decimalPlaces": 2,
+                  "id": "simpleEmailService_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Email messages sent from email client",
+                      "variableUnitLabel": "messages per month",
+                      "required": true,
+                      "variableId": "numberOfEmailMessagesSentFromEmailClient"
+                    },
+                    {
+                      "variableLabel": "price for email sent from email client",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Messages sent from email client cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Attachment data sent from email client",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "averageSizeOfEmailAttachmentSentFromEmailClient"
+                    },
+                    {
+                      "variableLabel": "price for attachments sent",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Email client attachment data cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Email messages received",
+                      "variableUnitLabel": "messages per month",
+                      "required": true,
+                      "variableId": "numberOfEmailMessagesReceived"
+                    },
+                    {
+                      "variableLabel": "price for messages received",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Messages received cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average size of email processed by Mail Manager",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "averageSizeOfEmailReceived"
+                    },
+                    {
+                      "constant": 256,
+                      "constantUnitLabel": "chunk size factor"
+                    }
+                  ],
+                  "outputUnitLabel": "chunk size in 256KB",
+                  "decimalPlaces": 0,
+                  "id": "simpleEmailService_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundDown",
+                  "factor": 1,
+                  "operationLabel": "RoundDown",
+                  "operands": [
+                    {
+                      "variableLabel": "chunk size in 256KB",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "simpleEmailService_generated_13"
+                    }
+                  ],
+                  "outputUnitLabel": "billable chunk factor",
+                  "id": "simpleEmailService_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Email messages received",
+                      "variableUnitLabel": "messages per month",
+                      "required": true,
+                      "variableId": "numberOfEmailMessagesReceived"
+                    },
+                    {
+                      "variableLabel": "billable chunk factor",
+                      "variableUnitLabel": "billable chunk factor",
+                      "required": true,
+                      "variableId": "simpleEmailService_generated_14"
+                    },
+                    {
+                      "variableLabel": "price for chunks received in email",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "simpleEmailService_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Email chunks received cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "simpleEmailService_generated_16",
+                  "inputRefer": "numberOfEmailSentDedicatedIPs",
+                  "inputReferLabel": "Email message sent via dedicated IPs (managed)",
+                  "inputUnitLabel": "email sent",
+                  "tieredPricingRefer": "tieredEmailSentPrice",
+                  "tieredPricingReferLabel": "price for email message sent via Dedicated IPs",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Email sent via Dedicated IP addresses cost)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Email sent via Dedicated IP addresses cost)",
+                      "variableUnitLabel": "[currency] for email message sent",
+                      "required": true,
+                      "variableId": "simpleEmailService_generated_16"
+                    },
+                    {
+                      "variableLabel": "price for subscription",
+                      "variableUnitLabel": "[currency] subscription per account",
+                      "required": true,
+                      "variableId": "simpleEmailService_subscription"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total cost for email message sent via Dedicated IP addresses)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of dedicated IP(standard) addresses",
+                      "variableUnitLabel": "number of IPs",
+                      "required": true,
+                      "variableId": "numberOfDedicatedIPAddresses"
+                    },
+                    {
+                      "variableLabel": "price for Dedicated IPs",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "simpleEmailService_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Dedicated IP addresses cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_18"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "virtualDeliveryManagerOption"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Email messages sent from EC2",
+                      "variableUnitLabel": "Email message sent from EC2",
+                      "required": false,
+                      "variableId": "numberOfEmailMessagesSentFromEC2"
+                    },
+                    {
+                      "variableLabel": "Email messages sent from email client",
+                      "variableUnitLabel": "Email message sent from email client",
+                      "required": false,
+                      "variableId": "numberOfEmailMessagesSentFromEmailClient"
+                    }
+                  ],
+                  "outputUnitLabel": "Total messages sent",
+                  "decimalPlaces": 4,
+                  "id": "Total_outbound_messages"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "virtualDeliveryManagerOption"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "virtualDeliveryCharge",
+                  "inputRefer": "Total_outbound_messages",
+                  "inputReferLabel": "Total messages sent",
+                  "inputUnitLabel": "messages",
+                  "tieredPricingRefer": "kopE_OXc__sui9Ygkvte1SJY8KPpIT_yQC1rKgp7JpU",
+                  "tieredPricingReferLabel": "price for virtual delivery manager",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Messages processed by Virtual Deliverability Manager)"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "virtualDeliveryManagerOption"
+                      },
+                      "0"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Messages sent from EC2 cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_8"
+                    },
+                    {
+                      "variableLabel": "[currency] (EC2 message attachment data cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_9"
+                    },
+                    {
+                      "variableLabel": "[currency] (Messages sent from email client cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_10"
+                    },
+                    {
+                      "variableLabel": "[currency] (Email client attachment data cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (Messages received cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_12"
+                    },
+                    {
+                      "variableLabel": "[currency] (Email chunks received cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_15"
+                    },
+                    {
+                      "variableLabel": "[currency] (total cost for email message sent via Dedicated IP addresses)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_17"
+                    },
+                    {
+                      "variableLabel": "[currency] (Dedicated IP addresses cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_18"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] SES usage cost",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_withoutVirtualDelivery"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "virtualDeliveryManagerOption"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Messages sent from EC2 cost)",
+                      "variableUnitLabel": "[currency] for Messages sent from EC2 cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_8"
+                    },
+                    {
+                      "variableLabel": "[currency] (EC2 message attachment data cost)",
+                      "variableUnitLabel": "[currency] for EC2 message attachment data cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_9"
+                    },
+                    {
+                      "variableLabel": "[currency] (Messages sent from email client cost)",
+                      "variableUnitLabel": "[currency] for Messages sent from email client cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_10"
+                    },
+                    {
+                      "variableLabel": "[currency] (Email client attachment data cost)",
+                      "variableUnitLabel": "[currency] for Email client attachment data cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (Messages received cost)",
+                      "variableUnitLabel": "[currency] for Messages received cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_12"
+                    },
+                    {
+                      "variableLabel": "[currency] (Email chunks received cost)",
+                      "variableUnitLabel": "[currency] for Email chunks received cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_15"
+                    },
+                    {
+                      "variableLabel": "[currency] (total cost for email message sent via Dedicated IP addresses)",
+                      "variableUnitLabel": "[currency] for email message sent via Dedicated IP addresses cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_17"
+                    },
+                    {
+                      "variableLabel": "[currency] (Dedicated IP addresses cost)",
+                      "variableUnitLabel": "[currency] for Dedicated IP addresses cost",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_18"
+                    },
+                    {
+                      "variableLabel": "[currency] (Messages processed by Virtual Deliverability Manager)",
+                      "variableUnitLabel": "[currency] for virtual delivery cost",
+                      "required": false,
+                      "variableId": "virtualDeliveryCharge"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (SES usage cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] SES usage cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_withoutVirtualDelivery"
+                    },
+                    {
+                      "variableLabel": "[currency] (SES usage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "simpleEmailService_generated_20"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total SES usage cost)",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_21"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "simpleEmailService_generated_8",
+                    "simpleEmailService_generated_9",
+                    "simpleEmailService_generated_10",
+                    "simpleEmailService_generated_11",
+                    "simpleEmailService_generated_12",
+                    "simpleEmailService_generated_13",
+                    "simpleEmailService_generated_14",
+                    "simpleEmailService_generated_15",
+                    "simpleEmailService_generated_16",
+                    "simpleEmailService_generated_17",
+                    "simpleEmailService_generated_18",
+                    "Total_outbound_messages",
+                    "virtualDeliveryCharge",
+                    "simpleEmailService_withoutVirtualDelivery",
+                    "simpleEmailService_generated_20",
+                    "simpleEmailService_generated_21"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "SES usage cost",
+                  "decimalPlaces": 4,
+                  "id": "simpleEmailService_generated_22",
+                  "subTotalRefer": "simpleEmailService_generated_21"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "ses",
+              "meteredUnit": "ezXrQRF8oz6e8vGyQKZhMXzIXp6D8BQFQavGOJBNNCw"
+            }
+          },
+          "title": "Archive",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ses/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "0yNuozAikUZMlvDgdzvVVnmii7YLknFCkBdaLquNSS4"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Gigabytes Inserted & Indexed",
+                "id": "number_of_GB_inserted_and_indexed",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "GB per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ses",
+                    "meteredUnit": "ezXrQRF8oz6e8vGyQKZhMXzIXp6D8BQFQavGOJBNNCw"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Gigabytes Already Stored",
+                "id": "number_of_GB_stored",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "GB per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price per GB inserted and indexed into archive",
+                "id": "GB_inserted_archive_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "0yNuozAikUZMlvDgdzvVVnmii7YLknFCkBdaLquNSS4"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "Price per GB stored in existing archive",
+                "id": "GB_stored_archive_price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ses",
+                "meteredUnit": {
+                  "allRegions": "ezXrQRF8oz6e8vGyQKZhMXzIXp6D8BQFQavGOJBNNCw"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "conversionDisplay3",
+                  "refer": [
+                    "number_of_GB_inserted_and_indexed",
+                    "number_of_GB_stored",
+                    "GB_inserted_archive_price",
+                    "GB_stored_archive_price"
+                  ],
+                  "subTotalRefer": "simpleEmailService_generated_21"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "GBInsertedArchiveCost",
+                  "operation": "multiplication",
+                  "variableName": "Cost of Gigabytes inserted and indexed into archive",
+                  "operands": [
+                    {
+                      "variableLabel": "Gigabytes Inserted & Indexed",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "number_of_GB_inserted_and_indexed"
+                    },
+                    {
+                      "variableLabel": "Price per GB inserted and indexed into archive",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "GB_inserted_archive_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Archive Insertion and Index cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "GBStoreArchiveCost",
+                  "operation": "multiplication",
+                  "variableName": "Cost of Gigabytes Stored",
+                  "operands": [
+                    {
+                      "variableLabel": "Gigabytes Already Stored",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "number_of_GB_stored"
+                    },
+                    {
+                      "variableLabel": "Price per GB stored in existing archive",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "GB_stored_archive_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Archive Storage cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalArchiveCost",
+                  "operation": "addition",
+                  "variableName": "Total Archive Cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Cost of Gigabytes inserted and indexed into archive",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GBInsertedArchiveCost"
+                    },
+                    {
+                      "variableLabel": "Cost of Gigabytes Stored",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GBStoreArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "GBInsertedArchiveCost",
+                    "GBStoreArchiveCost",
+                    "TotalArchiveCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Archive cost",
+                  "decimalPlaces": 2,
+                  "id": "ArchiveFinalCost",
+                  "subTotalRefer": "TotalArchiveCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "SES",
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

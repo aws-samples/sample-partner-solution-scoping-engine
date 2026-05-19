@@ -1,0 +1,847 @@
+{
+  "version": "0.0.7",
+  "serviceName": "EBS",
+  "serviceCode": "amazonEbsBackup",
+  "type": "AWSService",
+  "subType": "subService",
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ],
+  "regions": [
+    "us-gov-west-1",
+    "us-gov-east-1",
+    "af-south-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "me-central-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "us-iso-east-1",
+    "us-isob-east-1"
+  ],
+  "searchKeywords": [],
+  "serviceDescription": "AWS Backup for EBS",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/backup/"
+    }
+  },
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "ebs",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ec2/[currency]/current/ebs.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "EBS Backup",
+      "id": "EBSBackup",
+      "description": "To backup your Amazon EBS file data, you can use AWS Backup, a fully managed backup service that makes it easy to centralize and automate the backup of data across AWS services. AWS Backup provides you with a single place to monitor backup activity and to find and restore backups when needed. With AWS Backup, you pay only for the amount of backup storage you use and the amount of backup data you restore in the month. There is no minimum fee and there are no setup charges.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/backup/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Estimate summary",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Total EBS storage",
+                "id": "totalStorage",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter a value",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "expectedAnnaulGrowthRate",
+                "label": "Expected annual growth rate - optional",
+                "description": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "expectedDailyChangeRate",
+                "label": "Expected daily change rate",
+                "description": "We recommend 0.5% to 4% as industry standard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Backup frequency</b><br>Choose how frequently you want AWS Backup to take and store snapshot backups. <a href='https://aws.amazon.com/backup/pricing/#Backup_storage_pricing'target='_blank' rel='noopener noreferrer'>Backup storage pricing</a>",
+                "id": "frequencyText"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "hourlyBackupDuration",
+                "label": "Hourly backup retention period",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  },
+                  {
+                    "label": "Years",
+                    "value": "year"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 36500
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Optional",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "dailyBackupDuration",
+                "label": "Daily backup retention period",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  },
+                  {
+                    "label": "Years",
+                    "value": "year"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 36500
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Optional",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "weeklyBackupDuration",
+                "label": "Weekly backup retention period",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  },
+                  {
+                    "label": "Years",
+                    "value": "year"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 36500
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Optional",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "monthlyBackupDuration",
+                "label": "Monthly backup retention period",
+                "dropDownDuration": [
+                  {
+                    "label": "Days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "Weeks",
+                    "value": "week"
+                  },
+                  {
+                    "label": "Months",
+                    "value": "month"
+                  },
+                  {
+                    "label": "Years",
+                    "value": "year"
+                  }
+                ],
+                "outputDurationUnit": "day",
+                "outputDurationLabel": "Days",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 36500
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Optional",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "id": "backupWarmPrice",
+                "label": "Price warm backup",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Amazon S3 GB Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "backupConversion",
+                  "refer": [
+                    "totalStorage",
+                    "expectedAnnaulGrowthRate",
+                    "expectedDailyChangeRate",
+                    "frequencyText",
+                    "hourlyBackupDuration",
+                    "dailyBackupDuration",
+                    "weeklyBackupDuration",
+                    "monthlyBackupDuration",
+                    "backupWarmPrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "id": "annualGrowthRatePerMonth",
+                  "operands": [
+                    {
+                      "variableId": "expectedAnnaulGrowthRate",
+                      "variableLabel": "Expected annual growth rate - optional",
+                      "variableUnitLabel": "Expected annual growth rate",
+                      "required": false
+                    },
+                    {
+                      "constantUnitLabel": "Months per year",
+                      "constant": 12
+                    }
+                  ],
+                  "decimalPlaces": 5,
+                  "variableName": "AGRPM",
+                  "outputUnitLabel": "Annual growth rate per month"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "expectedDailyChangeRate"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "expectedDailyChangeRate",
+                      "variableLabel": "Expected daily change rate",
+                      "variableUnitLabel": "expected daily change rate",
+                      "required": false
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 1
+                    }
+                  ],
+                  "id": "dailyChangeRate",
+                  "outputUnitLabel": "Daily Change Rate",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "exponent",
+                  "id": "compoundDailyAnnual",
+                  "operands": [
+                    {
+                      "variableId": "dailyChangeRate",
+                      "variableLabel": "Daily Change Rate",
+                      "variableUnitLabel": "Daily Change Rate",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 6,
+                  "variableName": "%DCGR",
+                  "outputUnitLabel": "% Daily compound growth rate per month"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "compoundDailyAnnual"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "DailyCompoundGrowthRatePerMonth",
+                  "operands": [
+                    {
+                      "variableId": "compoundDailyAnnual",
+                      "variableLabel": "%DCGR",
+                      "variableUnitLabel": "% Daily compound growth rate per month",
+                      "required": false
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 1
+                    }
+                  ],
+                  "decimalPlaces": 6,
+                  "variableName": "DCMGR",
+                  "outputUnitLabel": "Daily compound growth rate per month"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "CompoundMonthlyGrowthRate",
+                  "operands": [
+                    {
+                      "variableId": "DailyCompoundGrowthRatePerMonth",
+                      "variableLabel": "DCMGR",
+                      "variableUnitLabel": "Daily compound growth rate per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "annualGrowthRatePerMonth",
+                      "variableLabel": "AGRPM",
+                      "variableUnitLabel": "Annual growth rate per month",
+                      "required": false
+                    }
+                  ],
+                  "decimalPlaces": 6,
+                  "variableName": "CMGR",
+                  "outputUnitLabel": "Compound Monthly Growth Rate"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "CompoundMonthlyGrowthRate",
+                      "variableLabel": "CMGR",
+                      "variableUnitLabel": "Compound Monthly Growth Rate",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "",
+                      "constant": 100
+                    }
+                  ],
+                  "displayInCalculationString": false,
+                  "decimalPlaces": 4,
+                  "id": "PercentCMGR",
+                  "outputUnitLabel": "% Compound Monthly Growth Rate"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Compound Monthly Growth Rate (%)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "% Compound Monthly Growth Rate",
+                  "id": "CompoundMonthlyGrowthRateDisplay",
+                  "refer": "PercentCMGR"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "CompoundMonthlyGrowthRate",
+                      "variableLabel": "CMGR",
+                      "variableUnitLabel": "CMGR",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalStorage",
+                      "variableLabel": "Total EBS storage",
+                      "variableUnitLabel": "Capacity",
+                      "required": true
+                    }
+                  ],
+                  "id": "AvgMoChange",
+                  "decimalPlaces": 0,
+                  "variableName": "AMC",
+                  "outputUnitLabel": "Average Monthly Change"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Average Monthly Change",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "AMC",
+                  "id": "AvgMoChangeDisplay",
+                  "refer": "AvgMoChange"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "hourlyBackupDuration",
+                      "variableLabel": "Hourly backup retention period",
+                      "variableUnitLabel": "days warm retention (hourly)",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "id": "MlyRetHourly",
+                  "variableName": "MonthlyRetentionHourly",
+                  "outputUnitLabel": "Monthly retention (hourly)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "MlyRetHourly",
+                      "variableLabel": "MonthlyRetentionHourly",
+                      "variableUnitLabel": "Monthly retention (hourly)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "AvgMoChangeDisplay",
+                      "variableLabel": "Average Monthly Change",
+                      "variableUnitLabel": "avg monthly change",
+                      "required": true
+                    }
+                  ],
+                  "id": "MonthlyRetentionHourly",
+                  "decimalPlaces": 0,
+                  "variableName": "Hourly_Retention_(GB)",
+                  "outputUnitLabel": "Hourly Retention (GB)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Hourly Retention (GB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Hourly_Retention_(GB)",
+                  "id": "GBHourlyRetention",
+                  "refer": "MonthlyRetentionHourly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "dailyBackupDuration",
+                      "variableLabel": "Daily backup retention period",
+                      "variableUnitLabel": "days warm retention (daily)",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "id": "MlyRetDaily",
+                  "variableName": "MonthlyRetentionDaily",
+                  "outputUnitLabel": "Monthly retention (daily)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "MlyRetDaily",
+                      "variableLabel": "MonthlyRetentionDaily",
+                      "variableUnitLabel": "Monthly retention (daily)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "AvgMoChangeDisplay",
+                      "variableLabel": "Average Monthly Change",
+                      "variableUnitLabel": "avg monthly change",
+                      "required": true
+                    }
+                  ],
+                  "id": "MonthlyRetentionDaily",
+                  "decimalPlaces": 0,
+                  "variableName": "Daily_Retention_(GB)",
+                  "outputUnitLabel": "Daily Retention (GB)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Daily Retention (GB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Daily_Retention_(GB)",
+                  "id": "GBDailyRetention",
+                  "refer": "MonthlyRetentionDaily"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "weeklyBackupDuration",
+                      "variableLabel": "Weekly backup retention period",
+                      "variableUnitLabel": "days warm retention (weekly)",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "id": "MlyRetWeekly",
+                  "variableName": "MonthlyRetentionWeekly",
+                  "outputUnitLabel": "Monthly retention (weekly)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "MlyRetWeekly",
+                      "variableLabel": "MonthlyRetentionWeekly",
+                      "variableUnitLabel": "Monthly retention (weekly)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "AvgMoChangeDisplay",
+                      "variableLabel": "Average Monthly Change",
+                      "variableUnitLabel": "avg monthly change",
+                      "required": true
+                    }
+                  ],
+                  "id": "MonthlyRetentionWeekly",
+                  "decimalPlaces": 0,
+                  "variableName": "Weekly_Retention_(GB)",
+                  "outputUnitLabel": "Weekly Retention (GB)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Weekly Retention (GB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Weekly_Retention_(GB)",
+                  "id": "GBWeeklyRetention",
+                  "refer": "MonthlyRetentionWeekly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "monthlyBackupDuration",
+                      "variableLabel": "Monthly backup retention period",
+                      "variableUnitLabel": "days warm retention (monthly)",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30
+                    }
+                  ],
+                  "decimalPlaces": 4,
+                  "id": "MlyRetMonthly",
+                  "variableName": "MonthlyRetentionMonthly",
+                  "outputUnitLabel": "Monthly retention (monthly)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "MlyRetMonthly",
+                      "variableLabel": "MonthlyRetentionMonthly",
+                      "variableUnitLabel": "Monthly retention (monthly)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "AvgMoChangeDisplay",
+                      "variableLabel": "Average Monthly Change",
+                      "variableUnitLabel": "avg monthly change",
+                      "required": true
+                    }
+                  ],
+                  "id": "MonthlyRetentionMonthly",
+                  "decimalPlaces": 0,
+                  "variableName": "Monthly_Retention_(GB)",
+                  "outputUnitLabel": "Monthly Retention (GB)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Monthly Retention (GB)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Monthly_Retention_(GB)",
+                  "id": "GBMonthlyRetention",
+                  "refer": "MonthlyRetentionMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totalStorage",
+                      "variableLabel": "Total EBS storage",
+                      "variableUnitLabel": "Total EBS storage",
+                      "required": true
+                    },
+                    {
+                      "variableId": "GBHourlyRetention",
+                      "variableLabel": "Hourly Retention (GB)",
+                      "variableUnitLabel": "hourly Retention",
+                      "required": false
+                    },
+                    {
+                      "variableId": "GBDailyRetention",
+                      "variableLabel": "Daily Retention (GB)",
+                      "variableUnitLabel": "daily Retention",
+                      "required": false
+                    },
+                    {
+                      "variableId": "GBWeeklyRetention",
+                      "variableLabel": "Weekly Retention (GB)",
+                      "variableUnitLabel": "weekly Retention",
+                      "required": false
+                    },
+                    {
+                      "variableId": "GBMonthlyRetention",
+                      "variableLabel": "Monthly Retention (GB)",
+                      "variableUnitLabel": "monthly Retention",
+                      "required": false
+                    }
+                  ],
+                  "id": "warmCapacity",
+                  "outputUnitLabel": "Warm Capacity (GB)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "warmCapacity",
+                      "variableLabel": "Warm Capacity (GB)",
+                      "variableUnitLabel": "warm capacity",
+                      "required": true
+                    },
+                    {
+                      "variableId": "backupWarmPrice",
+                      "variableLabel": "Price warm backup",
+                      "variableUnitLabel": "[currency] backup price",
+                      "required": true
+                    }
+                  ],
+                  "id": "AvgMonthlyWarm",
+                  "variableName": "[currency]_average_monthly_warm",
+                  "outputUnitLabel": "[currency] average monthly warm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "[currency] Average Monthly Warm",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency]_average_monthly_warm",
+                  "id": "AvgMonthlyWarmTotal",
+                  "refer": "AvgMonthlyWarm"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "annualGrowthRatePerMonth",
+                    "dailyChangeRate",
+                    "compoundDailyAnnual",
+                    "DailyCompoundGrowthRatePerMonth",
+                    "CompoundMonthlyGrowthRate",
+                    "PercentCMGR",
+                    "CompoundMonthlyGrowthRateDisplay",
+                    "AvgMoChange",
+                    "AvgMoChangeDisplay",
+                    "MlyRetHourly",
+                    "MonthlyRetentionHourly",
+                    "GBHourlyRetention",
+                    "MlyRetDaily",
+                    "MonthlyRetentionDaily",
+                    "GBDailyRetention",
+                    "MlyRetWeekly",
+                    "MonthlyRetentionWeekly",
+                    "GBWeeklyRetention",
+                    "MlyRetMonthly",
+                    "MonthlyRetentionMonthly",
+                    "GBMonthlyRetention",
+                    "warmCapacity",
+                    "AvgMonthlyWarm",
+                    "AvgMonthlyWarmTotal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total EBS Backup Cost",
+                  "decimalPlaces": 2,
+                  "id": "TotalBackupCost",
+                  "subTotalRefer": "AvgMonthlyWarmTotal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

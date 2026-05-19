@@ -1,0 +1,694 @@
+{
+  "version": "0.0.25",
+  "serviceName": "Parameter Store",
+  "serviceCode": "awsSystemsManagerParameterStore",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "System Manager",
+    "Parameter Store",
+    "API",
+    "parameter"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Systems Manager Parameter Store feature",
+    "aws-cn": "Amazon Systems Manager Parameter Store feature"
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/systems-manager/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "systemsmanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/systemsmanager/[currency]/current/systemsmanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Standard Throughput API Interactions Enabled",
+      "id": "paramStoreThrouhputStandard",
+      "description": "You are not charged for Standard parameter API interactions with Standard thoughput limit settings.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Parameter Store",
+          "helpText": {
+            "aws": "AWS Systems Manager Parameter Store consists of standard and advanced parameters. Standard parameters are available at no additional charge. When you create advanced parameters, you are charged based on the number of advanced parameters stored each month and per API interaction. Charges for parameters stored for less than a month are prorated on an hourly basis.Higher throughput limit settings are applied per account per region. After a higher throughput is enabled, you will be charged per Parameter Store API interaction for standard and advanced parameters. A Parameter Store API interaction is defined as an interaction between an API request and an individual parameter. For example, if a Get request returns ten parameters, that counts as ten Parameter Store API interactions.",
+            "aws-cn": "Amazon Systems Manager Parameter Store consists of standard and advanced parameters. Standard parameters are available at no additional charge. When you create advanced parameters, you are charged based on the number of advanced parameters stored each month and per API interaction. Charges for parameters stored for less than a month are prorated on an hourly basis.Higher throughput limit settings are applied per account per region. After a higher throughput is enabled, you will be charged per Parameter Store API interaction for standard and advanced parameters. A Parameter Store API interaction is defined as an interaction between an API request and an individual parameter. For example, if a Get request returns ten parameters, that counts as ten Parameter Store API interactions."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Advanced parameter cost is prorated when stored for less than 1 month. Calculations below assume a full month of parameter storage.",
+                "id": "sysManagerParamStore_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Standard parameters",
+                "id": "sysManagerParamStore_numberOfStandardParameters",
+                "placeholder": "Enter number of standard parameters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Advanced parameters",
+                "id": "sysManagerParamStore_numberOfAdvParameters",
+                "placeholder": "Enter number of advanced parameters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Frequency of API interactions per parameter",
+                "id": "sysManagerParamStore_numberOfAPIInteractions",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMinute",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 999000000000
+                },
+                "placeholder": "Enter number of API interactions per parameter",
+                "description": "Average number of API interactions with each parameter"
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_standardThroughputPrice",
+                "label": "Price for standard throughput API interaction",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Advanced Parameter Standard Throughput per API Request",
+                  "cn-north-1": "Advanced Parameter Standard Throughput per Units",
+                  "cn-northwest-1": "Advanced Parameter Standard Throughput per Units"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_advParameterPrice",
+                "label": "Price for advanced parameter per hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Advanced Parameter"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions systems manager on-prem",
+                  "refer": [
+                    "sysManagerParamStore_Text",
+                    "sysManagerParamStore_numberOfStandardParameters",
+                    "sysManagerParamStore_numberOfAdvParameters",
+                    "sysManagerParamStore_numberOfAPIInteractions",
+                    "sysManagerParamStore_standardThroughputPrice",
+                    "sysManagerParamStore_advParameterPrice"
+                  ],
+                  "id": "sysManagerParamStore_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_AdvParamStoreCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAdvParameters",
+                      "variableLabel": "Advanced parameters",
+                      "variableUnitLabel": "advanced parameters",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_advParameterPrice",
+                      "variableLabel": "Price for advanced parameter per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for advanced parameter storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Advanced parameter storage cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for advanced parameter storage",
+                  "id": "sysManagerParamStore_advParamStoreSummary",
+                  "refer": "sysManagerParamStore_AdvParamStoreCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_numberAdvParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAdvParameters",
+                      "variableLabel": "Advanced parameters",
+                      "variableUnitLabel": "advanced parameters",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAPIInteractions",
+                      "variableLabel": "Frequency of API interactions per parameter",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "advanced parameter API interactions",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_costAdvParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberAdvParamAPIs",
+                      "variableLabel": "advanced parameter API interactions",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_standardThroughputPrice",
+                      "variableLabel": "Price for standard throughput API interaction",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for advanced parameter API interactions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "API interaction cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for advanced parameter API interactions",
+                  "id": "sysManagerParamStore_summarizeParamAPICost",
+                  "refer": "sysManagerParamStore_costAdvParamAPIs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_totalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_AdvParamStoreCost",
+                      "variableLabel": "[currency] for advanced parameter storage",
+                      "variableUnitLabel": "[currency] for parameter storage",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_costAdvParamAPIs",
+                      "variableLabel": "[currency] for advanced parameter API interactions",
+                      "variableUnitLabel": "[currency] API interactions",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerParamStore_AdvParamStoreCost",
+                    "sysManagerParamStore_advParamStoreSummary",
+                    "sysManagerParamStore_numberAdvParamAPIs",
+                    "sysManagerParamStore_costAdvParamAPIs",
+                    "sysManagerParamStore_summarizeParamAPICost",
+                    "sysManagerParamStore_totalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Parameter store cost",
+                  "decimalPlaces": 2,
+                  "id": "parameterStoreTotalPrice",
+                  "subTotalRefer": "sysManagerParamStore_totalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "High Throughput API Interactions Enabled",
+      "id": "paramStoreThrouhputHigh",
+      "description": "Higher throughput limit settings are applied per account per region. After a higher throughput is enabled, you will be charged per Parameter Store API interaction for standard and advanced parameters. A Parameter Store API interaction is defined as an interaction between an API request and an individual parameter. For example, if a Get request returns ten parameters, that counts as ten Parameter Store API interactions.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Parameter Store",
+          "helpText": {
+            "aws": "AWS Systems Manager Parameter Store consists of standard and advanced parameters. Standard parameters are available at no additional charge. When you create advanced parameters, you are charged based on the number of advanced parameters stored each month and per API interaction. Charges for parameters stored for less than a month are prorated on an hourly basis.Higher throughput limit settings are applied per account per region. After a higher throughput is enabled, you will be charged per Parameter Store API interaction for standard and advanced parameters. A Parameter Store API interaction is defined as an interaction between an API request and an individual parameter. For example, if a Get request returns ten parameters, that counts as ten Parameter Store API interactions.",
+            "aws-cn": "Amazon Systems Manager Parameter Store consists of standard and advanced parameters. Standard parameters are available at no additional charge. When you create advanced parameters, you are charged based on the number of advanced parameters stored each month and per API interaction. Charges for parameters stored for less than a month are prorated on an hourly basis.Higher throughput limit settings are applied per account per region. After a higher throughput is enabled, you will be charged per Parameter Store API interaction for standard and advanced parameters. A Parameter Store API interaction is defined as an interaction between an API request and an individual parameter. For example, if a Get request returns ten parameters, that counts as ten Parameter Store API interactions."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Advanced parameter cost is prorated when stored for less than 1 month. Calculations below assume a full month of parameter storage.",
+                "id": "sysManagerParamStore_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Standard parameters",
+                "id": "sysManagerParamStore_numberOfStandardParameters",
+                "placeholder": "Enter number of standard parameters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Advanced parameters",
+                "id": "sysManagerParamStore_numberOfAdvParameters",
+                "placeholder": "Enter number of advanced parameters",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Frequency of API interactions per parameter",
+                "id": "sysManagerParamStore_numberOfAPIInteractions",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMinute",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 999000000000
+                },
+                "placeholder": "Enter number of API interactions per parameter",
+                "description": "Average number of API interactions with each parameter"
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_hightThroughputPrice",
+                "label": "Price for high throughput API interaction",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Parameter Higher Throughputper API Request"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_advParameterPrice",
+                "label": "Price for advanced parameter per hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Advanced Parameter"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions systems manager on-prem",
+                  "refer": [
+                    "sysManagerParamStore_Text",
+                    "sysManagerParamStore_numberOfStandardParameters",
+                    "sysManagerParamStore_numberOfAdvParameters",
+                    "sysManagerParamStore_numberOfAPIInteractions",
+                    "sysManagerParamStore_hightThroughputPrice",
+                    "sysManagerParamStore_advParameterPrice"
+                  ],
+                  "id": "sysManagerParamStore_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "sysManagerParamStore_totalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_AdvParamStoreCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAdvParameters",
+                      "variableLabel": "Advanced parameters",
+                      "variableUnitLabel": "advanced parameters",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_advParameterPrice",
+                      "variableLabel": "Price for advanced parameter per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for advanced parameter storage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Advanced parameter storage cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for advanced parameter storage",
+                  "id": "sysManagerParamStore_advParamStoreSummary",
+                  "refer": "sysManagerParamStore_AdvParamStoreCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_numberAdvParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAdvParameters",
+                      "variableLabel": "Advanced parameters",
+                      "variableUnitLabel": "advanced parameters",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAPIInteractions",
+                      "variableLabel": "Frequency of API interactions per parameter",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "advanced parameter API interactions",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_costAdvParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberAdvParamAPIs",
+                      "variableLabel": "advanced parameter API interactions",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_hightThroughputPrice",
+                      "variableLabel": "Price for high throughput API interaction",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for advanced parameter API interactions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Advanced parameter API interaction cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for advanced parameter API interactions",
+                  "id": "sysManagerParamStore_summarizeAdvParamAPICost",
+                  "refer": "sysManagerParamStore_costAdvParamAPIs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_numberStandardParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberOfStandardParameters",
+                      "variableLabel": "Standard parameters",
+                      "variableUnitLabel": "standard parameters",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_numberOfAPIInteractions",
+                      "variableLabel": "Frequency of API interactions per parameter",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "standard parameter API interactions",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_costStandardParamAPIs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_numberStandardParamAPIs",
+                      "variableLabel": "standard parameter API interactions",
+                      "variableUnitLabel": "API interactions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_hightThroughputPrice",
+                      "variableLabel": "Price for high throughput API interaction",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for high throughput standard parameter API interactions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "High throughput standard parameter API interaction cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for high throughput standard parameter API interactions",
+                  "id": "sysManagerParamStore_summarizeStandardParamAPICost",
+                  "refer": "sysManagerParamStore_costStandardParamAPIs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_costAPIs",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_costAdvParamAPIs",
+                      "variableLabel": "[currency] for advanced parameter API interactions",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_costStandardParamAPIs",
+                      "variableLabel": "[currency] for high throughput standard parameter API interactions",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total API interactions",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "API interaction cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] total API interactions",
+                  "id": "sysManagerParamStore_summarizeParamAPICost",
+                  "refer": "sysManagerParamStore_costAPIs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerParamStore_totalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerParamStore_AdvParamStoreCost",
+                      "variableLabel": "[currency] for advanced parameter storage",
+                      "variableUnitLabel": "[currency] for parameter storage",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerParamStore_costAPIs",
+                      "variableLabel": "[currency] total API interactions",
+                      "variableUnitLabel": "[currency] API interactions",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerParamStore_AdvParamStoreCost",
+                    "sysManagerParamStore_advParamStoreSummary",
+                    "sysManagerParamStore_numberAdvParamAPIs",
+                    "sysManagerParamStore_costAdvParamAPIs",
+                    "sysManagerParamStore_summarizeAdvParamAPICost",
+                    "sysManagerParamStore_numberStandardParamAPIs",
+                    "sysManagerParamStore_costStandardParamAPIs",
+                    "sysManagerParamStore_summarizeStandardParamAPICost",
+                    "sysManagerParamStore_costAPIs",
+                    "sysManagerParamStore_summarizeParamAPICost",
+                    "sysManagerParamStore_totalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Parameter store cost",
+                  "decimalPlaces": 2,
+                  "id": "parameterStoreTotalPrice",
+                  "subTotalRefer": "sysManagerParamStore_totalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

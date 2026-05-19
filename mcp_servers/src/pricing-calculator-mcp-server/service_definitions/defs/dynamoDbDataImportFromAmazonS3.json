@@ -1,0 +1,216 @@
+{
+  "version": "0.0.11",
+  "serviceName": "DynamoDB Data Import from Amazon S3",
+  "serviceCode": "dynamoDbDataImportFromAmazonS3",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-southeast-3",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "me-south-1",
+    "me-central-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Database",
+    "DDB",
+    "NoSQL",
+    "SQL",
+    "Table",
+    "nosql databases",
+    "database schema",
+    "database software",
+    "cloud database",
+    "document database",
+    "key value store",
+    "database as a service",
+    "database scheme",
+    "nosql hosting",
+    "hosted nosql",
+    "data store",
+    "unstructured database",
+    "Accelerator",
+    "DAX"
+  ],
+  "serviceDescription": "Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale. It's a fully managed, multiregion, multimaster, durable database with built-in security, backup and restore, and in-memory caching for internet-scale applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/dynamodb/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "dynamodb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/dynamodb/[currency]/current/dynamodb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "DynamoDB On-Demand",
+      "helpText": "",
+      "cards": [
+        {
+          "title": "Data Import from Amazon S3",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": {
+                  "aws": "DynamoDB charges for data you import based on the uncompressed file size in Amazon S3. Amazon S3 charges also apply for storing your source data and for GET requests made against your Amazon S3 bucket. For more information about Amazon S3 charges,  <a href='https://aws.amazon.com/s3/pricing/'>see Amazon S3 pricing</a>.",
+                  "aws-iso": "DynamoDB charges for data you import based on the uncompressed file size in Amazon S3. Amazon S3 charges also apply for storing your source data and for GET requests made against your Amazon S3 bucket. For more information about Amazon S3 charges,  <a href='https://awshome.ic.gov/s3/'>see Amazon S3 pricing</a>.",
+                  "aws-iso-b": "DynamoDB charges for data you import based on the uncompressed file size in Amazon S3. Amazon S3 charges also apply for storing your source data and for GET requests made against your Amazon S3 bucket. For more information about Amazon S3 charges,  <a href='https://awshome.scloud/s3/'>see Amazon S3 pricing</a>."
+                },
+                "id": "s3Text"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "importS3_tableSize",
+                "label": "Uncompressed source file size for Import from Amazon S3",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1e-09,
+                  "maxValue": 102400
+                },
+                "placeholder": "Enter amount",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price per GB for import from S3",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "dynamodb",
+                "meteredUnit": {
+                  "allRegions": "Import Data Size"
+                },
+                "id": "importS3_pricePerGB"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "s3Text",
+                    "importS3_tableSize",
+                    "importS3_pricePerGB"
+                  ],
+                  "id": "importS3_unitConversion",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "importS3_tableSize",
+                      "variableLabel": "Uncompressed source file size for Import from Amazon S3",
+                      "variableUnitLabel": "GB per table",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per GB for import from S3",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "importS3_pricePerGB"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data import from Amazon S3 cost)",
+                  "decimalPlaces": 4,
+                  "id": "importS3_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "importS3_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "DynamoDB Data import from Amazon S3 cost",
+                  "displayInConfigSummary": true,
+                  "decimalPlaces": 2,
+                  "id": "importS3_costDisplay",
+                  "subTotalRefer": "importS3_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "dynamoDBDataImportS3"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

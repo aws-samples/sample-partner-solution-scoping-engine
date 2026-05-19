@@ -1,0 +1,169 @@
+{
+  "version": "0.0.7",
+  "serviceName": "Network Access Analyzer",
+  "serviceCode": "networkAccessAnalyzerVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws"
+  ],
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Network Access Analyzer",
+      "id": "template_NetworkAccessAnalyzer",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/vpc/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of network assessments per month",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of network assessments using Network Access Analyzer in a month.",
+                "placeholder": "Enter the number of network assessments using Network Access Analyzer in a month.",
+                "displayInConfigSummary": true,
+                "id": "numberOfNetworkAssessment"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of ENIs (elastic network interfaces)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of Amazon EC2 Instance elastic network interfaces (ENIs) analyzed when you run a network assessment using Network Access Analyzer.",
+                "placeholder": "Enter the number of EINs (elastic network interfaces).",
+                "displayInConfigSummary": true,
+                "id": "numberOfElasticNetworkInterface"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Charge per ENI processed by VPC Access Analyzer per NetworkInterface Assessment"
+                },
+                "label": "pricing for Network Access Analysis",
+                "id": "priceOfNetworkAccessAnalyzer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of network assessments per month",
+                      "variableUnitLabel": "network assessments",
+                      "required": true,
+                      "variableId": "numberOfNetworkAssessment"
+                    },
+                    {
+                      "variableLabel": "Number of ENIs (elastic network interfaces)",
+                      "variableUnitLabel": "ENIs",
+                      "required": true,
+                      "variableId": "numberOfElasticNetworkInterface"
+                    },
+                    {
+                      "variableLabel": "pricing for Network Access Analysis",
+                      "variableUnitLabel": "[currency] per ENI analysis",
+                      "required": true,
+                      "variableId": "priceOfNetworkAccessAnalyzer"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "monthlyNetworkAccessAnalyzerCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total Network Access Analyzer charge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "numberOfNetworkAssessment",
+                    "numberOfElasticNetworkInterface",
+                    "priceOfNetworkAccessAnalyzer",
+                    "monthlyNetworkAccessAnalyzerCost"
+                  ],
+                  "id": "totalNetworkAccessAnalyzermonthlyCharge",
+                  "subTotalRefer": "monthlyNetworkAccessAnalyzerCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

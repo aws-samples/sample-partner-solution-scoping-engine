@@ -1,0 +1,410 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA Foundation - KMS Key and ACM Certificate for application encryption and TLS - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+  PublicReachableDomainName:
+    Type: String
+    Description: 'Primary domain name for SERA (e.g., projectsera.link)'
+
+Resources:
+  # KMS Key for SERA application
+  SeraKMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: !Sub 'SERA application KMS key for encrypting S3, RDS, DynamoDB, and other resources - ${StackPrefix}'
+      KeyUsage: ENCRYPT_DECRYPT
+      KeySpec: SYMMETRIC_DEFAULT
+      MultiRegion: false
+      PendingWindowInDays: 7
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          # Allow root account to manage the key
+          - Sid: EnableRootAccountPermissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 'kms:*'
+            Resource: '*'
+          
+          # Allow CloudFormation to use the key for stack operations
+          - Sid: AllowCloudFormationAccess
+            Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:GenerateDataKey*
+              - kms:ReEncrypt*
+            Resource: '*'
+          
+          # Allow AWS services to use the key
+          - Sid: AllowAWSServicesAccess
+            Effect: Allow
+            Principal:
+              Service:
+                - s3.amazonaws.com
+                - rds.amazonaws.com
+                - dynamodb.amazonaws.com
+                - elasticache.amazonaws.com
+                - secretsmanager.amazonaws.com
+                - logs.amazonaws.com
+                - ec2.amazonaws.com
+                - bedrock.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:GenerateDataKey*
+              - kms:ReEncrypt*
+            Resource: '*'
+          
+          # Simplified CloudWatch Logs permissions
+          - Sid: AllowCloudWatchLogsAccess
+            Effect: Allow
+            Principal:
+              Service: !Sub 'logs.${AWS::Region}.amazonaws.com'
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: '*'
+          
+          # Allow services to create grants for encryption
+          - Sid: AllowServiceGrants
+            Effect: Allow
+            Principal:
+              Service:
+                - s3.amazonaws.com
+                - rds.amazonaws.com
+                - dynamodb.amazonaws.com
+                - elasticache.amazonaws.com
+                - secretsmanager.amazonaws.com
+            Action:
+              - kms:CreateGrant
+              - kms:ListGrants
+              - kms:RevokeGrant
+            Resource: '*'
+            Condition:
+              Bool:
+                'kms:GrantIsForAWSResource': true
+      
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-app-key'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: ApplicationEncryption
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # KMS Key Alias
+  SeraKMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub 'alias/${StackPrefix}-app-key'
+      TargetKeyId: !Ref SeraKMSKey
+
+  # Primary Domain Certificate for CloudFront (must be in us-east-1)
+  CloudFrontCertificate1:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub 'docs.${PublicReachableDomainName}'
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Sub 'docs.${PublicReachableDomainName}'
+          HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-docs-certificate-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: CloudFrontTLS
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+          
+  # Primary Domain Certificate for ALB (in deployment region)
+  ALBCertificate1:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref PublicReachableDomainName
+      SubjectAlternativeNames:
+        - !Sub 'www.${PublicReachableDomainName}'
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref PublicReachableDomainName
+          HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+        - DomainName: !Sub 'www.${PublicReachableDomainName}'
+          HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-alb-certificate-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: ALBTLS
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # Primary Domain Certificate for Cognito Auth Domain (must be in us-east-1 for Cognito)
+  CognitoAuthCertificate1:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub 'auth.${PublicReachableDomainName}'
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Sub 'auth.${PublicReachableDomainName}'
+          HostedZoneId: !ImportValue
+            Fn::Sub: '${StackPrefix}-hosted-zone-id-1'
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-cognito-auth-certificate-1'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: Purpose
+          Value: CognitoAuthTLS
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+
+  # Flask Secret Key for session signing
+  FlaskSecretKey:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${StackPrefix}-flask-secret-key'
+      Description: !Sub 'Flask SECRET_KEY for session signing - ${StackPrefix}'
+      KmsKeyId: !Ref SeraKMSKey
+      GenerateSecretString:
+        SecretStringTemplate: '{}'
+        GenerateStringKey: 'secret_key'
+        PasswordLength: 64
+        ExcludeCharacters: '"@/\'
+
+  NovaActApiSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub '${StackPrefix}-nova-act-api-secret'
+      Description: !Sub 'Nova Act API key for SERA pricing calculator automation - ${StackPrefix}'
+      KmsKeyId: !Ref SeraKMSKey
+      SecretString: !Sub |
+        {
+          "api_key": "REPLACE_WITH_YOUR_NOVA_ACT_API_KEY"
+        }
+
+  # SES Email Identity for notifications
+  SESEmailIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: !Sub 'sera-assistant@${PublicReachableDomainName}'
+
+  # Flask Secret Key Rotation Lambda
+  FlaskSecretRotationLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${StackPrefix}-flask-secret-rotation-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: FlaskSecretRotationPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:PutSecretValue
+                  - secretsmanager:UpdateSecretVersionStage
+                  - secretsmanager:DescribeSecret
+                Resource: !Ref FlaskSecretKey
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${StackPrefix}-flask-secret-rotation:*'
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:Encrypt
+                  - kms:GenerateDataKey
+                Resource: !GetAtt SeraKMSKey.Arn
+              - Effect: Allow
+                Action:
+                  - autoscaling:StartInstanceRefresh
+                Resource: !Sub 'arn:aws:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${StackPrefix}-app'
+
+  FlaskSecretRotationLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${StackPrefix}-flask-secret-rotation'
+      Description: 'Rotates Flask session signing key and triggers ASG instance refresh'
+      Runtime: python3.12
+      Handler: index.handler
+      Timeout: 30
+      Role: !GetAtt FlaskSecretRotationLambdaRole.Arn
+      Environment:
+        Variables:
+          ASG_NAME: !Sub '${StackPrefix}-app'
+      Code:
+        ZipFile: |
+          import json
+          import os
+          import secrets
+          import boto3
+
+          def handler(event, context):
+              sm = boto3.client('secretsmanager')
+              arn = event['SecretId']
+              step = event['Step']
+              token = event['ClientRequestToken']
+
+              if step == 'createSecret':
+                  try:
+                      sm.get_secret_value(SecretId=arn, VersionId=token, VersionStage='AWSPENDING')
+                  except sm.exceptions.ResourceNotFoundException:
+                      new_key = secrets.token_urlsafe(48)
+                      sm.put_secret_value(
+                          SecretId=arn,
+                          ClientRequestToken=token,
+                          SecretString=json.dumps({'secret_key': new_key}),
+                          VersionStages=['AWSPENDING']
+                      )
+              elif step == 'setSecret':
+                  pass
+              elif step == 'testSecret':
+                  sm.get_secret_value(SecretId=arn, VersionId=token, VersionStage='AWSPENDING')
+              elif step == 'finishSecret':
+                  metadata = sm.describe_secret(SecretId=arn)
+                  for version, stages in metadata['VersionIdsToStages'].items():
+                      if 'AWSCURRENT' in stages and version != token:
+                          sm.update_secret_version_stage(
+                              SecretId=arn, VersionStage='AWSCURRENT',
+                              MoveToVersionId=token, RemoveFromVersionId=version
+                          )
+                          break
+                  # Trigger rolling ASG instance refresh so all instances pick up the new key
+                  asg = boto3.client('autoscaling')
+                  asg.start_instance_refresh(
+                      AutoScalingGroupName=os.environ['ASG_NAME'],
+                      Strategy='Rolling',
+                      Preferences={'MinHealthyPercentage': 50, 'InstanceWarmup': 300}
+                  )
+
+  FlaskSecretRotationLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref FlaskSecretRotationLambda
+      Action: lambda:InvokeFunction
+      Principal: secretsmanager.amazonaws.com
+
+  FlaskSecretRotationSchedule:
+    Type: AWS::SecretsManager::RotationSchedule
+    DependsOn: FlaskSecretRotationLambdaPermission
+    Properties:
+      SecretId: !Ref FlaskSecretKey
+      RotationLambdaARN: !GetAtt FlaskSecretRotationLambda.Arn
+      RotationRules:
+        AutomaticallyAfterDays: 90
+
+Outputs:
+  # KMS Key Outputs
+  SeraKMSKeyId:
+    Description: 'ID of the SERA KMS key'
+    Value: !Ref SeraKMSKey
+    Export:
+      Name: !Sub '${StackPrefix}-kms-key-id'
+
+  SeraKMSKeyArn:
+    Description: 'ARN of the SERA KMS key'
+    Value: !GetAtt SeraKMSKey.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-kms-key-arn'
+
+  SeraKMSKeyAliasName:
+    Description: 'Alias name of the SERA KMS key'
+    Value: !Ref SeraKMSKeyAlias
+    Export:
+      Name: !Sub '${StackPrefix}-kms-key-alias-name'
+
+  SeraKMSKeyAliasArn:
+    Description: 'ARN of the SERA KMS key alias'
+    Value: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:${SeraKMSKeyAlias}'
+    Export:
+      Name: !Sub '${StackPrefix}-kms-key-alias-arn'
+  
+  # CloudFront Certificate Outputs
+  CloudFrontCertificateArn1:
+    Description: 'ARN of the primary CloudFront ACM certificate'
+    Value: !Ref CloudFrontCertificate1
+    Export:
+      Name: !Sub '${StackPrefix}-cloudfront-certificate-arn-1'
+  
+  CloudFrontDomainName:
+    Description: 'Primary domain name for CloudFront distribution'
+    Value: !Sub 'docs.${PublicReachableDomainName}'
+    Export:
+      Name: !Sub '${StackPrefix}-cloudfront-domain-name'
+      
+  # Domain Name Output
+  SeraDomainName:
+    Description: 'Primary public reachable domain name for SERA'
+    Value: !ImportValue
+      Fn::Sub: '${StackPrefix}-public-reachable-domain-name'
+    Export:
+      Name: !Sub '${StackPrefix}-domain-name'
+      
+  # ALB Certificate Outputs
+  ALBCertificateArn1:
+    Description: 'ARN of the primary ALB ACM certificate'
+    Value: !Ref ALBCertificate1
+    Export:
+      Name: !Sub '${StackPrefix}-alb-certificate-arn-1'
+
+  # Cognito Auth Certificate Outputs
+  CognitoAuthCertificateArn1:
+    Description: 'ARN of the primary Cognito Auth ACM certificate'
+    Value: !Ref CognitoAuthCertificate1
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-auth-certificate-arn-1'
+
+  CognitoAuthDomainName:
+    Description: 'Primary domain name for Cognito authentication'
+    Value: !Sub 'auth.${PublicReachableDomainName}'
+    Export:
+      Name: !Sub '${StackPrefix}-cognito-auth-domain-name'
+
+  # Flask Secret Key Output
+  FlaskSecretKeyArn:
+    Description: 'ARN of the Flask secret key'
+    Value: !Ref FlaskSecretKey
+    Export:
+      Name: !Sub '${StackPrefix}-flask-secret-key-arn'
+
+  # Nova Act API Secret Output
+  NovaActApiSecretArn:
+    Description: 'ARN of the Nova Act API secret'
+    Value: !Ref NovaActApiSecret
+    Export:
+      Name: !Sub '${StackPrefix}-nova-act-api-secret-arn'

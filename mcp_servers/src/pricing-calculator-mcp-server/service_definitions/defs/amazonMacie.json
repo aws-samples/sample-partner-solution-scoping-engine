@@ -1,0 +1,896 @@
+{
+  "version": "0.0.67",
+  "serviceName": "Amazon Macie",
+  "serviceCode": "amazonMacie",
+  "type": "AWSService",
+  "slug": "Macie",
+  "serviceDescription": "Amazon Macie is a fully managed data security and data privacy service that uses machine learning and pattern matching to discover and protect your sensitive data in AWS. With Amazon Macie, you are charged based on the number of Amazon S3 buckets evaluated for bucket-level security and access controls and the quantity of data processed for sensitive data discovery.",
+  "excludeZeroSubTotals": true,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "af-south-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1"
+  ],
+  "searchKeywords": [
+    "data security",
+    "data privacy",
+    "machine learning",
+    "pattern matching",
+    "sensitive data protection",
+    "S3 buckets",
+    "PII",
+    "HIPAA",
+    "GDPR"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/macie/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "macie",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/macie/[currency]/current/macie.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "",
+      "description": "",
+      "id": "template0",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/macie/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Bucket evaluation",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "When you enable Macie, the service will gather detail on all of your S3 buckets, including bucket names, size, object count, resource tags, encryption status, access controls, and region placement. Macie will then automatically and continually evaluate all of your buckets for security and access control, alerting you to any unencrypted buckets, publicly accessible buckets, or buckets shared with an AWS account outside of your organization. You are charged based on the total number of buckets in your account after the 30-day free trial and charges are pro-rated per day.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/macie/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free 30-day trial",
+                "content": "You can quickly get started with Macie leveraging the 30-day free trial. During the 30-day free trial, there’s no charge for preventative control monitoring for each account in your organization. After the free trial ends, you’re charged based on the number of buckets for each account. The charges are prorated per day.",
+                "alertType": "info",
+                "partitions": [
+                  "aws"
+                ],
+                "isDismissable": true,
+                "id": "alertFreeTrialInfo"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NoFreeTierText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "NumberofS3bucketsEvaluated",
+                "label": "Number of S3 buckets",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "Buckets evaluated for security and access controls.",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "s3BucketPrice",
+                "label": "Price for s3 bucket",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "macie",
+                "meteredUnit": {
+                  "allRegions": "Security Services Amazon Macie Paid Data Inventory Evaluation per buckets per month"
+                },
+                "decimalPlaces": 5
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "alertFreeTrialInfo",
+                    "NoFreeTierText",
+                    "NumberofS3bucketsEvaluated",
+                    "s3BucketPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "PricePerBucketPerMonth",
+                  "variableName": "Price per bucket per month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Price for s3 bucket",
+                      "variableId": "s3BucketPrice",
+                      "variableUnitLabel": "[currency] (per S3 bucket per day)",
+                      "required": true
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "(days per month)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (per S3 bucket per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalS3BucketCharge",
+                  "variableName": "Total S3 bucket charge",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "PricePerBucketPerMonth",
+                      "variableLabel": "Price per bucket per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "NumberofS3bucketsEvaluated",
+                      "variableLabel": "Number of S3 buckets",
+                      "variableUnitLabel": "buckets",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 1
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PricePerBucketPerMonth",
+                    "totalS3BucketCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total S3 buckets evaluated cost",
+                  "decimalPlaces": 2,
+                  "id": "totalS3BucketChargeDisplay",
+                  "subTotalRefer": "totalS3BucketCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Automated sensitive data discovery",
+          "helpText": "For sensitive data discovery jobs, the first 1 GB processed every month in each account comes at no cost. For each GB processed beyond the first 1 GB, charges will occur as defined in the pricing table below. For automated data discovery jobs, the first 1 GB processed every month in each account comes at no cost. For each GB processed beyond the first 1 GB, charges will occur as defined in the pricing table below.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/macie/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free 30-day trial",
+                "content": "Automated data discovery is included in the 30-day free trial. During the 30-day free trial, Macie analyzes up to 150 GB of data for each account in your organization and there’s no charge for the analyses. After the free trial ends, you’re charged based on the total amount of data that Macie analyzes for each account.",
+                "alertType": "info",
+                "partitions": [
+                  "aws"
+                ],
+                "isDismissable": true,
+                "id": "alertAutomatedInfo"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Total bytes in S3 storage",
+                "id": "totalByteScannedAutomated",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter total bytes in S3 storage",
+                "description": "Macie picks small samples of objects from your S3 for inspection. This calculator provides an approximation of the data picked. Actual data picked may vary."
+              },
+              {
+                "type": "pricing",
+                "id": "tieredDataProcessedPrice",
+                "label": "Price for data processed for sensitive data discovery",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "macie",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1,
+                      "meteredUnit": "FREE Tier Security Services Amazon Macie Sensitive Data Discovery per GB"
+                    },
+                    {
+                      "startOfTier": 1.1,
+                      "endOfTier": 50000,
+                      "meteredUnit": "Security Services Amazon Macie Sensitive Data Discovery Next 50000 per GB"
+                    },
+                    {
+                      "startOfTier": 50001,
+                      "endOfTier": 500000,
+                      "meteredUnit": "Security Services Amazon Macie Sensitive Data Discovery Next 450000 per GB"
+                    },
+                    {
+                      "startOfTier": 500001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Security Services Amazon Macie Sensitive Data Discovery Over 500000 per GB"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": []
+            }
+          ]
+        },
+        {
+          "title": "Targeted sensitive data discovery",
+          "helpText": "For sensitive data discovery jobs, the first 1 GB processed every month in each account comes at no cost. For each GB processed beyond the first 1 GB, charges will occur as defined in the pricing table below. For automated data discovery jobs, the first 1 GB processed every month in each account comes at no cost. For each GB processed beyond the first 1 GB, charges will occur as defined in the pricing table below.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/macie/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": false,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Total bytes scanned per month",
+                "id": "totalByteScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": "",
+                "placeholder": "Enter total bytes scanned per month",
+                "description": "Data processed for sensitive data discovery."
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentCompressed",
+                "label": "The percentage of your objects which are compressed (such as .gz, or .tar)? ",
+                "description": "Macie automatically decompresses and analyzes all the contents of compressed folders.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": "0",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter percentage of objects compressed"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "compressionRatio",
+                "label": "Compression Ratio",
+                "mappingDefinitionName": "devicefarm",
+                "options": [
+                  {
+                    "label": "1x",
+                    "id": "1x"
+                  },
+                  {
+                    "label": "3x",
+                    "id": "3x"
+                  },
+                  {
+                    "label": "5x",
+                    "id": "5x"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "3x",
+                "description": "This is the ratio of the size of the compressed file to the size of all objects inside the compressed file.",
+                "validations": {
+                  "required": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "totalByteScanned",
+                    "percentCompressed",
+                    "compressionRatio"
+                  ],
+                  "subTotalRefer": "totalS3BucketCharge",
+                  "id": "serviceSettingUnitConversionSensitive"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "UnCompressedPercent",
+                  "variableName": "Uncompressed percent",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "The percentage of your objects which are compressed (such as .gz, or .tar)? ",
+                      "variableId": "percentCompressed",
+                      "variableUnitLabel": "(compressed %)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "(uncompressed %)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "The percentage of objects which are not compressed",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Uncompressed percent",
+                  "refer": "UnCompressedPercent",
+                  "id": "UncompressedPercentVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "UnCompressedByte",
+                  "variableName": "Uncompressed Byte",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total bytes scanned per month",
+                      "variableId": "totalByteScanned",
+                      "variableUnitLabel": "GB (total bytes scanned)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Uncompressed percent",
+                      "variableId": "UnCompressedPercent",
+                      "variableUnitLabel": "(uncompressed %)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total uncompressed bytes)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "compressionRatio"
+                      },
+                      "1x"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalBytesCompressed_1x",
+                  "variableName": "Total Bytes Compressed 1x",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total bytes scanned per month",
+                      "variableId": "totalByteScanned",
+                      "variableUnitLabel": "GB (total bytes scanned)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "The percentage of your objects which are compressed (such as .gz, or .tar)? ",
+                      "variableId": "percentCompressed",
+                      "variableUnitLabel": "(compressed %)",
+                      "required": false
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "(1x compression ratio)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total bytes without compression)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "compressionRatio"
+                      },
+                      "3x"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalBytesCompressed_3x",
+                  "variableName": "Total Bytes Compressed 3x",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total bytes scanned per month",
+                      "variableId": "totalByteScanned",
+                      "variableUnitLabel": "GB (total bytes scanned)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "The percentage of your objects which are compressed (such as .gz, or .tar)? ",
+                      "variableId": "percentCompressed",
+                      "variableUnitLabel": "(compressed %)",
+                      "required": false
+                    },
+                    {
+                      "constant": 3,
+                      "constantUnitLabel": "(3x compression ratio)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total bytes without compression)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "compressionRatio"
+                      },
+                      "5x"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalBytesCompressed_5x",
+                  "variableName": "Total Bytes Compressed 5x",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total bytes scanned per month",
+                      "variableId": "totalByteScanned",
+                      "variableUnitLabel": "GB (total bytes scanned)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "The percentage of your objects which are compressed (such as .gz, or .tar)? ",
+                      "variableId": "percentCompressed",
+                      "variableUnitLabel": "(compressed %)",
+                      "required": false
+                    },
+                    {
+                      "constant": 5,
+                      "constantUnitLabel": "(5x compression ratio)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total bytes without compression)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalDataScanned",
+                  "variableName": "Total data scanned",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Bytes Compressed 1x",
+                      "variableId": "TotalBytesCompressed_1x",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total Bytes Compressed 3x",
+                      "variableId": "TotalBytesCompressed_3x",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Total Bytes Compressed 5x",
+                      "variableId": "TotalBytesCompressed_5x",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Uncompressed Byte",
+                      "variableId": "UnCompressedByte",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "The total data scanned in GB (targeted sensitive data discovery)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Total data scanned",
+                  "refer": "TotalDataScanned",
+                  "id": "TotalDataScannedVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "automatedFinalBytes",
+                  "variableName": "total data scanned in GB for sensitive data discovery",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total bytes in S3 storage",
+                      "variableId": "totalByteScannedAutomated",
+                      "variableUnitLabel": "GB (total bytes scanned)",
+                      "required": false
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "(approximate sampling)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (approximate total bytes)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Approximate data scanned in GB (automated sensitive data discovery)",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "total data scanned in GB for sensitive data discovery",
+                  "refer": "automatedFinalBytes",
+                  "id": "TotalDataScannedAutomatedVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalDataScanned_targetedandAutomates",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total data scanned",
+                      "variableId": "TotalDataScanned",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "total data scanned in GB for sensitive data discovery",
+                      "variableId": "automatedFinalBytes",
+                      "variableUnitLabel": "GB",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "Total GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "TotalDataScannedCharges",
+                  "inputRefer": "TotalDataScanned_targetedandAutomates",
+                  "inputReferLabel": "Total GB",
+                  "inputUnitLabel": "GB",
+                  "tieredPricingRefer": "tieredDataProcessedPrice",
+                  "tieredPricingReferLabel": "Price for data processed for sensitive data discovery",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "UnCompressedPercent",
+                    "UncompressedPercentVar",
+                    "UnCompressedByte",
+                    "TotalBytesCompressed_1x",
+                    "TotalBytesCompressed_3x",
+                    "TotalBytesCompressed_5x",
+                    "TotalDataScanned",
+                    "TotalDataScannedVar",
+                    "automatedFinalBytes",
+                    "TotalDataScannedAutomatedVar",
+                    "TotalDataScanned_targetedandAutomates",
+                    "TotalDataScannedCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for data processed for sensitive data discovery",
+                  "decimalPlaces": 6,
+                  "id": "TotalDataScannedChargesDisplay",
+                  "subTotalRefer": "TotalDataScannedCharges"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Object Monitoring",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/macie/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Free 30-day trial",
+                "content": "Automated object monitoring is included in the 30-day free trial. During the 30-day free trial, there’s no charge for object monitoring for each account. After the free trial ends, you’re charged based on the total number of S3 objects that Macie monitors for each account. The charges are prorated per day.",
+                "alertType": "info",
+                "partitions": [
+                  "aws"
+                ],
+                "isDismissable": true,
+                "id": "alertObjectScanningInfo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "NumberofObjects",
+                "label": "Number of objects monitored for automated data discovery",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter total number of objects in s3",
+                "description": "",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "s3ObjectPrice",
+                "label": "Price for s3 object",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "macie",
+                "meteredUnit": {
+                  "allRegions": "Security Services Amazon Macie Paid Object Monitoring per Object-days"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "alertObjectScanningInfo",
+                    "NumberofObjects",
+                    "s3ObjectPrice"
+                  ],
+                  "subTotalRefer": "TotalDataScannedCharges",
+                  "id": "serviceSettingUnitConversionS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "finalObjects",
+                  "variableName": "Final object per month",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of objects monitored for automated data discovery",
+                      "variableId": "NumberofObjects",
+                      "variableUnitLabel": "objects",
+                      "required": true
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "objects",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "groups of 100k objects",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "objectPrice",
+                  "variableName": "Final object price",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Price for s3 object",
+                      "variableId": "s3ObjectPrice",
+                      "variableUnitLabel": "[currency] per 100K objects",
+                      "required": false
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "objects",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per 100k object",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalPriceperObject",
+                  "variableName": "Price per object per month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Final object per month",
+                      "variableId": "finalObjects",
+                      "variableUnitLabel": "groups of 100k objects",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Final object price",
+                      "variableId": "objectPrice",
+                      "variableUnitLabel": "[currency] per 100K objects",
+                      "required": false
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "(days per month)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (per S3 objects per month)",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Price per object per month",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "TotalPriceperObject"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (for automated sensitive data discovery)",
+                  "decimalPlaces": 6,
+                  "id": "finalAutomatedDataDiscovery"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "finalObjects",
+                    "objectPrice",
+                    "TotalPriceperObject",
+                    "finalAutomatedDataDiscovery"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for object scanning",
+                  "decimalPlaces": 6,
+                  "id": "TotalAutomatedDataScannedChargesDisplay",
+                  "subTotalRefer": "finalAutomatedDataDiscovery"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "version": "0.0.11",
+  "serviceName": {
+    "aws": "AWS Glue Crawlers",
+    "aws-cn": "Amazon Glue Crawlers"
+  },
+  "serviceCode": "awsGlueCrawlers",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "glue",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glue/[currency]/current/glue.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Crawlers",
+      "id": "glueCrawlers",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/glue/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "glue",
+              "meteredUnit": "Data catalog crawler run"
+            }
+          },
+          "title": "Crawlers",
+          "defaultExpansion": true,
+          "expandable": true,
+          "helpText": {
+            "aws": "There is an hourly rate for AWS Glue crawler runtime to discover data and populate the AWS Glue Data Catalog. You are charged an hourly rate based on the number of Data Processing Units (or DPUs) used to run your crawler.",
+            "aws-cn": "There is an hourly rate for Amazon Glue crawler runtime to discover data and populate the Amazon Glue Data Catalog. You are charged an hourly rate based on the number of Data Processing Units (or DPUs) used to run your crawler.",
+            "aws-us-gov": "There is an hourly rate for AWS Glue crawler runtime to discover data and populate the AWS Glue Data Catalog. You are charged an hourly rate based on the number of Data Processing Units (or DPUs) used to run your crawler."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of crawlers",
+                "description": "A single Data Processing Unit (DPU) provides 4 vCPU and 16 GB of memory.",
+                "id": "numberOfDPU",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for each crawler",
+                "description": "You are billed in increments of 1 second, rounded up to the nearest second, with a 10-minute minimum duration for each crawl.",
+                "id": "durationForCrawl",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hour",
+                "decimalPlaces": 2,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for Crawler",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "Data catalog crawler run"
+                },
+                "id": "Glue_Crawler"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfDPU",
+                    "durationForCrawl",
+                    "Glue_Crawler"
+                  ],
+                  "subTotalRefer": "",
+                  "id": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Duration for each crawler",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "durationForCrawl"
+                    },
+                    {
+                      "constant": 0.17,
+                      "constantUnitLabel": "hours (minimum billable duration)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "hours (billable duration)",
+                  "decimalPlaces": 2,
+                  "id": "crawlerDuration"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDPU",
+                      "variableLabel": "Number of crawlers",
+                      "variableUnitLabel": "crawlers",
+                      "required": true
+                    },
+                    {
+                      "variableId": "crawlerDuration",
+                      "variableLabel": "hours (billable duration)",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Glue_Crawler",
+                      "variableLabel": "Price for Crawler",
+                      "variableUnitLabel": "[currency] per DPU-hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "GlueClrawler_Charge"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "crawlerDuration",
+                    "GlueClrawler_Charge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Crawlers cost",
+                  "decimalPlaces": 2,
+                  "id": "GlueCrawlers_Disp",
+                  "subTotalRefer": "GlueClrawler_Charge"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

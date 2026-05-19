@@ -1,0 +1,440 @@
+{
+  "version": "0.0.15",
+  "serviceName": "Medical Named Entity and Relationship Extraction (NERe) API",
+  "serviceCode": "medicalNamedEntityAndRelationshipExtractionNeReApi",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-gov-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics"
+  ],
+  "serviceDescription": "",
+  "excludeZeroSubTotals": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehendmedical",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehendmedical/[currency]/current/comprehendmedical.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "API call selection",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Type of API call",
+                "id": "Type_of_API_call",
+                "options": [
+                  {
+                    "label": "Synchronous",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Asynchronous",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "validations": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "Type_of_API_call"
+              },
+              "1"
+            ]
+          },
+          "title": "Medical Named Entity and Relationship Extraction (NERe) API",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_text_(utf-8)_documents",
+                "label": "Number of text (utf-8) documents (NERe)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text (utf-8) documents to be analyzed",
+                "description": "Number of text (utf-8) documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_characters_in_a_document",
+                "label": "Average characters in a document (NERe)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text (utf-8) document",
+                "description": "Average number of characters in each text (utf-8) document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "detect entity cost",
+                "id": "detect_entity_cost",
+                "mappingDefinitionName": "comprehendmedical",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "DetectEntities"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 2000000,
+                      "meteredUnit": "DetectEntities Tier2"
+                    },
+                    {
+                      "startOfTier": 2000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "DetectEntities Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_text_(utf-8)_documents",
+                      "variableLabel": "Number of text (utf-8) documents (NERe)",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_characters_in_a_document",
+                      "variableLabel": "Average characters in a document (NERe)",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "units rounded up",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "monthlyNEreCost",
+                  "outputUnitLabel": "[currency]",
+                  "inputRefer": "unitsRounded",
+                  "inputReferLabel": "units rounded up to nearest 1 unit",
+                  "tieredPricingRefer": "detect_entity_cost",
+                  "tieredPricingReferLabel": "detect entity cost",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1",
+                    "Number_of_text_(utf-8)_documents",
+                    "Average_characters_in_a_document",
+                    "detect_entity_cost",
+                    "unitsPerRequest",
+                    "unitsChar",
+                    "unitsRounded",
+                    "monthlyNEreCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Medical Named Entity and Relationship Extraction (NERe) API",
+                  "decimalPlaces": 2,
+                  "id": "NERefin",
+                  "subTotalRefer": "monthlyNEreCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "Type_of_API_call"
+              },
+              "0"
+            ]
+          },
+          "title": "Medical Named Entity and Relationship Extraction (NERe) API",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1_1"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_text_(utf-8)_documents_a",
+                "label": "Number of text (utf-8) documents (NERe)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text (utf-8) documents to be analyzed",
+                "description": "Number of text (utf-8) documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_characters_in_a_document_a",
+                "label": "Average characters in a document (NERe)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text (utf-8) document",
+                "description": "Average number of characters in each text (utf-8) document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "detect entity cost",
+                "id": "detect_entity_cost_a",
+                "mappingDefinitionName": "comprehendmedical",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "EntitiesDetection Batching"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 2000000,
+                      "meteredUnit": "EntitiesDetection Batching Tier2"
+                    },
+                    {
+                      "startOfTier": 2000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "EntitiesDetection Batching Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_a",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_text_(utf-8)_documents_a",
+                      "variableLabel": "Number of text (utf-8) documents (NERe)",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_characters_in_a_document_a",
+                      "variableLabel": "Average characters in a document (NERe)",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_a",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest_a",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": true
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_a",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_a",
+                      "variableLabel": "units",
+                      "variableUnitLabel": "units rounded up",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "monthlyNEreCost_a",
+                  "outputUnitLabel": "[currency]",
+                  "inputRefer": "unitsRounded_a",
+                  "inputReferLabel": "units rounded up to nearest 1 unit",
+                  "tieredPricingRefer": "detect_entity_cost_a",
+                  "tieredPricingReferLabel": "detect entity cost",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1_1",
+                    "Number_of_text_(utf-8)_documents_a",
+                    "Average_characters_in_a_document_a",
+                    "detect_entity_cost_a",
+                    "unitsPerRequest_a",
+                    "unitsChar_a",
+                    "unitsRounded_a",
+                    "monthlyNEreCost_a"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Medical Named Entity and Relationship Extraction (NERe) API",
+                  "decimalPlaces": 2,
+                  "id": "NERefin_a",
+                  "subTotalRefer": "monthlyNEreCost_a"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "version": "0.0.10",
+  "serviceName": {
+    "aws": "AWS Glue ETL jobs with Flex execution option"
+  },
+  "serviceCode": "awsEtlJobsFlexExecutionOption",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "glue",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glue/[currency]/current/glue.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Flex jobs",
+      "id": "template_0",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/glue/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "glue",
+              "meteredUnit": "ETL Job run Flex"
+            }
+          },
+          "title": "ETL jobs with Flex excution options",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "Flex is ideal for customer workloads that don’t require fast jobs start times. The start and execution times of jobs using Flex vary because spare compute resources are not always available immediately and may be reclaimed during the execution of a job. Regardless of the execution option used, Glue jobs have the same capabilities, including access to custom connectors, a visual job authoring experience, and job scheduling system. Using Flex execution option, customers can optimize the costs of their data integration workloads by configuring the execution option based on the workloads’ requirements, using the standard execution option for time-sensitive workloads, and Flex for non-urgent workloads."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Apache Spark job with flexible execution",
+                "id": "etlJobsFlex"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DPUs for Apache Spark job with Flex execution",
+                "id": "numberOfDPUsForApacheSparkFlex",
+                "description": "A single Data Processing Unit (DPU) provides 4 vCPU and 16 GB of memory.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 2,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for which Apache Spark ETL job with flexible execution runs",
+                "id": "durationForApacheSparkJobFlexOption",
+                "dropDownDuration": [
+                  {
+                    "label": "minutes per month",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds per month",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "hour per month",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours per month",
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "minValue": 0.0166,
+                  "maxValue": 730,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter amount",
+                "description": "Minimum billing duration for each Spark job with flexible execution is 1-minute (Glue version 3.0 and later)."
+              },
+              {
+                "type": "pricing",
+                "label": "Price for ETL job run with Flex execution option",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "ETL Job run Flex"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "etlJobFlexPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "etlJobsFlex",
+                    "numberOfDPUsForApacheSparkFlex",
+                    "durationForApacheSparkJobFlexOption",
+                    "etlJobFlexPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "etlJobsFlex_unitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Duration for which Apache Spark ETL job with flexible execution runs",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "durationForApacheSparkJobFlexOption"
+                    },
+                    {
+                      "constant": 0.0166,
+                      "constantUnitLabel": "hours per month (minimum billable duration)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "hours per month (billable duration)",
+                  "decimalPlaces": 2,
+                  "id": "etlJobsFlexBillableDuration"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DPUs for Apache Spark job with Flex execution",
+                      "variableUnitLabel": "DPUs",
+                      "required": true,
+                      "variableId": "numberOfDPUsForApacheSparkFlex"
+                    },
+                    {
+                      "variableLabel": "hours per month (billable duration)",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "etlJobsFlexBillableDuration"
+                    },
+                    {
+                      "variableLabel": "Price for ETL job run with Flex execution option",
+                      "variableUnitLabel": "[currency] per DPU-Hour",
+                      "required": true,
+                      "variableId": "etlJobFlexPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Apache Spark ETL job with Flex execution option cost)",
+                  "decimalPlaces": 2,
+                  "id": "etlJobsFlexCostCalculated"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "etlJobsFlexBillableDuration",
+                    "etlJobsFlexCostCalculated"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "ETL jobs with Flex execution option cost",
+                  "decimalPlaces": 2,
+                  "id": "etlJobsFlexMonthlyCostDisplay",
+                  "subTotalRefer": "etlJobsFlexCostCalculated"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

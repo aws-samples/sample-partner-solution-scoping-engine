@@ -1,0 +1,739 @@
+{
+  "version": "0.0.45",
+  "serviceName": "AWS Private Certificate Authority",
+  "serviceCode": "awsCertificateManager",
+  "slug": "certificateManager",
+  "displayAutomation": true,
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "PCA",
+    "OCSP",
+    "certificates x.509",
+    "private"
+  ],
+  "serviceDescription": "AWS Private Certificate Authority is a service that lets you easily provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services and your internal connected resources.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/certificate-manager/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "certificatemanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/certificatemanager/[currency]/current/certificatemanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "AWS Private Certificate Authority is a service that lets you easily provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with AWS services and your internal connected resources.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/private-ca/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "General Purpose Mode Certificate Authority",
+          "helpText": "AWS Private Certificate Authority (CA) is priced along two dimensions. You pay a monthly fee for the operation of each private CA until you delete it and you pay for the private certificates you issue each month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/private-ca/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "AWS Private CA 30-day Free Trial",
+                "label": "info alert",
+                "content": "Any new account to AWS Private CA can try the service for 30 days with no charge for operation of the first Private CA created in the account and region. You pay for the certificates you issue during the trial period.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "freeTierAlert"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "certificatemanager",
+                    "meteredUnit": "Certificate Authority Paid"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "privateCertCount",
+                "label": "Number of Private CAs",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of private CA",
+                "description": "You pay a monthly fee for the operation of each private CA until you delete it."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "issuedCertCount",
+                "label": "Number of general purpose mode private certificates issued",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number",
+                "description": "You pay for the private certificates you issue each month."
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "AWS-integrated services",
+                "label": "info alert",
+                "content": "Private certificates issued from AWS Private CA for which you do not have access to the private key are free. These include certificates used exclusively with <a href='https://docs.aws.amazon.com/privateca/latest/userguide/PcaWelcome.html'>ACM-integrated services</a>, such as Elastic Load Balancing, Amazon CloudFront, and Amazon API Gateway.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "freeACMService"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "certificatemanager",
+                        "meteredUnit": "Certificate Issued from 0 to 1000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "certificatemanager",
+                        "meteredUnit": "Certificate Issued from 1000 to 10000"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "certificatemanager",
+                        "meteredUnit": "Certificate Issued from 10001 and above"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "integratedServiceCert",
+                "label": "Number of certificates used with ACM-integrated services",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Ceritificates Exceeded Limit",
+                "label": "Usage alert",
+                "content": "You cannot enter number of ACM-Integrated certificate more than private certificate Issued",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "ACM_alert_1"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "remaining general-purpose mode certificates",
+                        "variableId": "finalCertCount"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "0"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Usage alert",
+                        "variableId": "ACM_alert_1"
+                      }
+                    ]
+                  }
+                },
+                "id": "ACM_alert_2"
+              },
+              {
+                "type": "pricing",
+                "id": "privateCAPrice",
+                "label": "Price for operation for Private CA per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "certificatemanager",
+                "meteredUnit": {
+                  "allRegions": "Certificate Authority Paid"
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tiered Certificate Price",
+                "id": "certTieredPrice",
+                "mappingDefinitionName": "certificatemanager",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000,
+                      "meteredUnit": "Certificate Issued from 0 to 1000"
+                    },
+                    {
+                      "startOfTier": 1001,
+                      "endOfTier": 10000,
+                      "meteredUnit": "Certificate Issued from 1000 to 10000"
+                    },
+                    {
+                      "startOfTier": 10001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Certificate Issued from 10001 and above"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "freeTierAlert",
+                    "privateCertCount",
+                    "issuedCertCount",
+                    "freeACMService",
+                    "integratedServiceCert",
+                    "ACM_alert_1",
+                    "ACM_alert_2",
+                    "privateCAPrice",
+                    "certTieredPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "privateCAMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "privateCertCount",
+                      "variableLabel": "Number of Private CAs",
+                      "variableUnitLabel": "Private CAs",
+                      "required": true
+                    },
+                    {
+                      "variableId": "privateCAPrice",
+                      "variableLabel": "Price for operation for Private CA per month",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for operation of general purpose mode Private CAs",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ACMintegratedCertCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "integratedServiceCert",
+                      "variableLabel": "Number of certificates used with ACM-integrated services",
+                      "variableUnitLabel": "ACM certificates",
+                      "required": false
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "[currency]"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for certificates issued and used with ACM-integrated services",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "finalCertCount",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "issuedCertCount",
+                      "variableLabel": "Number of general purpose mode private certificates issued",
+                      "variableUnitLabel": "certificates issued",
+                      "required": false
+                    },
+                    {
+                      "variableId": "integratedServiceCert",
+                      "variableLabel": "Number of certificates used with ACM-integrated services",
+                      "variableUnitLabel": "certificates used with ACM-integrated services",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "remaining general-purpose mode certificates"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "finalCertCount",
+                  "inputReferLabel": "remaining general-purpose mode certificates",
+                  "tieredPricingRefer": "certTieredPrice",
+                  "tieredPricingReferLabel": "Tiered Certificate Price",
+                  "inputUnitLabel": "general-purpose mode certificates",
+                  "decimalPlaces": 4,
+                  "id": "issuedCACost",
+                  "outputUnitLabel": "[currency] per month for certificate issued"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "CACost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "privateCAMonthlyCost",
+                      "variableLabel": "[currency] per month for operation of general purpose mode Private CAs",
+                      "variableUnitLabel": "[currency] for instances",
+                      "required": false
+                    },
+                    {
+                      "variableId": "ACMintegratedCertCost",
+                      "variableLabel": "[currency] for certificates issued and used with ACM-integrated services",
+                      "variableUnitLabel": "[currency] exclusively using certificate with ACM-integrated services",
+                      "required": false
+                    },
+                    {
+                      "variableId": "issuedCACost",
+                      "variableLabel": "[currency] per month for certificate issued",
+                      "variableUnitLabel": "[currency] for certificate issued",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "privateCAMonthlyCost",
+                    "ACMintegratedCertCost",
+                    "finalCertCount",
+                    "issuedCACost",
+                    "CACost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Cost",
+                  "decimalPlaces": 2,
+                  "id": "TotalCost",
+                  "subTotalRefer": "CACost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "certificatemanager",
+              "meteredUnit": "Short lived Certificate Authority"
+            }
+          },
+          "title": "Short Lived Certificate Mode Certificate Authority",
+          "helpText": "AWS Private Certificate Authority (CA) is priced along two dimensions. You pay a monthly fee for the operation of each private CA until you delete it and you pay for the private certificates you issue each month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/private-ca/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "AWS Private CA 30-day Free Trial",
+                "label": "info alert",
+                "content": "Any new account to AWS Private CA can try the service for 30 days with no charge for operation of the first Private CA created in the account and region. You pay for the certificates you issue during the trial period.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "freeTierAlert_sl"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "privateCertCount_sl",
+                "label": "Number of Private CAs",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of private CA",
+                "description": "You pay a monthly fee for the operation of each private CA until you delete it."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "issuedCertCount_sl",
+                "label": "Number of short lived certificate mode private certificates issued",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number",
+                "description": "You pay for the private certificates you issue each month."
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_short_lived_certificates",
+                "label": "Price for short lived certificates",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "certificatemanager",
+                "meteredUnit": {
+                  "allRegions": "Short lived Certificate Authority"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_short_lived_certificates_issued",
+                "label": "Price for short lived certificates issued",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "certificatemanager",
+                "meteredUnit": {
+                  "allRegions": "Short lived Certificate Issued"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "freeTierAlert_sl",
+                    "privateCertCount_sl",
+                    "issuedCertCount_sl",
+                    "Price_for_short_lived_certificates",
+                    "Price_for_short_lived_certificates_issued"
+                  ],
+                  "subTotalRefer": "CACost",
+                  "id": "serviceSettingUnitConversion_sl"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "privateCAMonthlyCost_sl",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "privateCertCount_sl",
+                      "variableLabel": "Number of Private CAs",
+                      "variableUnitLabel": "Private CAs",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_short_lived_certificates",
+                      "variableLabel": "Price for short lived certificates",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for operation of short lived certificate mode Private CAs",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "issed_cl_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "issuedCertCount_sl",
+                      "variableLabel": "Number of short lived certificate mode private certificates issued",
+                      "variableUnitLabel": "certificates issued",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_short_lived_certificates_issued",
+                      "variableLabel": "Price for short lived certificates issued",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for short lived certificates issued",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "CACost_sl",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "privateCAMonthlyCost_sl",
+                      "variableLabel": "[currency] per month for operation of short lived certificate mode Private CAs",
+                      "variableUnitLabel": "[currency] for instances",
+                      "required": false
+                    },
+                    {
+                      "variableId": "issed_cl_cost",
+                      "variableLabel": "[currency] per month for short lived certificates issued",
+                      "variableUnitLabel": "[currency] for short lived certificate",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "privateCAMonthlyCost_sl",
+                    "issed_cl_cost",
+                    "CACost_sl"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Cost",
+                  "decimalPlaces": 2,
+                  "id": "TotalCost_sl",
+                  "subTotalRefer": "CACost_sl"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "OCSP Settings",
+          "helpText": "OCSP is priced along two dimensions. When you enable the OCSP feature, you pay a monthly fee for OCSP response generation, and you pay for the total number of OCSP queries made for your certificates.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/certificate-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "certificatemanager",
+                    "meteredUnit": "OCSP Response"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "OCSPResponseCount",
+                "label": "Number of OCSP responses per Month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "certificatemanager",
+                    "meteredUnit": "OCSP Query"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "OCSPQueryCount",
+                "label": "Number of OCSP Queries per hour",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Amount",
+                "description": "OCSP queries are billed on a per-CA basis."
+              },
+              {
+                "type": "pricing",
+                "id": "OCSPResponsePrice",
+                "label": "Price for OCSP Response",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "certificatemanager",
+                "meteredUnit": {
+                  "allRegions": "OCSP Response"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "OCSPQueryPrice",
+                "label": "Price for OCSP Queries per Hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "certificatemanager",
+                "meteredUnit": {
+                  "allRegions": "OCSP Query"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "OCSPResponseCount",
+                    "OCSPQueryCount",
+                    "OCSPResponsePrice",
+                    "OCSPQueryPrice"
+                  ],
+                  "subTotalRefer": "CACost_sl",
+                  "id": "OCSPSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "OCSPResponseMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "OCSPResponseCount",
+                      "variableLabel": "Number of OCSP responses per Month",
+                      "variableUnitLabel": "items",
+                      "required": true
+                    },
+                    {
+                      "variableId": "OCSPResponsePrice",
+                      "variableLabel": "Price for OCSP Response",
+                      "variableUnitLabel": "[currency] per Month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] For OCSP Response",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "OCSPQueryMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "OCSPQueryCount",
+                      "variableLabel": "Number of OCSP Queries per hour",
+                      "variableUnitLabel": "Queries",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "variableId": "OCSPQueryPrice",
+                      "variableLabel": "Price for OCSP Queries per Hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for OCSP Queries",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "FinalOCSPCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "OCSPResponseMonthlyCost",
+                      "variableLabel": "[currency] For OCSP Response",
+                      "variableUnitLabel": "[currency] per Month for OCSP Response",
+                      "required": false
+                    },
+                    {
+                      "variableId": "OCSPQueryMonthlyCost",
+                      "variableLabel": "[currency] for OCSP Queries",
+                      "variableUnitLabel": "[currency] per month for OCSP Queries",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "OCSPResponseMonthlyCost",
+                    "OCSPQueryMonthlyCost",
+                    "FinalOCSPCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total OCSP Cost",
+                  "decimalPlaces": 2,
+                  "id": "totalOCSPCost",
+                  "subTotalRefer": "FinalOCSPCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "certificateManager"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

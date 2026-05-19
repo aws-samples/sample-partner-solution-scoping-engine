@@ -1,0 +1,1498 @@
+{
+  "version": "0.0.31",
+  "serviceName": "Automation",
+  "serviceCode": "awsSystemsManagerAutomation",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "System Manager",
+    "Automation",
+    "steps",
+    "automate"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Systems Manager Automation feature",
+    "aws-cn": "Amazon Systems Manager Automation feature"
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/systems-manager/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "systemsmanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/systemsmanager/[currency]/current/systemsmanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": {
+        "aws": "AWS Systems Manager Automation feature",
+        "aws-cn": "Amazon Systems Manager Automation feature"
+      },
+      "id": "smAutomation",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b",
+            "aws-iso-e",
+            "aws-iso-f"
+          ],
+          "title": "Automation",
+          "helpText": {
+            "aws": "Automation, an AWS Systems Manager feature, allows you to safely automate common and repetitive IT operations and management tasks across AWS resources. You pay only for what you use and are charged based on the number and duration of steps.",
+            "aws-cn": "Automation, an Amazon Systems Manager feature, allows you to safely automate common and repetitive IT operations and management tasks across Amazon resources. You pay only for what you use and are charged based on the number and duration of steps."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "A step is defined as an initiated action performed in the Automation execution on a per-resource basis. There is a free tier of 100,000 steps per account per month. For multi-account automations, all steps including those run in any child accounts are counted only in the originating account.",
+                "id": "systemsManager_AutomationText"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Frequency of steps",
+                "id": "sysManagerAutomation_numberOfSteps",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of steps"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": {
+                  "aws": "aws:executeScript steps",
+                  "aws-cn": "amazon:executeScript steps"
+                },
+                "id": "sysManagerAutomation_numberOfAWSExecuteSteps",
+                "placeholder": {
+                  "aws": "Enter number of aws:executeScript steps per month",
+                  "aws-cn": "Enter number of amazon:executeScript steps per month"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": {
+                  "aws": "Average aws:executeScript step duration",
+                  "aws-cn": "Average amazon:executeScript step duration"
+                },
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter step duration",
+                "description": "Enter the average duration for each step (if the duration is less than 1 second then enter 1 second).",
+                "id": "sysManagerAutomation_stepDuration"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Storage per GB Mo"
+                  }
+                },
+                "label": "Playbook attachments stored",
+                "id": "sysManagerAutomation_numberOfPlaybookAttachments",
+                "placeholder": "Enter number of playbook attachments stored",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Storage per GB Mo"
+                  }
+                },
+                "label": "Average size of playbook attachments",
+                "id": "sysManagerAutomation_playbookSize",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 100,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                },
+                "placeholder": "Enter average size for each playbook attachment",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_stepPrice",
+                "label": "Price for step",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Step Basic per Steps"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_stepDurationPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "Price for step duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Step Duration per Units"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_playbookGBPrice",
+                "label": "Price for playbook attach",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Storage per GB Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions automation",
+                  "refer": [
+                    "systemsManager_AutomationText",
+                    "sysManagerAutomation_numberOfSteps",
+                    "sysManagerAutomation_numberOfAWSExecuteSteps",
+                    "sysManagerAutomation_stepDuration",
+                    "sysManagerAutomation_numberOfPlaybookAttachments",
+                    "sysManagerAutomation_playbookSize",
+                    "sysManagerParamStore_stepPrice",
+                    "sysManagerParamStore_stepDurationPrice",
+                    "sysManagerParamStore_playbookGBPrice"
+                  ],
+                  "id": "sysManagerAutomation_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_stepsMinusFree",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfSteps",
+                      "variableLabel": "Frequency of steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "free tier steps per month"
+                    }
+                  ],
+                  "outputUnitLabel": "steps beyond free tier",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "steps beyond free tier",
+                      "variableUnitLabel": "steps",
+                      "required": true,
+                      "variableId": "sysManagerAutomation_stepsMinusFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable steps"
+                    }
+                  ],
+                  "outputUnitLabel": "billable steps",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerAutomation_stepsBillable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_stepsPrice",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_stepsBillable",
+                      "variableLabel": "billable steps",
+                      "variableUnitLabel": "steps (billable)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for step",
+                      "variableUnitLabel": "[currency] per step",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for steps",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for Steps",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for steps",
+                  "id": "sysManagerAutomation_stepsPriceSubtotal",
+                  "refer": "sysManagerAutomation_stepsPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalDuration",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfAWSExecuteSteps",
+                      "variableLabel": {
+                        "aws": "aws:executeScript steps",
+                        "aws-cn": "amazon:executeScript steps"
+                      },
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_stepDuration",
+                      "variableLabel": {
+                        "aws": "Average aws:executeScript step duration",
+                        "aws-cn": "Average amazon:executeScript step duration"
+                      },
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total seconds",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_executeStepsMinusFree",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_totalDuration",
+                      "variableLabel": "total seconds",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 5000,
+                      "constantUnitLabel": {
+                        "aws": "free tier aws:executeScript seconds per month",
+                        "aws-cn": "free tier amazon:executeScript seconds per month"
+                      }
+                    }
+                  ],
+                  "outputUnitLabel": {
+                    "aws": "aws:executeScript seconds beyond free tier",
+                    "aws-cn": "amazon:executeScript seconds beyond free tier"
+                  },
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": {
+                        "aws": "aws:executeScript seconds beyond free tier",
+                        "aws-cn": "amazon:executeScript seconds beyond free tier"
+                      },
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "sysManagerAutomation_executeStepsMinusFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable seconds"
+                    }
+                  ],
+                  "outputUnitLabel": {
+                    "aws": "billable aws:executeScript seconds",
+                    "aws-cn": "billable amazon:executeScript seconds"
+                  },
+                  "decimalPlaces": 2,
+                  "id": "sysManagerAutomation_executeScriptSecondsBillable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_durationPrice",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_executeScriptSecondsBillable",
+                      "variableLabel": {
+                        "aws": "billable aws:executeScript seconds",
+                        "aws-cn": "billable amazon:executeScript seconds"
+                      },
+                      "variableUnitLabel": "billable seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "milliseconds per second"
+                    },
+                    {
+                      "variableLabel": "Price for step duration",
+                      "variableUnitLabel": "[currency] per millisecond",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepDurationPrice"
+                    }
+                  ],
+                  "outputUnitLabel": {
+                    "aws": "[currency] for aws:executeScript step duration",
+                    "aws-cn": "[currency] for amazon:executeScript step duration"
+                  },
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": {
+                    "aws": "Total monthly cost for aws:executeScript steps",
+                    "aws-cn": "Total monthly cost for amazon:executeScript steps"
+                  },
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": {
+                    "aws": "[currency] for aws:executeScript step duration",
+                    "aws-cn": "[currency] for amazon:executeScript step duration"
+                  },
+                  "id": "sysManagerAutomation_excecuteStepsPriceSubtotal",
+                  "refer": "sysManagerAutomation_durationPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalPlaybookSize",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfPlaybookAttachments",
+                      "variableLabel": "Playbook attachments stored",
+                      "variableUnitLabel": "playbook attachments",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_playbookSize",
+                      "variableLabel": "Average size of playbook attachments",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total playbook GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_playbookPrice",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_totalPlaybookSize",
+                      "variableLabel": "total playbook GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for playbook attach",
+                      "variableUnitLabel": "[currency] per GB-month",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_playbookGBPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for playbook attachments",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for playbook attachments",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for playbook attachments",
+                  "id": "sysManagerAutomation_playbookPriceSubtotal",
+                  "refer": "sysManagerAutomation_playbookPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalPrice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_stepsPrice",
+                      "variableLabel": "[currency] for steps",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_durationPrice",
+                      "variableLabel": {
+                        "aws": "[currency] for aws:executeScript step duration",
+                        "aws-cn": "[currency] for amazon:executeScript step duration"
+                      },
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_playbookPrice",
+                      "variableLabel": "[currency] for playbook attachments",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerAutomation_stepsMinusFree",
+                    "sysManagerAutomation_stepsBillable",
+                    "sysManagerAutomation_stepsPrice",
+                    "sysManagerAutomation_stepsPriceSubtotal",
+                    "sysManagerAutomation_totalDuration",
+                    "sysManagerAutomation_executeStepsMinusFree",
+                    "sysManagerAutomation_executeScriptSecondsBillable",
+                    "sysManagerAutomation_durationPrice",
+                    "sysManagerAutomation_excecuteStepsPriceSubtotal",
+                    "sysManagerAutomation_totalPlaybookSize",
+                    "sysManagerAutomation_playbookPrice",
+                    "sysManagerAutomation_playbookPriceSubtotal",
+                    "sysManagerAutomation_totalPrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Automation cost",
+                  "decimalPlaces": 2,
+                  "id": "automationTotalPriceDisplay",
+                  "subTotalRefer": "sysManagerAutomation_totalPrice"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-cn",
+            "aws-us-gov"
+          ],
+          "title": "Automation",
+          "helpText": "Automation, an AWS Systems Manager feature, allows you to safely automate common and repetitive IT operations and management tasks across AWS resources. You pay only for what you use and are charged based on the number and duration of steps.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "A step is defined as an initiated action performed in the Automation execution on a per-resource basis. For multi-account automations, all steps including those run in any child accounts are counted only in the originating account.",
+                "id": "systemsManager_AutomationTextMVP"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Frequency of steps",
+                "id": "sysManagerAutomation_numberOfStepsMVP",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of steps"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": {
+                  "aws": "aws:executeScript steps",
+                  "aws-cn": "amazon:executeScript steps"
+                },
+                "id": "sysManagerAutomation_numberOfAWSExecuteStepsMVP",
+                "placeholder": {
+                  "aws": "Enter number of aws:executeScript steps per month",
+                  "aws-cn": "Enter number of amazon:executeScript steps per month"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": {
+                  "aws": "Average aws:executeScript step duration",
+                  "aws-cn": "Average amazon:executeScript step duration"
+                },
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter step duration",
+                "description": "Enter the average duration for each step (if the duration is less than 1 second then enter 1 second).",
+                "id": "sysManagerAutomation_stepDurationMVP"
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_stepPriceMVP",
+                "label": "Price for step",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Step Basic per Steps"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_stepDurationPriceMVP",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "Price for step duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Step Duration per Units"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions automation",
+                  "refer": [
+                    "systemsManager_AutomationTextMVP",
+                    "sysManagerAutomation_numberOfStepsMVP",
+                    "sysManagerAutomation_numberOfAWSExecuteStepsMVP",
+                    "sysManagerAutomation_stepDurationMVP",
+                    "sysManagerParamStore_stepPriceMVP",
+                    "sysManagerParamStore_stepDurationPriceMVP"
+                  ],
+                  "id": "sysManagerAutomation_unitConvertMVP",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "sysManagerAutomation_totalPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_stepsPriceMVP",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfStepsMVP",
+                      "variableLabel": "Frequency of steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for step",
+                      "variableUnitLabel": "[currency] per step",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepPriceMVP"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for steps",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for Steps",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for steps",
+                  "id": "sysManagerAutomation_stepsPriceSubtotalMVP",
+                  "refer": "sysManagerAutomation_stepsPriceMVP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalDurationMVP",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfAWSExecuteStepsMVP",
+                      "variableLabel": {
+                        "aws": "aws:executeScript steps",
+                        "aws-cn": "amazon:executeScript steps"
+                      },
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_stepDurationMVP",
+                      "variableLabel": {
+                        "aws": "Average aws:executeScript step duration",
+                        "aws-cn": "Average amazon:executeScript step duration"
+                      },
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total seconds",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_durationPriceMVP",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_totalDurationMVP",
+                      "variableLabel": "total seconds",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "milliseconds per second"
+                    },
+                    {
+                      "variableLabel": "Price for step duration",
+                      "variableUnitLabel": "[currency] per millisecond",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepDurationPriceMVP"
+                    }
+                  ],
+                  "outputUnitLabel": {
+                    "aws": "[currency] for aws:executeScript step duration",
+                    "aws-cn": "[currency] for amazon:executeScript step duration"
+                  },
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "systemsmanager",
+                      "meteredUnit": "Step Duration per Units"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": {
+                    "aws": "Total monthly cost for aws:executeScript steps",
+                    "aws-cn": "Total monthly cost for amazon:executeScript steps"
+                  },
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": {
+                    "aws": "[currency] for aws:executeScript step duration",
+                    "aws-cn": "[currency] for amazon:executeScript step duration"
+                  },
+                  "id": "sysManagerAutomation_excecuteStepsPriceSubtotalMVP",
+                  "refer": "sysManagerAutomation_durationPriceMVP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalPriceMVP",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_stepsPriceMVP",
+                      "variableLabel": "[currency] for steps",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_durationPriceMVP",
+                      "variableLabel": {
+                        "aws": "[currency] for aws:executeScript step duration",
+                        "aws-cn": "[currency] for amazon:executeScript step duration"
+                      },
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerAutomation_stepsPriceMVP",
+                    "sysManagerAutomation_stepsPriceSubtotalMVP",
+                    "sysManagerAutomation_totalDurationMVP",
+                    "sysManagerAutomation_durationPriceMVP",
+                    "sysManagerAutomation_excecuteStepsPriceSubtotalMVP",
+                    "sysManagerAutomation_totalPriceMVP"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Automation cost",
+                  "decimalPlaces": 2,
+                  "id": "automationTotalPriceDisplayMVP",
+                  "subTotalRefer": "sysManagerAutomation_totalPriceMVP"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws",
+            "aws-us-gov",
+            "aws-iso-b",
+            "aws-iso-e",
+            "aws-iso-f"
+          ],
+          "title": "Automation",
+          "helpText": "Automation, an Amazon Systems Manager feature, allows you to safely automate common and repetitive IT operations and management tasks across Amazon resources. You pay only for what you use and are charged based on the number and duration of steps.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "A step is defined as an initiated action performed in the Automation execution on a per-resource basis. There is a free tier of 100,000 steps per account per month. For multi-account automations, all steps including those run in any child accounts are counted only in the originating account.",
+                "id": "systemsManager_AutomationText_cn"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Basic per Steps"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Frequency of steps",
+                "id": "sysManagerAutomation_numberOfSteps_cn",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "placeholder": "Enter number of steps"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": "amazon:executeScript steps",
+                "id": "sysManagerAutomation_numberOfAWSExecuteSteps_cn",
+                "placeholder": "Enter number of amazon:executeScript steps per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Step Duration per Units"
+                  }
+                },
+                "label": "Average amazon:executeScript step duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true
+                },
+                "placeholder": "Enter step duration",
+                "description": "Enter the average duration for each step (if the duration is less than 1 second then enter 1 second).",
+                "id": "sysManagerAutomation_stepDuration_cn"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Storage per GB Mo"
+                  }
+                },
+                "label": "Playbook attachments stored",
+                "id": "sysManagerAutomation_numberOfPlaybookAttachments_cn",
+                "placeholder": "Enter number of playbook attachments stored",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "systemsmanager",
+                    "meteredUnit": "Storage per GB Mo"
+                  }
+                },
+                "label": "Average size of playbook attachments",
+                "id": "sysManagerAutomation_playbookSize_cn",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 100,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000
+                },
+                "placeholder": "Enter average size for each playbook attachment",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_stepDurationPrice_cn",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "Price for step duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Step Duration per Units"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerParamStore_playbookGBPrice_cn",
+                "label": "Price for playbook attach",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Storage per GB Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions automation",
+                  "refer": [
+                    "systemsManager_AutomationText_cn",
+                    "sysManagerAutomation_numberOfSteps_cn",
+                    "sysManagerAutomation_numberOfAWSExecuteSteps_cn",
+                    "sysManagerAutomation_stepDuration_cn",
+                    "sysManagerAutomation_numberOfPlaybookAttachments_cn",
+                    "sysManagerAutomation_playbookSize_cn",
+                    "sysManagerParamStore_stepDurationPrice_cn",
+                    "sysManagerParamStore_playbookGBPrice_cn"
+                  ],
+                  "id": "sysManagerAutomation_unitConvert_cn",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "sysManagerAutomation_totalPriceMVP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_stepsMinusFree_cn",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfSteps_cn",
+                      "variableLabel": "Frequency of steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "free tier steps per month"
+                    }
+                  ],
+                  "outputUnitLabel": "steps beyond free tier",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "systemsmanager",
+                      "meteredUnit": "Step Basic per Steps"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "steps beyond free tier",
+                      "variableUnitLabel": "steps",
+                      "required": true,
+                      "variableId": "sysManagerAutomation_stepsMinusFree_cn"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable steps"
+                    }
+                  ],
+                  "outputUnitLabel": "billable steps",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerAutomation_stepsBillable_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_stepsPrice_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_stepsBillable_cn",
+                      "variableLabel": "billable steps",
+                      "variableUnitLabel": "steps (billable)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for step",
+                      "variableUnitLabel": "[currency] per step",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepPriceMVP"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for steps",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "systemsmanager",
+                      "meteredUnit": "Step Basic per Steps"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for Steps",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for steps",
+                  "id": "sysManagerAutomation_stepsPriceSubtotal_cn",
+                  "refer": "sysManagerAutomation_stepsPrice_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalDuration_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfAWSExecuteSteps_cn",
+                      "variableLabel": "amazon:executeScript steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_stepDuration_cn",
+                      "variableLabel": "Average amazon:executeScript step duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total seconds",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_executeStepsMinusFree_cn",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_totalDuration_cn",
+                      "variableLabel": "total seconds",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 5000,
+                      "constantUnitLabel": "free tier amazon:executeScript seconds per month"
+                    }
+                  ],
+                  "outputUnitLabel": "amazon:executeScript seconds beyond free tier",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "amazon:executeScript seconds beyond free tier",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "sysManagerAutomation_executeStepsMinusFree_cn"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "billable amazon:executeScript seconds",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerAutomation_executeScriptSecondsBillable_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_durationPrice_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_executeScriptSecondsBillable_cn",
+                      "variableLabel": "billable amazon:executeScript seconds",
+                      "variableUnitLabel": "billable seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "milliseconds per second"
+                    },
+                    {
+                      "variableLabel": "Price for step duration",
+                      "variableUnitLabel": "[currency] per millisecond",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_stepDurationPrice_cn"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for amazon:executeScript step duration",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for amazon:executeScript steps",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for amazon:executeScript step duration",
+                  "id": "sysManagerAutomation_excecuteStepsPriceSubtotal_cn",
+                  "refer": "sysManagerAutomation_durationPrice_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalPlaybookSize_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_numberOfPlaybookAttachments_cn",
+                      "variableLabel": "Playbook attachments stored",
+                      "variableUnitLabel": "playbook attachments",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_playbookSize_cn",
+                      "variableLabel": "Average size of playbook attachments",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total playbook GB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_playbookPrice_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_totalPlaybookSize_cn",
+                      "variableLabel": "total playbook GB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for playbook attach",
+                      "variableUnitLabel": "[currency] per GB-month",
+                      "required": true,
+                      "variableId": "sysManagerParamStore_playbookGBPrice_cn"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for playbook attachments",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for playbook attachments",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for playbook attachments",
+                  "id": "sysManagerAutomation_playbookPriceSubtotal_cn",
+                  "refer": "sysManagerAutomation_playbookPrice_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerAutomation_totalPrice_cn",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerAutomation_stepsPrice_cn",
+                      "variableLabel": "[currency] for steps",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_durationPrice_cn",
+                      "variableLabel": "[currency] for amazon:executeScript step duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "sysManagerAutomation_playbookPrice_cn",
+                      "variableLabel": "[currency] for playbook attachments",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerAutomation_stepsMinusFree_cn",
+                    "sysManagerAutomation_stepsBillable_cn",
+                    "sysManagerAutomation_stepsPrice_cn",
+                    "sysManagerAutomation_stepsPriceSubtotal_cn",
+                    "sysManagerAutomation_totalDuration_cn",
+                    "sysManagerAutomation_executeStepsMinusFree_cn",
+                    "sysManagerAutomation_executeScriptSecondsBillable_cn",
+                    "sysManagerAutomation_durationPrice_cn",
+                    "sysManagerAutomation_excecuteStepsPriceSubtotal_cn",
+                    "sysManagerAutomation_totalPlaybookSize_cn",
+                    "sysManagerAutomation_playbookPrice_cn",
+                    "sysManagerAutomation_playbookPriceSubtotal_cn",
+                    "sysManagerAutomation_totalPrice_cn"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Automation cost",
+                  "decimalPlaces": 2,
+                  "id": "automationTotalPriceDisplay_cn",
+                  "subTotalRefer": "sysManagerAutomation_totalPrice_cn"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

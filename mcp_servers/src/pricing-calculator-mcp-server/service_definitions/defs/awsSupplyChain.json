@@ -1,0 +1,633 @@
+{
+  "version": "0.0.73",
+  "serviceName": "AWS Supply Chain",
+  "serviceCode": "awsSupplyChain",
+  "type": "AWSService",
+  "slug": "supplyChain",
+  "serviceDescription": "AWS Supply Chain is a cloud application that unifies data and provides machine learning (ML)–powered actionable insights, built-in contextual collaboration, and demand planning. AWS Supply Chain connects to your existing enterprise resource planning (ERP) and supply chain management systems, without replatforming, up-front licensing fees, or long-term contracts.",
+  "excludeZeroSubTotals": true,
+  "regions": [
+    "eu-central-1",
+    "us-west-2-pdx-1",
+    "us-east-1"
+  ],
+  "searchKeywords": [
+    "supply chain",
+    "insights",
+    "supply chain insights",
+    "demand planning"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/aws-supply-chain/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "supplychain",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/supplychain/[currency]/current/supplychain.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "template_supplychain",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/aws-supply-chain//pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Free 30-day trial",
+          "helpText": "AWS Supply Chain Insights analyzes your supply chain data in the data lake to provide actionable insights to improve resilience against demand fluctuations and supply chain disruptions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "You can get started with AWS Supply Chain with a free trial. For the first 30 days of your initial AWS Supply Chain deployment, you receive:1,000 product SKU location combinations to be used for AWS Supply Chain Insights and Demand Planning 10 GB of data storage",
+                "alertType": "info",
+                "partitions": [
+                  "aws"
+                ],
+                "id": "alertFreeTrialInfo_1"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Data Lake Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "The AWS Supply Chain data lake combines an extensible Canonical Data Model (CDM), data governance, data storage, and data transformation capabilities. The data lake leverages pretrained machine learning (ML) models to understand, extract, and transform disparate data into a unified data model.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Enter total data to be uploaded",
+                "id": "datalakeStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": "",
+                "placeholder": "Enter total storage in GB",
+                "description": "Data import and first 10 GB of storage are included"
+              },
+              {
+                "type": "pricing",
+                "id": "tiereddataLakePrice",
+                "label": "Price for data lake storage",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "supplychain",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10,
+                      "meteredUnit": "SCDL over 10GBStorage per GB month Tier1"
+                    },
+                    {
+                      "startOfTier": 11,
+                      "endOfTier": -1,
+                      "meteredUnit": "SCDL over 10GBStorage per GB month Tier2"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "storageHourlyPrice",
+                "label": "Price for hourly storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "supplychain",
+                "meteredUnit": {
+                  "allRegions": "SCDL hourly up to 10 GB storage per hours"
+                },
+                "decimalPlaces": 5
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "datalakeStorage",
+                    "tiereddataLakePrice",
+                    "storageHourlyPrice"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalDataLakeStorageCharge",
+                  "inputRefer": "datalakeStorage",
+                  "inputReferLabel": "Enter total data to be uploaded",
+                  "inputUnitLabel": "GB",
+                  "tieredPricingRefer": "tiereddataLakePrice",
+                  "tieredPricingReferLabel": "Price for data lake storage",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] storage charge per GB"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "PricePerHourlyStoragePerMonth",
+                  "label": "Price per hourly storage per month",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "(hours per month)"
+                    },
+                    {
+                      "variableLabel": "Price for hourly storage",
+                      "variableId": "storageHourlyPrice",
+                      "variableUnitLabel": "[currency] (per hour)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total hourly storage charge)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "finalStorageCharge",
+                  "variableName": "Total Data Lake Storage Price",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] storage charge per GB",
+                      "variableId": "totalDataLakeStorageCharge",
+                      "variableUnitLabel": "[currency] (storage charge per GB)",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] (total hourly storage charge)",
+                      "variableId": "PricePerHourlyStoragePerMonth",
+                      "variableUnitLabel": "[currency] (total hourly storage charge)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total data lake storage charge)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalDataLakeStorageCharge",
+                    "PricePerHourlyStoragePerMonth",
+                    "finalStorageCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total data lake storage cost",
+                  "decimalPlaces": 2,
+                  "id": "finalDataLakeStorage",
+                  "subTotalRefer": "finalStorageCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Insights",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "AWS Supply Chain Insights analyzes your supply chain data in the data lake to provide actionable insights to improve resilience against demand fluctuations and supply chain disruptions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberofProductLocation",
+                "label": "Number of Product SKU Location Combinations",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "tieredInsightPrice",
+                "label": "Price for insights data usage",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "supplychain",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "SCI Product SKU Location Combinations Tier1"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "SCI Product SKU Location Combinations Tier2"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "SCI Product SKU Location Combinations Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofProductLocation",
+                    "tieredInsightPrice"
+                  ],
+                  "subTotalRefer": "finalStorageCharge",
+                  "id": "serviceSettingUnitConversionInsight"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalIndightsCharge",
+                  "inputRefer": "numberofProductLocation",
+                  "inputReferLabel": "Number of Product SKU Location Combinations",
+                  "inputUnitLabel": "Products",
+                  "tieredPricingRefer": "tieredInsightPrice",
+                  "tieredPricingReferLabel": "Price for insights data usage",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalIndightsCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total insight data usage",
+                  "decimalPlaces": 2,
+                  "id": "totalInsightDataUsage",
+                  "subTotalRefer": "totalIndightsCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Demand Planning",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "AWS Supply Chain Demand Planning forecasts demand using ML.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberofProductLocationDemand",
+                "label": "Number of Product SKU Location Combinations",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "tieredDemandPlanningPrice",
+                "label": "Price for demand planning",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "supplychain",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "ADP Product SKU Location Combinations Tier1"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "ADP Product SKU Location Combinations Tier2"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ADP Product SKU Location Combinations Tier3"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofProductLocationDemand",
+                    "tieredDemandPlanningPrice"
+                  ],
+                  "subTotalRefer": "totalIndightsCharge",
+                  "id": "serviceSettingUnitConversionDemand"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalDemandPlanningCharge",
+                  "inputRefer": "numberofProductLocationDemand",
+                  "inputReferLabel": "Number of Product SKU Location Combinations",
+                  "inputUnitLabel": "Products",
+                  "tieredPricingRefer": "tieredDemandPlanningPrice",
+                  "tieredPricingReferLabel": "Price for demand planning",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalDemandPlanningCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total demand planning data usage",
+                  "decimalPlaces": 2,
+                  "id": "totalDemandPlanningDataUsage",
+                  "subTotalRefer": "totalDemandPlanningCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Supply Planning and N-Tier Visibility",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Supply Planning uses the demand forecasts created by AWS Supply Chain Demand Planning (or other demand planning tools), along with data about product, facility, bill of materials (BOM), and inventory to generate transfer, production, and purchase plans.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberofComponentSKU",
+                "label": "Number of Component SKU Location Combinations",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "tieredSupplyplanningPrice",
+                "label": "Price for component SKU location combination",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "supplychain",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "Component SKU Location Combinations Tier1"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Component SKU Location Combinations per Count 10000"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofComponentSKU",
+                    "tieredSupplyplanningPrice"
+                  ],
+                  "subTotalRefer": "totalDemandPlanningCharge",
+                  "id": "serviceSettingUnitConversion_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalsupplyPlanningVisibilityCharge",
+                  "inputRefer": "numberofComponentSKU",
+                  "inputReferLabel": "Number of Component SKU Location Combinations",
+                  "inputUnitLabel": "combinations",
+                  "tieredPricingRefer": "tieredSupplyplanningPrice",
+                  "tieredPricingReferLabel": "Price for component SKU location combination",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for component SKU Location Combination"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalsupplyPlanningVisibilityCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Supply Planning and N-Tier Visibility cost",
+                  "decimalPlaces": 2,
+                  "id": "finalsupplyPlanningCost",
+                  "subTotalRefer": "totalsupplyPlanningVisibilityCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Sustainability",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "AWS Supply Chain Sustainability creates a secure and efficient way for sustainability professionals to obtain documents and datasets from their supplier network.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/aws-supply-chain//pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberofDataRequest",
+                "label": "Data Requests",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "",
+                "description": "",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "tieredDataRequestPrice",
+                "label": "Price for data request",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "supplychain",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000,
+                      "meteredUnit": "Sustainability Data Requests per Count Tier100"
+                    },
+                    {
+                      "startOfTier": 1001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Sustainability Data Requests per Count 100"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberofDataRequest",
+                    "tieredDataRequestPrice"
+                  ],
+                  "subTotalRefer": "totalsupplyPlanningVisibilityCharge",
+                  "id": "serviceSettingUnitConversion_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "totalSustainabilityCharge",
+                  "inputRefer": "numberofDataRequest",
+                  "inputReferLabel": "Data Requests",
+                  "inputUnitLabel": "request(s)",
+                  "tieredPricingRefer": "tieredDataRequestPrice",
+                  "tieredPricingReferLabel": "Price for data request",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for data request(s)"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalSustainabilityCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Sustainability cost",
+                  "decimalPlaces": 2,
+                  "id": "finalSustainabilityCost",
+                  "subTotalRefer": "totalSustainabilityCharge"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

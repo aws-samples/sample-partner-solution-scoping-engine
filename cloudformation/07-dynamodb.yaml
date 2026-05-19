@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Sera DynamoDB tables - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment (e.g., sera-prod, sera-dev, sera-partner1)'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+
+Resources:
+  # DynamoDB Table for Chat Data
+  SeraChatsDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${StackPrefix}-chats-data'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+        - AttributeName: chat_id
+          AttributeType: S
+        - AttributeName: stage
+          AttributeType: S
+        - AttributeName: updated_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: chat-id-gsi
+          KeySchema:
+            - AttributeName: chat_id
+              KeyType: HASH
+            - AttributeName: timestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: stage-updated_at-index
+          KeySchema:
+            - AttributeName: stage
+              KeyType: HASH
+            - AttributeName: updated_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !ImportValue
+          Fn::Sub: '${StackPrefix}-kms-key-arn'
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-chats-data'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # DynamoDB Table for Support Relationship Data
+  SeraSupportRelationshipsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${StackPrefix}-support-relationship-data'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: seller_id
+          AttributeType: S
+        - AttributeName: support_member_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: seller_id
+          KeyType: HASH
+        - AttributeName: support_member_id
+          KeyType: RANGE
+      SSESpecification:
+        SSEEnabled: true
+        SSEType: KMS
+        KMSMasterKeyId: !ImportValue
+          Fn::Sub: '${StackPrefix}-kms-key-arn'
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-support-relationship-data'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+Outputs:
+  # DynamoDB outputs
+  ChatsTableName:
+    Description: Name of the chats DynamoDB table
+    Value: !Ref SeraChatsDataTable
+    Export:
+      Name: !Sub '${StackPrefix}-chats-data-table-name'
+
+  SupportRelationshipsTableName:
+    Description: Name of the support relationships DynamoDB table
+    Value: !Ref SeraSupportRelationshipsTable
+    Export:
+      Name: !Sub '${StackPrefix}-support-relationship-data-table-name'
+
+  ChatsTableArn:
+    Description: ARN of the chats DynamoDB table
+    Value: !GetAtt SeraChatsDataTable.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-chats-data-table-arn'
+
+  SupportRelationshipsTableArn:
+    Description: ARN of the support relationships DynamoDB table
+    Value: !GetAtt SeraSupportRelationshipsTable.Arn
+    Export:
+      Name: !Sub '${StackPrefix}-support-relationship-data-table-arn'

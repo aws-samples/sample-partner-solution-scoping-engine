@@ -1,0 +1,654 @@
+{
+  "version": "0.0.37",
+  "serviceName": "Gateway Load Balancer",
+  "serviceCode": "gatewayLoadBalancer",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "ELB",
+    "Elastic Load Balancer",
+    "Load Balancer",
+    "Application Load Balancer",
+    "Network Load Balancer",
+    "Classic Load Balancer",
+    "Gateway Load Balancer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/elasticloadbalancing/"
+    }
+  },
+  "serviceDescription": "Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elb/[currency]/current/elb.json"
+    },
+    {
+      "mappingDefinitionName": "vpc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Gateway Load Balancer",
+      "description": "Gateway Load Balancer makes it easy to deploy, scale, and run third-party virtual networking appliances. Providing load balancing and auto scaling for fleets of third-party appliances, Gateway Load Balancer is transparent to the source and destination of traffic. This capability makes it well suited for working with third-party appliances for security, network analytics, and other use cases.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/elasticloadbalancing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "elb",
+              "meteredUnit": "Gateway Load Balancer Hours"
+            }
+          },
+          "title": "Service settings",
+          "description": "",
+          "helpText": {
+            "aws": "You are charged for each hour or partial hour that a Gateway Load Balancer is running and the number of Gateway Load Balancer Capacity Units (GLCU) used by Gateway Load Balancer per hour. Gateway Load Balancer uses Gateway Load Balancer Endpoint (GWLBE), a new type of VPC Endpoint powered by AWS PrivateLink technology that simplifies how applications can securely exchange traffic with GWLB across VPC boundaries. GWLBE is priced and billed separately.",
+            "aws-cn": "You are charged for each hour or partial hour that a Gateway Load Balancer is running and the number of Gateway Load Balancer Capacity Units (GLCU) used by Gateway Load Balancer per hour. Gateway Load Balancer uses Gateway Load Balancer Endpoint (GWLBE), a new type of VPC Endpoint powered by Amazon PrivateLink technology that simplifies how applications can securely exchange traffic with GWLB across VPC boundaries. GWLBE is priced and billed separately."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below are for one Gateway Load Balancer.",
+                "id": "glbText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Availability Zones that Gateway Load Balancer is deployed to",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "numberOfGatewayAZs"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Gateway Load Balancer Hours"
+                },
+                "label": "pricing for glb per hour",
+                "id": "gatewayLoadBalancer_hourPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "gatewayLoadBalancer_unitConvert",
+                  "refer": [
+                    "glbText",
+                    "numberOfGatewayAZs",
+                    "gatewayLoadBalancer_hourPrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Availability Zones that Gateway Load Balancer is deployed to",
+                      "variableUnitLabel": "availability zones",
+                      "required": true,
+                      "variableId": "numberOfGatewayAZs"
+                    },
+                    {
+                      "variableLabel": "pricing for glb per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_hourPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "gatewayLoadBalancer_MonthlyHoursCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total hourly charges for all Gateway Load Balancers",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "gatewayLoadBalancer_MonthlyHoursCost"
+                  ],
+                  "id": "gatewayLoadBalancer_MonthlyHourTotal",
+                  "subTotalRefer": "gatewayLoadBalancer_MonthlyHoursCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "elb",
+              "meteredUnit": "Gateway Load Balancer LCU Hours"
+            }
+          },
+          "title": "Load Capacity Units (LCUs)",
+          "description": "An LCU measures the dimensions on which the Gateway Load Balancer processes your traffic (averaged over an hour).",
+          "bodyText": "Please specify at least one of the following dimensions to determine LCU pricing.",
+          "helpText": "An LCU measures the dimensions on which the Gateway Load Balancer processes your traffic (averaged over an hour). The three dimensions measured are: new connections or flows, active connections or flows, and bandwidth. You are charged only on one of the three dimensions that has the highest usage for the hour.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Total processed bytes",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed.",
+                "id": "sizeOfProcessedDataPerGLB"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average number of new connections/flows",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageNumberOfNewGLBConnections"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average connection/flow duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 2628000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new connection (if the duration is less than 1 second then enter 1 second).",
+                "displayInConfigSummary": true,
+                "id": "averageGLBConnectionDuration"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Gateway Load Balancer LCU Hours"
+                },
+                "label": "pricing for glb lcu per hour",
+                "id": "gatewayLoadBalancer_LCUPricePerHour"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "gatewayLoadBalancer_unitConvert_2",
+                  "refer": [
+                    "sizeOfProcessedDataPerGLB",
+                    "averageNumberOfNewGLBConnections",
+                    "averageGLBConnectionDuration",
+                    "gatewayLoadBalancer_LCUPricePerHour"
+                  ],
+                  "subTotalRefer": "gatewayLoadBalancer_MonthlyHoursCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Total processed bytes",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfProcessedDataPerGLB"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "GB per hour for EC2 instances, containers and IP addresses as targets."
+                    }
+                  ],
+                  "outputUnitLabel": "Processed bytes LCUs",
+                  "id": "gatewayLoadBalancer_processedLCUBytes"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new connections/flows",
+                      "variableUnitLabel": "new connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewGLBConnections"
+                    },
+                    {
+                      "constant": 600,
+                      "constantUnitLabel": "new connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "new connections/flows LCUs",
+                  "id": "gatewayLoadBalancer_newConnLCUs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new connections/flows",
+                      "variableUnitLabel": "new connections",
+                      "required": true,
+                      "variableId": "averageNumberOfNewGLBConnections"
+                    },
+                    {
+                      "variableLabel": "Average connection/flow duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "averageGLBConnectionDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "active GWLB connections",
+                  "id": "gatewayLoadBalancer_activeGLBConns"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "active GWLB connections",
+                      "variableUnitLabel": "active connections",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_activeGLBConns"
+                    },
+                    {
+                      "constant": 60000,
+                      "constantUnitLabel": "connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "active GWLB connections LCUs",
+                  "id": "gatewayLoadBalancer_activeConnLCUs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes LCUs",
+                      "variableUnitLabel": "processed bytes LCUs ",
+                      "required": false,
+                      "variableId": "gatewayLoadBalancer_processedLCUBytes"
+                    },
+                    {
+                      "variableLabel": "new connections/flows LCUs",
+                      "variableUnitLabel": "new connections/flows LCUs ",
+                      "required": false,
+                      "variableId": "gatewayLoadBalancer_newConnLCUs"
+                    },
+                    {
+                      "variableLabel": "active GWLB connections LCUs",
+                      "variableUnitLabel": "active connections/flows LCUs",
+                      "required": false,
+                      "variableId": "gatewayLoadBalancer_activeConnLCUs"
+                    }
+                  ],
+                  "outputUnitLabel": "max GWLB LCUs",
+                  "id": "gatewayLoadBalancer_maxLCUs"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "max GWLB LCUs",
+                      "variableUnitLabel": "GWLB LCUs",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_maxLCUs"
+                    },
+                    {
+                      "variableLabel": "pricing for glb lcu per hour",
+                      "variableUnitLabel": "GWLB LCU price",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_LCUPricePerHour"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Gateway Load Balancer LCU usage)",
+                  "decimalPlaces": 2,
+                  "id": "gatewayLoadBalancer_LCUCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total LCU charges for all Gateway Load Balancers",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "gatewayLoadBalancer_processedLCUBytes",
+                    "gatewayLoadBalancer_newConnLCUs",
+                    "gatewayLoadBalancer_activeGLBConns",
+                    "gatewayLoadBalancer_activeConnLCUs",
+                    "gatewayLoadBalancer_maxLCUs",
+                    "gatewayLoadBalancer_LCUCost"
+                  ],
+                  "id": "gatewayLoadBalancer_totalLCUCost",
+                  "subTotalRefer": "gatewayLoadBalancer_LCUCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Gateway Load Balancer Endpoint",
+          "description": "",
+          "helpText": {
+            "aws": "Gateway Load Balancer uses Gateway Load Balancer Endpoint (GWLBE), a new type of VPC Endpoint powered by AWS PrivateLink technology that simplifies how applications can securely exchange traffic with GWLB across VPC boundaries. GWLBE is priced and billed separately.",
+            "aws-cn": "Gateway Load Balancer uses Gateway Load Balancer Endpoint (GWLBE), a new type of VPC Endpoint powered by Amazon PrivateLink technology that simplifies how applications can securely exchange traffic with GWLB across VPC boundaries. GWLBE is priced and billed separately."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "vpc",
+                    "meteredUnit": "Hourly charge for AWS Gateway Load Balancer VPC Endpoint per Hrs"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Gateway Load Balancer Endpoints",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "numberOfGatewayLoadBalancerEndpoints"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for AWS Gateway Load Balancer VPC Endpoint per Hrs"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "pricing for glb vpc endpoint per hour",
+                "id": "gatewayLoadBalancer_endpointHourPrice"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Charge for per GB data processed by AWS Gateway Load Balancer VPC Endpoint per GB"
+                },
+                "label": "pricing for glb vpc endpoint per GB",
+                "id": "gatewayLoadBalancer_endpointGBPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Gateway Load Balancer Endpoints",
+                      "variableUnitLabel": "load balancer endpoints",
+                      "required": true,
+                      "variableId": "numberOfGatewayLoadBalancerEndpoints"
+                    },
+                    {
+                      "variableLabel": "pricing for glb vpc endpoint per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_endpointHourPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for hourly usage",
+                  "decimalPlaces": 2,
+                  "id": "gatewayLoadBalancer_endpointHrCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total hourly charges for all Gateway Load Balancer Endpoints (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for hourly usage",
+                  "id": "gatewayLoadBalancer_endpointHourlySubtotal",
+                  "refer": "gatewayLoadBalancer_endpointHrCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total processed bytes",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfProcessedDataPerGLB"
+                    },
+                    {
+                      "variableLabel": "pricing for glb vpc endpoint per GB",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_endpointGBPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for GBs processed",
+                  "decimalPlaces": 2,
+                  "id": "gatewayLoadBalancer_endpointGBCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total data transfer charges for all Gateway Load Balancer Endpoints (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for GBs processed",
+                  "id": "gatewayLoadBalancer_endpointGBSubtotal",
+                  "refer": "gatewayLoadBalancer_endpointGBCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for hourly usage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_endpointHrCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for GBs processed",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gatewayLoadBalancer_endpointGBCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "gatewayLoadBalancer_endpointCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total charges for all Gateway Load Balancer Endpoints",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "numberOfGatewayLoadBalancerEndpoints",
+                    "gatewayLoadBalancer_endpointHourPrice",
+                    "gatewayLoadBalancer_endpointGBPrice",
+                    "gatewayLoadBalancer_endpointHrCost",
+                    "gatewayLoadBalancer_endpointHourlySubtotal",
+                    "gatewayLoadBalancer_endpointGBCost",
+                    "gatewayLoadBalancer_endpointGBSubtotal",
+                    "gatewayLoadBalancer_endpointCost"
+                  ],
+                  "id": "gatewayLoadBalancer_endpointTotal",
+                  "subTotalRefer": "gatewayLoadBalancer_endpointCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

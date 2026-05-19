@@ -1,0 +1,429 @@
+{
+  "version": "0.0.1",
+  "serviceName": {
+    "aws": "AWS Glue Data Catalog Statistics and Optimization",
+    "aws-cn": "Amazon Glue Data Catalog Statistics and Optimization"
+  },
+  "serviceCode": "awsGlueDataCatalogStatisticsOptimization",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "glue",
+    "data catalog",
+    "statistics",
+    "optimization",
+    "iceberg",
+    "compaction",
+    "column statistics",
+    "table optimization"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Glue Data Catalog provides managed table optimization and statistics generation for Apache Iceberg tables and AWS Glue tables. Optimization includes compaction for better read performance, while statistics generation supports cost-based optimization in Athena and Amazon Redshift.",
+    "aws-cn": "Amazon Glue Data Catalog provides managed table optimization and statistics generation for Apache Iceberg tables and Amazon Glue tables. Optimization includes compaction for better read performance, while statistics generation supports cost-based optimization in Athena and Amazon Redshift."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "glue",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glue/[currency]/current/glue.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Data Catalog Statistics and Optimization",
+      "id": "glueDataCatalogStatsOpt",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/glue/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Table Statistics Generation",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "AWS Glue Data Catalog supports column-level table statistics for AWS Glue tables. These statistics are integrated with cost-based optimizer (CBO) in Athena and Amazon Redshift data lake querying, resulting in improved query performance and potential cost savings. You are charged $0.44 per DPU-hour for generating statistics, billed per second with a 1-minute minimum duration per run.",
+            "aws-cn": "Amazon Glue Data Catalog supports column-level table statistics for Amazon Glue tables. These statistics are integrated with cost-based optimizer (CBO) in Athena and Amazon Redshift data lake querying, resulting in improved query performance and potential cost savings. You are charged $0.44 per DPU-hour for generating statistics, billed per second with a 1-minute minimum duration per run."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DPUs",
+                "id": "statisticsDpus",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "placeholder": "1",
+                "description": "Number of Data Processing Units (DPUs) allocated for statistics generation. Each DPU provides 4 vCPU and 16 GB of memory.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average runtime per statistics job",
+                "id": "statisticsRuntime",
+                "options": [
+                  {
+                    "label": "minutes",
+                    "id": "minutes"
+                  },
+                  {
+                    "label": "hours",
+                    "id": "hours"
+                  }
+                ],
+                "defaultDuration": "minutes",
+                "outputDuration": {
+                  "label": "hours",
+                  "id": "hours"
+                },
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 24
+                },
+                "placeholder": "10",
+                "description": "Average time each statistics generation job takes to complete.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of statistics jobs per month",
+                "id": "statisticsJobsPerMonth",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000
+                },
+                "placeholder": "30",
+                "description": "How many statistics generation jobs you run per month.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "Price per DPU-hour for statistics generation",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "Data Catalog Statistics per DPU-hour"
+                },
+                "id": "statisticsPricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Average runtime per statistics job",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "statisticsRuntime"
+                    },
+                    {
+                      "constant": 0.0166667,
+                      "constantUnitLabel": "hours (1-minute minimum)"
+                    }
+                  ],
+                  "outputUnitLabel": "hours (with minimum billing)",
+                  "decimalPlaces": 7,
+                  "id": "statisticsBillableHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DPUs",
+                      "variableUnitLabel": "DPUs",
+                      "required": true,
+                      "variableId": "statisticsDpus"
+                    },
+                    {
+                      "variableLabel": "hours (with minimum billing)",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "statisticsBillableHours"
+                    },
+                    {
+                      "variableLabel": "Number of statistics jobs per month",
+                      "variableUnitLabel": "jobs",
+                      "required": true,
+                      "variableId": "statisticsJobsPerMonth"
+                    },
+                    {
+                      "variableLabel": "Price per DPU-hour for statistics generation",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "statisticsPricing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Statistics cost)",
+                  "decimalPlaces": 2,
+                  "id": "statisticsTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "statisticsTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Statistics generation cost",
+                  "decimalPlaces": 2,
+                  "id": "statisticsDisplay",
+                  "subTotalRefer": "statisticsTotalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Table Optimization (Apache Iceberg)",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "AWS Glue Data Catalog provides managed compaction for Apache Iceberg tables in Amazon S3 object storage, compacting small objects into larger ones for better read performance by AWS analytics services like Amazon Redshift, Athena, Amazon EMR, and AWS Glue ETL jobs. You are charged $0.44 per DPU-hour for optimizing Apache Iceberg tables, billed per second with a 1-minute minimum duration per run.",
+            "aws-cn": "Amazon Glue Data Catalog provides managed compaction for Apache Iceberg tables in Amazon S3 object storage, compacting small objects into larger ones for better read performance by AWS analytics services like Amazon Redshift, Athena, Amazon EMR, and Amazon Glue ETL jobs. You are charged $0.44 per DPU-hour for optimizing Apache Iceberg tables, billed per second with a 1-minute minimum duration per run."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DPUs",
+                "id": "optimizationDpus",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100
+                },
+                "placeholder": "2",
+                "description": "Number of Data Processing Units (DPUs) allocated for table optimization. Each DPU provides 4 vCPU and 16 GB of memory.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average runtime per optimization job",
+                "id": "optimizationRuntime",
+                "options": [
+                  {
+                    "label": "minutes",
+                    "id": "minutes"
+                  },
+                  {
+                    "label": "hours",
+                    "id": "hours"
+                  }
+                ],
+                "defaultDuration": "minutes",
+                "outputDuration": {
+                  "label": "hours",
+                  "id": "hours"
+                },
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 24
+                },
+                "placeholder": "30",
+                "description": "Average time each table optimization job takes to complete.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of optimization jobs per month",
+                "id": "optimizationJobsPerMonth",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000
+                },
+                "placeholder": "10",
+                "description": "How many table optimization jobs you run per month.",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "Price per DPU-hour for table optimization",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "Data Catalog Optimization per DPU-hour"
+                },
+                "id": "optimizationPricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Average runtime per optimization job",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "optimizationRuntime"
+                    },
+                    {
+                      "constant": 0.0166667,
+                      "constantUnitLabel": "hours (1-minute minimum)"
+                    }
+                  ],
+                  "outputUnitLabel": "hours (with minimum billing)",
+                  "decimalPlaces": 7,
+                  "id": "optimizationBillableHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DPUs",
+                      "variableUnitLabel": "DPUs",
+                      "required": true,
+                      "variableId": "optimizationDpus"
+                    },
+                    {
+                      "variableLabel": "hours (with minimum billing)",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "optimizationBillableHours"
+                    },
+                    {
+                      "variableLabel": "Number of optimization jobs per month",
+                      "variableUnitLabel": "jobs",
+                      "required": true,
+                      "variableId": "optimizationJobsPerMonth"
+                    },
+                    {
+                      "variableLabel": "Price per DPU-hour for table optimization",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "optimizationPricing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Optimization cost)",
+                  "decimalPlaces": 2,
+                  "id": "optimizationTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "optimizationTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Table optimization cost",
+                  "decimalPlaces": 2,
+                  "id": "optimizationDisplay",
+                  "subTotalRefer": "optimizationTotalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Total Cost Summary",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "Combined cost for AWS Glue Data Catalog Statistics and Optimization features.",
+            "aws-cn": "Combined cost for Amazon Glue Data Catalog Statistics and Optimization features."
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Statistics cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "statisticsTotalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Optimization cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "optimizationTotalCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalCombinedCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "statisticsTotalCost",
+                    "optimizationTotalCost",
+                    "totalCombinedCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Data Catalog Statistics and Optimization cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCostDisplay",
+                  "subTotalRefer": "totalCombinedCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

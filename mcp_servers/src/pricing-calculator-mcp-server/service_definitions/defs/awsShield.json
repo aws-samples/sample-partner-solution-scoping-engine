@@ -1,0 +1,684 @@
+{
+  "version": "0.0.23",
+  "serviceName": "AWS Shield",
+  "serviceCode": "awsShield",
+  "type": "AWSService",
+  "excludeZeroSubTotals": true,
+  "slug": "shield",
+  "regions": [
+    " "
+  ],
+  "searchKeywords": [
+    "shield",
+    "DDoS"
+  ],
+  "serviceDescription": "AWS Shield Advanced is a paid service that provides additional protections for internet-facing applications running on Amazon Elastic Compute Cloud (EC2), Elastic Load Balancing (ELB), Amazon CloudFront, AWS Global Accelerator, and Amazon Route 53. AWS Shield Advanced is available to all customers; however, to contact the AWS Shield Response Team customers will need the Enterprise or Business Support levels of AWS Premium Support.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/shield/pricing/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "shield-calc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/shield/[currency]/current/shield-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "AWS Shield Advanced",
+          "helpText": "AWS Shield Advanced is a paid service that provides additional protections for internet-facing applications running on Amazon Elastic Compute Cloud (EC2), Elastic Load Balancing (ELB), Amazon CloudFront, AWS Global Accelerator, and Amazon Route 53. AWS Shield Advanced is available to all customers; however, to contact the AWS Shield Response Team customers will need the Enterprise or Business Support levels of AWS Premium Support. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/shield/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "<table style='border-collapse: collapse;text-align: center;'><thead><tr style='background-color: #cccccc;'><th rowspan='2' style='border: 1px solid black;'>Service</th><th rowspan='2' style='border: 1px solid black;'>Usage</th><th colspan='2' style='border: 1px solid black;'>Contact</th></tr></thead><tbody><tr><td style='border: 1px solid black;'>Amazon Cloud Front</td><td style='border: 1px solid black;'>Above 5 PB</td><td rowspan='4' style='border: 1px solid black;padding-left: 20px;padding-right: 20px;'><a href='https://aws.amazon.com/contact-us/'target='_blank'>Contact Us</a></td></tr><tr><td style='border: 1px solid black;'>Elastic Load Balancing (ELB)</td> <td style='border: 1px solid black;'>Above 1 PB</td></tr><tr><td style='border: 1px solid black;padding-left: 20px;padding-right: 20px;'>AWS Elastic IP (EC2 and Network Load Balancer)</td> <td style='border: 1px solid black;padding-left: 20px;padding-right: 20px;'>Above 1 PB</td></tr><tr><td style='border: 1px solid black;'>AWS Global Accelerator</td> <td style='border: 1px solid black;'>Above 5 PB</td></tr></tbody></table>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "contactAlert"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global CloudFront DataTransfer Out First 100 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global CloudFront DataTransfer Out Next 400 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global CloudFront DataTransfer Out Next 500 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global CloudFront DataTransfer Out Next 4 PB"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "cloudFrontUsage",
+                "label": "Cloud Front Usage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 104857600
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "LoadBalancing DataTransfer Out First 100 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "LoadBalancing DataTransfer Out Next 400 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "LoadBalancing DataTransfer Out Next 500 TB"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "LoadBalancingUsage",
+                "label": "Elastic Load Balancing (ELB) Usage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 104857600
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "ShieldProtectionEIP DataTransfer Out First 100 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "ShieldProtectionEIP DataTransfer Out Next 400 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "ShieldProtectionEIP DataTransfer Out Next 500 TB"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "elasticIpUsage",
+                "label": "Elastic IP Usage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 104857600
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global GlobalAccelerator DataTransfer Out First 100 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 400 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 500 TB"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "shield-calc",
+                        "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 4 PB"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "id": "globalAcceleratorUsage",
+                "label": "Global Accelerator Usage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  },
+                  {
+                    "label": "PB",
+                    "id": "pb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "tb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 104857600
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "tiered pricing cloudfront",
+                "id": "tierExp",
+                "mappingDefinitionName": "shield-calc",
+                "decimalPlaces": 4,
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 102400,
+                      "meteredUnit": "Global CloudFront DataTransfer Out First 100 TB"
+                    },
+                    {
+                      "startOfTier": 102400.1,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Global CloudFront DataTransfer Out Next 400 TB"
+                    },
+                    {
+                      "startOfTier": 512000.1,
+                      "endOfTier": 1024000,
+                      "meteredUnit": "Global CloudFront DataTransfer Out Next 500 TB"
+                    },
+                    {
+                      "startOfTier": 1024000.1,
+                      "endOfTier": 104857600,
+                      "meteredUnit": "Global CloudFront DataTransfer Out Next 4 PB"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing loadBalancing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "tierExp_1",
+                "mappingDefinitionName": "shield-calc",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 102400,
+                      "meteredUnit": "LoadBalancing DataTransfer Out First 100 TB"
+                    },
+                    {
+                      "startOfTier": 102400.1,
+                      "endOfTier": 512000,
+                      "meteredUnit": "LoadBalancing DataTransfer Out Next 400 TB"
+                    },
+                    {
+                      "startOfTier": 512000.1,
+                      "endOfTier": 104857600,
+                      "meteredUnit": "LoadBalancing DataTransfer Out Next 500 TB"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "tiered pricing elasticIP",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "tierExp_2",
+                "mappingDefinitionName": "shield-calc",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 102400,
+                      "meteredUnit": "ShieldProtectionEIP DataTransfer Out First 100 TB"
+                    },
+                    {
+                      "startOfTier": 102400.1,
+                      "endOfTier": 512000,
+                      "meteredUnit": "ShieldProtectionEIP DataTransfer Out Next 400 TB"
+                    },
+                    {
+                      "startOfTier": 512000.1,
+                      "endOfTier": 104857600,
+                      "meteredUnit": "ShieldProtectionEIP DataTransfer Out Next 500 TB"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "tiered pricing global accelerator",
+                "id": "tierExp_3",
+                "mappingDefinitionName": "shield-calc",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 102400,
+                      "meteredUnit": "Global GlobalAccelerator DataTransfer Out First 100 TB"
+                    },
+                    {
+                      "startOfTier": 102400.1,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 400 TB"
+                    },
+                    {
+                      "startOfTier": 512000.1,
+                      "endOfTier": 1024000,
+                      "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 500 TB"
+                    },
+                    {
+                      "startOfTier": 1024000.1,
+                      "endOfTier": 104857600,
+                      "meteredUnit": "Global GlobalAccelerator DataTransfer Out Next 4 PB"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for advanced Shield",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "shield-calc",
+                "meteredUnit": {
+                  "allRegions": "Global Monthly Shield Advanced"
+                },
+                "id": "globalMonthlyShieldAdvanced"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "contactAlert",
+                    "cloudFrontUsage",
+                    "LoadBalancingUsage",
+                    "elasticIpUsage",
+                    "globalAcceleratorUsage",
+                    "tierExp",
+                    "tierExp_1",
+                    "tierExp_2",
+                    "tierExp_3",
+                    "globalMonthlyShieldAdvanced"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "awsShieldUnit"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing cloudfront",
+                  "tieredPricingRefer": "tierExp",
+                  "inputReferLabel": "Cloud Front Usage",
+                  "inputRefer": "cloudFrontUsage",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Cloud Front)",
+                  "id": "tieredMath1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cloud Front Monthly Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Cloud Front)",
+                  "id": "cfVar",
+                  "refer": "tieredMath1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing loadBalancing",
+                  "tieredPricingRefer": "tierExp_1",
+                  "inputReferLabel": "Elastic Load Balancing (ELB) Usage",
+                  "inputRefer": "LoadBalancingUsage",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Elastic Load Balancing)",
+                  "id": "tieredMath2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elastic Load Balancing (ELB) Monthly Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Elastic Load Balancing)",
+                  "id": "lbVar",
+                  "refer": "tieredMath2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing elasticIP",
+                  "tieredPricingRefer": "tierExp_2",
+                  "inputReferLabel": "Elastic IP Usage",
+                  "inputRefer": "elasticIpUsage",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Elastic IP)",
+                  "id": "tieredMath3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Elastic IP Monthly Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Elastic IP)",
+                  "id": "eipVar",
+                  "refer": "tieredMath3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "tiered pricing global accelerator",
+                  "tieredPricingRefer": "tierExp_3",
+                  "inputReferLabel": "Global Accelerator Usage",
+                  "inputRefer": "globalAcceleratorUsage",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency] (Global Accelerator)",
+                  "id": "tieredMath4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Global Accelerator Monthly Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Global Accelerator)",
+                  "id": "GAVar",
+                  "refer": "tieredMath4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Advanced Shield Monthly Fee",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "price for advanced Shield",
+                  "id": "monthlyAdvanceFee",
+                  "refer": "globalMonthlyShieldAdvanced"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "shieldTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "tieredMath1",
+                      "variableLabel": "[currency] (Cloud Front)",
+                      "variableUnitLabel": "[currency] (Cloud Front)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "tieredMath2",
+                      "variableLabel": "[currency] (Elastic Load Balancing)",
+                      "variableUnitLabel": "[currency] (Elastic Load Balancing)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "tieredMath3",
+                      "variableLabel": "[currency] (Elastic IP)",
+                      "variableUnitLabel": "[currency] (Elastic IP)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "tieredMath4",
+                      "variableLabel": "[currency] (Global Accelerator)",
+                      "variableUnitLabel": "[currency] (Global Accelerator)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "monthlyAdvanceFee",
+                      "variableLabel": "Advanced Shield Monthly Fee",
+                      "variableUnitLabel": "[currency] monthly fee",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Shield",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMath1",
+                    "cfVar",
+                    "tieredMath2",
+                    "lbVar",
+                    "tieredMath3",
+                    "eipVar",
+                    "tieredMath4",
+                    "GAVar",
+                    "monthlyAdvanceFee",
+                    "shieldTotal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Shield pricing",
+                  "decimalPlaces": 2,
+                  "id": "serviceTotalPrice",
+                  "subTotalRefer": "shieldTotal"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template",
+      "notifications": [
+        {
+          "subType": "alert",
+          "header": "Note",
+          "content": "The cost saving you receive from enabling AWS Shield Advanced resource protection does not apply to Advanced WAF security features such as Bot Control, Account Takeover Prevention and Capcha Analysis. For detailed information on WAF costs not covered by Shield Advanced refer<a href='https://aws.amazon.com/waf/pricing/'target='_blank'> AWS WAF pricing page</a> for details.",
+          "alertType": "info",
+          "isDismissable": true,
+          "refers": []
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

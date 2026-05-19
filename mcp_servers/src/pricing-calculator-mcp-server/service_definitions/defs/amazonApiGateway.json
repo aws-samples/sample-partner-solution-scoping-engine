@@ -1,0 +1,1344 @@
+{
+  "version": "0.0.59",
+  "serviceName": "Amazon API Gateway",
+  "serviceCode": "amazonApiGateway",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "slug": "APIGateway",
+  "regions": [],
+  "searchKeywords": [
+    "API",
+    "api",
+    "Rest",
+    "websocket",
+    "messages"
+  ],
+  "excludeZeroSubTotals": true,
+  "serviceDescription": "Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. APIs act as the front door for applications to access data, business logic, or functionality from your backend services.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/api-gateway/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "apigateway",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/apigateway/[currency]/current/apigateway.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/api-gateway/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "ApiGatewayHttpApi First 300 million"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "ApiGatewayHttpApi more than 300 million"
+                }
+              }
+            ]
+          },
+          "title": "HTTP APIs",
+          "helpText": "With HTTP APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for the API calls you receive and the amount of data transferred out. Requests are metered in 512 KB increments of data. So, a request with 513 KB of data is metered as two requests.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/api-gateway/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Select the units, number, and frequency for HTTP API requests based on expected volume. The calculations below exclude free tier discounts.",
+                "id": "apiGateway_HTTPText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "HTTP API requests units",
+                "id": "APIOpsMult",
+                "options": [
+                  {
+                    "label": "exact number",
+                    "id": "1"
+                  },
+                  {
+                    "label": "thousands",
+                    "id": "1000"
+                  },
+                  {
+                    "label": "millions",
+                    "id": "1000000"
+                  },
+                  {
+                    "label": "billions",
+                    "id": "1000000000"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1000000",
+                "description": "The unit will apply to the number of requests you will specify below.",
+                "validations": {
+                  "required": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Requests",
+                "id": "numberOfAPIRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of HTTP API requests in units selected"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each request",
+                "id": "dataPerRequest",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 34,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10240
+                },
+                "placeholder": "Enter amount",
+                "description": "Requests are defined as having 512 KB of data; a request with 513 KB of data is metered as two requests.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "API tiered pricing",
+                "id": "APIPrice",
+                "mappingDefinitionName": "apigateway",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 300000000,
+                      "meteredUnit": "ApiGatewayHttpApi First 300 million"
+                    },
+                    {
+                      "startOfTier": 300000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "ApiGatewayHttpApi more than 300 million"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions management events",
+                  "refer": [
+                    "apiGateway_HTTPText",
+                    "APIOpsMult",
+                    "numberOfAPIRequests",
+                    "dataPerRequest",
+                    "APIPrice"
+                  ],
+                  "id": "unitConvertAPI",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected multiplier",
+                  "displayInConfigSummary": false,
+                  "referLabel": "HTTP API requests units",
+                  "refer": "APIOpsMult",
+                  "id": "multiplierSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "requestSizeDiv",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "dataPerRequest",
+                      "variableLabel": "Average size of each request",
+                      "variableUnitLabel": "KB per request",
+                      "required": true
+                    },
+                    {
+                      "constant": 512,
+                      "constantUnitLabel": "KB request increment"
+                    }
+                  ],
+                  "outputUnitLabel": "request(s)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "request(s)",
+                      "variableUnitLabel": "request(s)",
+                      "required": true,
+                      "variableId": "requestSizeDiv"
+                    }
+                  ],
+                  "outputUnitLabel": "billable request(s)",
+                  "id": "callsRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "APIMult",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfAPIRequests",
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "multiplierSelected",
+                      "variableLabel": "selected multiplier",
+                      "variableUnitLabel": "unit multiplier",
+                      "required": true
+                    },
+                    {
+                      "variableId": "callsRounded",
+                      "variableLabel": "billable request(s)",
+                      "variableUnitLabel": "billable request(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable request(s)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "API tiered pricing",
+                  "inputReferLabel": "total billable request(s)",
+                  "outputUnitLabel": "[currency] (HTTP API requests)",
+                  "inputUnitLabel": "requests",
+                  "decimalPlaces": 4,
+                  "id": "APITieredMath",
+                  "inputRefer": "APIMult",
+                  "tieredPricingRefer": "APIPrice"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "multiplierSelected",
+                    "requestSizeDiv",
+                    "callsRounded",
+                    "APIMult",
+                    "APITieredMath"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "HTTP API request cost",
+                  "decimalPlaces": 2,
+                  "id": "manageTotalPrice",
+                  "subTotalRefer": "APITieredMath"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "API Calls Number of up to 333 million"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "API Calls Number of Request Next 667 million"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "API Calls Number of Request Next 19 billion"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "API Calls Number of Request Over 20 billion"
+                }
+              }
+            ]
+          },
+          "title": "REST APIs",
+          "helpText": {
+            "aws": "With REST APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for the API calls you receive and the amount of data transferred out. There are no data transfer out charges for Private APIs. However, AWS PrivateLink charges apply when using Private APIs in API Gateway. API Gateway also provides optional data caching charged at an hourly rate that varies based on the cache size you select.",
+            "aws-iso": "With REST APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for the API calls you receive and the amount of data transferred out. There are no data transfer out charges for Private APIs. However, AWS PrivateLink charges apply when using Private APIs in API Gateway. API Gateway also provides optional data caching charged at an hourly rate that varies based on the cache size you select.",
+            "aws-iso-b": "With REST APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for the API calls you receive and the amount of data transferred out. There are no data transfer out charges for Private APIs. However, AWS PrivateLink charges apply when using Private APIs in API Gateway. API Gateway also provides optional data caching charged at an hourly rate that varies based on the cache size you select.",
+            "aws-cn": "With REST APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for the API calls you receive and the amount of data transferred out. There are no data transfer out charges for Private APIs. However, Amazon Web Service PrivateLink charges apply when using Private APIs in API Gateway. API Gateway also provides optional data caching charged at an hourly rate that varies based on the cache size you select."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/api-gateway/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Select the units, number, and frequency for REST API requests based on expected volume. The calculations below exclude free tier discounts.",
+                "id": "apiGateway_RESTText"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of up to 333 million"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Next 667 million"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Next 19 billion"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Over 20 billion"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "REST API request units",
+                "id": "RESTMult",
+                "options": [
+                  {
+                    "label": "exact number",
+                    "id": "1"
+                  },
+                  {
+                    "label": "thousands",
+                    "id": "1000"
+                  },
+                  {
+                    "label": "millions",
+                    "id": "1000000"
+                  },
+                  {
+                    "label": "billions",
+                    "id": "1000000000"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1000000",
+                "description": "The unit will apply to the number of requests you will specify below.",
+                "validations": {
+                  "required": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of up to 333 million"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Next 667 million"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Next 19 billion"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "API Calls Number of Request Over 20 billion"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Requests",
+                "id": "numberOfRESTRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of REST API requests in units selected",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Cache memory size (GB)",
+                "id": "cacheSize",
+                "mappingDefinitionName": "apigateway",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "[ZERO_COST]"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 0 5"
+                      }
+                    },
+                    "label": "0.5",
+                    "id": "Caching Memory Size 0 5"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 1 6"
+                      }
+                    },
+                    "label": "1.6",
+                    "id": "Caching Memory Size 1 6"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 6 1"
+                      }
+                    },
+                    "label": "6.1",
+                    "id": "Caching Memory Size 6 1"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 13 5"
+                      }
+                    },
+                    "label": "13.5",
+                    "id": "Caching Memory Size 13 5"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 28 4"
+                      }
+                    },
+                    "label": "28.4",
+                    "id": "Caching Memory Size 28 4"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 58 2"
+                      }
+                    },
+                    "label": "58.2",
+                    "id": "Caching Memory Size 58 2"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 118"
+                      }
+                    },
+                    "label": "118",
+                    "id": "Caching Memory Size 118"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "Caching Memory Size 237"
+                      }
+                    },
+                    "label": "237",
+                    "id": "Caching Memory Size 237"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "minValue": 0
+                },
+                "defaultOption": "Caching Memory Size 0 5",
+                "description": "Optional. Choose cache memory size in GB. Dedicated cache memory is billed at an hourly rate."
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for REST API caching",
+                "id": "RESTCachePrice",
+                "mappingDefinitionName": "apigateway",
+                "refers": [
+                  {
+                    "variableLabel": "Cache memory size (GB)",
+                    "variableId": "cacheSize"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "REST API tiered pricing",
+                "id": "RESTPrice",
+                "mappingDefinitionName": "apigateway",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 333000000,
+                      "meteredUnit": "API Calls Number of up to 333 million"
+                    },
+                    {
+                      "startOfTier": 333000001,
+                      "endOfTier": 1000000000,
+                      "meteredUnit": "API Calls Number of Request Next 667 million"
+                    },
+                    {
+                      "startOfTier": 100000000,
+                      "endOfTier": 20000000000,
+                      "meteredUnit": "API Calls Number of Request Next 19 billion"
+                    },
+                    {
+                      "startOfTier": 20000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "API Calls Number of Request Over 20 billion"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions REST API requests",
+                  "refer": [
+                    "apiGateway_RESTText",
+                    "RESTMult",
+                    "numberOfRESTRequests",
+                    "cacheSize",
+                    "RESTCachePrice",
+                    "RESTPrice"
+                  ],
+                  "id": "unitConvertREST",
+                  "subTotalRefer": "APITieredMath"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected REST multiplier",
+                  "displayInConfigSummary": false,
+                  "referLabel": "REST API request units",
+                  "refer": "RESTMult",
+                  "id": "RESTMultiplierSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RestMult",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfRESTRequests",
+                      "variableLabel": "Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true
+                    },
+                    {
+                      "variableId": "RESTMultiplierSelected",
+                      "variableLabel": "selected REST multiplier",
+                      "variableUnitLabel": "unit multiplier",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total REST API requests",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "REST API tiered pricing",
+                  "inputReferLabel": "total REST API requests",
+                  "outputUnitLabel": "[currency] (REST API requests)",
+                  "inputUnitLabel": "requests",
+                  "decimalPlaces": 4,
+                  "id": "RestTieredMath",
+                  "inputRefer": "RestMult",
+                  "tieredPricingRefer": "RESTPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Tiered price total for REST API requests",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (REST API requests)",
+                  "id": "SubTotalRequests",
+                  "refer": "RestTieredMath"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cacheTotal",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "RESTCachePrice",
+                      "variableLabel": "Price for REST API caching",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": false
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for cache memory",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Dedicated cache memory total price",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for cache memory",
+                  "id": "SubTotalCache",
+                  "refer": "cacheTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "RESTTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "RestTieredMath",
+                      "variableLabel": "[currency] (REST API requests)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "cacheTotal",
+                      "variableLabel": "[currency] for cache memory",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "RESTMultiplierSelected",
+                    "RestMult",
+                    "RestTieredMath",
+                    "SubTotalRequests",
+                    "cacheTotal",
+                    "SubTotalCache",
+                    "RESTTotal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "REST API cost",
+                  "decimalPlaces": 2,
+                  "id": "RESTTotalPrice",
+                  "subTotalRefer": "RESTTotal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "WebSocket Messages Messages first 1 billion"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "WebSocket Messages Messages over 1 billion"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "apigateway",
+                  "meteredUnit": "WebSocket Connection Minutes"
+                }
+              }
+            ]
+          },
+          "title": "WebSocket APIs",
+          "helpText": "With WebSocket APIs, you only pay when your APIs are in use. There are no minimum fees or upfront commitments. You pay for messages sent and received and the total number of connection minutes. You may send and receive messages up to 128 kilobytes (KB) in size. Messages are metered in 32 KB increments. So, a 33 KB message is metered as two messages.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/api-gateway/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Select the units, number, and frequency for WebSocket messages (sent and received) based on expected volume. The calculations below exclude free tier discounts.",
+                "id": "apiGateway_WSText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "WebSocket message units",
+                "id": "WebSocketMult",
+                "options": [
+                  {
+                    "label": "exact number",
+                    "id": "1"
+                  },
+                  {
+                    "label": "thousands",
+                    "id": "1000"
+                  },
+                  {
+                    "label": "millions",
+                    "id": "1000000"
+                  },
+                  {
+                    "label": "billions",
+                    "id": "1000000000"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1000",
+                "description": "The unit will apply to the number of messages you will specify below.",
+                "validations": {
+                  "required": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "WebSocket Messages Messages first 1 billion"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "WebSocket Messages Messages over 1 billion"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Messages",
+                "id": "numberOfWSRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter number of WebSocket messages in units selected",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "WebSocket Messages Messages first 1 billion"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "apigateway",
+                        "meteredUnit": "WebSocket Messages Messages over 1 billion"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average message size",
+                "id": "msgSize",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 32,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 128
+                },
+                "placeholder": "Enter average message size",
+                "description": "You may send and receive messages up to 128 kilobytes (KB) in size. Messages are metered in 32 KB increments. So, a 33 KB message is metered as two messages.",
+                "help": "Messages are metered in 32 KB increments. So, a 33 KB message is metered as two messages."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "apigateway",
+                    "meteredUnit": "WebSocket Connection Minutes"
+                  }
+                },
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average connection duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new connection (if the duration is less than 1 second then enter 1 second).",
+                "id": "connDuration"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "apigateway",
+                    "meteredUnit": "WebSocket Connection Minutes"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average connection rate",
+                "id": "connRate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter the average number of connections",
+                "description": "Average number of connections per second, minute, hour, or day."
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "WebSocket messages tiered pricing",
+                "id": "WSMsgPrice",
+                "mappingDefinitionName": "apigateway",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000000,
+                      "meteredUnit": "WebSocket Messages Messages first 1 billion"
+                    },
+                    {
+                      "startOfTier": 1000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "WebSocket Messages Messages over 1 billion"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "WSConnPrice",
+                "label": "Price for WebSocket connection mins",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "apigateway",
+                "meteredUnit": {
+                  "allRegions": "WebSocket Connection Minutes"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Monthly total of WebSocket message",
+                  "refer": [
+                    "apiGateway_WSText",
+                    "WebSocketMult",
+                    "numberOfWSRequests",
+                    "msgSize",
+                    "connDuration",
+                    "connRate",
+                    "WSMsgPrice",
+                    "WSConnPrice"
+                  ],
+                  "id": "unitConvertWS",
+                  "subTotalRefer": "RESTTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected WS multiplier",
+                  "displayInConfigSummary": false,
+                  "referLabel": "WebSocket message units",
+                  "refer": "WebSocketMult",
+                  "id": "multiplierSelectedWS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "msgSizeDiv",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "msgSize",
+                      "variableLabel": "Average message size",
+                      "variableUnitLabel": "KB per message",
+                      "required": true
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB message increment"
+                    }
+                  ],
+                  "outputUnitLabel": "message(s)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "message(s)",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "msgSizeDiv"
+                    }
+                  ],
+                  "outputUnitLabel": "billable message(s)",
+                  "id": "msgRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "MsgMult",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfWSRequests",
+                      "variableLabel": "Messages",
+                      "variableUnitLabel": "messages",
+                      "required": true
+                    },
+                    {
+                      "variableId": "multiplierSelectedWS",
+                      "variableLabel": "selected WS multiplier",
+                      "variableUnitLabel": "unit multiplier",
+                      "required": true
+                    },
+                    {
+                      "variableId": "msgRounded",
+                      "variableLabel": "billable message(s)",
+                      "variableUnitLabel": "billable message(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable WebSocket messages",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "WebSocket messages tiered pricing",
+                  "inputReferLabel": "total billable WebSocket messages",
+                  "outputUnitLabel": "[currency] (WebSocket messages)",
+                  "inputUnitLabel": "messages",
+                  "decimalPlaces": 2,
+                  "id": "WSTieredMath",
+                  "inputRefer": "MsgMult",
+                  "tieredPricingRefer": "WSMsgPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Tiered price total for WebSocket messages",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "decimalPlaces": 2,
+                  "referLabel": "[currency] (WebSocket messages)",
+                  "id": "SubTotalMsgs",
+                  "refer": "WSTieredMath"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "minMult",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "connDuration",
+                      "variableLabel": "Average connection duration",
+                      "variableUnitLabel": "minutes per connection",
+                      "required": true
+                    },
+                    {
+                      "variableId": "connRate",
+                      "variableLabel": "Average connection rate",
+                      "variableUnitLabel": "connections per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "WSConnPrice",
+                      "variableLabel": "Price for WebSocket connection mins",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (WebSocket connection minutes)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Price for WebSocket connection minutes",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (WebSocket connection minutes)",
+                  "id": "SubTotalMins",
+                  "refer": "minMult"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalWS",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "WSTieredMath",
+                      "variableLabel": "[currency] (WebSocket messages)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "minMult",
+                      "variableLabel": "[currency] (WebSocket connection minutes)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "multiplierSelectedWS",
+                    "msgSizeDiv",
+                    "msgRounded",
+                    "MsgMult",
+                    "WSTieredMath",
+                    "SubTotalMsgs",
+                    "minMult",
+                    "SubTotalMins",
+                    "totalWS"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total WebSocket API costs",
+                  "decimalPlaces": 2,
+                  "id": "WSTotalPrice",
+                  "subTotalRefer": "totalWS"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

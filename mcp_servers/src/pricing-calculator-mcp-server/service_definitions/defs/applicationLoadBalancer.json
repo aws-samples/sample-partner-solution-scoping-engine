@@ -1,0 +1,775 @@
+{
+  "version": "0.0.28",
+  "serviceName": "Application Load Balancer",
+  "serviceCode": "applicationLoadBalancer",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "ELB",
+    "Elastic Load Balancer",
+    "Load Balancer",
+    "Application Load Balancer",
+    "Network Load Balancer",
+    "Classic Load Balancer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/elasticloadbalancing/"
+    }
+  },
+  "serviceDescription": "Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions.",
+  "helpLinks": [
+    {
+      "text": "Elastic Load Balancing product page",
+      "url": {
+        "aws": "https://aws.amazon.com/elasticloadbalancing/",
+        "aws-cn": "https://www.amazonaws.cn/en/elasticloadbalancing/"
+      }
+    },
+    {
+      "text": "Elastic Load Balancing pricing page",
+      "url": {
+        "aws": "https://aws.amazon.com/elasticloadbalancing/pricing/",
+        "aws-cn": "https://www.amazonaws.cn/en/elasticloadbalancing/pricing/"
+      }
+    }
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elb/[currency]/current/elb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": {
+        "aws": "Load Balancer in AWS Region",
+        "aws-cn": "Load Balancer in Amazon Region"
+      },
+      "description": "Application Load Balancer is best suited for load balancing of HTTP and HTTPS traffic and provides advanced request routing targeted at the delivery of modern application architectures, including microservices and containers. Operating at the individual request level (Layer 7), Application Load Balancer routes traffic to targets within Amazon Virtual Private Cloud (Amazon VPC) based on the content of the request.",
+      "helpText": "Application Load Balancer is best suited for load balancing of HTTP and HTTPS traffic and provides advanced request routing targeted at the delivery of modern application architectures, including microservices and containers. Operating at the individual request level (Layer 7), Application Load Balancer routes traffic to targets within Amazon Virtual Private Cloud (Amazon VPC) based on the content of the request.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/elasticloadbalancing/features/#Details_for_Elastic_Load_Balancing_Products"
+        }
+      },
+      "excludeRegion": [],
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "You are charged for each hour or partial hour that an Application Load Balancer is running and the number of Load Balancer Capacity Units (LCU) used per hour.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Application Load Balancers",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "numberOfApplicationLoadBalancers"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Application Load Balancer Hours"
+                },
+                "label": "pricing for alb per hour",
+                "id": "objectObject_generated_0"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "objectObject_generated_1",
+                  "refer": [
+                    "numberOfApplicationLoadBalancers",
+                    "objectObject_generated_0"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Application Load Balancers",
+                      "variableUnitLabel": "load balancers",
+                      "required": true,
+                      "variableId": "numberOfApplicationLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "pricing for alb per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "objectObject_generated_0"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "objectObject_generated_2"
+                },
+                {
+                  "type": "display",
+                  "label": "Application Load Balancer fixed hourly charges",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "objectObject_generated_2"
+                  ],
+                  "id": "objectObject_generated_3",
+                  "subTotalRefer": "objectObject_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Load Balancer Capacity Units (LCUs)",
+          "description": "An LCU measures the dimensions on which the Application Load Balancer processes your traffic (averaged over an hour).",
+          "bodyText": "Please specify at least one of the following dimensions to determine LCU pricing.",
+          "helpText": "An LCU measures the dimensions on which the Application Load Balancer processes your traffic (averaged over an hour). The four dimensions are: new connections, active connections, processed bytes, and rule evaluations. You are charged only on the dimension with the highest usage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes (Lambda functions as targets)",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed per ALB for Lambda functions as targets.",
+                "id": "sizeOfBytesProcessedForLambdaFunctionTargets"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes (EC2 Instances and IP addresses as targets)",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "hour",
+                "outputFrequencyLabel": "hour",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed per ALB for EC2 Instances and IP addresses as targets.",
+                "id": "sizeOfDataProcessedForEC2InstanceAndIPAddressTargets"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average number of new connections per ALB",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageNumberOfNewConnectionsPerALB"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average connection duration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "outputDurationUnit": "sec",
+                "outputDurationLabel": "seconds",
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the average duration for each new connection (if the duration is less than 1 second then enter 1 second).",
+                "id": "averageConnectionDuration"
+              },
+              {
+                "type": "input",
+                "label": "Average number of requests per second per ALB",
+                "subType": "numericInput",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 30000000000000
+                },
+                "displayInConfigSummary": false,
+                "placeholder": "Enter amount",
+                "description": "Enter the average number of requests per connection.",
+                "id": "averageNumberOfRequestsPerALBPerSecond"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of rule evaluations per request",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 3000000
+                },
+                "displayInConfigSummary": false,
+                "description": "",
+                "placeholder": "Enter amount",
+                "id": "averageNumberOfRuleEvaluationsPerRequest"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Application Load Balancer LCU Hours"
+                },
+                "label": "pricing for alb lcu per hour",
+                "id": "objectObject_generated_4"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "objectObject_generated_5",
+                  "refer": [
+                    "sizeOfBytesProcessedForLambdaFunctionTargets",
+                    "sizeOfDataProcessedForEC2InstanceAndIPAddressTargets",
+                    "averageNumberOfNewConnectionsPerALB",
+                    "averageConnectionDuration",
+                    "averageNumberOfRequestsPerALBPerSecond",
+                    "averageNumberOfRuleEvaluationsPerRequest",
+                    "objectObject_generated_4"
+                  ],
+                  "subTotalRefer": "objectObject_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes (Lambda functions as targets)",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfBytesProcessedForLambdaFunctionTargets"
+                    },
+                    {
+                      "constant": 0.4,
+                      "constantUnitLabel": "GB processed bytes per hour per LCU for Lambda functions as targets"
+                    }
+                  ],
+                  "outputUnitLabel": "processed bytes LCUs for Lambda functions as targets",
+                  "id": "objectObject_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Processed bytes (EC2 Instances and IP addresses as targets)",
+                      "variableUnitLabel": "GB per hour",
+                      "required": true,
+                      "variableId": "sizeOfDataProcessedForEC2InstanceAndIPAddressTargets"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "GB processed bytes per hour per LCU for EC2 instances and IP addresses as targets"
+                    }
+                  ],
+                  "outputUnitLabel": "processed bytes LCUs for EC2 instances and IP addresses as targets",
+                  "id": "objectObject_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "processed bytes LCUs for Lambda functions as targets",
+                      "variableUnitLabel": "LCUs",
+                      "required": false,
+                      "variableId": "objectObject_generated_6"
+                    },
+                    {
+                      "variableLabel": "processed bytes LCUs for EC2 instances and IP addresses as targets",
+                      "variableUnitLabel": "LCUs",
+                      "required": false,
+                      "variableId": "objectObject_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "processed bytes LCUs",
+                  "id": "objectObject_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new connections per ALB",
+                      "variableUnitLabel": "new connections per second",
+                      "required": true,
+                      "variableId": "averageNumberOfNewConnectionsPerALB"
+                    },
+                    {
+                      "constant": 25,
+                      "constantUnitLabel": "new connections per second per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "new connections LCUs",
+                  "id": "objectObject_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of new connections per ALB",
+                      "variableUnitLabel": "new connections per second",
+                      "required": true,
+                      "variableId": "averageNumberOfNewConnectionsPerALB"
+                    },
+                    {
+                      "variableLabel": "Average connection duration",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "averageConnectionDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "active connections",
+                  "id": "objectObject_generated_10"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "active connections",
+                      "variableUnitLabel": "active connections ",
+                      "required": true,
+                      "variableId": "objectObject_generated_10"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "connections per LCU"
+                    }
+                  ],
+                  "outputUnitLabel": "active connections LCUs",
+                  "id": "objectObject_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of rule evaluations per request",
+                      "variableUnitLabel": "rules per request",
+                      "required": true,
+                      "variableId": "averageNumberOfRuleEvaluationsPerRequest"
+                    },
+                    {
+                      "constant": 10,
+                      "constantUnitLabel": "free rules"
+                    }
+                  ],
+                  "outputUnitLabel": "paid rules per request after 10 free rules",
+                  "id": "objectObject_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "paid rules per request after 10 free rules",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "objectObject_generated_12"
+                    },
+                    {
+                      "constant": "0",
+                      "constantUnitLabel": "[currency]"
+                    }
+                  ],
+                  "outputUnitLabel": "paid rules per request",
+                  "decimalPlaces": 2,
+                  "id": "objectObject_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "paid rules per request",
+                      "variableUnitLabel": "paid rules per request ",
+                      "required": true,
+                      "variableId": "objectObject_generated_13"
+                    },
+                    {
+                      "variableLabel": "Average number of requests per second per ALB",
+                      "variableUnitLabel": "average requests per second",
+                      "required": true,
+                      "variableId": "averageNumberOfRequestsPerALBPerSecond"
+                    }
+                  ],
+                  "outputUnitLabel": "rules evaluated per second",
+                  "id": "objectObject_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "rules evaluated per second",
+                      "variableUnitLabel": "rules evaluated per second ",
+                      "required": true,
+                      "variableId": "objectObject_generated_14"
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "rules per LCUs"
+                    }
+                  ],
+                  "outputUnitLabel": "rule evaluation LCUs",
+                  "id": "objectObject_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "processed bytes LCUs",
+                      "variableUnitLabel": "processed bytes LCUs ",
+                      "required": false,
+                      "variableId": "objectObject_generated_8"
+                    },
+                    {
+                      "variableLabel": "new connections LCUs",
+                      "variableUnitLabel": "new connections LCUs ",
+                      "required": false,
+                      "variableId": "objectObject_generated_9"
+                    },
+                    {
+                      "variableLabel": "active connections LCUs",
+                      "variableUnitLabel": "active connections LCUs ",
+                      "required": false,
+                      "variableId": "objectObject_generated_11"
+                    },
+                    {
+                      "variableLabel": "rule evaluation LCUs",
+                      "variableUnitLabel": "rule evaluation LCUs ",
+                      "required": false,
+                      "variableId": "objectObject_generated_15"
+                    }
+                  ],
+                  "outputUnitLabel": "maximum LCUs",
+                  "id": "objectObject_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Application Load Balancers",
+                      "variableUnitLabel": "load balancers",
+                      "required": true,
+                      "variableId": "numberOfApplicationLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "maximum LCUs",
+                      "variableUnitLabel": "LCUs",
+                      "required": true,
+                      "variableId": "objectObject_generated_16"
+                    },
+                    {
+                      "variableLabel": "pricing for alb lcu per hour",
+                      "variableUnitLabel": "LCU price per hour ",
+                      "required": true,
+                      "variableId": "objectObject_generated_4"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "objectObject_generated_17"
+                },
+                {
+                  "type": "display",
+                  "label": "Application Load Balancer LCU usage charges",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "required": true,
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "objectObject_generated_6",
+                    "objectObject_generated_7",
+                    "objectObject_generated_8",
+                    "objectObject_generated_9",
+                    "objectObject_generated_10",
+                    "objectObject_generated_11",
+                    "objectObject_generated_12",
+                    "objectObject_generated_13",
+                    "objectObject_generated_14",
+                    "objectObject_generated_15",
+                    "objectObject_generated_16",
+                    "objectObject_generated_17"
+                  ],
+                  "id": "objectObject_generated_18",
+                  "subTotalRefer": "objectObject_generated_17"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    },
+    {
+      "title": "Load Balancer on Outposts",
+      "description": "ALB on Outposts is a fully managed and secure request level (layer 7) load balancing service that automatically distributes incoming HTTP(S) traffic across multiple targets, such as Amazon EC2 instances, containers, and IP addresses. Within Outposts, ALB will operate in a single subnet and will scale automatically up to the capacity available on the rack to meet varying levels of application load without manual intervention. Similar to ALB in the Region, ALB on Outposts will promote high security posture for your application as it works within your Amazon Virtual Private Cloud (VPC) and provides robust security features like integrated certificate management and TLS offload.",
+      "helpText": "ALB on Outposts is a fully managed and secure request level (layer 7) load balancing service that automatically distributes incoming HTTP(S) traffic across multiple targets, such as Amazon EC2 instances, containers, and IP addresses. Within Outposts, ALB will operate in a single subnet and will scale automatically up to the capacity available on the rack to meet varying levels of application load without manual intervention. Similar to ALB in the Region, ALB on Outposts will promote high security posture for your application as it works within your Amazon Virtual Private Cloud (VPC) and provides robust security features like integrated certificate management and TLS offload.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/elasticloadbalancing/features/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "You are charged for each hour or partial hour that an Application Load Balancer is running",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/elasticloadbalancing/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Application Load Balancers on Outposts",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "outpostsNumberOfApplicationLoadBalancers"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "AWS Outposts Application Load Balancer Hours"
+                },
+                "label": "pricing for alb per hour",
+                "id": "outpostsApplicationLoadBalancerHoury"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "applicationLoadBalancerOutpostsDisplay",
+                  "refer": [
+                    "outpostsNumberOfApplicationLoadBalancers",
+                    "outpostsApplicationLoadBalancerHoury"
+                  ],
+                  "subTotalRefer": "objectObject_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Application Load Balancers on Outposts",
+                      "variableUnitLabel": "load balancers",
+                      "required": true,
+                      "variableId": "outpostsNumberOfApplicationLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "pricing for alb per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "outpostsApplicationLoadBalancerHoury"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "OutpostsApplicationLoadBalancerCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Application Load Balancer on Outposts fixed hourly charges",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "OutpostsApplicationLoadBalancerCost"
+                  ],
+                  "id": "applicationLoadBalancerOutpostsCostDisplay",
+                  "subTotalRefer": "OutpostsApplicationLoadBalancerCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_1"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "version": "0.0.6",
+  "serviceName": "Rekognition Face Liveness",
+  "serviceCode": "rekognitionFaceLiveness",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rekognition",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rekognition/[currency]/current/rekognition.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "amazonFaceLiveness",
+      "cards": [
+        {
+          "title": "Face Liveness pricing",
+          "helpText": "Amazon Rekognition Face Liveness makes it easy to deter fraud and scams during face-based identity checks on your applications using proven, highly scalable, deep learning technology that requires no machine learning expertise to use. Face Liveness lets you to validate that its users are physically present in front of the camera at that moment, and not an imposter spoofing the user's face. Face Liveness detects spoof attacks, such as printed photos, digital photos or videos, and physical 3D masks, and attacks that attempt to bypass the camera, such as pre-recorded and deepfake videos. With Amazon Rekognition Face Liveness, you only pay for what you use. There is no up-front commitment or minimum fee.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rekognition/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of face liveness checks per month",
+                "id": "Numberoffacelivenesscheckspermonth",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "defaultValue": 0,
+                "placeholder": "Enter the amount",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "face Liveness Pricing",
+                "id": "faceLivenessPricing",
+                "mappingDefinitionName": "rekognition",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 500000,
+                      "meteredUnit": "Rekognition API Requests 500000 per API Calls"
+                    },
+                    {
+                      "startOfTier": 500001,
+                      "endOfTier": 3000000,
+                      "meteredUnit": "Rekognition API Requests 3000000 per API Calls"
+                    },
+                    {
+                      "startOfTier": 3000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition API Requests per API Calls"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "FLUnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Numberoffacelivenesscheckspermonth",
+                    "faceLivenessPricing"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "face Liveness Pricing",
+                  "tieredPricingRefer": "faceLivenessPricing",
+                  "inputReferLabel": "Number of face liveness checks per month",
+                  "inputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]",
+                  "id": "tieredPricingForFL",
+                  "inputRefer": "Numberoffacelivenesscheckspermonth",
+                  "variableName": "Tiered Pricing face liveness checks"
+                },
+                {
+                  "type": "display",
+                  "id": "faceLDisp",
+                  "label": "Face Liveness pricing",
+                  "refer": [
+                    "tieredPricingForFL"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "tieredPricingForFL"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

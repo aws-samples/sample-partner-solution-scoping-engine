@@ -1,0 +1,262 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Classic Load Balancer",
+  "serviceCode": "classicLoadBalancer",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "ELB",
+    "Elastic Load Balancer",
+    "Load Balancer",
+    "Application Load Balancer",
+    "Network Load Balancer",
+    "Classic Load Balancer"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/elasticloadbalancing/"
+    }
+  },
+  "serviceDescription": "Elastic Load Balancing automatically distributes incoming application traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions.",
+  "helpLinks": [
+    {
+      "text": "Elastic Load Balancing product page",
+      "url": "https://aws.amazon.com/elasticloadbalancing/?nc2=type_a"
+    },
+    {
+      "text": "Elastic Load Balancing pricing page",
+      "url": "https://aws.amazon.com/elasticloadbalancing/pricing/?nc=sn&loc=3"
+    }
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elb/[currency]/current/elb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Classic Load Balancer",
+      "description": "Classic Load Balancer provides basic load balancing across multiple Amazon EC2 instances and operates at both the request level and connection level. Classic Load Balancer is intended for applications that were built within the EC2-Classic network.",
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Classic Load Balancers",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 3000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "id": "numberOfClassicLoadBalancers"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Classic Load Balancer Hours"
+                },
+                "label": "pricing for clb per hour",
+                "id": "classicLoadBalancer_generated_0"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "classicLoadBalancer_generated_1",
+                  "refer": [
+                    "numberOfClassicLoadBalancers",
+                    "classicLoadBalancer_generated_0"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Classic Load Balancers",
+                      "variableUnitLabel": "load balancers",
+                      "required": true,
+                      "variableId": "numberOfClassicLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "pricing for clb per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "classicLoadBalancer_generated_0"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "classicLoadBalancer_generated_2"
+                },
+                {
+                  "type": "display",
+                  "label": "Classic Load Balancer fixed hourly charges",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "classicLoadBalancer_generated_2"
+                  ],
+                  "id": "classicLoadBalancer_generated_3",
+                  "subTotalRefer": "classicLoadBalancer_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Load Balancer Data",
+          "description": "An LCU measures the dimensions on which the Classic Load Balancer processes your traffic (averaged over an hour).",
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Processed bytes per CLB",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the total data processed.",
+                "help": "Contextual Help Text for CLB",
+                "id": "sizeOfDataProcessedPerCLB"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elb",
+                "meteredUnit": {
+                  "allRegions": "Classic Load Balancer Data"
+                },
+                "label": "pricing for clb lcu per hour",
+                "id": "classicLoadBalancer_generated_4"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "classicLoadBalancer_generated_5",
+                  "refer": [
+                    "sizeOfDataProcessedPerCLB",
+                    "classicLoadBalancer_generated_4"
+                  ],
+                  "subTotalRefer": "classicLoadBalancer_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Classic Load Balancers",
+                      "variableUnitLabel": "classic load balancers",
+                      "required": true,
+                      "variableId": "numberOfClassicLoadBalancers"
+                    },
+                    {
+                      "variableLabel": "Processed bytes per CLB",
+                      "variableUnitLabel": "GB total bytes processed per CLB",
+                      "required": true,
+                      "variableId": "sizeOfDataProcessedPerCLB"
+                    },
+                    {
+                      "variableLabel": "pricing for clb lcu per hour",
+                      "variableUnitLabel": "per GB",
+                      "required": true,
+                      "variableId": "classicLoadBalancer_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "classicLoadBalancer_generated_6"
+                },
+                {
+                  "type": "display",
+                  "label": "Classic Load Balancer Data Processing charges",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "classicLoadBalancer_generated_6"
+                  ],
+                  "id": "classicLoadBalancer_generated_7",
+                  "subTotalRefer": "classicLoadBalancer_generated_6"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

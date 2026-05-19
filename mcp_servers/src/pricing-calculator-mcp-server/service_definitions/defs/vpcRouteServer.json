@@ -1,0 +1,153 @@
+{
+  "version": "0.0.5",
+  "serviceName": "VPC Route Server",
+  "serviceCode": "vpcRouteServer",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ],
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN",
+    "Route Server"
+  ],
+  "serviceDescription": "Amazon VPC Route Server simplifies routing for traffic between workloads that are deployed within a VPC and its internet gateways. With this feature, VPC Route Server dynamically updates VPC and internet gateway route tables with your preferred IPv4 or IPv6 routes to achieve routing fault tolerance for those workloads. This enables you to automatically reroute traffic within a VPC, which increases the manageability of VPC routing and interoperability with third-party workloads.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "VPC Route Server",
+      "id": "template_VPC_Route_Server",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "VPC Route Server",
+          "description": "",
+          "helpText": "Amazon VPC Route Server simplifies routing for traffic between workloads that are deployed within a VPC and its internet gateways. With this feature, VPC Route Server dynamically updates VPC and internet gateway route tables with your preferred IPv4 or IPv6 routes to achieve routing fault tolerance for those workloads. This enables you to automatically reroute traffic within a VPC, which increases the manageability of VPC routing and interoperability with third-party workloads.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/vpc/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Route Server endpoints",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of of Route Server endpoints.",
+                "placeholder": "Enter the number of of Route Server endpoints.",
+                "displayInConfigSummary": true,
+                "id": "Number_of_route_server_end_points"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Tp1vEAoqMY31GgPH14zuxLp6yh9iyW42zYbWfdTLkhc"
+                },
+                "label": "pricing for active IP addresses per hours",
+                "id": "activeIPAddressHourlyCharge"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Route Server endpoints",
+                      "variableUnitLabel": "Route Server endpoints",
+                      "required": true,
+                      "variableId": "Number_of_route_server_end_points"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "pricing for active IP addresses per hours",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "activeIPAddressHourlyCharge"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Route Server endpoints charge)",
+                  "decimalPlaces": 2,
+                  "id": "monthlyIPAMcost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total Route Server endpoint charge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "Number_of_route_server_end_points",
+                    "activeIPAddressHourlyCharge",
+                    "monthlyIPAMcost"
+                  ],
+                  "id": "totalIPAMmonthlyCharge",
+                  "subTotalRefer": "monthlyIPAMcost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

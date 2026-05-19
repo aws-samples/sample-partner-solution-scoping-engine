@@ -1,0 +1,273 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA CloudTrail Security Monitoring - Detects malicious activity via CloudWatch Alarms - Multi-Stack Support'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Description: 'Unique prefix for this SERA deployment'
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: 'Must be 3-21 characters, lowercase, start with letter, hyphens allowed'
+    Default: 'sera'
+  
+  AlertEmail:
+    Type: String
+    Description: 'Email address for security alerts (optional)'
+    Default: ''
+
+Resources:
+  # SNS Topic for Security Alerts
+  SecurityAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${StackPrefix}-security-alerts'
+      DisplayName: 'SERA Security Alerts'
+      KmsMasterKeyId: !ImportValue
+        Fn::Sub: '${StackPrefix}-kms-key-id'
+      Tags:
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+
+  SecurityAlertTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref SecurityAlertTopic
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudwatch.amazonaws.com
+            Action:
+              - SNS:Publish
+            Resource: !Ref SecurityAlertTopic
+
+  # Email Subscription (if provided)
+  SecurityAlertEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasAlertEmail
+    Properties:
+      Protocol: email
+      TopicArn: !Ref SecurityAlertTopic
+      Endpoint: !Ref AlertEmail
+
+  # ===== HIGH PRIORITY DETECTIONS =====
+
+  # CloudTrail Tampering - DeleteTrail
+  DeleteTrailMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = DeleteTrail) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: DeleteTrailCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  DeleteTrailAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-DeleteTrail-Detected'
+      AlarmDescription: 'CRITICAL: CloudTrail deletion attempted - attacker covering tracks'
+      MetricName: DeleteTrailCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # CloudTrail Tampering - StopLogging
+  StopLoggingMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = StopLogging) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: StopLoggingCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  StopLoggingAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-StopLogging-Detected'
+      AlarmDescription: 'CRITICAL: CloudTrail logging stopped - attacker covering tracks'
+      MetricName: StopLoggingCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # IAM Role Policy Changes
+  IAMRolePolicyChangeMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = AttachRolePolicy) || ($.eventName = PutRolePolicy) || ($.eventName = DetachRolePolicy) || ($.eventName = DeleteRolePolicy) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: IAMRolePolicyChangeCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  IAMRolePolicyChangeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-IAMRolePolicy-Changed'
+      AlarmDescription: 'HIGH: IAM role policy modified - potential privilege escalation'
+      MetricName: IAMRolePolicyChangeCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # IAM User/Access Key Creation
+  IAMAccessCreationMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = CreateAccessKey) || ($.eventName = CreateUser) || ($.eventName = CreateLoginProfile) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: IAMAccessCreationCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  IAMAccessCreationAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-IAMAccess-Created'
+      AlarmDescription: 'HIGH: New IAM access created - potential persistence mechanism'
+      MetricName: IAMAccessCreationCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # Security Group Changes - Unauthorized Port Opening
+  SecurityGroupIngressMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = AuthorizeSecurityGroupIngress) || ($.eventName = AuthorizeSecurityGroupEgress) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: SecurityGroupIngressCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  SecurityGroupIngressAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-SecurityGroup-Modified'
+      AlarmDescription: 'MEDIUM: Security group rule added - review for unauthorized access'
+      MetricName: SecurityGroupIngressCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 5
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # VPC Network Changes
+  VPCNetworkChangeMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ ($.eventName = CreateRoute) || ($.eventName = AttachInternetGateway) || ($.eventName = CreateVpcPeeringConnection) || ($.eventName = AcceptVpcPeeringConnection) }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: VPCNetworkChangeCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  VPCNetworkChangeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-VPCNetwork-Changed'
+      AlarmDescription: 'HIGH: VPC network configuration changed - potential data exfiltration route'
+      MetricName: VPCNetworkChangeCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+  # Root Account Usage
+  RootAccountUsageMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      FilterPattern: '{ $.userIdentity.type = "Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType != "AwsServiceEvent" }'
+      LogGroupName: !ImportValue
+        Fn::Sub: '${StackPrefix}-cloudtrail-log-group-name'
+      MetricTransformations:
+        - MetricName: RootAccountUsageCount
+          MetricNamespace: !Sub '${StackPrefix}/SecurityEvents'
+          MetricValue: '1'
+          DefaultValue: 0
+
+  RootAccountUsageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${StackPrefix}-RootAccount-Used'
+      AlarmDescription: 'CRITICAL: Root account used - should only be used for break-glass scenarios'
+      MetricName: RootAccountUsageCount
+      Namespace: !Sub '${StackPrefix}/SecurityEvents'
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref SecurityAlertTopic
+      TreatMissingData: notBreaching
+
+Conditions:
+  HasAlertEmail: !Not [!Equals [!Ref AlertEmail, '']]
+
+Outputs:
+  SecurityAlertTopicArn:
+    Description: 'SNS Topic ARN for security alerts'
+    Value: !Ref SecurityAlertTopic
+    Export:
+      Name: !Sub '${StackPrefix}-security-alert-topic-arn'
+
+  SecurityAlertTopicName:
+    Description: 'SNS Topic Name for security alerts'
+    Value: !GetAtt SecurityAlertTopic.TopicName
+    Export:
+      Name: !Sub '${StackPrefix}-security-alert-topic-name'

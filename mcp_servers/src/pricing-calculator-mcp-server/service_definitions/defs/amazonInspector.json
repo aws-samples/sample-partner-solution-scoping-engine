@@ -1,0 +1,797 @@
+{
+  "version": "0.0.22",
+  "serviceName": "Amazon Inspector",
+  "serviceCode": "amazonInspector",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "Analytics",
+    "SQL",
+    "query",
+    "S3",
+    "big data",
+    "Presto",
+    "serverless",
+    "ad-hoc analysis",
+    "log processing",
+    "bigquery",
+    "big query",
+    "query S3 data"
+  ],
+  "serviceDescription": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/inspector/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "inspectorv2",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/inspectorv2/[currency]/current/inspectorv2.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/inspector/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon EC2 instance scanning:",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads. Monthly costs are determined by a combination of two dimensions: Amazon EC2 instances being scanned, and the total number of container images initially scanned when pushed to Amazon Elastic Container Registry (ECR) and rescanned during a month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/inspector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Each EC2 instance is continually scanned for software vulnerabilities and unintended network exposure. Total monthly cost is based on the average* number of EC2 instances assessed within a month. For instances that are run intermittently, the price is prorated based on total time run within a month.",
+                "id": "AverageDescription"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average* No. of EC2 instances scanned per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "*Average number of EC2 instances = (total hours of active, supported instances being scanned) / (number of hours in a month, i.e., 720 hours). For example, you have 3 supported instances that were active and being scanned for different amounts of time during a month: The first for 360 hours, the second for 350 hours, and the third for 10 hours, adding up to a total 720 hours of active, supported instances being scanned. Therefore, 720 hours total of instances being scanned that month / 720 hours in the month = 1 average EC2 instance",
+                "id": "NumberOfEC2Instance"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for EC2 instance scanning",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "e_8I2HCKlhP13Ov1SOMCgaqpNQZpDdceuT_nThe5NdI"
+                },
+                "id": "price_EC2Instance"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "calc_mul_ins_per_mon",
+                  "operation": "multiplication",
+                  "description": "(i.e., 720 instance-hours per month * 0.00174 [currency] per hour)",
+                  "operands": [
+                    {
+                      "constant": 720,
+                      "constantUnitLabel": "instance-hours per month"
+                    },
+                    {
+                      "variableLabel": "Price for EC2 instance scanning",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "price_EC2Instance"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per instance per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "calc_mul_ec2_instance",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average* No. of EC2 instances scanned per month",
+                      "variableUnitLabel": "Instances",
+                      "required": true,
+                      "variableId": "NumberOfEC2Instance"
+                    },
+                    {
+                      "variableLabel": "[currency] per instance per month",
+                      "variableUnitLabel": "[currency] per instance per month",
+                      "required": true,
+                      "variableId": "calc_mul_ins_per_mon"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageDescription",
+                    "NumberOfEC2Instance",
+                    "price_EC2Instance",
+                    "calc_mul_ins_per_mon",
+                    "calc_mul_ec2_instance"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "EC2 Instance Price",
+                  "decimalPlaces": 2,
+                  "id": "EC2InstancePrice",
+                  "subTotalRefer": "calc_mul_ec2_instance"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Amazon ECR container image with continual scanning:",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads. Monthly costs are determined by a combination of two dimensions: Amazon EC2 instances being scanned, and the total number of container images initially scanned when pushed to Amazon Elastic Container Registry (ECR) and rescanned during a month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/inspector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Each container image pushed to Amazon ECR that is configured for Amazon Inspector scanning is assessed for software vulnerabilities. Total monthly cost is based on a combination of the number of images initially scanned when pushed into ECR and the number of times those images are rescanned per month.",
+                "id": "ContainerImageInfo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of newly pushed container images per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfNewImages_continual"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of automated rescans per image per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfRescans"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for ECR container image with on-push scanning",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "f0ZGLIT_UE_sj5XBeCTGKHM-PD_xK8gYVsvtcKhfcwo"
+                },
+                "id": "onPushPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for ECR container image with continual scanning",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "zIdO11Ae40xnbX1Wo4oDXymCORcbL7NXGbUe3VcilVU"
+                },
+                "id": "priceForRescan"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "onPushCost",
+                  "variableName": "On Push Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of newly pushed container images per month",
+                      "variableUnitLabel": "images per month",
+                      "required": true,
+                      "variableId": "numberOfNewImages_continual"
+                    },
+                    {
+                      "variableLabel": "Price for ECR container image with on-push scanning",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "onPushPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "OnPushRescans",
+                  "variableName": "On Push Rescans",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of newly pushed container images per month",
+                      "variableUnitLabel": "images",
+                      "required": true,
+                      "variableId": "numberOfNewImages_continual"
+                    },
+                    {
+                      "variableLabel": "Total number of automated rescans per image per month",
+                      "variableUnitLabel": "Rescans",
+                      "required": true,
+                      "variableId": "numberOfRescans"
+                    },
+                    {
+                      "variableLabel": "Price for ECR container image with continual scanning",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForRescan"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ContinualCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "onPushCost",
+                      "variableLabel": "On Push Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "OnPushRescans",
+                      "variableLabel": "On Push Rescans",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ContainerImageInfo",
+                    "numberOfNewImages_continual",
+                    "numberOfRescans",
+                    "onPushPrice",
+                    "priceForRescan",
+                    "onPushCost",
+                    "OnPushRescans",
+                    "ContinualCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Inspector Continual pricing",
+                  "decimalPlaces": 2,
+                  "id": "ContinualCostDisplay",
+                  "subTotalRefer": "ContinualCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Amazon ECR container on-push image scans:",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads. Monthly costs are determined by a combination of two dimensions: Amazon EC2 instances being scanned, and the total number of container images initially scanned when pushed to Amazon Elastic Container Registry (ECR) and rescanned during a month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/inspector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Each container image pushed to Amazon ECR that is configured for Amazon Inspector scanning is assessed for software vulnerabilities. Total monthly cost is based on a combination of the number of images initially scanned when pushed into ECR and the number of times those images are rescanned per month.",
+                "id": "ContainerImageInfo_2"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of newly pushed container images per month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "numberOfNewImages"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for ECR container image with on-push scanning",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "f0ZGLIT_UE_sj5XBeCTGKHM-PD_xK8gYVsvtcKhfcwo"
+                },
+                "id": "Price_OnPush"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "math_mul_onpush_price",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of newly pushed container images per month",
+                      "variableUnitLabel": "images per month",
+                      "required": true,
+                      "variableId": "numberOfNewImages"
+                    },
+                    {
+                      "variableLabel": "Price for ECR container image with on-push scanning",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Price_OnPush"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ContainerImageInfo_2",
+                    "numberOfNewImages",
+                    "Price_OnPush",
+                    "math_mul_onpush_price"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Inspector On-push pricing",
+                  "decimalPlaces": 2,
+                  "id": "dispOnPushPrice",
+                  "subTotalRefer": "math_mul_onpush_price"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": {
+            "aws": "AWS Lambda function scanning",
+            "aws-cn": "Amazon Lambda function scanning"
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads. Monthly costs are determined by a combination of two dimensions: Amazon EC2 instances being scanned, and the total number of container images initially scanned when pushed to Amazon Elastic Container Registry (ECR) and rescanned during a month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/inspector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Each deployed Lambda function is continually assessed for software package vulnerabilities. Total monthly cost is based on the average number of Lambda functions scanned per month, the price is prorated based on total Inspector coverage hours within a month.",
+                "id": "LambdaFunctionInfo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of Lambda functions scanned in a month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "**Average number of Lambda Functions = (total hours of Amazon Inspector coverage for a Lambda function) / (number of hours in a month, i.e., 720 hours). For example, you have 3 deployed Lambda functions that were scanned for different amounts of time during a month: The first for 720 hours, the second for 350 hours, and the third for 10 hours, adding up to a total 1080 hours of deployed Lambda functions instances being scanned. Therefore, 1080 hours total of Lambda functions being scanned that month / 720 hours in the month = 1.5 average Lambda functions.Note: Inspector coverage hours is defined time duration from when a function is discovered to the time when its deleted or excluded from scanning.",
+                "id": "avgNoOfLambda"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for lambda functions",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "mhhXLlb8BV7cdoa-Knn4kpUrYakfijQNVHu3uKpGgNU"
+                },
+                "id": "Price_lambda"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "lambda_conversion",
+                  "refer": [
+                    "LambdaFunctionInfo",
+                    "avgNoOfLambda",
+                    "Price_lambda"
+                  ],
+                  "subTotalRefer": "math_mul_onpush_price"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "calc_mul_func_per_mon",
+                  "operation": "multiplication",
+                  "description": "(i.e., 720 instance-hours per month * 0.00174 [currency] per hour)",
+                  "operands": [
+                    {
+                      "constant": 720,
+                      "constantUnitLabel": "hours per month"
+                    },
+                    {
+                      "variableLabel": "Price for lambda functions",
+                      "variableUnitLabel": "[currency] per function per hour",
+                      "required": true,
+                      "variableId": "Price_lambda"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per lambda function per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "calc_mul_lambda_function",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average number of Lambda functions scanned in a month",
+                      "variableUnitLabel": "functions",
+                      "required": true,
+                      "variableId": "avgNoOfLambda"
+                    },
+                    {
+                      "variableLabel": "[currency] per lambda function per month",
+                      "variableUnitLabel": "[currency] per function per month",
+                      "required": true,
+                      "variableId": "calc_mul_func_per_mon"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "calc_mul_func_per_mon",
+                    "calc_mul_lambda_function"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Lambda function scanning",
+                  "decimalPlaces": 2,
+                  "id": "lambdaFinal",
+                  "subTotalRefer": "calc_mul_lambda_function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Code Security",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Inspector is an automated and continual vulnerability scanning service that assesses Amazon Elastic Compute Cloud (EC2) instances and container images to improve the security and compliance of infrastructure workloads. Monthly costs are determined by a combination of two dimensions: Amazon EC2 instances being scanned, and the total number of container images initially scanned when pushed to Amazon Elastic Container Registry (ECR) and rescanned during a month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/inspector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "alertType": "info",
+                "content": "Each repository can be scanned for three-types of scans including first-party source-code (SAST), third-party dependencies (SCA), and Infrastructure as Code (IaC). Each of them can be configured to be scanned one-time on-demand, periodically at a set cadence (weekly or monthly), or change-based (pull request/merge request or push). Total monthly cost is based on the total number of scans performed per month across all the repositories for each scan-type and all scan configuration.",
+                "id": "RepositoryInfo"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of repositories",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "(with max 10MB size. Repos over 10MB are billed as multiple of 10MB repositories)",
+                "id": "total_repositories"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of SAST periodic scans per repository per month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "number_SAST_scans"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of SCA periodc scans per repository per month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "number_SCA_scans"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of IaC periodic scans per repository per month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "number_IAC_scans"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total Number of on-demand scans (across each scan-type including SAST, SCA and IaC) per repository per month",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "number_onDemand_scans"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of change-based scans (across each scan-type including SAST, SCA, IaC) per repository per month (including pull request/merge request or push)",
+                "displayInConfigSummary": true,
+                "defaultValue": 0,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter a number",
+                "description": "",
+                "id": "number_change_based_scans"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for resource assessment",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "inspectorv2",
+                "meteredUnit": {
+                  "allRegions": "tKg94b5fpSxt_XBCvnLJ4s1foi9N1ZW-kaYoNcJQF6Y"
+                },
+                "id": "resource_assessment_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "code__security_conversion",
+                  "refer": [
+                    "RepositoryInfo",
+                    "total_repositories",
+                    "number_SAST_scans",
+                    "number_SCA_scans",
+                    "number_IAC_scans",
+                    "number_onDemand_scans",
+                    "number_change_based_scans",
+                    "resource_assessment_price"
+                  ],
+                  "subTotalRefer": "calc_mul_lambda_function"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_number_of_scans",
+                  "variableName": "Total Number of Scans",
+                  "operation": "addition",
+                  "description": "",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of SAST periodic scans per repository per month",
+                      "variableUnitLabel": "(SAST scans)",
+                      "required": false,
+                      "variableId": "number_SAST_scans"
+                    },
+                    {
+                      "variableLabel": "Number of SCA periodc scans per repository per month",
+                      "variableUnitLabel": "(SCA scans)",
+                      "required": false,
+                      "variableId": "number_SCA_scans"
+                    },
+                    {
+                      "variableLabel": "Number of IaC periodic scans per repository per month",
+                      "variableUnitLabel": "(IAC scans)",
+                      "required": false,
+                      "variableId": "number_IAC_scans"
+                    },
+                    {
+                      "variableLabel": "Total Number of on-demand scans (across each scan-type including SAST, SCA and IaC) per repository per month",
+                      "variableUnitLabel": "(On-demand scans)",
+                      "required": false,
+                      "variableId": "number_onDemand_scans"
+                    },
+                    {
+                      "variableLabel": "Total number of change-based scans (across each scan-type including SAST, SCA, IaC) per repository per month (including pull request/merge request or push)",
+                      "variableUnitLabel": "(Change-based scans)",
+                      "required": false,
+                      "variableId": "number_change_based_scans"
+                    }
+                  ],
+                  "outputUnitLabel": "(total scans)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "code_security_total",
+                  "operation": "multiplication",
+                  "description": "",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of repositories",
+                      "variableUnitLabel": "(repositories)",
+                      "required": true,
+                      "variableId": "total_repositories"
+                    },
+                    {
+                      "variableLabel": "Total Number of Scans",
+                      "variableUnitLabel": "(scans)",
+                      "required": true,
+                      "variableId": "total_number_of_scans"
+                    },
+                    {
+                      "variableLabel": "Price for resource assessment",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "resource_assessment_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "total_number_of_scans",
+                    "code_security_total"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total monthly estimate for Amazon Inspector Code ",
+                  "decimalPlaces": 2,
+                  "id": "codeSecurityFinal",
+                  "subTotalRefer": "code_security_total"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "Inspectorv2"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov",
+    "aws-cn"
+  ],
+  "slug": "Inspector"
+}

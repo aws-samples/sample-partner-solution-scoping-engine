@@ -1,0 +1,527 @@
+{
+  "version": "0.0.9",
+  "serviceName": "AWS Data Pipeline",
+  "serviceCode": "awsDataPipeline",
+  "type": "AWSService",
+  "slug": "datapipeline",
+  "regions": [
+    "ap-northeast-1",
+    "ap-southeast-2",
+    "eu-west-1",
+    "us-west-2",
+    "us-east-1",
+    "us-iso-east-1"
+  ],
+  "searchKeywords": [
+    "datapipeline",
+    "data",
+    "move data"
+  ],
+  "serviceDescription": "AWS Data Pipeline is a web service that helps you reliably process and move data between different AWS compute and storage services, as well as on-premises data sources, at specified intervals.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datapipeline",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datapipeline/[currency]/current/datapipeline.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/datapipeline/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/datapipeline/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Activities or preconditions running On AWS",
+          "description": "The calculations below exclude free tier discounts.",
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_high_frequency_activities_in_a_month",
+                "label": "Number of high frequency activities in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of high frequency activites per month.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_low_frequency_activities_in_a_month",
+                "label": "Number of low frequency activities in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of low frequency activites per month.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_inactive_pipelines_per_month",
+                "label": "Number of inactive pipelines per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of inactive pipelines per month.",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for AWS High Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datapipeline",
+                "meteredUnit": {
+                  "allRegions": "Active Pipeline running on AWS High Frequency"
+                },
+                "id": "awsHighPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for AWS Low Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datapipeline",
+                "meteredUnit": {
+                  "allRegions": "Active Pipeline running on AWS Low Frequency"
+                },
+                "id": "awsLowPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for inactivePipline",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datapipeline",
+                "meteredUnit": {
+                  "allRegions": "Inactive Pipeline"
+                },
+                "id": "inactivePipline"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of high frequency activities in a month",
+                      "variableUnitLabel": "activities",
+                      "required": true,
+                      "variableId": "Number_of_high_frequency_activities_in_a_month"
+                    },
+                    {
+                      "variableLabel": "price for AWS High Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "awsHighPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for high frequency activities",
+                  "decimalPlaces": 2,
+                  "id": "AWSHighFreqCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for AWS high frequency activities",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for high frequency activities",
+                  "id": "AWSHighFreqCostVar",
+                  "refer": "AWSHighFreqCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of low frequency activities in a month",
+                      "variableUnitLabel": "activities",
+                      "required": true,
+                      "variableId": "Number_of_low_frequency_activities_in_a_month"
+                    },
+                    {
+                      "variableLabel": "price for AWS Low Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "awsLowPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for low frequency activities",
+                  "decimalPlaces": 2,
+                  "id": "AWSLowFreqCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for AWS low frequency activities",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for low frequency activities",
+                  "id": "AWSLowFreqCostVar",
+                  "refer": "AWSLowFreqCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of inactive pipelines per month",
+                      "variableUnitLabel": "pipelines",
+                      "required": true,
+                      "variableId": "Number_of_inactive_pipelines_per_month"
+                    },
+                    {
+                      "variableLabel": "price for inactivePipline",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "inactivePipline"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for inactive pipelines",
+                  "decimalPlaces": 2,
+                  "id": "Inactivepipcost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for inactive pipelines",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for inactive pipelines",
+                  "id": "inactivePipelineVar",
+                  "refer": "Inactivepipcost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for high frequency activities",
+                      "variableUnitLabel": "[currency] for high frequency activities",
+                      "required": false,
+                      "variableId": "AWSHighFreqCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for low frequency activities",
+                      "variableUnitLabel": "[currency] for low frequency activities",
+                      "required": false,
+                      "variableId": "AWSLowFreqCost"
+                    },
+                    {
+                      "variableLabel": "[currency] for inactive pipelines",
+                      "variableUnitLabel": "[currency] for inactive pipelines",
+                      "required": false,
+                      "variableId": "Inactivepipcost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (activities or preconditions running On AWS)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyDP"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Number_of_high_frequency_activities_in_a_month",
+                    "Number_of_low_frequency_activities_in_a_month",
+                    "Number_of_inactive_pipelines_per_month",
+                    "awsHighPrice",
+                    "awsLowPrice",
+                    "inactivePipline",
+                    "AWSHighFreqCost",
+                    "AWSHighFreqCostVar",
+                    "AWSLowFreqCost",
+                    "AWSLowFreqCostVar",
+                    "Inactivepipcost",
+                    "inactivePipelineVar",
+                    "AddAllmonthlyDP"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Data Pipeline cost (activities or preconditions running On AWS)",
+                  "decimalPlaces": 2,
+                  "id": "totDataPip",
+                  "subTotalRefer": "AddAllmonthlyDP"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Activities or preconditions running On-Premise",
+          "description": "The calculations below exclude free tier discounts.",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_high_frequency_activities_in_a_month_OP",
+                "label": "Number of high frequency activities in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of high frequency activites per month.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_low_frequency_activities_in_a_month_OP",
+                "label": "Number of low frequency activities in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of low frequency activites per month.",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_inactive_pipelines_per_month_OP",
+                "label": "Number of inactive pipelines per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter number of inactive pipelines per month.",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for AWS High Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datapipeline",
+                "meteredUnit": {
+                  "allRegions": "Active Pipeline running on On-Premise High Frequency"
+                },
+                "id": "awsHighPriceOP"
+              },
+              {
+                "type": "pricing",
+                "label": "price for AWS Low Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "datapipeline",
+                "meteredUnit": {
+                  "allRegions": "Active Pipeline running on On-Premise Low Frequency"
+                },
+                "id": "awsLowPriceOP"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of high frequency activities in a month",
+                      "variableUnitLabel": "activities",
+                      "required": true,
+                      "variableId": "Number_of_high_frequency_activities_in_a_month_OP"
+                    },
+                    {
+                      "variableLabel": "price for AWS High Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "awsHighPriceOP"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for high frequency activities",
+                  "decimalPlaces": 2,
+                  "id": "AWSHighFreqCost_OP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for AWS high frequency activities",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for high frequency activities",
+                  "id": "AWSHighFreqCostVar_OP",
+                  "refer": "AWSHighFreqCost_OP",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of low frequency activities in a month",
+                      "variableUnitLabel": "activities",
+                      "required": true,
+                      "variableId": "Number_of_low_frequency_activities_in_a_month_OP"
+                    },
+                    {
+                      "variableLabel": "price for AWS Low Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "awsLowPriceOP"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for low frequency activities",
+                  "decimalPlaces": 2,
+                  "id": "AWSLowFreqCost_OP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for AWS low frequency activities",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for low frequency activities",
+                  "id": "AWSLowFreqCostVar_OP",
+                  "refer": "AWSLowFreqCost_OP",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of inactive pipelines per month",
+                      "variableUnitLabel": "pipelines",
+                      "required": true,
+                      "variableId": "Number_of_inactive_pipelines_per_month_OP"
+                    },
+                    {
+                      "variableLabel": "price for inactivePipline",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "inactivePipline"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for inactive pipelines",
+                  "decimalPlaces": 2,
+                  "id": "Inactivepipcost_OP"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Cost for inactive pipelines",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for inactive pipelines",
+                  "id": "inactivePipelineVar_OP",
+                  "refer": "Inactivepipcost_OP",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] for high frequency activities",
+                      "variableUnitLabel": "[currency] for high frequency activities",
+                      "required": false,
+                      "variableId": "AWSHighFreqCost_OP"
+                    },
+                    {
+                      "variableLabel": "[currency] for low frequency activities",
+                      "variableUnitLabel": "[currency] for low frequency activities",
+                      "required": false,
+                      "variableId": "AWSLowFreqCost_OP"
+                    },
+                    {
+                      "variableLabel": "[currency] for inactive pipelines",
+                      "variableUnitLabel": "[currency] for inactive pipelines",
+                      "required": false,
+                      "variableId": "Inactivepipcost_OP"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (activities or preconditions running On-Premise)",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyDP_OP"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Number_of_high_frequency_activities_in_a_month_OP",
+                    "Number_of_low_frequency_activities_in_a_month_OP",
+                    "Number_of_inactive_pipelines_per_month_OP",
+                    "awsHighPriceOP",
+                    "awsLowPriceOP",
+                    "AWSHighFreqCost_OP",
+                    "AWSHighFreqCostVar_OP",
+                    "AWSLowFreqCost_OP",
+                    "AWSLowFreqCostVar_OP",
+                    "Inactivepipcost_OP",
+                    "inactivePipelineVar_OP",
+                    "AddAllmonthlyDP_OP"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "AWS Data Pipeline cost (activities or preconditions running On-Premise)",
+                  "decimalPlaces": 2,
+                  "id": "totDataPip_OP",
+                  "subTotalRefer": "AddAllmonthlyDP_OP"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso"
+  ]
+}

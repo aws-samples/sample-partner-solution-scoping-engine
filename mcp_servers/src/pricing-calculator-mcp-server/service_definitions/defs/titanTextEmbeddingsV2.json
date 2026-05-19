@@ -1,0 +1,174 @@
+{
+  "version": "0.0.7",
+  "serviceName": "Titan Text Embeddings V2",
+  "serviceCode": "titanTextEmbeddingsV2",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "bedrock",
+    "bed",
+    "genAI"
+  ],
+  "serviceDescription": "",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/bedrock/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrock",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrock/[currency]/current/bedrock.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "On-Demand",
+          "helpText": {
+            "aws": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "noOfInputTokens_1",
+                "label": "Number of Input tokens",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of input tokens",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 1K token per input for Emb v2",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "eh1KPfqS8SzOcpzykb_8UNOOCmIOCxQthHTL2CoKg_U"
+                },
+                "id": "inputprice_1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfInputTokens_1",
+                    "inputprice_1"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "EmbV2UnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inputMonthlyCost_Lite",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "noOfInputTokens_1",
+                      "variableLabel": "Number of Input tokens",
+                      "variableUnitLabel": "input tokens",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "K input tokens",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inputMonthlyCost_emb_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "inputMonthlyCost_Lite",
+                      "variableLabel": "K input tokens",
+                      "variableUnitLabel": "K input tokens",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inputprice_1",
+                      "variableLabel": "Price for 1K token per input for Emb v2",
+                      "variableUnitLabel": "[currency] per K-tokens",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for input tokens",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "inputMonthlyCost_Lite",
+                    "inputMonthlyCost_emb_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total On demand Cost for Titan Text Embeddings V2",
+                  "decimalPlaces": 2,
+                  "id": "TotalOndemandMonthlyCost_emb_v2",
+                  "subTotalRefer": "inputMonthlyCost_emb_2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_bedrock"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso"
+  ]
+}

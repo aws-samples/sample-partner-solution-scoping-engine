@@ -1,0 +1,395 @@
+{
+  "version": "0.0.6",
+  "serviceName": "AgentCore Browser Tools",
+  "serviceCode": "agentCoreBrowserTools",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Agentcore"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrockagentcore",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrockagentcore/[currency]/current/bedrockagentcore.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Browser Tools",
+      "description": "figure out what to add",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/bedrock/agentcore/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Browser Tools",
+          "helpText": {
+            "aws": "AgentCore Browser Tools enable agents to interact with web content."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/agentcore/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_agentsessions_per_month",
+                "label": "Number of agent sessions per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The total number of agent sessions expected to run per month"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_session_duration_seconds",
+                "label": "Average Session Duration (seconds)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The average length of each agent session, measured in seconds."
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "IO_wait_time_percentage",
+                "label": "I/O Wait Time (%)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "placeholder": "Enter %",
+                "displayInConfigSummary": true,
+                "description": "The percentage of time your agent spends waiting for a tool or foundational model to respond. This idle time is not factored into your compute cost."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "vCPU_per_browser_session",
+                "label": "vCPU per Browser Session",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.1,
+                  "maxValue": 64
+                },
+                "description": "Total number of vCPU allocated to a single browser session"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Memory_per_browser_session_GB",
+                "label": "Memory per Browser Session (GB)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.1,
+                  "maxValue": 256
+                },
+                "description": "The amount of memory (in GB) allocated for each browser session"
+              },
+              {
+                "type": "pricing",
+                "id": "cpusession",
+                "label": "Price for cpu per session",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "kDAyGksfgGqO7sejjw-Rn6hmsqe788WtiO6O6x_1njo"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "memorysession",
+                "label": "Price for memory per session",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrockagentcore",
+                "meteredUnit": {
+                  "allRegions": "8NG08a16bPCeKSL1rQ-ozfhKxtXkH3rCJ5lkLJ6svLU"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions Standard Workflows",
+                  "refer": [
+                    "Number_of_agentsessions_per_month",
+                    "Average_session_duration_seconds",
+                    "IO_wait_time_percentage",
+                    "vCPU_per_browser_session",
+                    "Memory_per_browser_session_GB",
+                    "cpusession",
+                    "memorysession"
+                  ],
+                  "id": "unitConvertExecutions",
+                  "decimalPlaces": 7,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_browser_sessions",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.15,
+                      "constantUnitLabel": "ratio (estimated 15% of number of agent sessions per month)"
+                    }
+                  ],
+                  "outputUnitLabel": "browser sessions per month",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Browser_session_duration",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Average_session_duration_seconds",
+                      "variableLabel": "Average Session Duration (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.2,
+                      "constantUnitLabel": "ratio (estimated 20% of average session duration seconds)"
+                    }
+                  ],
+                  "outputUnitLabel": "browser session duration in seconds",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Cost_per_vCPU_second",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "cpusession",
+                      "variableLabel": "Price for cpu per session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per vCPU-second",
+                  "decimalPlaces": 10
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Effective_CPU_utilization_decimal",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableId": "IO_wait_time_percentage",
+                      "variableLabel": "I/O Wait Time (%)",
+                      "variableUnitLabel": "wait time",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "effective CPU utilization rate",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "CPU_cost_per_session",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Cost_per_vCPU_second",
+                      "variableLabel": "[currency] per vCPU-second",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Browser_session_duration",
+                      "variableLabel": "browser session duration in seconds",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "variableId": "vCPU_per_browser_session",
+                      "variableLabel": "vCPU per Browser Session",
+                      "variableUnitLabel": "vCPU",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Effective_CPU_utilization_decimal",
+                      "variableLabel": "effective CPU utilization rate",
+                      "variableUnitLabel": "CPU utilization rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "CPU cost per session (vCPU)",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Cost_per_GiB_second",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "memorysession",
+                      "variableLabel": "Price for memory per session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per GiB-second",
+                  "decimalPlaces": 10
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Memory_cost_per_session",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Cost_per_GiB_second",
+                      "variableLabel": "[currency] per GiB-second",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Browser_session_duration",
+                      "variableLabel": "browser session duration in seconds",
+                      "variableUnitLabel": "seconds",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Memory_per_browser_session_GB",
+                      "variableLabel": "Memory per Browser Session (GB)",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Memory cost per session",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_cost_per_session",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "CPU_cost_per_session",
+                      "variableLabel": "CPU cost per session (vCPU)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Memory_cost_per_session",
+                      "variableLabel": "Memory cost per session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total cost per session",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Monthly_browser_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Total_cost_per_session",
+                      "variableLabel": "Total cost per session",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Total_browser_sessions",
+                      "variableLabel": "browser sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Monthly browser cost",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Total_browser_sessions",
+                    "Browser_session_duration",
+                    "Cost_per_vCPU_second",
+                    "Effective_CPU_utilization_decimal",
+                    "CPU_cost_per_session",
+                    "Cost_per_GiB_second",
+                    "Memory_cost_per_session",
+                    "Total_cost_per_session",
+                    "Monthly_browser_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Browser cost",
+                  "decimalPlaces": 2,
+                  "id": "tot_cost_browser",
+                  "subTotalRefer": "Monthly_browser_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

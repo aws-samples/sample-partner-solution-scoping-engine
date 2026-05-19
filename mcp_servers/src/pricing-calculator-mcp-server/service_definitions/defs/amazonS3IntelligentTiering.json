@@ -1,0 +1,3780 @@
+{
+  "version": "0.0.114",
+  "serviceName": "S3 Intelligent - Tiering",
+  "serviceCode": "amazonS3IntelligentTiering",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3-intelligent-tiering",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3-intelligent-tiering.json"
+    },
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "S3 Intelligent - Tiering",
+      "id": "s3IntelligentTiering",
+      "description": "is best used for data with unknown or changing access patterns.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-cn",
+            "aws-us-gov",
+            "aws-iso-e",
+            "aws-iso-f"
+          ],
+          "title": "S3 Intelligent - Tiering (S3 INT)",
+          "description": "is best used for data with unknown or changing access patterns.",
+          "helpText": "S3 Intelligent-Tiering is for data with unknown or changing access patterns.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The Amazon S3 Intelligent-Tiering storage class is designed to optimize storage costs by automatically moving data to the most cost-effective access tier when access patterns change. S3 Intelligent-Tiering automatically stores objects in three access tiers: one tier optimized for frequent access, a lower-cost tier optimized for infrequent access, and a very-low-cost tier optimized for rarely accessed data. For a small monthly object monitoring and automation charge, S3 Intelligent-Tiering moves objects that have not been accessed for 30 consecutive days to the Infrequent Access tier and after 90 days of no access they’re moved to the Archive Instant Access tier. If the objects are accessed later, S3 Intelligent-Tiering moves the objects back to the Frequent Access tier.",
+                "id": "S3IntTextBody"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 INT storage",
+                "id": "s3IntStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 INT Average Object Size",
+                "id": "S3_Intelligent_Tiering_Average_Object_Size",
+                "defaultValue": 16,
+                "description": "Used to calculate number of objects which affects object monitoring and automation costs, in addition to cost of moving data into S3 INT. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.000128,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 INT?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 INT",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST requests to S3 INT",
+                    "id": "PUT to Intelligent Tiering Requests"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                      }
+                    },
+                    "label": "Lifecycle Transitions into S3 INT",
+                    "id": "Lifecycle to Intelligent Tiering Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 INT initially. To compare the cost of current storage in S3 INT to lifecycling this data to another storage class, you can specify that your storage is already stored in S3 INT while selecting Lifecycle under the new storage class to capture the upfront cost of moving your data."
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3FreqPercentStorageAccessed",
+                "label": "Percentage of Storage in INT-Frequent Access Tier (% of Frequent Access Storage accessed in a 30 day period)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 100,
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Intelligent Tiering Infrequent Access per GB Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3IntPercentStorageNotAccessed",
+                "label": "Percentage of Storage in INT-Infrequent Access Tier (% of Infrequent Access Storage accessed in a 30 day period)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Intelligent Tiering Archive Instant Access"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3ArchivePercentStorageInstantAccessed",
+                "label": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "IntelligentTieringArchiveAccess"
+                  }
+                },
+                "id": "s3ArchivePercentStorageAccessed",
+                "label": "Percentage of Storage in INT-Archive Access Tier (% of Archive Access Storage accessed in a 30 day period)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3DeepArchivePercentStorageAccessed",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "IntelligentTieringDeepArchiveAccess"
+                  }
+                },
+                "label": "Percentage of Storage in INT-Deep Archive Access Tier (% of Deep Archive Access Storage accessed in a 30 day period)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is more than 100%",
+                "label": "Percent alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is less than 100%",
+                "label": "Percent alert2",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert2",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalStoragePercent"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert",
+                        "variableId": "percentageAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component2",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalStoragePercent"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert2",
+                        "variableId": "percentageAlert2"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay2"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 INT",
+                "id": "s3IntPutRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "GET and all other requests per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "GET, SELECT, and all other requests from S3 INT",
+                "id": "s3IntGetRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of GET,SELECT and all other requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transition requests",
+                "id": "s3IntLifecycleTransitionRequests",
+                "description": "Ongoing monthly number of Lifecycle requests from S3 Standard or S3 IA into S3 INT.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Data Returned by S3 Select in Intelligent Tiering per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data returned by S3 Select",
+                "id": "s3IntSelectDataReturned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data returned by S3 Select requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Data Scanned by S3 Select in Intelligent Tiering per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned by S3 Select",
+                "id": "s3IntSelectDataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data scanned by S3 Select reqeusts"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "label": "Pricing Intelligent-Tiering Storage, Frequent Access Tier",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "s3IntelligentTiering_generated_0"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Per object per month monitoring and automation fee for objects in Intelligent Tiering"
+                },
+                "label": "pricing for monitoring and automation objects in S3 Intelligent - Tiering",
+                "id": "s3IntelligentTiering_generated_1"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                },
+                "label": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                "id": "s3IntelligentTiering_generated_2"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "GET and all other requests per Requests"
+                },
+                "label": "pricing for GET/Select and similar S3 INT requests",
+                "id": "s3IntelligentTiering_generated_3"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                },
+                "label": "pricing for lifecycle transition requests",
+                "id": "s3IntelligentTiering_generated_4"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Intelligent Tiering Infrequent Access per GB Mo"
+                },
+                "label": "pricing for S3 INT Infrequent access storage",
+                "id": "s3IntelligentTiering_generated_5"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Data Returned by S3 Select in Intelligent Tiering per GB"
+                },
+                "label": "pricing for data returned by S3 select",
+                "id": "s3IntelligentTiering_generated_6"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Data Scanned by S3 Select in Intelligent Tiering per GB"
+                },
+                "label": "pricing for data scanned by S3 INT select",
+                "id": "s3IntelligentTiering_generated_7"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Intelligent Tiering Archive Instant Access"
+                },
+                "label": "pricing for Instant Access Archive Storage",
+                "id": "s3InstantAccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "IntelligentTieringArchiveAccess"
+                },
+                "label": "pricing for Access Archive Storage",
+                "id": "s3AccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "IntelligentTieringDeepArchiveAccess"
+                },
+                "label": "pricing for Deep Access Archive Storage",
+                "id": "s3DeepAccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "volumeDiscountEligibility": false,
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "amazonS3Standard_t_p"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3IntelligentTiering_generated_8",
+                  "refer": [
+                    "S3IntTextBody",
+                    "s3IntStorage",
+                    "S3_Intelligent_Tiering_Average_Object_Size",
+                    "moveToStorageClassMethod",
+                    "s3FreqPercentStorageAccessed",
+                    "s3IntPercentStorageNotAccessed",
+                    "s3ArchivePercentStorageInstantAccessed",
+                    "s3ArchivePercentStorageAccessed",
+                    "s3DeepArchivePercentStorageAccessed",
+                    "percentageAlert",
+                    "percentageAlert2",
+                    "alertDisplay1",
+                    "alertDisplay2",
+                    "s3IntPutRequests",
+                    "s3IntGetRequests",
+                    "s3IntLifecycleTransitionRequests",
+                    "s3IntSelectDataReturned",
+                    "s3IntSelectDataScanned",
+                    "s3IntelligentTiering_generated_0",
+                    "s3IntelligentTiering_generated_1",
+                    "s3IntelligentTiering_generated_2",
+                    "s3IntelligentTiering_generated_3",
+                    "s3IntelligentTiering_generated_4",
+                    "s3IntelligentTiering_generated_5",
+                    "s3IntelligentTiering_generated_6",
+                    "s3IntelligentTiering_generated_7",
+                    "s3InstantAccessArchiveCost",
+                    "s3AccessArchiveCost",
+                    "s3DeepAccessArchiveCost",
+                    "amazonS3Standard_t_p"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    },
+                    {
+                      "variableLabel": "S3 INT Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Intelligent_Tiering_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Frequent Access Tier (% of Frequent Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3FreqPercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Infrequent Access Tier (% of Infrequent Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3IntPercentStorageNotAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageInstantAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of Deep Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    }
+                  ],
+                  "outputUnitLabel": "total percentage",
+                  "decimalPlaces": 2,
+                  "id": "totalStoragePercent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Frequent Access Tier (% of Frequent Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3FreqPercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total frequent access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_9"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing Intelligent-Tiering Storage, Frequent Access Tier",
+                  "inputReferLabel": "GB (total frequent access storage)",
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_10",
+                  "inputRefer": "s3IntelligentTiering_generated_9",
+                  "tieredPricingRefer": "s3IntelligentTiering_generated_0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Frequent Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                  "id": "freqvar",
+                  "refer": "s3IntelligentTiering_generated_10",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Infrequent Access Tier (% of Infrequent Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "infrequent access multiplier",
+                      "required": true,
+                      "variableId": "s3IntPercentStorageNotAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total infrequent access storage)",
+                  "decimalPlaces": 4,
+                  "id": "InfreqStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total infrequent access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "InfreqStorage"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 INT Infrequent access storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Infrequent-Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                  "id": "Infreqvar",
+                  "refer": "s3IntelligentTiering_generated_11",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                      "variableUnitLabel": "archive instant access multiplier",
+                      "required": true,
+                      "variableId": "s3ArchivePercentStorageInstantAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total archive instant access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3ArchiveInstantAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total archive instant access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3ArchiveInstantAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Instant Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3InstantAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveInstantAccessStorageFinalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Archive Instant Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                  "id": "ArchInstantAccessVar",
+                  "refer": "s3ArchiveInstantAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 2,
+                  "id": "s3INTAAMultiplierOverheadUnroundedObjects"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "s3INTAAObjectsRounded",
+                  "operands": [
+                    {
+                      "variableId": "s3INTAAMultiplierOverheadUnroundedObjects",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects (total number of objects archive access storage)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTAAObjectsRounded"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeArchiveAccessS3"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC",
+                  "inputRefer": "overHeadSizeGBArchiveAccessS3",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTAAObjectsRounded"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeArchiveAccess"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGBArchiveAccess"
+                    },
+                    {
+                      "variableLabel": "pricing for Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3AccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3-INT Archive Access storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "S3INTArchiveAccessOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "archive access multiplier",
+                      "required": true,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total archive access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3ArchiveAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total archive access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3ArchiveAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3AccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveAccessStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SOVC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3-INT Archive Access storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "S3INTArchiveAccessOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3ArchiveAccessStorageTierCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveAccessStorageFinalCost"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "s3-intelligent-tiering",
+                      "meteredUnit": "IntelligentTieringArchiveAccess"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Archive Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Total Archive Access Tier cost)",
+                  "id": "ArchAccessVar",
+                  "refer": "s3ArchiveAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of Deep Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 2,
+                  "id": "s3INTDAAMultiplierOverheadUnroundedObjects"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "s3INTDAAOverhead_objectsRounded",
+                  "operands": [
+                    {
+                      "variableId": "s3INTDAAMultiplierOverheadUnroundedObjects",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects deep archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTDAAOverhead_objectsRounded"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeDeepArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeDeepArchiveAccessS3"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBDeepArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC_S3DAA",
+                  "inputRefer": "overHeadSizeGBDeepArchiveAccessS3",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects deep archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTDAAOverhead_objectsRounded"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeDeepArchiveAccessDAA"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeDeepArchiveAccessDAA"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBDeepArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGBDeepArchiveAccess"
+                    },
+                    {
+                      "variableLabel": "pricing for Deep Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3-INT Deep Archive storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "S3INTDeepArchiveAccessOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of Deep Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "deep archive access multiplier",
+                      "required": true,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total deep archive access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3DeepArchiveAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total deep archive access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3DeepArchiveAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Deep Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Deep Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3DeepArchiveAccessStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SOVC_S3DAA"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3-INT Deep Archive storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "S3INTDeepArchiveAccessOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Deep Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepArchiveAccessStorageTierCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3DeepArchiveAccessStorageFinalCost"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "s3-intelligent-tiering",
+                      "meteredUnit": "IntelligentTieringDeepArchiveAccess"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": " Deep Archive Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                  "id": "DeepArchAccessVar",
+                  "refer": "s3DeepArchiveAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for monitoring and automation objects in S3 Intelligent - Tiering",
+                      "variableUnitLabel": "[currency] per object",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Monitoring and automation objects cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 INT",
+                      "variableUnitLabel": "PUT requests for S3 INT Storage",
+                      "required": true,
+                      "variableId": "s3IntPutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT PUT requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET, SELECT, and all other requests from S3 INT",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "s3IntGetRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for GET/Select and similar S3 INT requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT GET requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_14"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transition requests",
+                      "variableUnitLabel": "lifecycle request count for S3 INT",
+                      "required": true,
+                      "variableId": "s3IntLifecycleTransitionRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Lifecycle requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_15"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data returned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntSelectDataReturned"
+                    },
+                    {
+                      "variableLabel": "pricing for data returned by S3 select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_6"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data returned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_16"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntSelectDataScanned"
+                    },
+                    {
+                      "variableLabel": "pricing for data scanned by S3 INT select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT data scanned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_17"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_10"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3ArchiveInstantAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Total Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3ArchiveAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3DeepArchiveAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Monitoring and automation objects cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_12"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT PUT requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_13"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT GET requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_14"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Lifecycle requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_15"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data returned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_16"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT data scanned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_17"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total S3 INT Storage, requests, select, scanned and retrieval cost)",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_18"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "totalStoragePercent",
+                    "s3IntelligentTiering_generated_9",
+                    "s3IntelligentTiering_generated_10",
+                    "freqvar",
+                    "InfreqStorage",
+                    "s3IntelligentTiering_generated_11",
+                    "Infreqvar",
+                    "s3ArchiveInstantAccessStorage_afterPCnt",
+                    "s3ArchiveInstantAccessStorageFinalCost",
+                    "ArchInstantAccessVar",
+                    "s3INTAAMultiplierOverheadUnroundedObjects",
+                    "s3INTAAObjectsRounded",
+                    "overHeadSizeArchiveAccessS3",
+                    "overHeadSizeGBArchiveAccessS3",
+                    "SOVC",
+                    "overHeadSizeArchiveAccess",
+                    "overHeadSizeGBArchiveAccess",
+                    "S3INTArchiveAccessOC",
+                    "s3ArchiveAccessStorage_afterPCnt",
+                    "s3ArchiveAccessStorageTierCost",
+                    "s3ArchiveAccessStorageFinalCost",
+                    "ArchAccessVar",
+                    "s3INTDAAMultiplierOverheadUnroundedObjects",
+                    "s3INTDAAOverhead_objectsRounded",
+                    "overHeadSizeDeepArchiveAccessS3",
+                    "overHeadSizeGBDeepArchiveAccessS3",
+                    "SOVC_S3DAA",
+                    "overHeadSizeDeepArchiveAccessDAA",
+                    "overHeadSizeGBDeepArchiveAccess",
+                    "S3INTDeepArchiveAccessOC",
+                    "s3DeepArchiveAccessStorage_afterPCnt",
+                    "s3DeepArchiveAccessStorageTierCost",
+                    "s3DeepArchiveAccessStorageFinalCost",
+                    "DeepArchAccessVar",
+                    "s3IntelligentTiering_generated_12",
+                    "s3IntelligentTiering_generated_13",
+                    "s3IntelligentTiering_generated_14",
+                    "s3IntelligentTiering_generated_15",
+                    "s3IntelligentTiering_generated_16",
+                    "s3IntelligentTiering_generated_17",
+                    "s3IntelligentTiering_generated_18"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "S3 INT cost",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_19",
+                  "subTotalRefer": "s3IntelligentTiering_generated_18"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "moveToStorageClassMethod"
+                          },
+                          "PUT to Intelligent Tiering Requests"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "moveToStorageClassMethod"
+                          },
+                          "Lifecycle to Intelligent Tiering Requests"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "S3ITRCPCP",
+                  "variableName": "S3ITRCPCP without parts"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "Lifecycle to Intelligent Tiering Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Lifecycle requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "S3ITRCLC",
+                  "variableName": "S3ITRCLC without parts"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "upfrontS3ITTotal",
+                  "operands": [
+                    {
+                      "variableId": "S3ITRCPCP",
+                      "variableLabel": "S3ITRCPCP without parts",
+                      "variableUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "S3ITRCLC",
+                      "variableLabel": "S3ITRCLC without parts",
+                      "variableUnitLabel": "[currency] (Cost for Lifecycle requests for initial data)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "S3ITRCPCP",
+                    "S3ITRCLC",
+                    "upfrontS3ITTotal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 INT cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontS3ITCostDisplay",
+                  "subTotalRefer": "upfrontS3ITTotal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-iso",
+            "aws-iso-b"
+          ],
+          "title": "S3 Intelligent - Tiering (S3 INT)",
+          "description": "is best used for data with unknown or changing access patterns.",
+          "helpText": "S3 Intelligent-Tiering is for data with unknown or changing access patterns.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The Amazon S3 Intelligent-Tiering storage class is designed to optimize storage costs by automatically moving data to the most cost-effective access tier when access patterns change. S3 Intelligent-Tiering automatically stores objects in three access tiers: one tier optimized for frequent access, a lower-cost tier optimized for infrequent access, and a very-low-cost tier optimized for rarely accessed data. For a small monthly object monitoring and automation charge, S3 Intelligent-Tiering moves objects that have not been accessed for 30 consecutive days to the Infrequent Access tier and after 90 days of no access they’re moved to the Archive Instant Access tier. If the objects are accessed later, S3 Intelligent-Tiering moves the objects back to the Frequent Access tier. To save more on data that doesn’t require immediate retrieval, you can activate the optional asynchronous Archive Access and Deep Archive Access tiers. There are no retrieval fees when using the S3 Intelligent-Tiering storage class, and no additional tiering fees when objects are moved between access tiers within S3 Intelligent-Tiering.",
+                "id": "S3IntTextBody"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 INT storage",
+                "id": "s3IntStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "S3 INT Average Object Size",
+                "id": "S3_Intelligent_Tiering_Average_Object_Size",
+                "defaultValue": 16,
+                "description": "Used to calculate number of objects which affects object monitoring and automation costs, in addition to cost of moving data into S3 INT. You can find the average object size of your existing S3 data using S3 Storage Lens in the S3 Console.",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.000128,
+                  "maxValue": 5000
+                },
+                "placeholder": "Enter amount."
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "How will data be moved into S3 INT?",
+                "id": "moveToStorageClassMethod",
+                "options": [
+                  {
+                    "label": "The specified amount of data is already stored in S3 INT",
+                    "id": "No movement required"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                      }
+                    },
+                    "label": "PUT, COPY, POST requests to S3 INT",
+                    "id": "PUT to Intelligent Tiering Requests"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                      }
+                    },
+                    "label": "Lifecycle Transitions into S3 INT",
+                    "id": "Lifecycle to Intelligent Tiering Requests"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "No movement required",
+                "validations": {
+                  "required": false
+                },
+                "description": "Automatically calculates PUT, COPY, POST, Lifecycle costs for moving data into S3 INT initially. To compare the cost of current storage in S3 INT to lifecycling this data to another storage class, you can specify that your storage is already stored in S3 INT while selecting Lifecycle under the new storage class to capture the upfront cost of moving your data."
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3-intelligent-tiering",
+                        "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3FreqPercentStorageAccessed",
+                "label": "Percentage of Storage in INT-Frequent Access Tier",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 100,
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Intelligent Tiering Infrequent Access per GB Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3IntPercentStorageNotAccessed",
+                "label": "Percentage of Storage in INT-Infrequent Access Tier (% of storage that hasn't been accessed in the last 30 days)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Intelligent Tiering Archive Instant Access"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3ArchivePercentStorageInstantAccessed",
+                "label": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "IntelligentTieringArchiveAccess"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3ArchivePercentStorageAccessed",
+                "label": "Percentage of Storage in INT-Archive Access Tier (% of storage that hasn't been accessed for a minimum of 90 days)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "IntelligentTieringDeepArchiveAccess"
+                  }
+                },
+                "type": "input",
+                "subType": "percentInput",
+                "id": "s3DeepArchivePercentStorageAccessed",
+                "label": "Percentage of Storage in INT-Deep Archive Access Tier (% of storage that hasn't been accessed for a minimum of 180 days)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is more than 100%",
+                "label": "Percent alert",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Percentage total above is less than 100%",
+                "label": "Percent alert2",
+                "alertType": "error",
+                "isDismissable": false,
+                "id": "percentageAlert2",
+                "allowSaveEstimateOnAlert": false
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalStoragePercent"
+                      },
+                      "trigger": "greater than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert",
+                        "variableId": "percentageAlert"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay1"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "usage alert component2",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "total percentage",
+                        "variableId": "totalStoragePercent"
+                      },
+                      "trigger": "less than",
+                      "triggerValue": "1.00"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Percent alert2",
+                        "variableId": "percentageAlert2"
+                      }
+                    ]
+                  }
+                },
+                "id": "alertDisplay2"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "PUT, COPY, POST, LIST requests to S3 INT",
+                "id": "s3IntPutRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of PUT, COPY, POST or LIST requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "GET and all other requests per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "GET, SELECT, and all other requests from S3 INT",
+                "id": "s3IntGetRequests",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests",
+                "description": "Ongoing monthly number of GET,SELECT and all other requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Lifecycle Transition requests",
+                "id": "s3IntLifecycleTransitionRequests",
+                "description": "Ongoing monthly number of Lifecycle requests from S3 Standard or S3 IA into S3 INT.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Data Returned by S3 Select in Intelligent Tiering per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data returned by S3 Select",
+                "id": "s3IntSelectDataReturned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data returned by S3 Select requests"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3-intelligent-tiering",
+                    "meteredUnit": "Data Scanned by S3 Select in Intelligent Tiering per GB"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data scanned by S3 Select",
+                "id": "s3IntSelectDataScanned",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Ongoing monthly volume of data scanned by S3 Select reqeusts"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "label": "Pricing Intelligent - Tiering Storage, Frequent Access Tier",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Intelligent Tiering Frequent Access First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Intelligent Tiering Frequent Access Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Intelligent Tiering Frequent Access Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "s3IntelligentTiering_generated_20"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Per object per month monitoring and automation fee for objects in Intelligent Tiering"
+                },
+                "label": "pricing for monitoring and automation objects in S3 Intelligent - Tiering",
+                "id": "s3IntelligentTiering_generated_21"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "PUT COPY/POST or LIST requests to Intelligent Tiering per Requests"
+                },
+                "label": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                "id": "s3IntelligentTiering_generated_22"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "GET and all other requests per Requests"
+                },
+                "label": "pricing for GET/Select and similar S3 INT requests",
+                "id": "s3IntelligentTiering_generated_23"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Standard Infrequent Access or One Zone - Infrequent Access or Intelligent Tiering per Requests"
+                },
+                "label": "pricing for lifecycle transition requests old",
+                "id": "s3IntelligentTiering_generated_24_old"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Lifecycle Transition Requests into Intelligent Tiering per Requests"
+                },
+                "label": "pricing for lifecycle transition requests",
+                "id": "s3IntelligentTiering_generated_24"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Intelligent Tiering Infrequent Access per GB Mo"
+                },
+                "label": "pricing for S3 INT Infrequent access storage",
+                "id": "s3IntelligentTiering_generated_25"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Data Returned by S3 Select in Intelligent Tiering per GB"
+                },
+                "label": "pricing for data returned by S3 select",
+                "id": "s3IntelligentTiering_generated_26"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Data Scanned by S3 Select in Intelligent Tiering per GB"
+                },
+                "label": "pricing for data scanned by S3 INT select",
+                "id": "s3IntelligentTiering_generated_27"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "Intelligent Tiering Archive Instant Access"
+                },
+                "label": "pricing for Instant Access Archive Storage",
+                "id": "s3InstantAccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "IntelligentTieringArchiveAccess"
+                },
+                "label": "pricing for Access Archive Storage",
+                "id": "s3AccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "s3-intelligent-tiering",
+                "meteredUnit": {
+                  "allRegions": "IntelligentTieringDeepArchiveAccess"
+                },
+                "label": "pricing for Deep Access Archive Storage",
+                "id": "s3DeepAccessArchiveCost"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "volumeDiscountEligibility": false,
+                "label": "Pricing for Standard S3 Storage",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 51200,
+                      "meteredUnit": "Standard Storage First 50 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 51201,
+                      "endOfTier": 512000,
+                      "meteredUnit": "Standard Storage Next 450 TB per GB Mo"
+                    },
+                    {
+                      "startOfTier": 512001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Standard Storage Over 500 TB per GB Mo"
+                    }
+                  ]
+                },
+                "id": "amazonS3Standard_t_p"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3IntelligentTiering_generated_28",
+                  "refer": [
+                    "S3IntTextBody",
+                    "s3IntStorage",
+                    "S3_Intelligent_Tiering_Average_Object_Size",
+                    "moveToStorageClassMethod",
+                    "s3FreqPercentStorageAccessed",
+                    "s3IntPercentStorageNotAccessed",
+                    "s3ArchivePercentStorageInstantAccessed",
+                    "s3ArchivePercentStorageAccessed",
+                    "s3DeepArchivePercentStorageAccessed",
+                    "percentageAlert",
+                    "percentageAlert2",
+                    "alertDisplay1",
+                    "alertDisplay2",
+                    "s3IntPutRequests",
+                    "s3IntGetRequests",
+                    "s3IntLifecycleTransitionRequests",
+                    "s3IntSelectDataReturned",
+                    "s3IntSelectDataScanned",
+                    "s3IntelligentTiering_generated_20",
+                    "s3IntelligentTiering_generated_21",
+                    "s3IntelligentTiering_generated_22",
+                    "s3IntelligentTiering_generated_23",
+                    "s3IntelligentTiering_generated_24_old",
+                    "s3IntelligentTiering_generated_24",
+                    "s3IntelligentTiering_generated_25",
+                    "s3IntelligentTiering_generated_26",
+                    "s3IntelligentTiering_generated_27",
+                    "s3InstantAccessArchiveCost",
+                    "s3AccessArchiveCost",
+                    "s3DeepAccessArchiveCost",
+                    "amazonS3Standard_t_p"
+                  ],
+                  "subTotalRefer": "upfrontS3ITTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    },
+                    {
+                      "variableLabel": "S3 INT Average Object Size",
+                      "variableUnitLabel": "GB average item size",
+                      "required": true,
+                      "variableId": "S3_Intelligent_Tiering_Average_Object_Size"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 4,
+                  "id": "AverageItemSizeunrounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "billablenumberofItems",
+                  "operands": [
+                    {
+                      "variableId": "AverageItemSizeunrounded",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "displayCalculationString": false,
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Frequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3FreqPercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Infrequent Access Tier (% of storage that hasn't been accessed in the last 30 days)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3IntPercentStorageNotAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageInstantAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of storage that hasn't been accessed for a minimum of 90 days)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of storage that hasn't been accessed for a minimum of 180 days)",
+                      "variableUnitLabel": "",
+                      "required": false,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    }
+                  ],
+                  "outputUnitLabel": "total percentage",
+                  "decimalPlaces": 2,
+                  "id": "totalStoragePercent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Frequent Access Tier",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3FreqPercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total frequent access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_29"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing Intelligent - Tiering Storage, Frequent Access Tier",
+                  "inputReferLabel": "GB (total frequent access storage)",
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_30",
+                  "inputRefer": "s3IntelligentTiering_generated_29",
+                  "tieredPricingRefer": "s3IntelligentTiering_generated_20"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Frequent Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                  "id": "freqvar",
+                  "refer": "s3IntelligentTiering_generated_30",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Infrequent Access Tier (% of storage that hasn't been accessed in the last 30 days)",
+                      "variableUnitLabel": "infrequent access multiplier",
+                      "required": true,
+                      "variableId": "s3IntPercentStorageNotAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total infrequent access storage)",
+                  "decimalPlaces": 4,
+                  "id": "InfreqStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total infrequent access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "InfreqStorage"
+                    },
+                    {
+                      "variableLabel": "pricing for S3 INT Infrequent access storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_25"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_31"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Infrequent-Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                  "id": "Infreqvar",
+                  "refer": "s3IntelligentTiering_generated_31",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Instant Access Tier (% of storage that hasn't been accessed in the last 90 days)",
+                      "variableUnitLabel": "archive instant access multiplier",
+                      "required": true,
+                      "variableId": "s3ArchivePercentStorageInstantAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total archive instant access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3ArchiveInstantAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total archive instant access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3ArchiveInstantAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Instant Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3InstantAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveInstantAccessStorageFinalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Archive Instant Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                  "id": "ArchInstantAccessVar",
+                  "refer": "s3ArchiveInstantAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 2,
+                  "id": "s3INTAAMultiplierOverheadUnroundedObjects"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "s3INTAAObjectsRounded",
+                  "operands": [
+                    {
+                      "variableId": "s3INTAAMultiplierOverheadUnroundedObjects",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects (total number of objects archive access storage)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTAAObjectsRounded"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeArchiveAccessS3"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC",
+                  "inputRefer": "overHeadSizeGBArchiveAccessS3",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTAAObjectsRounded"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeArchiveAccess"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGBArchiveAccess"
+                    },
+                    {
+                      "variableLabel": "pricing for Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3AccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3-INT Archive Access storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "S3INTArchiveAccessOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Archive Access Tier (% of storage that hasn't been accessed for a minimum of 90 days)",
+                      "variableUnitLabel": "archive access multiplier",
+                      "required": true,
+                      "variableId": "s3ArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total archive access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3ArchiveAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total archive access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3ArchiveAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3AccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveAccessStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SOVC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3-INT Archive Access storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "S3INTArchiveAccessOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3ArchiveAccessStorageTierCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3ArchiveAccessStorageFinalCost"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "s3-intelligent-tiering",
+                      "meteredUnit": "IntelligentTieringArchiveAccess"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Archive Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Total Archive Access Tier cost)",
+                  "id": "ArchAccessVar",
+                  "refer": "s3ArchiveAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of Deep Archive Access Storage accessed in a 30 day period)",
+                      "variableUnitLabel": "frequent access multiplier",
+                      "required": false,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded number of objects",
+                  "decimalPlaces": 2,
+                  "id": "s3INTDAAMultiplierOverheadUnroundedObjects"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "Round up by 1",
+                  "id": "s3INTDAAOverhead_objectsRounded",
+                  "operands": [
+                    {
+                      "variableId": "s3INTDAAMultiplierOverheadUnroundedObjects",
+                      "variableLabel": "unrounded number of objects",
+                      "variableUnitLabel": "unrounded number of objects",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects deep archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTDAAOverhead_objectsRounded"
+                    },
+                    {
+                      "constant": 8,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeDeepArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeDeepArchiveAccessS3"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBDeepArchiveAccessS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Pricing for Standard S3 Storage",
+                  "inputReferLabel": "GB overhead",
+                  "outputUnitLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                  "inputUnitLabel": "GB",
+                  "decimalPlaces": 7,
+                  "id": "SOVC_S3DAA",
+                  "inputRefer": "overHeadSizeGBDeepArchiveAccessS3",
+                  "tieredPricingRefer": "amazonS3Standard_t_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects (total number of objects deep archive access storage)",
+                      "variableUnitLabel": "number of objects (total number of objects deep archive access storage)",
+                      "required": true,
+                      "variableId": "s3INTDAAOverhead_objectsRounded"
+                    },
+                    {
+                      "constant": 32,
+                      "constantUnitLabel": "KB"
+                    }
+                  ],
+                  "outputUnitLabel": "KB overhead",
+                  "decimalPlaces": 4,
+                  "id": "overHeadSizeDeepArchiveAccessDAA"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB overhead",
+                      "variableUnitLabel": "KB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeDeepArchiveAccessDAA"
+                    },
+                    {
+                      "constant": 1048576,
+                      "constantUnitLabel": "KB in a GB"
+                    }
+                  ],
+                  "outputUnitLabel": "GB overhead",
+                  "decimalPlaces": 6,
+                  "id": "overHeadSizeGBDeepArchiveAccess"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB overhead",
+                      "variableUnitLabel": "GB overhead",
+                      "required": true,
+                      "variableId": "overHeadSizeGBDeepArchiveAccess"
+                    },
+                    {
+                      "variableLabel": "pricing for Deep Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3-INT Deep Archive storage overhead cost for metadata)",
+                  "decimalPlaces": 7,
+                  "id": "S3INTDeepArchiveAccessOC"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Percentage of Storage in INT-Deep Archive Access Tier (% of storage that hasn't been accessed for a minimum of 180 days)",
+                      "variableUnitLabel": "deep archive access multiplier",
+                      "required": true,
+                      "variableId": "s3DeepArchivePercentStorageAccessed"
+                    },
+                    {
+                      "variableLabel": "S3 INT storage",
+                      "variableUnitLabel": "GB (Total S3 INT storage)",
+                      "required": true,
+                      "variableId": "s3IntStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (total deep archive access storage)",
+                  "decimalPlaces": 2,
+                  "id": "s3DeepArchiveAccessStorage_afterPCnt"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB (total deep archive access storage)",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3DeepArchiveAccessStorage_afterPCnt"
+                    },
+                    {
+                      "variableLabel": "pricing for Deep Access Archive Storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepAccessArchiveCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Storage, Deep Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3DeepArchiveAccessStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "SOVC_S3DAA"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3-INT Deep Archive storage overhead cost for metadata)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "S3INTDeepArchiveAccessOC"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Deep Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3DeepArchiveAccessStorageTierCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3DeepArchiveAccessStorageFinalCost"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "s3-intelligent-tiering",
+                      "meteredUnit": "IntelligentTieringDeepArchiveAccess"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": " Deep Archive Access Tier cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                  "id": "DeepArchAccessVar",
+                  "refer": "s3DeepArchiveAccessStorageFinalCost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for monitoring and automation objects in S3 Intelligent - Tiering",
+                      "variableUnitLabel": "[currency] per object",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_21"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Monitoring and automation objects cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_32"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "PUT, COPY, POST, LIST requests to S3 INT",
+                      "variableUnitLabel": "PUT requests for S3 INT Storage",
+                      "required": true,
+                      "variableId": "s3IntPutRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_22"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT PUT requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_33"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET, SELECT, and all other requests from S3 INT",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "s3IntGetRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for GET/Select and similar S3 INT requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_23"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT GET requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_34"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Lifecycle Transition requests",
+                      "variableUnitLabel": "lifecycle request count for S3 INT",
+                      "required": true,
+                      "variableId": "s3IntLifecycleTransitionRequests"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_24"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT Lifecycle requests cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_35"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data returned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntSelectDataReturned"
+                    },
+                    {
+                      "variableLabel": "pricing for data returned by S3 select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_26"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 select data returned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_36"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data scanned by S3 Select",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "s3IntSelectDataScanned"
+                    },
+                    {
+                      "variableLabel": "pricing for data scanned by S3 INT select",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_27"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 INT data scanned cost)",
+                  "decimalPlaces": 4,
+                  "id": "s3IntelligentTiering_generated_37"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Frequent Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_30"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Infrequent-Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_31"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Storage, Archive Instant Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3ArchiveInstantAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Total Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3ArchiveAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Total Deep Archive Access Tier cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3DeepArchiveAccessStorageFinalCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Monitoring and automation objects cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_32"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT PUT requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_33"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT GET requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_34"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT Lifecycle requests cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_35"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 select data returned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_36"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 INT data scanned cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "s3IntelligentTiering_generated_37"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total S3 INT Storage, requests, select, scanned and retrieval cost)",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_38"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AverageItemSizeunrounded",
+                    "billablenumberofItems",
+                    "totalStoragePercent",
+                    "s3IntelligentTiering_generated_29",
+                    "s3IntelligentTiering_generated_30",
+                    "freqvar",
+                    "InfreqStorage",
+                    "s3IntelligentTiering_generated_31",
+                    "Infreqvar",
+                    "s3ArchiveInstantAccessStorage_afterPCnt",
+                    "s3ArchiveInstantAccessStorageFinalCost",
+                    "ArchInstantAccessVar",
+                    "s3INTAAMultiplierOverheadUnroundedObjects",
+                    "s3INTAAObjectsRounded",
+                    "overHeadSizeArchiveAccessS3",
+                    "overHeadSizeGBArchiveAccessS3",
+                    "SOVC",
+                    "overHeadSizeArchiveAccess",
+                    "overHeadSizeGBArchiveAccess",
+                    "S3INTArchiveAccessOC",
+                    "s3ArchiveAccessStorage_afterPCnt",
+                    "s3ArchiveAccessStorageTierCost",
+                    "s3ArchiveAccessStorageFinalCost",
+                    "ArchAccessVar",
+                    "s3INTDAAMultiplierOverheadUnroundedObjects",
+                    "s3INTDAAOverhead_objectsRounded",
+                    "overHeadSizeDeepArchiveAccessS3",
+                    "overHeadSizeGBDeepArchiveAccessS3",
+                    "SOVC_S3DAA",
+                    "overHeadSizeDeepArchiveAccessDAA",
+                    "overHeadSizeGBDeepArchiveAccess",
+                    "S3INTDeepArchiveAccessOC",
+                    "s3DeepArchiveAccessStorage_afterPCnt",
+                    "s3DeepArchiveAccessStorageTierCost",
+                    "s3DeepArchiveAccessStorageFinalCost",
+                    "DeepArchAccessVar",
+                    "s3IntelligentTiering_generated_32",
+                    "s3IntelligentTiering_generated_33",
+                    "s3IntelligentTiering_generated_34",
+                    "s3IntelligentTiering_generated_35",
+                    "s3IntelligentTiering_generated_36",
+                    "s3IntelligentTiering_generated_37",
+                    "s3IntelligentTiering_generated_38"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "displayInConfigSummary": true,
+                  "label": "S3 INT cost",
+                  "decimalPlaces": 2,
+                  "id": "s3IntelligentTiering_generated_39",
+                  "subTotalRefer": "s3IntelligentTiering_generated_38"
+                },
+                {
+                  "displayIf": {
+                    "or": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "moveToStorageClassMethod"
+                          },
+                          "PUT to Intelligent Tiering Requests"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "moveToStorageClassMethod"
+                          },
+                          "Lifecycle to Intelligent Tiering Requests"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for PUT/COPY/POST/LIST request to S3 INT per request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_22"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "S3ITRCPCP",
+                  "variableName": "S3ITRCPCP without parts"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "moveToStorageClassMethod"
+                      },
+                      "Lifecycle to Intelligent Tiering Requests"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "number of objects",
+                      "variableUnitLabel": "number of objects",
+                      "required": true,
+                      "variableId": "billablenumberofItems"
+                    },
+                    {
+                      "variableLabel": "pricing for lifecycle transition requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "s3IntelligentTiering_generated_24"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cost for Lifecycle requests for initial data)",
+                  "decimalPlaces": 6,
+                  "id": "S3ITRCLC",
+                  "variableName": "S3ITRCLC without parts"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "upfrontS3ITTotal",
+                  "operands": [
+                    {
+                      "variableId": "S3ITRCPCP",
+                      "variableLabel": "S3ITRCPCP without parts",
+                      "variableUnitLabel": "[currency] (Cost for PUT, COPY, POST requests for initial data)",
+                      "required": false
+                    },
+                    {
+                      "variableId": "S3ITRCLC",
+                      "variableLabel": "S3ITRCLC without parts",
+                      "variableUnitLabel": "[currency] (Cost for Lifecycle requests for initial data)",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "S3ITRCPCP",
+                    "S3ITRCLC",
+                    "upfrontS3ITTotal"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "S3 INT cost",
+                  "decimalPlaces": 2,
+                  "id": "upfrontS3ITCostDisplay",
+                  "subTotalRefer": "upfrontS3ITTotal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

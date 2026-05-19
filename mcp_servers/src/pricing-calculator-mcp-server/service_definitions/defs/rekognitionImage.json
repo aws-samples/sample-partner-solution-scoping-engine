@@ -1,0 +1,2488 @@
+{
+  "version": "0.0.22",
+  "serviceName": "Rekognition Image",
+  "serviceCode": "rekognitionImage",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rekognition",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rekognition/[currency]/current/rekognition.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "amazonRekognitionCustom",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                }
+              }
+            ]
+          },
+          "title": "Image Pricing",
+          "helpText": "Amazon Rekognition Image charges you each time you analyze an image using our APIs. Running multiple APIs against a single image counts as processing multiple images.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rekognition/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "Amazon Rekognition uses tiered pricing based on the number of images processed in each API group per month.<br>Group 1: CompareFaces, IndexFaces, SearchFacebyImage, SearchFaces APIs.<br>Group 2: DetectFaces, DetectModerationLabels, DetectLabels, DetectText, RecognizeCelebrities, DetectProtectiveEquipment APIs.<br>Other than the APIs listed above, Amazon Rekognition Image also supports Image Properties and face metadata storage which are priced seperately Group 1 and Group 2.<br>Please see <a href='https://aws.amazon.com/rekognition/pricing'target='_blank'>Amazon Rekognition</a> pricing page for tier price details.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "image_infoAlert"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Image analysis</b>",
+                "id": "imageAnalysisInput",
+                "style": "bold"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with labels API calls per month",
+                "id": "labelsAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with content moderation API calls per month",
+                "id": "contentModerationAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with detect text API calls per month",
+                "id": "detectTextAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with celebrity API calls per month",
+                "id": "celebrityAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with PPE detection API calls per month",
+                "id": "PPEAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of images processed with Image Properties API calls per month",
+                "id": "numberOfImagesProcessedWithImageProperties",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Face analysis and comparison</b>",
+                "id": "faceAnalysisInput"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of DetectFaces API calls per month",
+                "description": "1 API call per image",
+                "id": "detectFacesAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of CompareFaces API calls per month",
+                "description": "1 API call per 2 images",
+                "id": "compareFacesAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<b>Face search</b>",
+                "id": "faceSearchInput"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of IndexFaces API calls per month",
+                "description": "Add all faces in an image to a face collection",
+                "id": "indexFacesAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of AssociateFaces API calls per month",
+                "description": "Assign multiple face vectors to a created user",
+                "id": "associateFacesAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of SearchUsers API calls per month",
+                "description": "Compare a stored user against other stored users in a collection",
+                "id": "searchUsersAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of SearchUsersByImage API calls per month",
+                "description": "Compare a face from an image against a stored users in a collection",
+                "id": "searchUsersbyimageAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of SearchFaces API calls per month",
+                "description": "Compare an indexed face against a face collection",
+                "id": "searchFacesAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "and": [
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                          }
+                        },
+                        {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "rekognition",
+                            "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of SearchFacesByImage API calls per month",
+                "description": "Compare face on an image against a face collection",
+                "id": "searchFacesbyImageAPI",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rekognition",
+                    "meteredUnit": "Face Metadata Storage per Faces Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of faces stored in a collection",
+                "description": "Each indexed face results in one face vector stored",
+                "id": "facesStored",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "rekognition",
+                    "meteredUnit": "Face Metadata Storage per Faces Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of users stored in a collection",
+                "description": "Each created user results in one user vector stored",
+                "id": "usersStored",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "defaultValue": 0
+              },
+              {
+                "type": "pricing",
+                "id": "imageRateGroup1",
+                "label": "Price for Image Group1",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 5000000,
+                      "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 5000001,
+                      "endOfTier": 35000000,
+                      "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 35000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "imageRateGroup1_alternativeTiers",
+                "label": "Price for Image Group1 alternative tiers",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "imageRateGroup2",
+                "label": "Price for Image Group2",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 5000000,
+                      "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 5000001,
+                      "endOfTier": 35000000,
+                      "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 35000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "imageRateGroup2_alternativeTiers",
+                "label": "Price for Image Group2 alternative tiers",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceForImageProperties",
+                "label": "Price for Image Properties",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 5000000,
+                      "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 5000001,
+                      "endOfTier": 35000000,
+                      "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 35000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceForImageProperties_alternativeTiers",
+                "label": "Price for Image Properties alternative tiers",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "rekognition",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 10000001,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Rekognition Image API over 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "metadataStorageRate",
+                "label": "Face metadata storage price",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Face Metadata Storage per Faces Mo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "ImageUnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "image_infoAlert",
+                    "imageAnalysisInput",
+                    "labelsAPI",
+                    "contentModerationAPI",
+                    "detectTextAPI",
+                    "celebrityAPI",
+                    "PPEAPI",
+                    "numberOfImagesProcessedWithImageProperties",
+                    "faceAnalysisInput",
+                    "detectFacesAPI",
+                    "compareFacesAPI",
+                    "faceSearchInput",
+                    "indexFacesAPI",
+                    "associateFacesAPI",
+                    "searchUsersAPI",
+                    "searchUsersbyimageAPI",
+                    "searchFacesAPI",
+                    "searchFacesbyImageAPI",
+                    "facesStored",
+                    "usersStored",
+                    "imageRateGroup1",
+                    "imageRateGroup1_alternativeTiers",
+                    "imageRateGroup2",
+                    "imageRateGroup2_alternativeTiers",
+                    "priceForImageProperties",
+                    "priceForImageProperties_alternativeTiers",
+                    "metadataStorageRate"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAPIcalls",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "compareFacesAPI",
+                      "variableLabel": "Number of CompareFaces API calls per month",
+                      "variableUnitLabel": "compare faces",
+                      "required": false
+                    },
+                    {
+                      "variableId": "indexFacesAPI",
+                      "variableLabel": "Number of IndexFaces API calls per month",
+                      "variableUnitLabel": "index faces",
+                      "required": false
+                    },
+                    {
+                      "variableId": "associateFacesAPI",
+                      "variableLabel": "Number of AssociateFaces API calls per month",
+                      "variableUnitLabel": "search associate faces",
+                      "required": false
+                    },
+                    {
+                      "variableId": "searchUsersAPI",
+                      "variableLabel": "Number of SearchUsers API calls per month",
+                      "variableUnitLabel": "search users",
+                      "required": false
+                    },
+                    {
+                      "variableId": "searchUsersbyimageAPI",
+                      "variableLabel": "Number of SearchUsersByImage API calls per month",
+                      "variableUnitLabel": "search users by image",
+                      "required": false
+                    },
+                    {
+                      "variableId": "searchFacesAPI",
+                      "variableLabel": "Number of SearchFaces API calls per month",
+                      "variableUnitLabel": "search faces",
+                      "required": false
+                    },
+                    {
+                      "variableId": "searchFacesbyImageAPI",
+                      "variableLabel": "Number of SearchFacesByImage API calls per month",
+                      "variableUnitLabel": "search faces by image",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total API calls (group 1)",
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalstored_group2",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "usersStored",
+                      "variableLabel": "Number of users stored in a collection",
+                      "variableUnitLabel": "users stored",
+                      "required": false
+                    },
+                    {
+                      "variableId": "facesStored",
+                      "variableLabel": "Number of faces stored in a collection",
+                      "variableUnitLabel": "faces stored",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total face metadata storage",
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalAPIcalls2",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "labelsAPI",
+                      "variableLabel": "Number of images processed with labels API calls per month",
+                      "variableUnitLabel": "labels",
+                      "required": false
+                    },
+                    {
+                      "variableId": "contentModerationAPI",
+                      "variableLabel": "Number of images processed with content moderation API calls per month",
+                      "variableUnitLabel": "content moderation",
+                      "required": false
+                    },
+                    {
+                      "variableId": "detectTextAPI",
+                      "variableLabel": "Number of images processed with detect text API calls per month",
+                      "variableUnitLabel": "detect text",
+                      "required": false
+                    },
+                    {
+                      "variableId": "celebrityAPI",
+                      "variableLabel": "Number of images processed with celebrity API calls per month",
+                      "variableUnitLabel": "celebrity",
+                      "required": false
+                    },
+                    {
+                      "variableId": "PPEAPI",
+                      "variableLabel": "Number of images processed with PPE detection API calls per month",
+                      "variableUnitLabel": "PPE detection",
+                      "required": false
+                    },
+                    {
+                      "variableId": "detectFacesAPI",
+                      "variableLabel": "Number of DetectFaces API calls per month",
+                      "variableUnitLabel": "detect faces",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total API calls (group 2)",
+                  "allowDecimals": false
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group1"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imageCost",
+                  "inputRefer": "totalAPIcalls",
+                  "inputReferLabel": "total API calls (group 1)",
+                  "inputUnitLabel": "API calls",
+                  "tieredPricingRefer": "imageRateGroup1",
+                  "tieredPricingReferLabel": "Price for Image Group1",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for images group 1"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group1"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group1"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imageCost_alternativeTiers",
+                  "inputRefer": "totalAPIcalls",
+                  "inputReferLabel": "total API calls (group 1)",
+                  "inputUnitLabel": "API calls",
+                  "tieredPricingRefer": "imageRateGroup1_alternativeTiers",
+                  "tieredPricingReferLabel": "Price for Image Group1 alternative tiers",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for images group 1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCostGroup1Total",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCost_alternativeTiers",
+                      "variableUnitLabel": "[currency] for group 1 images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost",
+                      "variableUnitLabel": "[currency] for group 1 images",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for images group1 total",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "imageCostVar",
+                  "label": "Image analysis cost group 1 (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for images group1 total",
+                  "refer": "imageCostGroup1Total"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 35MM per Images Processed Group2"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imageCost2",
+                  "inputRefer": "totalAPIcalls2",
+                  "inputReferLabel": "total API calls (group 2)",
+                  "inputUnitLabel": "API calls",
+                  "tieredPricingRefer": "imageRateGroup2",
+                  "tieredPricingReferLabel": "Price for Image Group2",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for images group 2"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Group2"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 100MM per Images Processed Group2"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imageCost2_alternativeTiers",
+                  "inputRefer": "totalAPIcalls2",
+                  "inputReferLabel": "total API calls (group 2)",
+                  "inputUnitLabel": "API calls",
+                  "tieredPricingRefer": "imageRateGroup2_alternativeTiers",
+                  "tieredPricingReferLabel": "Price for Image Group2 alternative tiers",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for images group 2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCostGroup2Total",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCost2_alternativeTiers",
+                      "variableUnitLabel": "[currency] for group 2 images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost2",
+                      "variableUnitLabel": "[currency] for group 2 images",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for images group2 total",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "imageCostVar2",
+                  "label": "Image analysis cost group 2 (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for images group2 total",
+                  "refer": "imageCostGroup2Total"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 5MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 35MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imagePropertyCost",
+                  "inputReferLabel": "Number of images processed with Image Properties API calls per month",
+                  "inputUnitLabel": "API calls (Image Properties)",
+                  "tieredPricingRefer": "priceForImageProperties",
+                  "tieredPricingReferLabel": "Price for Image Properties",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for Image Properties",
+                  "inputRefer": "numberOfImagesProcessedWithImageProperties"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 1MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 10MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API upto 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "rekognition",
+                          "meteredUnit": "Rekognition Image API over 100MM per Images Processed Number of images processed using DetectLabels Image Properties API"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "imagePropertyCost_alternativeTiers",
+                  "inputReferLabel": "Number of images processed with Image Properties API calls per month",
+                  "inputUnitLabel": "API calls (Image Properties)",
+                  "tieredPricingRefer": "priceForImageProperties_alternativeTiers",
+                  "tieredPricingReferLabel": "Price for Image Properties alternative tiers",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] for Image Properties",
+                  "inputRefer": "numberOfImagesProcessedWithImageProperties"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imagePropertyCostTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imagePropertyCost_alternativeTiers",
+                      "variableUnitLabel": "[currency] for group 2 images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imagePropertyCost",
+                      "variableUnitLabel": "[currency] for group 2 images",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for image property total",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "imagePropCostVar",
+                  "label": "Image analysis cost for Image Properties (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for image property total",
+                  "refer": "imagePropertyCostTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCostTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCostGroup1Total",
+                      "variableUnitLabel": "[currency] for group 1 images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCostGroup2Total",
+                      "variableUnitLabel": "[currency] for group 2 images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imagePropertyCostTotal",
+                      "variableUnitLabel": "[currency] for Image Properties",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for images",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "imageCostVarTotal",
+                  "label": "Image analysis cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for images",
+                  "refer": "imageCostTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "faceMetadataStorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totalstored_group2",
+                      "variableLabel": "total face metadata storage",
+                      "variableUnitLabel": "stored face metadata",
+                      "required": true
+                    },
+                    {
+                      "variableId": "metadataStorageRate",
+                      "variableLabel": "Face metadata storage price",
+                      "variableUnitLabel": "[currency] per face",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for face metadata storage",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "storageCostVar",
+                  "label": "Face metadata storage cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for face metadata storage",
+                  "refer": "faceMetadataStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalImageCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCostTotal",
+                      "variableLabel": "[currency] for images",
+                      "variableUnitLabel": "[currency] for images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "faceMetadataStorageCost",
+                      "variableLabel": "[currency] for face metadata storage",
+                      "variableUnitLabel": "[currency] for storage",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "allowDecimals": true
+                },
+                {
+                  "type": "display",
+                  "id": "imageCostDisp",
+                  "label": "Image pricing",
+                  "refer": [
+                    "totalAPIcalls",
+                    "totalstored_group2",
+                    "totalAPIcalls2",
+                    "imageCost",
+                    "imageCost_alternativeTiers",
+                    "imageCostGroup1Total",
+                    "imageCostVar",
+                    "imageCost2",
+                    "imageCost2_alternativeTiers",
+                    "imageCostGroup2Total",
+                    "imageCostVar2",
+                    "imagePropertyCost",
+                    "imagePropertyCost_alternativeTiers",
+                    "imagePropertyCostTotal",
+                    "imagePropCostVar",
+                    "imageCostTotal",
+                    "imageCostVarTotal",
+                    "faceMetadataStorageCost",
+                    "storageCostVar",
+                    "totalImageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalImageCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

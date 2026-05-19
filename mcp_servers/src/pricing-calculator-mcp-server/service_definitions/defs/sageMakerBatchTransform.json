@@ -1,0 +1,262 @@
+{
+  "version": "0.0.15",
+  "serviceName": "SageMaker Batch Transform",
+  "serviceCode": "sageMakerBatchTransform",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "eu-west-1",
+    "us-west-1",
+    "ap-southeast-1",
+    "ap-northeast-1",
+    "us-gov-west-1",
+    "us-west-2",
+    "sa-east-1",
+    "ap-southeast-2",
+    "eu-central-1",
+    "ap-northeast-2",
+    "ap-northeast-3",
+    "ap-south-1",
+    "us-east-2",
+    "ca-central-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "ap-east-1",
+    "me-south-1",
+    "eu-south-1",
+    "af-south-1"
+  ],
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-batch-instances-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-batch-instances-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "sagemaker-storage",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-storage.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "SageMaker Batch Transform",
+      "description": "",
+      "id": "sagemakerBatchTransform",
+      "helpText": "With Batch Transform, there is no need to break down the data set into multiple chunks or manage real-time endpoints. Batch Transform allows you to run predictions on large or small batch datasets.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "SageMaker Batch Transform",
+          "helpText": "With Batch Transform, there is no need to break down the data set into multiple chunks or manage real-time endpoints. Batch Transform allows you to run predictions on large or small batch datasets.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/sagemaker/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "batchtransformJobsPerMonth",
+                "label": "Number of Batch Transform jobs per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of Batch Transform jobs per month",
+                "description": "Number of Batch Transform jobs"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "instancesPerJob",
+                "label": "Number of instances per job",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of instances per job",
+                "description": "Number of instances"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "HrsPerInstancePerJob",
+                "label": "Hour(s) per instance per job",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.01,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter the number of hours per instance per job",
+                "description": "Number of hours per instance per job"
+              },
+              {
+                "label": "SageMaker batchtransform IPM",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": true,
+                "mappingDefinitionName": "sagemaker-batch-instances-calc",
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "Compute Type",
+                    "V CPU",
+                    "Memory",
+                    "Clock Speed",
+                    "GPU",
+                    "Network Performance",
+                    "Storage",
+                    "GPU Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Instance name",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "Compute Type",
+                      "V CPU",
+                      "Memory",
+                      "Clock Speed",
+                      "GPU",
+                      "Network Performance",
+                      "Storage",
+                      "GPU Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "batchtransformJobsPerMonth",
+                      "variableLabel": "Number of Batch Transform jobs per month",
+                      "variableUnitLabel": "jobs per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "instancesPerJob",
+                      "variableLabel": "Number of instances per job",
+                      "variableUnitLabel": "instances per job",
+                      "required": true
+                    },
+                    {
+                      "variableId": "HrsPerInstancePerJob",
+                      "variableLabel": "Hour(s) per instance per job",
+                      "variableUnitLabel": "hours per job",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "SageMaker Batch Transform hours per month",
+                  "decimalPlaces": 6,
+                  "id": "sageMakerBatchTransform_generated_0"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "SageMaker Batch Transform hours per month",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "sageMakerBatchTransform_generated_0"
+                    },
+                    {
+                      "variableLabel": "SageMaker Batch Transform IPM",
+                      "variableUnitLabel": "[currency] per hour instance cost",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency](monthly On-Demand cost)",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerBatchTransform_generated_1"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "batchtransformJobsPerMonth",
+                    "instancesPerJob",
+                    "HrsPerInstancePerJob",
+                    "columnFormIPM",
+                    "sageMakerBatchTransform_generated_0",
+                    "sageMakerBatchTransform_generated_1"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for SageMaker Batch Transform",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerBatchTransform_generated_2",
+                  "subTotalRefer": "sageMakerBatchTransform_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

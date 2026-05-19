@@ -1,0 +1,502 @@
+{
+  "version": "0.0.19",
+  "serviceName": "VPN Connection",
+  "serviceCode": "vpnConnectionVpc",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "VPN Connection",
+      "id": "VPNConnection",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Site-to-Site VPN settings",
+          "helpText": "AWS Site-to-Site VPN extends your data center or branch office to the cloud via IP Security (IPSec) tunnels, and supports connecting to both virtual private gateway and AWS Transit Gateway. If you choose to create an AWS Site-to-Site VPN connection to your Amazon VPC, you are charged for each VPN connection-hour that your VPN connection is provisioned and available. Each partial VPN connection-hour consumed is billed as a full hour. You also incur standard AWS data transfer charges for all data transferred via the VPN connection.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Site-to-Site VPN Connections",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "numberOfSiteToSiteVPNConnections"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average duration for each connection",
+                "id": "averageDurationForEachConnection",
+                "options": [
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "defaultValue": 24,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 730
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Y7KwlAt9N15lwPpQwpkLUblr-i4jSDIlafwUAkPHPxg"
+                },
+                "label": "price for site to site vpn",
+                "id": "vpnConnection_generated_0"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfSiteToSiteVPNConnections",
+                    "averageDurationForEachConnection",
+                    "vpnConnection_generated_0"
+                  ],
+                  "id": "vpnConnection_generated_1",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Site-to-Site VPN Connections",
+                      "variableUnitLabel": "connections",
+                      "required": true,
+                      "variableId": "numberOfSiteToSiteVPNConnections"
+                    },
+                    {
+                      "variableLabel": "price for site to site vpn",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "vpnConnection_generated_0"
+                    },
+                    {
+                      "variableLabel": "Average duration for each connection",
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "averageDurationForEachConnection"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Site to Site VPN usage cost)",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_generated_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "vpnConnection_generated_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Site to Site VPN usage cost",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_generated_3",
+                  "subTotalRefer": "vpnConnection_generated_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "vpc",
+                  "meteredUnit": "2u73sSnyv2p-AmJUlnbu-lK1nddDBYoXB5a3FPIfzzs"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "vpc",
+                  "meteredUnit": "CjuukKCESmvAnD6Rjy-d5vh77v8f7wjbhY7EsvCOSs4"
+                }
+              }
+            ]
+          },
+          "title": "Client VPN settings",
+          "helpText": "In AWS Client VPN you are charged for the number of active client connections per hour and the number of subnets that are associated to Client VPN per hour. You start by creating a Client VPN endpoint and associating subnets to that endpoint. You can associate multiple subnets from within an Amazon Virtual Public Cloud (Amazon VPC) to a Client VPN endpoint as long as they are all part of the same AWS account. Each subnet associated with the Client VPN endpoint has to belong to a different Availability Zone and we will bill the Amazon VPC account owner. Billing starts once the subnet association is made and each partial hour consumed is pro-rated for the hour. The next step is to connect users to the Client VPN endpoint. This can happen dynamically as users need the service and you are charged a second fee based on the number of active clients that are connected to the Client VPC endpoint, per hour. Any client connection that is less than an hour is also pro-rated for the hour.",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "vpc",
+                    "meteredUnit": "CjuukKCESmvAnD6Rjy-d5vh77v8f7wjbhY7EsvCOSs4"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of subnet associations",
+                "description": "Number of subnets associated to an AWS Client VPN endpoint",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 5
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "vpnConnection_numberOfClientSubnets"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "vpc",
+                    "meteredUnit": "2u73sSnyv2p-AmJUlnbu-lK1nddDBYoXB5a3FPIfzzs"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of active Client VPN connections (or users)",
+                "id": "vpnConnection_numberOfClientConnections",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per day",
+                  "id": "perDay"
+                },
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 36500
+                },
+                "placeholder": "Enter amount",
+                "description": "Connection limitations apply based on the number of subnet associations"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "vpc",
+                    "meteredUnit": "2u73sSnyv2p-AmJUlnbu-lK1nddDBYoXB5a3FPIfzzs"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average duration for each connection",
+                "id": "vpnConnection_clientAvgDuration",
+                "options": [
+                  {
+                    "label": "hours per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "hours per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "hours per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "hours per day",
+                  "id": "perDay"
+                },
+                "displayInConfigSummary": false,
+                "defaultValue": 10,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "vpc",
+                    "meteredUnit": "2u73sSnyv2p-AmJUlnbu-lK1nddDBYoXB5a3FPIfzzs"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Working days per month",
+                "description": "",
+                "defaultValue": 22,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 22,
+                  "maxValue": 30
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the number of working days",
+                "id": "vpnConnection_numberOfWorkDays"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "2u73sSnyv2p-AmJUlnbu-lK1nddDBYoXB5a3FPIfzzs"
+                },
+                "label": "price for client VPN connection",
+                "id": "vpnConnection_clientConnectionPrice"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "CjuukKCESmvAnD6Rjy-d5vh77v8f7wjbhY7EsvCOSs4"
+                },
+                "label": "price for client VPN endpoint",
+                "id": "vpnConnection_clientEndpointPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "vpnConnection_numberOfClientSubnets",
+                    "vpnConnection_numberOfClientConnections",
+                    "vpnConnection_clientAvgDuration",
+                    "vpnConnection_numberOfWorkDays",
+                    "vpnConnection_clientConnectionPrice",
+                    "vpnConnection_clientEndpointPrice"
+                  ],
+                  "id": "vpnConnection_clientUnitConvert",
+                  "subTotalRefer": "vpnConnection_generated_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of subnet associations",
+                      "variableUnitLabel": "subnets",
+                      "required": true,
+                      "variableId": "vpnConnection_numberOfClientSubnets"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    },
+                    {
+                      "variableLabel": "price for client VPN endpoint",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "vpnConnection_clientEndpointPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Client VPN endpoint cost)",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_clientEndPointCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Client VPN endpoint cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Client VPN endpoint cost)",
+                  "refer": "vpnConnection_clientEndPointCost",
+                  "id": "vpnConnection_clientEndPointCostSummary"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of active Client VPN connections (or users)",
+                      "variableUnitLabel": "connections",
+                      "required": true,
+                      "variableId": "vpnConnection_numberOfClientConnections"
+                    },
+                    {
+                      "variableLabel": "Average duration for each connection",
+                      "variableUnitLabel": "hours per day",
+                      "required": true,
+                      "variableId": "vpnConnection_clientAvgDuration"
+                    },
+                    {
+                      "variableLabel": "Working days per month",
+                      "variableUnitLabel": "working days",
+                      "required": true,
+                      "variableId": "vpnConnection_numberOfWorkDays"
+                    },
+                    {
+                      "variableLabel": "price for client VPN connection",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "vpnConnection_clientConnectionPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Client VPN connection cost)",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_clientConnectionCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Client VPN connection cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (Client VPN connection cost)",
+                  "refer": "vpnConnection_clientConnectionCost",
+                  "id": "vpnConnection_clientConnectionCostSummary"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Client VPN endpoint cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "vpnConnection_clientEndPointCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (Client VPN connection cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "vpnConnection_clientConnectionCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Client VPN total cost)",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_clientTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "vpnConnection_clientEndPointCost",
+                    "vpnConnection_clientEndPointCostSummary",
+                    "vpnConnection_clientConnectionCost",
+                    "vpnConnection_clientConnectionCostSummary",
+                    "vpnConnection_clientTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Client VPN cost",
+                  "decimalPlaces": 2,
+                  "id": "vpnConnection_clientDisplayCost",
+                  "subTotalRefer": "vpnConnection_clientTotalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "version": "0.0.27",
+  "serviceName": "Lightsail Data Transfer",
+  "serviceCode": "lightsailDataTransfer",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    },
+    {
+      "mappingDefinitionName": "lightsail",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Data Transfer",
+      "description": "Data transfer is used for transfer between different services and the charges apply for data transfer into the region, out of the region and with in the region.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ec2/pricing/on-demand/#Data_Transfer"
+        }
+      },
+      "id": "lightsailDataTransfer",
+      "cards": [
+        {
+          "title": "Additional Data Transfer",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/on-demand/#Data_Transfer"
+            }
+          },
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              },
+              {
+                "type": "pricing",
+                "label": "lightsail metered unit for region list",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lightsail",
+                "meteredUnit": {
+                  "allRegions": "Lightsail Snapshot per GB-Mo"
+                },
+                "id": "lightsailMeteredUnitForRegionList"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "dataTransfer_generated_0",
+                  "refer": [
+                    "dataTransfer",
+                    "lightsailMeteredUnitForRegionList"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_2",
+                  "refer": [
+                    "dataTransfer_generated_1"
+                  ],
+                  "subTotalRefer": "dataTransfer_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

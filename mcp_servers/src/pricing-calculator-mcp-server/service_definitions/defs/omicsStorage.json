@@ -1,0 +1,393 @@
+{
+  "version": "0.0.10",
+  "serviceName": "HealthOmics Storage",
+  "serviceCode": "omicsStorage",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "amazon omics",
+    "omics",
+    "omics Storage"
+  ],
+  "serviceDescription": "With AWS HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With AWS HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. AWS HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "omics",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/omics/[currency]/current/omics.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "With AWS HealthOmics, you only pay for what you use. You are charged based on the amount of data you store and the compute instances you use for processing your workflow. With AWS HealthOmics, you can store sequence and reference data objects or variants and annotation data. You can also run bioinformatics workflows to analyze and transform genomic, transcriptomic, and other omics data. AWS HealthOmics is optimized for the storage and computation of omics data and works with other AWS services such as Amazon SageMaker, Amazon Simple Storage Service (S3), and Amazon Athena.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/omics/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "omics",
+                  "meteredUnit": "Storage Active per Gigabase-month"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "omics",
+                  "meteredUnit": "Storage Archive per Gigabase-month"
+                }
+              }
+            ]
+          },
+          "title": "HealthOmics Storage",
+          "helpText": "When you store genomic sequences in AWS HealthOmics storage, you pay for storage per gigabase per month. A gigabase is one billion bases from your imported sequence files (such as FASTQ, BAM, and CRAM). AWS HealthOmics storage stores the bases, quality scores, alignments, and other metadata from your source files. You pay per gigabase stored, so you don’t need to worry about optimal file formats or compression techniques. AWS HealthOmics takes care of all of that for you. ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/omics/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_gigabases_per_sample",
+                "label": "How many gigabases per sample?",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of gigabases",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_existing_samples",
+                "label": "How many existing samples?",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of samples",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_existing_samples_are_accessed_every_month",
+                "label": "How many existing samples are accessed every month?",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of samples",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "How_many_new_samples_every_month",
+                "label": "How many new samples every month?",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of new samples accessed every month",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "How_many_existing_samples_are_accessed_every_month"
+                    },
+                    {
+                      "type": "component",
+                      "id": "How_many_existing_samples"
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "Invalid inputs",
+                "label": "info alert",
+                "content": "Existing sample accessed every month <b>(How many existing samples are accessed every month?)</b> cannot be greater than existing samples <b>(How many existing samples?)</b>.",
+                "alertType": "error",
+                "isDismissable": true,
+                "allowSaveEstimateOnAlert": false,
+                "id": "maxAlert"
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_active_storage",
+                "label": "Price for active storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "omics",
+                "meteredUnit": {
+                  "allRegions": "Storage Active per Gigabase-month"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_archive_storage",
+                "label": "Price for archive storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "omics",
+                "meteredUnit": {
+                  "allRegions": "Storage Archive per Gigabase-month"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "How_many_gigabases_per_sample",
+                    "How_many_existing_samples",
+                    "How_many_existing_samples_are_accessed_every_month",
+                    "How_many_new_samples_every_month",
+                    "maxAlert",
+                    "Price_for_active_storage",
+                    "Price_for_archive_storage"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "serviceSettingUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "active_existing_samples",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How many existing samples are accessed every month?",
+                      "variableId": "How_many_existing_samples_are_accessed_every_month",
+                      "variableUnitLabel": "samples accessed every month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "How_many_gigabases_per_sample",
+                      "variableLabel": "How many gigabases per sample?",
+                      "variableUnitLabel": "gigabases",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "gigabases for active existing samples",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "new_active_samples",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "How many new samples every month?",
+                      "variableId": "How_many_new_samples_every_month",
+                      "variableUnitLabel": "new samples accessed every month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "How_many_gigabases_per_sample",
+                      "variableLabel": "How many gigabases per sample?",
+                      "variableUnitLabel": "gigabases",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "gigabases for active new samples",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_active_gigabases",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "active_existing_samples",
+                      "variableLabel": "gigabases for active existing samples",
+                      "variableUnitLabel": "samples",
+                      "required": false
+                    },
+                    {
+                      "variableId": "new_active_samples",
+                      "variableLabel": "gigabases for active new samples",
+                      "variableUnitLabel": "samples",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "gigabases for total active samples",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "active_Storage_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "total_active_gigabases",
+                      "variableLabel": "gigabases for total active samples",
+                      "variableUnitLabel": "gigabases",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_active_storage",
+                      "variableLabel": "Price for active storage",
+                      "variableUnitLabel": "[currency] gigabase per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for active storage",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "archived_samples",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "How_many_existing_samples",
+                      "variableLabel": "How many existing samples?",
+                      "variableUnitLabel": "existing samples",
+                      "required": false
+                    },
+                    {
+                      "variableId": "How_many_existing_samples_are_accessed_every_month",
+                      "variableLabel": "How many existing samples are accessed every month?",
+                      "variableUnitLabel": "existing samples accessed every month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "archived samples",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "archived_gigabases",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "archived_samples",
+                      "variableLabel": "archived samples",
+                      "variableUnitLabel": "samples",
+                      "required": true
+                    },
+                    {
+                      "variableId": "How_many_gigabases_per_sample",
+                      "variableLabel": "How many gigabases per sample?",
+                      "variableUnitLabel": "gigabases",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "gigabases for archived samples",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "archive_storage_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "archived_gigabases",
+                      "variableLabel": "gigabases for archived samples",
+                      "variableUnitLabel": "gigabases",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_archive_storage",
+                      "variableLabel": "Price for archive storage",
+                      "variableUnitLabel": "[currency] gigabase per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for archive storage",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "total_storage_cost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "active_Storage_cost",
+                      "variableLabel": "[currency] per month for active storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "archive_storage_cost",
+                      "variableLabel": "[currency] per month for archive storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for HealthOmics Storage",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "active_existing_samples",
+                    "new_active_samples",
+                    "total_active_gigabases",
+                    "active_Storage_cost",
+                    "archived_samples",
+                    "archived_gigabases",
+                    "archive_storage_cost",
+                    "total_storage_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "storageTotalPrice",
+                  "subTotalRefer": "total_storage_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_omics_storage"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

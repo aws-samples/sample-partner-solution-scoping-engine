@@ -1,0 +1,180 @@
+{
+  "version": "0.0.16",
+  "serviceName": "Amazon File Cache",
+  "serviceCode": "amazonFileCache",
+  "type": "AWSService",
+  "excludeZeroSubTotals": true,
+  "slug": "filecache",
+  "regions": [
+    " "
+  ],
+  "searchKeywords": [
+    "file cache",
+    "amazon file cache"
+  ],
+  "serviceDescription": "Amazon File Cache provides a high-speed cache on AWS that makes it easier to process file data, regardless of where the data is stored.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/filecache/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "fsx",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/fsx/[currency]/current/fsx.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Storage settings",
+          "description": "",
+          "helpText": "You only pay for the resources you use. You will be billed for each hour that your cache remains provisioned. Such hourly billing will stop when you delete the cache.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/filecache/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Throughput capacity",
+                "id": "throughputCapacity",
+                "options": [
+                  {
+                    "label": "1000 MBps/TiB",
+                    "id": "oq9qtgwm1xPCEWnXBSEfWj5OlMWtICXz1yHhYHh9UR0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1000 MBps/TiB",
+                "description": " ",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "storageCapacity",
+                "label": "Storage capacity",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 3600,
+                  "maxValue": 100000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount of storage (including cache storage and metadata storage) you want to provision"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "select Price",
+                "id": "pricecost",
+                "mappingDefinitionName": "fsx",
+                "refers": [
+                  {
+                    "variableLabel": "Throughput capacity",
+                    "key": "price",
+                    "variableId": "throughputCapacity"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "displayUnitConv",
+                  "refer": [
+                    "throughputCapacity",
+                    "storageCapacity",
+                    "pricecost"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "storageCapacity",
+                      "variableLabel": "Storage capacity",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pricecost",
+                      "variableLabel": "select Price",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for storage",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for File Cache",
+                  "decimalPlaces": 2,
+                  "id": "serviceTotalPrice",
+                  "subTotalRefer": "storageCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,823 @@
+{
+  "version": "0.0.11",
+  "serviceName": {
+    "aws": "AWS Cloud Map",
+    "aws-cn": "Amazon Cloud Map"
+  },
+  "serviceCode": "awsCloudMap",
+  "type": "AWSService",
+  "slug": "CloudMap",
+  "excludeZeroSubTotals": true,
+  "displayAutomation": true,
+  "regions": [],
+  "serviceDescription": {
+    "aws": "AWS Cloud Map is a cloud resource discovery service. With Cloud Map, you can define custom names for your application resources, and it maintains the updated location of these dynamically changing resources. This increases your application availability because your web service always discovers the most up-to-date locations of its resources.",
+    "aws-cn": "Amazon Cloud Map is a cloud resource discovery service. With Cloud Map, you can define custom names for your application resources, and it maintains the updated location of these dynamically changing resources. This increases your application availability because your web service always discovers the most up-to-date locations of its resources."
+  },
+  "searchKeywords": [
+    "API calls",
+    "DNS queries",
+    "resource discoveries",
+    "discovery queries",
+    "service discovery",
+    "discovery API"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/cloud-map/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "cloudmap",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cloudmap/[currency]/current/cloudmap.json"
+    },
+    {
+      "mappingDefinitionName": "route53",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/route53/[currency]/current/route53.json",
+      "includeRegions": false
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": {
+        "aws": "AWS Cloud Map",
+        "aws-cn": "Amazon Cloud Map"
+      },
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/cloud-map/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service registry",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloud-map/"
+            }
+          },
+          "expandable": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "All the resources registered via ECS Service Connect and ECS Service Discovery are free.",
+                "id": "APIText"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Registered via ECS",
+                "id": "RegisterOptionECS",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "0"
+                  },
+                  {
+                    "label": "No",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "RegisterOptionECS"
+                    },
+                    "1"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of service instances (tasks or pods) registered across all services",
+                "id": "numberNonECSResources",
+                "description": "",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000
+                },
+                "defaultValue": "1",
+                "placeholder": "Enter the number of registered services",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudmap",
+                "meteredUnit": {
+                  "allRegions": "Resource"
+                },
+                "label": "pricing for service registry",
+                "id": "pricingServiceRegistry"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "APIText",
+                    "RegisterOptionECS",
+                    "numberNonECSResources",
+                    "pricingServiceRegistry"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "unitConversionRegistry"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "serviceRegistryCharge",
+                  "operation": "multiplication",
+                  "variableName": "Service registry charges",
+                  "operands": [
+                    {
+                      "variableId": "numberNonECSResources",
+                      "variableLabel": "Average number of service instances (tasks or pods) registered across all services",
+                      "variableUnitLabel": "service(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pricingServiceRegistry",
+                      "variableLabel": "pricing for service registry",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total monthly service registry charges)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "serviceRegistryCharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Service registry charges",
+                  "decimalPlaces": 2,
+                  "id": "totalServiceRegistryDisplay",
+                  "subTotalRefer": "serviceRegistryCharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "API calls",
+          "helpText": {
+            "aws": "AWS Cloud Map pricing is based on resources that you register in the service registry and API calls that you make to discover them. With AWS Cloud Map there are no upfront payments, and you only pay for what you use.",
+            "aws-cn": "Amazon Cloud Map pricing is based on resources that you register in the service registry and API calls that you make to discover them. With Amazon Cloud Map there are no upfront payments, and you only pay for what you use."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloud-map/pricing/"
+            }
+          },
+          "expandable": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of services to discover",
+                "id": "numRegisteredResourcesAPI",
+                "description": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "defaultValue": "",
+                "placeholder": "Enter the amount",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of API calls per service",
+                "id": "numberOfAPIcall",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cloudmap",
+                "meteredUnit": {
+                  "allRegions": "API Call"
+                },
+                "label": "pricing for API call",
+                "id": "pricingAPI"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numRegisteredResourcesAPI",
+                    "numberOfAPIcall",
+                    "pricingAPI"
+                  ],
+                  "subTotalRefer": "serviceRegistryCharge",
+                  "id": "unitConversionAPI"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "discoveryAPIcharge",
+                  "operation": "multiplication",
+                  "variableName": "Discovery API call charges",
+                  "operands": [
+                    {
+                      "variableId": "numRegisteredResourcesAPI",
+                      "variableLabel": "Number of services to discover",
+                      "variableUnitLabel": "service(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfAPIcall",
+                      "variableLabel": "Number of API calls per service",
+                      "variableUnitLabel": "(API calls per service)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pricingAPI",
+                      "variableLabel": "pricing for API call",
+                      "variableUnitLabel": "[currency] (per API call)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "discoveryAPIcharge"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total discovery API call charges",
+                  "decimalPlaces": 4,
+                  "id": "totalChargeAPIDisplay",
+                  "subTotalRefer": "discoveryAPIcharge"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "route53",
+              "meteredUnit": "DNS Zone"
+            }
+          },
+          "title": "DNS Query",
+          "helpText": "Optionally, you can enable DNS-based discovery for the resources with IP addresses. You can also enable health checking for these resources using Amazon Route 53 health checks. You will incur additional charges related to Amazon Route 53 DNS and health check usage.or pricing information related to these options, see the <a href='https://aws.amazon.com/route53/pricing/' target='_blank'> Amazon Route 53 pricing</a>.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloud-map/pricing/"
+            }
+          },
+          "expandable": true,
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "route53",
+                    "meteredUnit": "Query Standard External over 1B"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of services to discover ",
+                "id": "numRegisteredResourcesDNS",
+                "description": "",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "defaultValue": "",
+                "placeholder": "Enter the amount",
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "route53",
+                    "meteredUnit": "DNS Zone"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of DNS namespaces (Route53 hosted zones)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000
+                },
+                "displayInConfigSummary": true,
+                "description": "",
+                "placeholder": "Enter the amount",
+                "id": "numberOfHostedZones"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "route53",
+                "label": "pricing for DNS Zone",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 25,
+                      "meteredUnit": "DNS Zone first 25"
+                    },
+                    {
+                      "startOfTier": 26,
+                      "endOfTier": -1,
+                      "meteredUnit": "DNS Zone"
+                    }
+                  ]
+                },
+                "id": "route53HostZonePricing"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "route53",
+                    "meteredUnit": "Query Standard External over 1B"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of DNS queries per registered service",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "queries per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter the amount",
+                "description": "",
+                "id": "numberOfQueries"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "route53",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "DNS Zone"
+                },
+                "label": "pricing for DNS Zone single price point",
+                "id": "DNSZonePricing_singlePricePoint"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "route53",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "label": "pricing for Standard queries single price point",
+                "meteredUnit": {
+                  "allRegions": "Query Standard External over 1B"
+                },
+                "id": "QueryStandardPricing_singlePricePoint"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "route53",
+                "label": "pricing for Standard queries",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1000000000,
+                      "meteredUnit": "Query Standard External first 1B"
+                    },
+                    {
+                      "startOfTier": 1000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Query Standard External over 1B"
+                    }
+                  ]
+                },
+                "id": "route53StandardQueryPricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numRegisteredResourcesDNS",
+                    "numberOfHostedZones",
+                    "route53HostZonePricing",
+                    "numberOfQueries",
+                    "DNSZonePricing_singlePricePoint",
+                    "QueryStandardPricing_singlePricePoint",
+                    "route53StandardQueryPricing"
+                  ],
+                  "subTotalRefer": "discoveryAPIcharge",
+                  "decimalPlaces": 8,
+                  "id": "unitConversionDNS"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "DNS Zone first 25"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "DNS Zone"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "dnsNameSpaceCharge",
+                  "inputRefer": "numberOfHostedZones",
+                  "inputReferLabel": "Number of DNS namespaces (Route53 hosted zones)",
+                  "inputUnitLabel": "zone(s)",
+                  "tieredPricingRefer": "route53HostZonePricing",
+                  "tieredPricingReferLabel": "pricing for DNS Zone",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] (total monthly DNS namespace charges)"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "not": {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "route53",
+                            "meteredUnit": "DNS Zone first 25"
+                          }
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "DNS Zone"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DNS namespaces (Route53 hosted zones)",
+                      "variableUnitLabel": "Hosted Zones",
+                      "required": true,
+                      "variableId": "numberOfHostedZones"
+                    },
+                    {
+                      "variableLabel": "pricing for DNS Zone single price point",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "DNSZonePricing_singlePricePoint"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total monthly DNS namespace charges)",
+                  "decimalPlaces": 2,
+                  "id": "DNSZoneCost_singlePricePoint"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "dnsNameSpaceCharge"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "DNSZoneCost_singlePricePoint"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total cost for subtotal)",
+                  "decimalPlaces": 2,
+                  "id": "DNSZoneCost_total"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "DNS namespace charges (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (total cost for subtotal)",
+                  "id": "dnsNameSpaceCharge_variable",
+                  "refer": "DNSZoneCost_total"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dnsQueriesPerMonth",
+                  "operation": "multiplication",
+                  "variableName": "Total monthly DNS queries",
+                  "operands": [
+                    {
+                      "variableId": "numRegisteredResourcesDNS",
+                      "variableLabel": "Number of services to discover ",
+                      "variableUnitLabel": "service(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfQueries",
+                      "variableLabel": "Number of DNS queries per registered service",
+                      "variableUnitLabel": "(queries per service per month)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "(total monthly DNS queries)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "Query Standard External first 1B"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "Query Standard External over 1B"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "dnsQueriesChargePerMonth",
+                  "inputRefer": "dnsQueriesPerMonth",
+                  "inputReferLabel": "Total monthly DNS queries",
+                  "inputUnitLabel": "DNS queries per month",
+                  "tieredPricingRefer": "route53StandardQueryPricing",
+                  "tieredPricingReferLabel": "pricing for Standard queries",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency] (total monthly DNS query charges)"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "not": {
+                          "exists": {
+                            "type": "meteredUnit",
+                            "mappingDefinitionName": "route53",
+                            "meteredUnit": "Query Standard External first 1B"
+                          }
+                        }
+                      },
+                      {
+                        "exists": {
+                          "type": "meteredUnit",
+                          "mappingDefinitionName": "route53",
+                          "meteredUnit": "Query Standard External over 1B"
+                        }
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total monthly DNS queries",
+                      "variableUnitLabel": "DNS queries per month",
+                      "required": true,
+                      "variableId": "dnsQueriesPerMonth"
+                    },
+                    {
+                      "variableLabel": "pricing for Standard queries single price point",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "QueryStandardPricing_singlePricePoint"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total monthly DNS query charges)",
+                  "decimalPlaces": 2,
+                  "id": "dnsQueriesChargePerMonth_singlePricePoint"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "DNS queries per month",
+                      "required": false,
+                      "variableId": "dnsQueriesChargePerMonth"
+                    },
+                    {
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "dnsQueriesChargePerMonth_singlePricePoint"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total for subtotal variable)",
+                  "decimalPlaces": 2,
+                  "id": "dnsQueriesChargePerMonth_total"
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "route53",
+                      "meteredUnit": "Query Standard External over 1B"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "DNS query charges (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (total for subtotal variable)",
+                  "id": "dnsQueryCharge_variable",
+                  "refer": "dnsQueriesChargePerMonth_total",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "TotalMontlyChargeDNS",
+                  "operation": "addition",
+                  "variableName": "Total monthly charge for DNS",
+                  "operands": [
+                    {
+                      "variableId": "DNSZoneCost_total",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "dnsQueriesChargePerMonth_total",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "dnsNameSpaceCharge",
+                    "DNSZoneCost_singlePricePoint",
+                    "DNSZoneCost_total",
+                    "dnsNameSpaceCharge_variable",
+                    "dnsQueriesPerMonth",
+                    "dnsQueriesChargePerMonth",
+                    "dnsQueriesChargePerMonth_singlePricePoint",
+                    "dnsQueriesChargePerMonth_total",
+                    "dnsQueryCharge_variable",
+                    "TotalMontlyChargeDNS"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total DNS query charges",
+                  "decimalPlaces": 2,
+                  "id": "totalChargeDNSDisplay",
+                  "subTotalRefer": "TotalMontlyChargeDNS"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

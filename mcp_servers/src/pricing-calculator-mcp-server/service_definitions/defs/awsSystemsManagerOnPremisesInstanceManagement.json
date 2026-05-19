@@ -1,0 +1,340 @@
+{
+  "version": "0.0.31",
+  "serviceName": "On-Premises Instance Management",
+  "serviceCode": "awsSystemsManagerOnPremisesInstanceManagement",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Systems Manager",
+    "On-Premises Instance Management",
+    "On-Prem",
+    "Session Manager"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Systems Manager On-Premises Instance Management feature",
+    "aws-cn": "Amazon Systems Manager On-Premises Instance Management feature"
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/systems-manager/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "systemsmanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/systemsmanager/[currency]/current/systemsmanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Standard Instance Tier",
+      "id": "smOnPremStandard",
+      "description": "With standard on-premises instances, you will be able to register up to 1,000 on-premises instances per account per Region at no additional charge. If you need to register a larger number of on-premises instances or use advanced features (e.g. Session Manager, Microsoft application patching), you can change your account- and Region-level settings for on-premises instances to advanced.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Standard Instance Tier",
+          "helpText": "You can set your account- and Region-level settings for on-premises instances to either standard or advanced. With standard on-premises instances, you will be able to register up to 1,000 on-premises instances per account per Region at no additional charge.If you need to register a larger number of on-premises instances, you can change your account- and Region-level settings for on-premises instances to advanced. This will convert all the existing instances in the account and Region from standard to “advanced.” With advanced on-premises instances, you will also be able to use Systems Manager Session Manager to interactively access your on-premises instances. With this setting, you will also be able to use Systems Manager Patch Manager to patch Microsoft applications hosted on on-premises instances.Systems Manager advanced instances are priced on a pay-as-you-go basis. You are charged based on the number of advanced instances activated as Systems Manager managed instances and the hours those instances are running. Charges are not incurred for the hours where an advanced on-premises instance is de-registered, shut down, or terminated for the entire hour. This pricing applies to instances (on-premises, other cloud, or Amazon EC2) registered using Systems Manager activations.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "No additional charge. Limit of 1,000 on-premises instances per account per region.",
+                "id": "sysManagerOmPrem_StandardText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "sysManagerOnPrem_StandardInstanceInput1",
+                "label": "Hidden Input 1",
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1
+                },
+                "displayInConfigSummary": false,
+                "description": "This is a hidden field that never gets used. Required for estimation to work"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "sysManagerOnPrem_StandardInstanceInput2",
+                "label": "Hidden Input 2",
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1
+                },
+                "displayInConfigSummary": false,
+                "description": "This is a hidden field that never gets used. Required for estimation to work"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "Hide fake inputs",
+                "id": "sysManagerOnPrem_Hider",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "Hidden Input 1",
+                        "variableId": "sysManagerOnPrem_StandardInstanceInput1"
+                      },
+                      "trigger": "equal",
+                      "triggerValue": "1"
+                    }
+                  ],
+                  "render": {
+                    "action": "hide",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Hidden Input 2",
+                        "variableId": "sysManagerOnPrem_StandardInstanceInput2"
+                      },
+                      {
+                        "variableLabel": "Hidden Input 1",
+                        "variableId": "sysManagerOnPrem_StandardInstanceInput1"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerOnPrem_StandardInstancePrice",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerOnPrem_StandardInstanceInput1",
+                      "variableLabel": "Hidden Input 1",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerOnPrem_StandardInstanceInput2",
+                      "variableLabel": "Hidden Input 2",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "Hidden Constant"
+                    }
+                  ],
+                  "outputUnitLabel": "total fake addition",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerOmPrem_StandardText",
+                    "sysManagerOnPrem_StandardInstanceInput1",
+                    "sysManagerOnPrem_StandardInstanceInput2",
+                    "sysManagerOnPrem_Hider",
+                    "sysManagerOnPrem_StandardInstancePrice"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "On-Premises Instance Management cost",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerOnPrem_totalPriceStandard",
+                  "subTotalRefer": "sysManagerOnPrem_StandardInstancePrice"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Advanced Instance Tier",
+      "id": "smOnPremAdv",
+      "description": "If you need to register more than 1,000 on-premises instances or use advanced features (e.g. Session Manager, Microsoft application patching), you can change your account- and Region-level settings for on-premises instances to advanced. The calculations below are for the advanced setting.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Advanced Instance Tier",
+          "helpText": "You can set your account- and Region-level settings for on-premises instances to either standard or advanced. With standard on-premises instances, you will be able to register up to 1,000 on-premises instances per account per Region at no additional charge.If you need to register a larger number of on-premises instances, you can change your account- and Region-level settings for on-premises instances to advanced. This will convert all the existing instances in the account and Region from standard to “advanced.” With advanced on-premises instances, you will also be able to use Systems Manager Session Manager to interactively access your on-premises instances. With this setting, you will also be able to use Systems Manager Patch Manager to patch Microsoft applications hosted on on-premises instances.Systems Manager advanced instances are priced on a pay-as-you-go basis. You are charged based on the number of advanced instances activated as Systems Manager managed instances and the hours those instances are running. Charges are not incurred for the hours where an advanced on-premises instance is de-registered, shut down, or terminated for the entire hour. This pricing applies to instances (on-premises, other cloud, or Amazon EC2) registered using Systems Manager activations.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "",
+                "id": "sysManagerOnPrem_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of on-premises instances",
+                "id": "sysManagerOnPrem_numberOfOnPremInstancestoManage",
+                "placeholder": "Enter number of on-premises instances (value entered must be greater than 1000 if not using advanced features)",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "sysManagerOnPrem_percentMonth",
+                "description": "You are charged based on the number of advanced instances activated as Systems Manager managed instances and the hours those instances are running.",
+                "placeholder": "Enter average percentage",
+                "label": "Percentage of the month when instances are registered and running",
+                "defaultValue": 100,
+                "validations": {
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "id": "sysManagerOnPrem_instanceRegistrationPrice",
+                "label": "Price for on-prem instance per hour",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "Instance advanced per Hrs"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions systems manager on-prem",
+                  "refer": [
+                    "sysManagerOnPrem_Text",
+                    "sysManagerOnPrem_numberOfOnPremInstancestoManage",
+                    "sysManagerOnPrem_percentMonth",
+                    "sysManagerOnPrem_instanceRegistrationPrice"
+                  ],
+                  "id": "sysManagerOnPrem_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "sysManagerOnPrem_StandardInstancePrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerOnPrem_instanceHrs",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableId": "sysManagerOnPrem_percentMonth",
+                      "variableLabel": "Percentage of the month when instances are registered and running",
+                      "variableUnitLabel": "",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "advanced instance hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerOnPrem_onPremInstanceRegistrationCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerOnPrem_numberOfOnPremInstancestoManage",
+                      "variableLabel": "Number of on-premises instances",
+                      "variableUnitLabel": "instances",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerOnPrem_instanceHrs",
+                      "variableLabel": "advanced instance hours",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerOnPrem_instanceRegistrationPrice",
+                      "variableLabel": "Price for on-prem instance per hour",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for advanced instance hours",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerOnPrem_instanceHrs",
+                    "sysManagerOnPrem_onPremInstanceRegistrationCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "On-Premises Instance Management cost",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerOnPrem_totalPrice",
+                  "subTotalRefer": "sysManagerOnPrem_onPremInstanceRegistrationCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

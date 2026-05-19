@@ -1,0 +1,213 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Incident Manager",
+  "serviceCode": "awsSystemsManagerIncidentManager",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-southeast-1",
+    "ap-northeast-1",
+    "ap-southeast-2",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-central-1",
+    "me-central-1"
+  ],
+  "searchKeywords": [
+    "Systems Manager",
+    "AppConfig",
+    "configuration",
+    "monitoring"
+  ],
+  "serviceDescription": "AWS AppConfig enables you to provide validation logic to ensure your configuration data is syntactically and semantically correct according to your definitions before making it available to your application. AWS AppConfig also gives you the ability to roll out configuration changes over a defined time period while monitoring your application so that you can catch errors and roll back the changes if needed, to help you minimize the impact to the users.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/systems-manager/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "systemsmanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/systemsmanager/[currency]/current/systemsmanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "AWS Systems Manager Incident Manager feature",
+      "id": "smIncidentManager",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Incident Manager",
+          "helpText": "Incident Manager helps you prepare for incidents with automated response plans. Response plans execute runbook actions, track incident updates, and enable chat-based collaboration while automatically notifying the appropriate people to respond. With Incident Manager, you are charged based on the number of response plans active in a month. Response plans include up to 100 SMS or Voice messages per month; additional messages are charged based on the recipient’s country. Additionally, response plans use Systems Manager OpsCenter and Automation to track actions and execute runbooks; you will be charged based on OpsCenter and Automation pricing for OpsItems created and runbook steps executed. CloudWatch customers will also be billed separately for their metrics, alarms, and dashboards",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "With Incident Manager, you are charged based on the number of response plans active in a month. Incident Manager includes up to 100 SMS or Voice messages per month; additional messages are charged based on the recipient’s <a href='https://aws.amazon.com/systems-manager/pricing/country-rates/' target='_blank'>country</a>.",
+                "id": "sysManagerIncidentManager_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Response plans",
+                "id": "numberOfResponsePlans",
+                "placeholder": "Enter number of response plans",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Hours per response plan",
+                "id": "sysManagerIncidentResponse_hours",
+                "description": "Incident Manager response plans are billed on fractional increments, with a minimum of 1 hour.",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 730
+                },
+                "defaultValue": 730
+              },
+              {
+                "type": "pricing",
+                "id": "responsePlanPrice",
+                "label": "Price for response plan",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "systemsmanager",
+                "meteredUnit": {
+                  "allRegions": "response plan months"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "sysManagerIncidentManager_Text",
+                    "numberOfResponsePlans",
+                    "sysManagerIncidentResponse_hours",
+                    "responsePlanPrice"
+                  ],
+                  "id": "sysManagerIncidentManager_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerIncidentManager_rpMonth",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "sysManagerIncidentResponse_hours",
+                      "variableLabel": "Hours per response plan",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month"
+                    }
+                  ],
+                  "outputUnitLabel": "response plan month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sysManagerIncidentManager_responsePlanCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfResponsePlans",
+                      "variableLabel": "Response plans",
+                      "variableUnitLabel": "response plans",
+                      "required": true
+                    },
+                    {
+                      "variableId": "sysManagerIncidentManager_rpMonth",
+                      "variableLabel": "response plan month",
+                      "variableUnitLabel": "response plan month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "responsePlanPrice",
+                      "variableLabel": "Price for response plan",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Response plan cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "sysManagerIncidentManager_rpMonth",
+                    "sysManagerIncidentManager_responsePlanCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Incident Manager cost",
+                  "decimalPlaces": 2,
+                  "id": "sysManagerIncidentManager_responsePlanCostDisplay",
+                  "subTotalRefer": "sysManagerIncidentManager_responsePlanCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

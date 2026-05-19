@@ -1,0 +1,451 @@
+{
+  "encryption": {
+    "weight": 0.25,
+    "description": "Data encryption at rest and in transit",
+    "pillar": "security",
+    "services": {
+      "KMS": {
+        "provides": "key_management",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "AWS KMS",
+          "Key Management Service",
+          "KMS key",
+          "customer managed key",
+          "CMK"
+        ],
+        "configuration_checks": [
+          {
+            "check": "key_rotation_enabled",
+            "description": "Automatic key rotation is enabled",
+            "weight": 0.3
+          },
+          {
+            "check": "key_policy_defined",
+            "description": "Key policy restricts access appropriately",
+            "weight": 0.2
+          }
+        ]
+      },
+      "S3_encryption": {
+        "provides": "storage_encryption",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "S3 encryption",
+          "bucket encryption",
+          "SSE-S3",
+          "SSE-KMS",
+          "server-side encryption"
+        ],
+        "configuration_checks": [
+          {
+            "check": "default_encryption_enabled",
+            "description": "Default encryption is enabled on S3 buckets",
+            "weight": 0.4
+          },
+          {
+            "check": "encryption_in_transit",
+            "description": "HTTPS/TLS required for S3 access",
+            "weight": 0.3
+          }
+        ]
+      },
+      "RDS_encryption": {
+        "provides": "database_encryption",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "RDS encryption",
+          "encrypted RDS",
+          "database encryption",
+          "Aurora encryption"
+        ],
+        "configuration_checks": [
+          {
+            "check": "encryption_at_rest",
+            "description": "RDS instance has encryption at rest enabled",
+            "weight": 0.5
+          },
+          {
+            "check": "ssl_tls_connections",
+            "description": "SSL/TLS required for database connections",
+            "weight": 0.3
+          }
+        ]
+      },
+      "DynamoDB_encryption": {
+        "provides": "nosql_encryption",
+        "coverage_factor": 0.15,
+        "detection_patterns": [
+          "DynamoDB encryption",
+          "encrypted DynamoDB",
+          "DynamoDB KMS"
+        ],
+        "configuration_checks": [
+          {
+            "check": "encryption_at_rest",
+            "description": "DynamoDB table has encryption at rest enabled",
+            "weight": 0.5
+          }
+        ]
+      },
+      "EBS_encryption": {
+        "provides": "volume_encryption",
+        "coverage_factor": 0.15,
+        "detection_patterns": [
+          "EBS encryption",
+          "encrypted EBS",
+          "encrypted volume"
+        ],
+        "configuration_checks": [
+          {
+            "check": "encryption_enabled",
+            "description": "EBS volumes are encrypted",
+            "weight": 0.5
+          }
+        ]
+      }
+    }
+  },
+  "identity_access": {
+    "weight": 0.25,
+    "description": "Identity and access management",
+    "pillar": "security",
+    "services": {
+      "IAM": {
+        "provides": "access_control",
+        "coverage_factor": 0.4,
+        "detection_patterns": [
+          "IAM",
+          "Identity and Access Management",
+          "IAM role",
+          "IAM policy",
+          "IAM user",
+          "least privilege"
+        ],
+        "configuration_checks": [
+          {
+            "check": "mfa_enabled",
+            "description": "Multi-factor authentication enabled for privileged users",
+            "weight": 0.3
+          },
+          {
+            "check": "least_privilege_policies",
+            "description": "IAM policies follow least privilege principle",
+            "weight": 0.4
+          },
+          {
+            "check": "password_policy",
+            "description": "Strong password policy configured",
+            "weight": 0.2
+          }
+        ]
+      },
+      "Cognito": {
+        "provides": "user_authentication",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "Cognito",
+          "user pool",
+          "identity pool",
+          "user authentication"
+        ],
+        "configuration_checks": [
+          {
+            "check": "mfa_configuration",
+            "description": "MFA configured for user pool",
+            "weight": 0.4
+          },
+          {
+            "check": "password_requirements",
+            "description": "Strong password requirements enforced",
+            "weight": 0.3
+          }
+        ]
+      },
+      "Secrets_Manager": {
+        "provides": "credential_management",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "Secrets Manager",
+          "AWS Secrets Manager",
+          "secret rotation",
+          "credential management"
+        ],
+        "configuration_checks": [
+          {
+            "check": "automatic_rotation",
+            "description": "Automatic secret rotation enabled",
+            "weight": 0.5
+          },
+          {
+            "check": "encryption_enabled",
+            "description": "Secrets encrypted with KMS",
+            "weight": 0.3
+          }
+        ]
+      }
+    }
+  },
+  "network_security": {
+    "weight": 0.20,
+    "description": "Network isolation and protection",
+    "pillar": "security",
+    "services": {
+      "VPC": {
+        "provides": "network_isolation",
+        "coverage_factor": 0.4,
+        "detection_patterns": [
+          "VPC",
+          "Virtual Private Cloud",
+          "private subnet",
+          "public subnet",
+          "network isolation"
+        ],
+        "configuration_checks": [
+          {
+            "check": "private_subnets",
+            "description": "Private subnets used for sensitive resources",
+            "weight": 0.4
+          },
+          {
+            "check": "flow_logs_enabled",
+            "description": "VPC Flow Logs enabled for monitoring",
+            "weight": 0.3
+          }
+        ]
+      },
+      "Security_Groups": {
+        "provides": "firewall_rules",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "security group",
+          "security groups",
+          "firewall rules",
+          "ingress rules",
+          "egress rules"
+        ],
+        "configuration_checks": [
+          {
+            "check": "least_privilege_rules",
+            "description": "Security groups follow least privilege (no 0.0.0.0/0 for sensitive ports)",
+            "weight": 0.5
+          },
+          {
+            "check": "default_deny",
+            "description": "Default deny approach for security groups",
+            "weight": 0.3
+          }
+        ]
+      },
+      "WAF": {
+        "provides": "application_firewall",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "WAF",
+          "Web Application Firewall",
+          "AWS WAF",
+          "WAF rules"
+        ],
+        "configuration_checks": [
+          {
+            "check": "managed_rules",
+            "description": "AWS Managed Rules or custom rules configured",
+            "weight": 0.4
+          },
+          {
+            "check": "rate_limiting",
+            "description": "Rate limiting rules configured",
+            "weight": 0.3
+          }
+        ]
+      },
+      "Network_ACL": {
+        "provides": "subnet_firewall",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "Network ACL",
+          "NACL",
+          "network access control list"
+        ],
+        "configuration_checks": [
+          {
+            "check": "stateless_filtering",
+            "description": "Network ACLs configured for subnet-level filtering",
+            "weight": 0.4
+          }
+        ]
+      }
+    }
+  },
+  "monitoring_detection": {
+    "weight": 0.15,
+    "description": "Security monitoring and threat detection",
+    "pillar": "security",
+    "services": {
+      "CloudTrail": {
+        "provides": "audit_logging",
+        "coverage_factor": 0.4,
+        "detection_patterns": [
+          "CloudTrail",
+          "AWS CloudTrail",
+          "audit log",
+          "API logging"
+        ],
+        "configuration_checks": [
+          {
+            "check": "enabled_all_regions",
+            "description": "CloudTrail enabled in all regions",
+            "weight": 0.4
+          },
+          {
+            "check": "log_file_validation",
+            "description": "Log file validation enabled",
+            "weight": 0.3
+          },
+          {
+            "check": "s3_encryption",
+            "description": "CloudTrail logs encrypted in S3",
+            "weight": 0.2
+          }
+        ]
+      },
+      "GuardDuty": {
+        "provides": "threat_detection",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "GuardDuty",
+          "AWS GuardDuty",
+          "threat detection",
+          "intelligent threat detection"
+        ],
+        "configuration_checks": [
+          {
+            "check": "enabled",
+            "description": "GuardDuty enabled for threat detection",
+            "weight": 0.5
+          },
+          {
+            "check": "findings_notifications",
+            "description": "GuardDuty findings sent to SNS/EventBridge",
+            "weight": 0.3
+          }
+        ]
+      },
+      "Security_Hub": {
+        "provides": "security_posture",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "Security Hub",
+          "AWS Security Hub",
+          "security posture",
+          "compliance checks"
+        ],
+        "configuration_checks": [
+          {
+            "check": "enabled",
+            "description": "Security Hub enabled for centralized security view",
+            "weight": 0.4
+          },
+          {
+            "check": "standards_enabled",
+            "description": "Security standards enabled (CIS, PCI-DSS, etc.)",
+            "weight": 0.4
+          }
+        ]
+      },
+      "CloudWatch_Logs": {
+        "provides": "log_monitoring",
+        "coverage_factor": 0.2,
+        "detection_patterns": [
+          "CloudWatch Logs",
+          "log monitoring",
+          "log aggregation"
+        ],
+        "configuration_checks": [
+          {
+            "check": "log_retention",
+            "description": "Appropriate log retention configured",
+            "weight": 0.3
+          },
+          {
+            "check": "metric_filters",
+            "description": "Metric filters for security events",
+            "weight": 0.4
+          }
+        ]
+      }
+    }
+  },
+  "data_protection": {
+    "weight": 0.15,
+    "description": "Data backup and protection",
+    "pillar": "security",
+    "services": {
+      "Backup": {
+        "provides": "automated_backup",
+        "coverage_factor": 0.5,
+        "detection_patterns": [
+          "AWS Backup",
+          "backup plan",
+          "backup vault",
+          "automated backup"
+        ],
+        "configuration_checks": [
+          {
+            "check": "backup_plan_configured",
+            "description": "Backup plan configured for critical resources",
+            "weight": 0.4
+          },
+          {
+            "check": "backup_vault_encrypted",
+            "description": "Backup vault encrypted with KMS",
+            "weight": 0.3
+          },
+          {
+            "check": "cross_region_backup",
+            "description": "Cross-region backup configured for DR",
+            "weight": 0.2
+          }
+        ]
+      },
+      "S3_versioning": {
+        "provides": "data_versioning",
+        "coverage_factor": 0.5,
+        "detection_patterns": [
+          "S3 versioning",
+          "bucket versioning",
+          "object versioning"
+        ],
+        "configuration_checks": [
+          {
+            "check": "versioning_enabled",
+            "description": "S3 versioning enabled for data protection",
+            "weight": 0.5
+          },
+          {
+            "check": "mfa_delete",
+            "description": "MFA Delete enabled for critical buckets",
+            "weight": 0.3
+          }
+        ]
+      },
+      "S3_Object_Lock": {
+        "provides": "immutable_storage",
+        "coverage_factor": 0.3,
+        "detection_patterns": [
+          "S3 Object Lock",
+          "object lock",
+          "WORM",
+          "immutable storage"
+        ],
+        "configuration_checks": [
+          {
+            "check": "object_lock_enabled",
+            "description": "Object Lock enabled for compliance requirements",
+            "weight": 0.5
+          }
+        ]
+      }
+    }
+  }
+}

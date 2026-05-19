@@ -1,0 +1,322 @@
+{
+  "version": "0.0.19",
+  "serviceName": {
+    "aws": "AWS CodePipeline",
+    "aws-cn": "Amazon CodePipeline",
+    "aws-iso-f": "AWS CodePipeline"
+  },
+  "serviceCode": "awsCodePipeline",
+  "displayAutomation": true,
+  "type": "AWSService",
+  "slug": "CodePipeline",
+  "regions": [],
+  "searchKeywords": [
+    "code",
+    "pipeline"
+  ],
+  "serviceDescription": {
+    "aws": "AWS CodePipeline is a fully managed continuous delivery service that helps you automate your release pipelines for fast and reliable application and infrastructure updates.",
+    "aws-cn": "Amazon CodePipeline is a fully managed continuous delivery service that helps you automate your release pipelines for fast and reliable application and infrastructure updates.",
+    "aws-us-gov": "AWS CodePipeline is a fully managed continuous delivery service that helps you automate your release pipelines for fast and reliable application and infrastructure updates."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "codepipeline",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codepipeline/[currency]/current/codepipeline.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codepipeline/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/codepipeline/"
+        }
+      },
+      "cards": [
+        {
+          "title": "CodePipeline Pricing",
+          "description": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codepipeline/pricing/"
+            }
+          },
+          "helpText": "With Amazon Web Services CodePipeline, there are no upfront fees or commitments. You pay only for what you use. To encourage experimentation, pipelines are free for the first 30 days after creation.",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "codepipeline",
+                    "meteredUnit": "Active Pipeline Inf"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of active pipelines of type V1 used per account per month",
+                "id": "numberOfPipelines",
+                "description": "An active pipeline is a pipeline of type V1 that has existed for more than 30 days and has at least one code change that runs through it during the month. An active pipeline is not prorated for partial months.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "codepipeline",
+                    "meteredUnit": "Action Execution Minutes Inf"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of action execution minutes used in pipeline of type V2 per account per month",
+                "id": "numberOfPipelines_v2",
+                "description": "Action execution duration is calculated from the time an action in your pipeline starts executing until that action reaches a completion state, rounded up to the nearest minute. You are charged for all action types except for manual approval and custom action types. You get 100 free action execution minutes per month for all pipelines of type V2 in your account. Exclude manual approval and custom action minutes.",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "label": "price per codePipeline",
+                "id": "CodePipelinePrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codepipeline",
+                "meteredUnit": {
+                  "allRegions": "Active Pipeline Inf"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per action execution",
+                "id": "ExecutionPrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codepipeline",
+                "meteredUnit": {
+                  "allRegions": "Action Execution Minutes Inf"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "activePipelinesTotal",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "numberOfPipelines",
+                      "variableLabel": "Number of active pipelines of type V1 used per account per month",
+                      "variableUnitLabel": "active pipelines",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "free active pipeline of type v1 each month",
+                      "constant": 1
+                    }
+                  ],
+                  "outputUnitLabel": "total active pipelines of type v1 per month",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sm_totalAPIcalls",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total active pipelines of type v1 per month",
+                      "variableId": "activePipelinesTotal",
+                      "variableUnitLabel": "active CodePipelines",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per codePipeline",
+                      "variableId": "CodePipelinePrice",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (active pipelines)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "id": "sm_totalAPIcalls_mm",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (active pipelines)",
+                      "variableId": "sm_totalAPIcalls",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (active pipelines) ",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "activePipelinesTotal_1",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "numberOfPipelines_v2",
+                      "variableLabel": "Number of action execution minutes used in pipeline of type V2 per account per month",
+                      "variableUnitLabel": "action execution minutes",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "free action execution minutes in pipeline of type v2 each month",
+                      "constant": 100
+                    }
+                  ],
+                  "outputUnitLabel": "billable action execution minutes in pipeline of type v2 per month ",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "exists": {
+                      "type": "meteredUnit",
+                      "mappingDefinitionName": "codepipeline",
+                      "meteredUnit": "Action Execution Minutes Inf"
+                    }
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable action execution minutes in pipeline of type v2 per month ",
+                      "variableUnitLabel": "billable action execution minutes in pipeline of type v2 per month",
+                      "required": true,
+                      "variableId": "activePipelinesTotal_1"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "billable action execution minutes in pipeline of type v2 per month",
+                  "decimalPlaces": 2,
+                  "id": "minAction"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "sm_totalAPIcalls_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable action execution minutes in pipeline of type v2 per month",
+                      "variableId": "minAction",
+                      "variableUnitLabel": "action execution minutes",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per action execution",
+                      "variableId": "ExecutionPrice",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (v2 pipelines)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "tot_cost",
+                  "operation": "addition",
+                  "allowZero": true,
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (active pipelines) ",
+                      "variableId": "sm_totalAPIcalls_mm",
+                      "variableUnitLabel": "[currency] (active pipelines)",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "[currency] (v2 pipelines)",
+                      "variableId": "sm_totalAPIcalls_1",
+                      "variableUnitLabel": "[currency](v2 pipelines) ",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]  ",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberOfPipelines",
+                    "numberOfPipelines_v2",
+                    "CodePipelinePrice",
+                    "ExecutionPrice",
+                    "activePipelinesTotal",
+                    "sm_totalAPIcalls",
+                    "sm_totalAPIcalls_mm",
+                    "activePipelinesTotal_1",
+                    "minAction",
+                    "sm_totalAPIcalls_1",
+                    "tot_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "CodePipeline cost",
+                  "decimalPlaces": 2,
+                  "id": "CPDisplay",
+                  "subTotalRefer": "tot_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "awscodepipeline"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov",
+    "aws-iso-f"
+  ]
+}

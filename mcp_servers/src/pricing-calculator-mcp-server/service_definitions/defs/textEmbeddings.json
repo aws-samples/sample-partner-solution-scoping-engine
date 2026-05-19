@@ -1,0 +1,171 @@
+{
+  "version": "0.0.60",
+  "serviceName": "Titan Text Embeddings",
+  "serviceCode": "textEmbeddings",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "bedrock",
+    "bed"
+  ],
+  "serviceDescription": "",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/bedrock/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrock",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrock/[currency]/current/bedrock.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "On-Demand",
+          "helpText": {
+            "aws": " "
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "noOfInputTokens_4",
+                "label": "Number of Input tokens",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of input tokens",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 1K token per Input for Text Embeddings",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "4yFtpuoNdbt1cU3Kstaij6C4n0QlW5IZEde7wUPvEdE"
+                },
+                "id": "input_price_3"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfInputTokens_4",
+                    "input_price_3"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "TextEmbeddingsUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inputMonthlyCost_Embeddings",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "noOfInputTokens_4",
+                      "variableLabel": "Number of Input tokens",
+                      "variableUnitLabel": "input tokens",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "K input tokens",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inputMonthlyCost_Embeddings_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "inputMonthlyCost_Embeddings",
+                      "variableLabel": "K input tokens",
+                      "variableUnitLabel": "K input tokens",
+                      "required": true
+                    },
+                    {
+                      "variableId": "input_price_3",
+                      "variableLabel": "Price for 1K token per Input for Text Embeddings",
+                      "variableUnitLabel": "[currency] per K-tokens",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for input tokens for Text Embeddings",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "inputMonthlyCost_Embeddings",
+                    "inputMonthlyCost_Embeddings_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total On demand Cost for Text Embeddings",
+                  "decimalPlaces": 4,
+                  "id": "TotalOndemandMonthlyCost_Embeddings_2",
+                  "subTotalRefer": "inputMonthlyCost_Embeddings_2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_bedrock"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

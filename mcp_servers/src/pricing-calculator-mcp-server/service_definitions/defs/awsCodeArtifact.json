@@ -1,0 +1,415 @@
+{
+  "version": "0.0.8",
+  "serviceName": "AWS CodeArtifact",
+  "serviceCode": "awsCodeArtifact",
+  "slug": "CodeArtifact",
+  "type": "AWSService",
+  "excludeZeroSubTotals": false,
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "ap-northeast-1",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2"
+  ],
+  "searchKeywords": [
+    "artifacts",
+    "reqeusts",
+    "data transfer",
+    "public aritfact repositories",
+    "storage",
+    "npm",
+    "maven",
+    "nuget",
+    "pypi",
+    "python",
+    "nuget"
+  ],
+  "serviceDescription": "AWS CodeArtifact is a fully managed artifact repository service that makes it easy for organizations of any size to securely store, publish, and share software packages used in their software development process.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codeartifact/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "codeartifact",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codeartifact/[currency]/current/codeartifact.json"
+    },
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/codeartifact/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage",
+          "helpText": "You pay for storing artifacts in CodeArtifact. The rate you’re charged depends on your artifact storage size (in GB) and how long you store the artifacts during the month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codeartifact/pricing/#Storage"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "As part of the AWS Free Usage Tier, you get the first 2GB of storage for free every month.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "destinationAlert"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "storageGateway_FreeTierExclusion"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of artifacts stored",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "sizeofArtifactsStored"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for CodeArtifact per GB",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codeartifact",
+                "meteredUnit": {
+                  "allRegions": "Storage from 0 to Inf"
+                },
+                "id": "storageprice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "StorageUnitConversions",
+                  "refer": [
+                    "destinationAlert",
+                    "storageGateway_FreeTierExclusion",
+                    "sizeofArtifactsStored",
+                    "storageprice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size of artifacts stored",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeofArtifactsStored"
+                    },
+                    {
+                      "variableLabel": "Price for CodeArtifact per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageprice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "storage_cost",
+                  "subTotalRefer": "totalStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Requests",
+          "helpText": "You pay for requests made against CodeArtifact. You’re charged the same for all request types. Every asset downloaded by CodeArtifact from public artifact repositories (npm registry, maven central, PyPI, NuGet.org, etc.) counts towards the request count. The rate you are charged is based on the quantity of requests as listed in the table below.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codeartifact/pricing/#Requests"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "As part of the AWS Free Usage Tier, you get the 100,000 requests of CodeArtifact usage for free every month.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "destinationAlert_2"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "storageGateway_FreeTierExclusion_2"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of API requests",
+                "id": "noOfRequests",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "thousandPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter the number of request"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for CodeArtifact per Request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codeartifact",
+                "meteredUnit": {
+                  "allRegions": "Request from 0 to Inf"
+                },
+                "id": "requestprice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Request Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "_generated_6",
+                  "refer": [
+                    "destinationAlert_2",
+                    "storageGateway_FreeTierExclusion_2",
+                    "noOfRequests",
+                    "requestprice"
+                  ],
+                  "subTotalRefer": "totalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of API requests",
+                      "variableUnitLabel": "number of API requests",
+                      "required": true,
+                      "variableId": "noOfRequests"
+                    },
+                    {
+                      "variableLabel": "Price for CodeArtifact per Request",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "requestprice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Request Cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalRequestCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalRequestCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Request cost",
+                  "decimalPlaces": 2,
+                  "id": "RequestCost",
+                  "subTotalRefer": "totalRequestCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Transfer",
+          "cardType": "dataTransferV2",
+          "helpText": "You pay for all bandwidth into and out of AWS CodeArtifact, except for the following: 1. Data transferred in from the Internet. 2. Data transfer between CodeArtifact and another AWS Service in the same AWS Region ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codeartifact/pricing/#Data_Transfer"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "dataTransfer"
+                  ],
+                  "id": "DataTransfer",
+                  "subTotalRefer": "totalRequestCost"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_25",
+                  "refer": "dataTransfer"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_26",
+                  "refer": [
+                    "dataTransfer_generated_25"
+                  ],
+                  "subTotalRefer": "dataTransfer_generated_25"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "CodeArtifact"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

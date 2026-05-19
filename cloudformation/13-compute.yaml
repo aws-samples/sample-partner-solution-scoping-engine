@@ -1,0 +1,485 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'SERA EC2 Infrastructure - Key Pair, Launch Template, and Auto Scaling Group'
+
+Parameters:
+  StackPrefix:
+    Type: String
+    Default: sera
+    Description: Prefix for all resource names to support multiple SERA deployments
+    AllowedPattern: '^[a-z][a-z0-9-]{2,20}$'
+    ConstraintDescription: Must start with a lowercase letter, contain only lowercase letters, numbers, and hyphens, and be 3-21 characters long
+
+  PublicReachableDomainName:
+    Type: String
+    Description: 'Primary domain name for SERA (e.g., projectsera.link)'
+
+  SeraVersion:
+    Type: String
+    Description: 'SERA Version'
+    Default: 'SERA-main'
+
+  LogLevel:
+    Type: String
+    Description: 'Application log level (DEBUG for troubleshooting, INFO for detailed ops, WARNING for production)'
+    Default: 'INFO'
+    AllowedValues:
+      - DEBUG
+      - INFO
+      - WARNING
+      - ERROR
+
+  PartnerName:
+    Type: String
+    Description: 'Partner organization name'
+
+  PartnerLogoUrl:
+    Type: String
+    Description: 'URL to partner logo'
+
+  PartnerEmail:
+    Type: String
+    Description: 'Partner contact email'
+
+  AMIUpdateTrigger:
+    Type: String
+    Description: 'Increment this value to force AMI update (e.g., 1, 2, 3...)'
+    Default: '1'
+
+  EnableExternalIdP:
+    Type: String
+    Description: 'Whether external IdP federation is enabled'
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+
+Resources:
+  # EC2 Key Pair
+  SeraEC2KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Sub '${StackPrefix}-ec2-keypair'
+      KeyFormat: pem
+      KeyType: rsa
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-ec2-keypair'
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # CloudWatch Log Groups
+  SeraApplicationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '${StackPrefix}-ec2-application-logs'
+      RetentionInDays: 3653
+      KmsKeyId: !ImportValue 
+        Fn::Sub: '${StackPrefix}-kms-key-arn'
+      Tags:
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+
+  # EC2 Launch Template
+  SeraEC2LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub '${StackPrefix}-ec2-instance'
+      LaunchTemplateData:
+        ImageId: !Sub '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-arm64}}'
+        InstanceType: m7g.medium
+        KeyName: !Ref SeraEC2KeyPair
+        SecurityGroupIds:
+          - !ImportValue 
+            Fn::Sub: '${StackPrefix}-ec2-sg-id'
+        IamInstanceProfile:
+          Name: !ImportValue 
+            Fn::Sub: '${StackPrefix}-ec2-instance-profile-name'
+        MetadataOptions:
+          HttpEndpoint: enabled
+          HttpTokens: required
+          HttpPutResponseHopLimit: 2
+          InstanceMetadataTags: disabled
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: 20
+              VolumeType: gp3
+              DeleteOnTermination: true
+              Encrypted: true
+        UserData:
+          Fn::Base64:
+            Fn::Sub:
+              - |
+                #!/bin/bash
+                # EC2 Userdata script
+
+                # Install system packages and Node.js from Amazon repos
+                sudo dnf clean all
+                for i in 1 2 3; do sudo dnf install -y gcc python3-devel python3-pip pkgconfig libxml2-devel libxslt-devel xmlsec1 xmlsec1-devel xmlsec1-openssl libtool-ltdl-devel graphviz libatomic gtk3 nss libXScrnSaver at-spi2-atk libdrm libxkbcommon libXrandr alsa-lib nodejs npm && break || sleep 5; done
+                sudo dnf update -y
+                
+                # Install serve globally
+                sudo npm install -g serve
+
+                # Debug - show what variables we have
+                echo "DEBUG: S3CodeArtifactsBucketName = ${S3CodeArtifactsBucketName}" >> /home/ec2-user/sera-install.log
+                echo "DEBUG: AppName = ${!AppName}" >> /home/ec2-user/sera-install.log
+                echo "DEBUG: Full S3 path = s3://${S3CodeArtifactsBucketName}/${SeraVersion}.zip" >> /home/ec2-user/sera-install.log
+
+                # Download the artifact from S3     
+                echo "DEBUG: Starting S3 download" >> /home/ec2-user/sera-install.log
+                sudo aws s3 cp s3://${S3CodeArtifactsBucketName}/${SeraVersion}.zip /home/ec2-user/${SeraVersion}.zip
+                DOWNLOAD_EXIT_CODE=$?
+                echo "DEBUG: S3 download exit code = $DOWNLOAD_EXIT_CODE" >> /home/ec2-user/sera-install.log
+                
+                if [ $DOWNLOAD_EXIT_CODE -eq 0 ]; then
+                    echo "DEBUG: S3 download successful, file size:" >> /home/ec2-user/sera-install.log
+                    ls -la /home/ec2-user/${SeraVersion}.zip >> /home/ec2-user/sera-install.log
+                    echo "DEBUG: Starting unzip" >> /home/ec2-user/sera-install.log
+                    sudo unzip /home/ec2-user/${SeraVersion}.zip -d /home/ec2-user
+                    echo "DEBUG: Unzip complete, listing /home/ec2-user:" >> /home/ec2-user/sera-install.log
+                    ls -la /home/ec2-user/ >> /home/ec2-user/sera-install.log
+                else
+                    echo "ERROR: S3 download failed with exit code $DOWNLOAD_EXIT_CODE" >> /home/ec2-user/sera-install.log
+                    echo "DEBUG: Checking if bucket exists and is accessible:" >> /home/ec2-user/sera-install.log
+                    aws s3 ls s3://${S3CodeArtifactsBucketName}/ >> /home/ec2-user/sera-install.log 2>&1
+                    exit 1
+                fi
+
+                #Update Configuration
+                sudo mv /home/ec2-user/${SeraVersion}/backend/config/config-template.json /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|http://localhost:7001|https://${PublicReachableDomainName}|g" /home/ec2-user/${SeraVersion}/backend/routes/persona_routes.py
+                sudo sed -i "s|http://localhost|https://${PublicReachableDomainName}|g" /home/ec2-user/${SeraVersion}/backend/routes/chat_routes.py
+                sudo sed -i "s|http://localhost:7001|https://${PublicReachableDomainName}|g" /home/ec2-user/${SeraVersion}/backend/routes/chat_routes.py
+                sudo sed -i "s|cors-domain-name|${PublicReachableDomainName}|g" /home/ec2-user/${SeraVersion}/backend/app.py
+                sudo sed -i "s|http://localhost:7001|https://${PublicReachableDomainName}|g" /home/ec2-user/${SeraVersion}/backend/app.py
+                sudo sed -i "s|http://localhost:5001/api|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/.env.production
+                sudo sed -i "s|http://localhost:5001/api|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/.env.development
+                sudo sed -i "s|http://localhost:5001/api|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/vite.config.js
+                sudo sed -i "s|localhost|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/vite.config.js
+                sudo sed -i "s|http://localhost:5001/api|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/src/services/apiClient.js
+                sudo sed -i "s|http://localhost:5001/api|https://${PublicReachableDomainName}/api|g" /home/ec2-user/${SeraVersion}/frontend/src/config.js
+                sudo sed -i "s|SESSION_COOKIE_SECURE'] = False|SESSION_COOKIE_SECURE'] = True|g" /home/ec2-user/${SeraVersion}/backend/app.py
+                sudo sed -i "s|SESSION_COOKIE_HTTPONLY'] = False|SESSION_COOKIE_HTTPONLY'] = True|g" /home/ec2-user/${SeraVersion}/backend/app.py
+                sudo sed -i "s|SESSION_COOKIE_SAMESITE'] = None|SESSION_COOKIE_SAMESITE'] = 'Lax'|g" /home/ec2-user/${SeraVersion}/backend/app.py
+                
+                
+                COGNITO_CLIENT_KEY=$(aws secretsmanager get-secret-value \
+                    --secret-id ${CognitoClientSecret} \
+                    --query SecretString \
+                    --output text \
+                    --region ${CognitoRegion})   
+                FLASK_SECRET_KEY=$(aws secretsmanager get-secret-value \
+                    --secret-id ${FlaskSecretKeyArn} \
+                    --query SecretString \
+                    --output text)
+                sudo sed -i "s|\"STACK_PREFIX\": \"sera\"|\"STACK_PREFIX\": \"${StackPrefix}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"LOGGING_MODE\": \"local\"|\"LOGGING_MODE\": \"cloudwatch\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"LOG_LEVEL\": \"WARNING\"|\"LOG_LEVEL\": \"${LogLevel}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"AUTH_FRONTEND_URL\": \"http://localhost:7001\"|\"AUTH_FRONTEND_URL\": \"https://${PublicReachableDomainName}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"redirect_uri\": \"http://localhost:5001/api/callback\"|\"redirect_uri\": \"https://${PublicReachableDomainName}/api/callback\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"domain\": \"cognito_domain\"|\"domain\": \"https://${CognitoDomain}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"end_session_endpoint\": \"cognito-end-session-endpoint\"|\"end_session_endpoint\": \"https://${CognitoDomain}/logout\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"region\": \"cognito_region\"|\"region\": \"${CognitoRegion}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"user_pool_id\": \"cognito_user_pool_id\"|\"user_pool_id\": \"${CognitoUserPoolId}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"client_id\": \"cognito_client_id\"|\"client_id\": \"${CognitoClientId}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"client_secret\": \"cognito_client_secret\"|\"client_secret\": \"$COGNITO_CLIENT_KEY\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"COGNITO_DOMAIN\": \"cognito_domain\"|\"COGNITO_DOMAIN\": \"${CognitoDomain}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"COGNITO_CLIENT_ID\": \"cognito_client_id\"|\"COGNITO_CLIENT_ID\": \"${CognitoClientId}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"COGNITO_USER_POOL_ID\": \"cognito_user_pool_id\"|\"COGNITO_USER_POOL_ID\": \"${CognitoUserPoolId}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"ENABLE_EXTERNAL_IDP\": \"false\"|\"ENABLE_EXTERNAL_IDP\": \"${EnableExternalIdP}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"REDIS_HOST\": \"localhost\"|\"REDIS_HOST\": \"${RedisHost}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"REDIS_PORT\": \"6379\"|\"REDIS_PORT\": \"${RedisPort}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|\"REDIS_REPLICATION_GROUP_ID\": \"sera-redis-rg-id\"|\"REDIS_REPLICATION_GROUP_ID\": \"${RedisReplicationGroupId}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json 
+                sudo sed -i "s|\"REDIS_IAM_USER_NAME\": \"sera-redis-iam-user-name\"|\"REDIS_IAM_USER_NAME\": \"${RedisIamUserName}\"|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|s3_docs_bucket_name|${S3DocsBucketName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|s3_logging_bucket_name|${S3LoggingBucketName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|s3_token_usage_data_bucket_name|${S3TokenUsageDataBucketName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|dynamodb_chats_table_name|${DynamoDbChatsTableName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|dynamodb_support_rels_table_name|${DynamoDbSupportRelsTableName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|sera-version|${SeraVersion}|g" /home/ec2-user/${SeraVersion}/systemd/sera-frontend.service
+                sudo sed -i "s|sera-version|${SeraVersion}|g" /home/ec2-user/${SeraVersion}/systemd/sera-backend.service
+                sudo mkdir -p /home/ec2-user/sera-cloudfront-keys
+                PRIVATE_KEY=$(aws secretsmanager get-secret-value \
+                    --secret-id ${CloudFrontKeySecretName} \
+                    --query SecretString \
+                    --output text \
+                    --region ${CloudFrontKeySecretRegion})
+                sudo echo "$PRIVATE_KEY" | base64 -d > /tmp/key.pem && sudo mv /tmp/key.pem /home/ec2-user/sera-cloudfront-keys/sera-cloudfront-private-key.pem && sudo chmod 600 /home/ec2-user/sera-cloudfront-keys/sera-cloudfront-private-key.pem         
+                sudo sed -i "s|cloudfront_private_key_path|${CloudFrontPrivateKeyPath}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|cloudfront_domain|${CloudFrontDomain}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|cloudfront_key_pair_id|${CloudFrontKeyPairId}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json  
+                sudo sed -i "s|partner_name|${PartnerName}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|partner_logo_url|${PartnerLogoUrl}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                sudo sed -i "s|partner_email|${PartnerEmail}|g" /home/ec2-user/${SeraVersion}/backend/config/config.json
+                # Update personas.py with guardrail values
+                echo "=== DEBUG: Persona sed replacement ===" >> /home/ec2-user/sera-install.log
+                echo "DEBUG: BedrockGuardrail = '${BedrockGuardrail}'" >> /home/ec2-user/sera-install.log
+                echo "DEBUG: BedrockGuardrailVersion = '${BedrockGuardrailVersion}'" >> /home/ec2-user/sera-install.log
+                echo "DEBUG: File check:" >> /home/ec2-user/sera-install.log
+                ls -la /home/ec2-user/${SeraVersion}/backend/config/personas.py >> /home/ec2-user/sera-install.log 2>&1
+                echo "DEBUG: Current file content (relevant lines):" >> /home/ec2-user/sera-install.log
+                grep -n -A1 -B1 "sera_aws_sa_gdrl" /home/ec2-user/${SeraVersion}/backend/config/personas.py >> /home/ec2-user/sera-install.log 2>&1
+                echo "DEBUG: About to run sed commands" >> /home/ec2-user/sera-install.log
+                sudo sed -i "s|sera_aws_sa_gdrl|${BedrockGuardrail}|g" /home/ec2-user/${SeraVersion}/backend/config/personas.py
+                sudo sed -i "s|sera_aws_sa_br_gdrl_vn|${BedrockGuardrailVersion}|g" /home/ec2-user/${SeraVersion}/backend/config/personas.py
+                sudo chown -R ec2-user /home/ec2-user/${SeraVersion}
+                sudo chgrp -R ec2-user /home/ec2-user/${SeraVersion}
+                sudo chown -R ec2-user /home/ec2-user/sera-cloudfront-keys
+                sudo chgrp -R ec2-user /home/ec2-user/sera-cloudfront-keys
+                sudo rm /home/ec2-user/${!AppName}.zip
+                
+                # Setup SERA Frontend and Backend
+                sudo chown ec2-user:ec2-user /home/ec2-user/sera-install.log
+                sudo -u ec2-user bash << 'EOF'
+                # Install serve and build frontend
+                cd /home/ec2-user/${SeraVersion}/frontend
+                npm install serve
+                npm run build
+                # Install uv via pip
+                cd ~
+                pip3 install uv
+                export PATH="$HOME/.local/bin:$PATH"
+                cd /home/ec2-user/${SeraVersion}/backend
+                /home/ec2-user/.local/bin/uv python install 3.12.10
+                /home/ec2-user/.local/bin/uv python pin 3.12.10
+                /home/ec2-user/.local/bin/uv venv
+                /home/ec2-user/.local/bin/uv sync
+                # Install Playwright browsers
+                source .venv/bin/activate
+                playwright install chromium
+                # Setup MCP servers dynamically
+                echo "DEBUG: Starting MCP server setup" >> /home/ec2-user/sera-install.log
+                for mcp_server_dir in /home/ec2-user/${SeraVersion}/mcp_servers/src/*/; do
+                    if [ -d "$mcp_server_dir" ] && [ -f "$mcp_server_dir/pyproject.toml" ]; then
+                        server_name=$(basename "$mcp_server_dir")
+                        echo "DEBUG: Setting up MCP server: $server_name" >> /home/ec2-user/sera-install.log
+                        cd "$mcp_server_dir"
+                        /home/ec2-user/.local/bin/uv python pin 3.12.10
+                        /home/ec2-user/.local/bin/uv venv
+                        /home/ec2-user/.local/bin/uv sync
+                        echo "DEBUG: Completed setup for: $server_name" >> /home/ec2-user/sera-install.log
+                    fi
+                done
+                echo "DEBUG: MCP server setup completed" >> /home/ec2-user/sera-install.log
+
+                EOF
+                
+                # Create sera-frontend service
+                sudo cp /home/ec2-user/${SeraVersion}/systemd/sera-frontend.service /etc/systemd/system/sera-frontend.service
+                sudo systemctl daemon-reload
+                sudo systemctl enable sera-frontend
+                sudo systemctl start sera-frontend
+                
+                # Create sera-backend service
+                sudo cp /home/ec2-user/${SeraVersion}/systemd/sera-backend.service /etc/systemd/system/sera-backend.service
+                sudo systemctl daemon-reload
+                sudo systemctl enable sera-backend
+                sudo systemctl start sera-backend 
+              - CognitoDomain: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-domain'
+                CognitoUserPoolId: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-user-pool-id'
+                CognitoClientId: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-client-id'
+                CognitoRegion: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-region'
+                CognitoClientSecret: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cognito-client-secret-arn'
+                EnableExternalIdP: !Ref EnableExternalIdP
+                FlaskSecretKeyArn: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-flask-secret-key-arn'
+                RedisHost: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-endpoint'
+                RedisAuthSecretArn: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-auth-token-secret-arn'
+                RedisPort: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-port'
+                RedisIamUserName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-iam-user-name'
+                RedisReplicationGroupId: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-redis-replication-group-id'
+                CloudFrontPrivateKeyPath: "/home/ec2-user/sera-cloudfront-keys/sera-cloudfront-private-key.pem"
+                CloudFrontDomain: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cloudfront-domain-name'
+                CloudFrontKeyPairId: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cloudfront-public-key-id'
+                S3LoggingBucketName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-logfiles-bucket-name'
+                S3DocsBucketName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-chat-docs-bucket-name'
+                S3CodeArtifactsBucketName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-code-artifacts-bucket-name'
+                S3TokenUsageDataBucketName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-token-usage-data-bucket-name'
+                CloudFrontKeySecretName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cloudfront-private-key-secret-arn'
+                CloudFrontKeySecretRegion: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-cloudfront-private-key-secret-region'
+                DynamoDbChatsTableName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-chats-data-table-name'
+                DynamoDbSupportRelsTableName: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-support-relationship-data-table-name'
+                PublicReachableDomainName: !Ref PublicReachableDomainName
+                BedrockGuardrail: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-aws-sa-bedrock-guardrail-id'
+                BedrockGuardrailVersion: !ImportValue 
+                  Fn::Sub: '${StackPrefix}-aws-sa-bedrock-guardrail-version'
+                LogLevel: !Ref LogLevel
+                PartnerName: !Ref PartnerName
+                PartnerLogoUrl: !Ref PartnerLogoUrl
+                PartnerEmail: !Ref PartnerEmail
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub '${StackPrefix}-app-instance'
+              - Key: Application
+                Value: !Sub 'SERA-${StackPrefix}'
+              - Key: AMIUpdateTrigger
+                Value: !Ref AMIUpdateTrigger
+              - Key: StackPrefix
+                Value: !Ref StackPrefix
+          - ResourceType: volume
+            Tags:
+              - Key: Name
+                Value: !Sub '${StackPrefix}-app-volume'
+              - Key: Application
+                Value: !Sub 'SERA-${StackPrefix}'
+              - Key: StackPrefix
+                Value: !Ref StackPrefix
+  # Auto Scaling Group
+  SeraAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Metadata:
+      cdk_nag:
+        rules_to_suppress:
+          - id: AwsSolutions-AS3
+            reason: "To be done in management template"
+    Properties:
+      AutoScalingGroupName: !Sub '${StackPrefix}-app'
+      LaunchTemplate:
+        LaunchTemplateId: !Ref SeraEC2LaunchTemplate
+        Version: !GetAtt SeraEC2LaunchTemplate.LatestVersionNumber
+      MinSize: 2
+      MaxSize: 6
+      DesiredCapacity: 2
+      VPCZoneIdentifier:
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-instances-subnet-1-id'
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-instances-subnet-2-id'
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-instances-subnet-3-id'
+      TargetGroupARNs:
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-frontend-target-group-arn'
+        - !ImportValue 
+          Fn::Sub: '${StackPrefix}-backend-target-group-arn'
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 900
+      Tags:
+        - Key: Name
+          Value: !Sub '${StackPrefix}-app-asg'
+          PropagateAtLaunch: false
+        - Key: Application
+          Value: !Sub 'SERA-${StackPrefix}'
+          PropagateAtLaunch: true
+        - Key: StackPrefix
+          Value: !Ref StackPrefix
+          PropagateAtLaunch: true
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: 1
+        MaxBatchSize: 1
+        PauseTime: PT10M
+        WaitOnResourceSignals: false
+
+  # Auto Scaling Policies
+  SeraScaleUpPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref SeraAutoScalingGroup
+      PolicyType: StepScaling
+      AdjustmentType: ChangeInCapacity
+      MetricAggregationType: Average
+      StepAdjustments:
+        - MetricIntervalLowerBound: 0
+          MetricIntervalUpperBound: 20
+          ScalingAdjustment: 1
+        - MetricIntervalLowerBound: 20
+          ScalingAdjustment: 2
+      Cooldown: 300
+
+  SeraScaleDownPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref SeraAutoScalingGroup
+      PolicyType: StepScaling
+      AdjustmentType: ChangeInCapacity
+      MetricAggregationType: Average
+      StepAdjustments:
+        - MetricIntervalUpperBound: 0
+          ScalingAdjustment: -1
+      Cooldown: 300
+
+  # CloudWatch Alarms for Auto Scaling
+  SeraCPUAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: 'Scale up when CPU utilization is high'
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 70
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref SeraAutoScalingGroup
+      AlarmActions:
+        - !Ref SeraScaleUpPolicy
+      TreatMissingData: notBreaching
+
+  SeraCPUAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: 'Scale down when CPU utilization is low'
+      MetricName: CPUUtilization
+      Namespace: AWS/EC2
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 20
+      ComparisonOperator: LessThanThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref SeraAutoScalingGroup
+      AlarmActions:
+        - !Ref SeraScaleDownPolicy
+      TreatMissingData: notBreaching
+
+Outputs:
+  # Key Pair Output
+  SeraEC2KeyPairId:
+    Description: 'ID of the SERA EC2 Key Pair'
+    Value: !Ref SeraEC2KeyPair
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-keypair-id'
+
+  # Launch Template Output
+  SeraEC2LaunchTemplateId:
+    Description: 'ID of the SERA EC2 Launch Template'
+    Value: !Ref SeraEC2LaunchTemplate
+    Export:
+      Name: !Sub '${StackPrefix}-ec2-launch-template-id'
+
+  # Auto Scaling Group Output
+  SeraAutoScalingGroupArn:
+    Description: 'ARN of the SERA Auto Scaling Group'
+    Value: !Ref SeraAutoScalingGroup
+    Export:
+      Name: !Sub '${StackPrefix}-auto-scaling-group-arn'

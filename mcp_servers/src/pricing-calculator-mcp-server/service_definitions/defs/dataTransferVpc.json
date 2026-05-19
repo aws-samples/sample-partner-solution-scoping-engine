@@ -1,0 +1,186 @@
+{
+  "version": "0.0.9",
+  "serviceName": "Data Transfer",
+  "serviceCode": "dataTransferVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ],
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-southeast-3",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "me-central-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    },
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Data Transfer",
+      "id": "dataTransfer",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ec2/pricing/on-demand/#Data_Transfer"
+        }
+      },
+      "cards": [
+        {
+          "title": "Data Transfer",
+          "cardType": "dataTransferV2",
+          "helpText": "Data transfer charges within the same AWS Region (Intra-Region Data Transfer) can vary depending on the AWS services used.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/on-demand/#Data_Transfer"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for VPC Endpoints per Hrs"
+                },
+                "label": "pricing vpc",
+                "id": "vpcMUForRegions"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "dataTransfer",
+                    "vpcMUForRegions"
+                  ],
+                  "id": "dataTransfer_generated_24",
+                  "subTotalRefer": ""
+                },
+                {
+                  "label": "Data transfer cost",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_25",
+                  "refer": "dataTransfer"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "dataTransfer_generated_26",
+                  "refer": [
+                    "dataTransfer_generated_25"
+                  ],
+                  "subTotalRefer": "dataTransfer_generated_25"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

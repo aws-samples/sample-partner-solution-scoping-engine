@@ -1,0 +1,329 @@
+{
+  "version": "0.0.3",
+  "serviceName": "AWS Glue ETL for Ray jobs and interactive sessions",
+  "serviceCode": "awsGlueEtlForRayJobsAndInteractiveSessions",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-east-1"
+  ],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "glue",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glue/[currency]/current/glue.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Ray ETL jobs and interactive sessions",
+      "id": "template_0",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/glue/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "glue",
+              "meteredUnit": "ETL Ray Job run"
+            }
+          },
+          "title": "Ray ETL jobs",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "",
+            "aws-us-gov": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of M-DPUs for Ray ETL job",
+                "id": "numberOfMDPUsForRayETLJob",
+                "description": "A single Memory optimized Data Processing Unit (M-DPU) provides 4 vCPU and 32 GB of memory.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 2,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 6,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for which Ray ETL job runs",
+                "id": "durationForRayETLJob",
+                "displayInConfigSummary": true,
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "defaultValue": 0,
+                "validations": {
+                  "required": true,
+                  "minValue": 0.0166,
+                  "maxValue": 730,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter amount",
+                "description": {
+                  "aws": "Minimum billing duration for each Ray job is 1-minute. AWS bills for Ray jobs in increments of 1 second.",
+                  "aws-us-gov": "Minimum billing duration for each Ray job is 1-minute. AWS bills for Ray jobs in increments of 1 second."
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "Price for ETL Ray job run",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "ETL Ray Job run"
+                },
+                "id": "pricing_RayJobsRun"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfMDPUsForRayETLJob",
+                    "durationForRayETLJob",
+                    "pricing_RayJobsRun"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "etlRayJobsRunConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of M-DPUs for Ray ETL job",
+                      "variableUnitLabel": "M-DPUs",
+                      "required": true,
+                      "variableId": "numberOfMDPUsForRayETLJob"
+                    },
+                    {
+                      "variableLabel": "Duration for which Ray ETL job runs",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "durationForRayETLJob"
+                    },
+                    {
+                      "variableLabel": "Price for ETL Ray job run",
+                      "variableUnitLabel": "[currency] per M-DPU-Hour",
+                      "required": true,
+                      "variableId": "pricing_RayJobsRun"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (ETL Ray job cost)",
+                  "decimalPlaces": 2,
+                  "id": "etlRayJobsCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "etlRayJobsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "ETL Ray jobs cost",
+                  "decimalPlaces": 2,
+                  "id": "etlRayJobsCostDisplay",
+                  "subTotalRefer": "etlRayJobsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "glue",
+              "meteredUnit": "ETL Ray Interactive Session"
+            }
+          },
+          "title": "Ray Interactive sessions",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": {
+            "aws": "",
+            "aws-us-gov": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/glue/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of M-DPUs for each provisioned Ray interactive session",
+                "id": "numberOfMDPUsForRayInteractiveSession",
+                "description": "A single Memory optimized Data Processing Unit (M-DPU) provides 4 vCPU and 32 GB of memory.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 2,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 6,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Duration for provisioned Ray interactive sessions",
+                "id": "durationForRayInteractiveSession",
+                "displayInConfigSummary": true,
+                "dropDownDuration": [
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": true,
+                  "minValue": 0.0166,
+                  "maxValue": 730,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter amount",
+                "description": "Minimum billing duration for each provisioned Ray interactive session is 1-minute. AWS bills for Ray jobs in increments of 1 second."
+              },
+              {
+                "type": "pricing",
+                "label": "Price for Ray Interactive sessions",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "glue",
+                "meteredUnit": {
+                  "allRegions": "ETL Ray Interactive Session"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "pricing_RayInteractiveSession"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfMDPUsForRayInteractiveSession",
+                    "durationForRayInteractiveSession",
+                    "pricing_RayInteractiveSession"
+                  ],
+                  "subTotalRefer": "etlRayJobsCost",
+                  "id": "etlRayInteractiveSessionConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of M-DPUs for each provisioned Ray interactive session",
+                      "variableUnitLabel": "M-DPUs",
+                      "required": true,
+                      "variableId": "numberOfMDPUsForRayInteractiveSession"
+                    },
+                    {
+                      "variableLabel": "Duration for provisioned Ray interactive sessions",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "durationForRayInteractiveSession"
+                    },
+                    {
+                      "variableLabel": "Price for Ray Interactive sessions",
+                      "variableUnitLabel": "[currency] per M-DPU-Hour",
+                      "required": true,
+                      "variableId": "pricing_RayInteractiveSession"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "etlRayInteractiveSessionCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "etlRayInteractiveSessionCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Ray Interactive sessions cost",
+                  "decimalPlaces": 2,
+                  "id": "etlRayInteractiveSessionCostDisplay",
+                  "subTotalRefer": "etlRayInteractiveSessionCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

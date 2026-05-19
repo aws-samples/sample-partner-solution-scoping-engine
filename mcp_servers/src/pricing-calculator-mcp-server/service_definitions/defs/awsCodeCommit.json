@@ -1,0 +1,181 @@
+{
+  "version": "0.0.58",
+  "serviceName": {
+    "aws": "AWS CodeCommit",
+    "aws-cn": "Amazon CodeCommit"
+  },
+  "serviceCode": "awsCodeCommit",
+  "type": "AWSService",
+  "slug": "codecommit",
+  "regions": [],
+  "searchKeywords": [
+    "codecommit",
+    "code",
+    "commit"
+  ],
+  "disableRegionSupport": {
+    "aws": true,
+    "aws-cn": true
+  },
+  "serviceDescription": {
+    "aws": "AWS CodeCommit is a secure, highly scalable, fully managed source control service that hosts private Git repositories.",
+    "aws-cn": "Amazon CodeCommit is a secure, highly scalable, fully managed source control service that hosts private Git repositories."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "codecommit",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codecommit/[currency]/current/codecommit.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codecommit/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/codecommit/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service Setting",
+          "helpText": {
+            "aws": "AWS CodeCommit is designed for collaborative software development. You can easily commit, branch, and merge your code allowing you to easily maintain control of your team’s projects. CodeCommit also supports pull requests, which provide a mechanism to request code reviews and discuss code with collaborators. You can create a repository from the AWS Management Console, AWS CLI, or AWS SDKs and start working with the repository using Git.",
+            "aws-cn": "Amazon CodeCommit is designed for collaborative software development. You can easily commit, branch, and merge your code allowing you to easily maintain control of your team’s projects. CodeCommit also supports pull requests, which provide a mechanism to request code reviews and discuss code with collaborators. You can create a repository from the Amazon Web Services Management Console, Amazon CLI, or Amazon SDKs and start working with the repository using Git."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codecommit/pricing/",
+              "overrides": {
+                "aws-us-gov": "https://aws.amazon.com/guardduty/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "content": "<p>Any Active user Receives: </p><ul><li>1,000 repositories per account; up to 25,000 upon requests. <a href='https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html' aria-label='Learn more about AWS service quotas. Opens in a new tab' target='_blank'> Learn More</a> </li><li>50 GB-month of storage</li><li>10,000 Git requests/month</li></ul>",
+                "alertType": "info",
+                "partitions": [
+                  "aws"
+                ],
+                "isDismissable": true,
+                "id": "CodecommitAlert"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "content": "<p>Any Active user Recieves: </p><br/> <ul><li>Unlimited repositories </li><li>50 GB-month of storage</li><li>10,000 Git requests/month</li></ul>",
+                "alertType": "info",
+                "partitions": [
+                  "aws-cn"
+                ],
+                "isDismissable": true,
+                "id": "CodecommitAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "activeUsers",
+                "label": "Number of active users",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Pricing_active_user",
+                "id": "activeUserPricing",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "codecommit",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 5,
+                      "meteredUnit": "AWSCodeCommit StartingRange 0 5"
+                    },
+                    {
+                      "startOfTier": 6,
+                      "endOfTier": -1,
+                      "meteredUnit": "AWSCodeCommit StartingRange 5 Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "CodecommitAlert",
+                    "CodecommitAlert",
+                    "activeUsers",
+                    "activeUserPricing"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvGaurdDuty"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "activeUsers",
+                  "inputReferLabel": "Number of active users",
+                  "tieredPricingRefer": "activeUserPricing",
+                  "tieredPricingReferLabel": "Tierd_Pricing_active_user",
+                  "inputUnitLabel": "users",
+                  "decimalPlaces": 2,
+                  "id": "activeUserCost",
+                  "outputUnitLabel": "[currency] cost per user"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "activeUserCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "CodeCommit Total Cost",
+                  "decimalPlaces": 2,
+                  "id": "codeCommitTot",
+                  "subTotalRefer": "activeUserCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov",
+    "aws-cn"
+  ]
+}

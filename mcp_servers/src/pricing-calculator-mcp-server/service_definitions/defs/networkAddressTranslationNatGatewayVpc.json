@@ -1,0 +1,287 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Network Address Translation (NAT) Gateway",
+  "serviceCode": "networkAddressTranslationNatGatewayVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": {
+    "aws": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+    "aws-cn": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the Amazon Web Services global network. Amazon Web Services VPN is comprised of two services: Amazon Web Services Site-to-Site VPN and Amazon Web Services Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+    "aws-us-gov": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic."
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "natgateway",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ec2/[currency]/current/natgateway.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Network Address Translation (NAT) Gateway",
+      "id": "networkAddressTranslationGateway",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "natgateway",
+                  "meteredUnit": "Hourly charge for NAT Gateways"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "natgateway",
+                  "meteredUnit": "Hourly charge for NAT Gateways"
+                }
+              }
+            ]
+          },
+          "title": "Service settings",
+          "helpText": "Connect to the Internet using Network Address Translation (private subnets) – Private subnets can be used for instances that you do not want to be directly addressable from the Internet. NAT gateway is charged for each NAT Gateway-hour that your NAT gateway is provisioned and available. Data processing charges apply for each Gigabyte processed through the NAT gateway regardless of the traffic’s source or destination. Each partial NAT Gateway-hour consumed is billed as a full hour.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of NAT Gateways",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount",
+                "id": "numberOfGateways"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data Processed per NAT Gateway",
+                "id": "dataProcessedPerNATGateway",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "month"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for NAT Gateway",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "natgateway",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for NAT Gateways"
+                },
+                "id": "networkAddressTranslationNatGateway_generated_4"
+              },
+              {
+                "type": "pricing",
+                "label": "price for NAT Gateway data processing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "natgateway",
+                "meteredUnit": {
+                  "allRegions": "Hourly charge for NAT Gateways"
+                },
+                "id": "networkAddressTranslationNatGateway_generated_5"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfGateways",
+                    "dataProcessedPerNATGateway",
+                    "networkAddressTranslationNatGateway_generated_4",
+                    "networkAddressTranslationNatGateway_generated_5"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "networkAddressTranslationNatGateway_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for NAT Gateway",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "networkAddressTranslationNatGateway_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Gateway usage hourly cost)",
+                  "decimalPlaces": 2,
+                  "id": "networkAddressTranslationNatGateway_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Processed per NAT Gateway",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "dataProcessedPerNATGateway"
+                    },
+                    {
+                      "variableLabel": "price for NAT Gateway data processing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "networkAddressTranslationNatGateway_generated_5"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (NAT Gateway data processing cost)",
+                  "decimalPlaces": 2,
+                  "id": "networkAddressTranslationNatGateway_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "networkAddressTranslationNatGateway_generated_9",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Gateway usage hourly cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "networkAddressTranslationNatGateway_generated_7"
+                    },
+                    {
+                      "variableLabel": "[currency] (NAT Gateway data processing cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "networkAddressTranslationNatGateway_generated_8"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (NAT Gateway processing and month hours)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "networkAddressTranslationNatGateway_generated_10",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of NAT Gateways",
+                      "variableUnitLabel": "NAT Gateways",
+                      "required": true,
+                      "variableId": "numberOfGateways"
+                    },
+                    {
+                      "variableLabel": "[currency] (NAT Gateway processing and month hours)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "networkAddressTranslationNatGateway_generated_9"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total NAT Gateway usage and data processing cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "networkAddressTranslationNatGateway_generated_7",
+                    "networkAddressTranslationNatGateway_generated_8",
+                    "networkAddressTranslationNatGateway_generated_9",
+                    "networkAddressTranslationNatGateway_generated_10"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total NAT Gateway usage and data processing cost",
+                  "decimalPlaces": 2,
+                  "id": "networkAddressTranslationNatGateway_generated_11",
+                  "subTotalRefer": "networkAddressTranslationNatGateway_generated_10"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

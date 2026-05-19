@@ -1,0 +1,1382 @@
+"""Enhanced recommendation engine for WAFR assessments."""
+
+import logging
+import sys
+import os
+from typing import Dict, List, Optional, Any, Tuple
+from datetime import datetime
+import uuid
+
+# Import models
+try:
+    from ..models.capability import CapabilityMatrix, DetectedCapability, CapabilityGap
+    from ..models.scoring import PillarScore, AssessmentScore
+    from ..models.recommendation import (
+        EnhancedRecommendation,
+        RecommendationSet,
+        RecommendationPriority,
+        ImplementationEffort,
+        ImplementationStep
+    )
+except ImportError:
+    from models.capability import CapabilityMatrix, DetectedCapability, CapabilityGap
+    from models.scoring import PillarScore, AssessmentScore
+    from models.recommendation import (
+        EnhancedRecommendation,
+        RecommendationSet,
+        RecommendationPriority,
+        ImplementationEffort,
+        ImplementationStep
+    )
+
+# Setup logging following MCP server patterns
+try:
+    backend_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..', '..', 'backend')
+    if backend_path not in sys.path:
+        sys.path.insert(0, backend_path)
+    
+    from utils.mcp_logger import setup_mcp_logging
+    logger = setup_mcp_logging("wafr-recommendation-engine")
+    logger.info("Enhanced recommendation engine logger initialized")
+except ImportError as e:
+    from logging.handlers import RotatingFileHandler
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s [%(levelname)s] [%(name)s] - %(message)s',
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+            RotatingFileHandler("wafr-recommendation-engine.log", maxBytes=10*1024*1024, backupCount=5)
+        ]
+    )
+    logger = logging.getLogger("wafr-recommendation-engine")
+    logger.warning(f"Using fallback logging: {e}")
+
+
+class EnhancedRecommendationEngine:
+    """
+    Enhanced recommendation engine for WAFR assessments.
+    
+    Generates capability-specific, actionable recommendations based on:
+    - Capability gaps (missing or low-coverage capabilities)
+    - Detected services and their configurations
+    - Architecture patterns
+    - Pillar scores and weaknesses
+    
+    Features:
+    - Capability gap analysis
+    - Service-specific implementation guidance
+    - Priority and effort estimation
+    - Pattern-aware recommendations
+    - Score improvement estimates
+    """
+    
+    def __init__(self):
+        """Initialize the recommendation engine."""
+        self.logger = logger
+        self._load_recommendation_templates()
+        self._load_service_guidance()
+        self._load_pattern_recommendations()
+    
+    def _load_recommendation_templates(self):
+        """Load recommendation templates for different capability gaps."""
+        # Recommendation templates organized by capability
+        self.recommendation_templates = {
+            # Security capabilities
+            "encryption": {
+                "title": "Enable Encryption for Data Protection",
+                "description": "Implement encryption at rest and in transit to protect sensitive data",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "2-4 hours",
+                "risk_reduction": "High"
+            },
+            "identity_access": {
+                "title": "Strengthen Identity and Access Management",
+                "description": "Implement robust IAM policies and authentication mechanisms",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "4-8 hours",
+                "risk_reduction": "High"
+            },
+            "network_security": {
+                "title": "Enhance Network Security Controls",
+                "description": "Implement network isolation and protection mechanisms",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-6 hours",
+                "risk_reduction": "High"
+            },
+            "monitoring_detection": {
+                "title": "Implement Security Monitoring and Detection",
+                "description": "Enable comprehensive security monitoring and threat detection",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "1-2 hours",
+                "risk_reduction": "Medium"
+            },
+            "data_protection": {
+                "title": "Enhance Data Protection and Backup",
+                "description": "Implement automated backup and data protection mechanisms",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "2-3 hours",
+                "risk_reduction": "Medium"
+            },
+            
+            # Reliability capabilities
+            "redundancy": {
+                "title": "Implement Redundancy and Fault Tolerance",
+                "description": "Add redundancy mechanisms to improve system availability",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "4-8 hours",
+                "risk_reduction": "High"
+            },
+            "monitoring_alerting": {
+                "title": "Enhance Monitoring and Alerting",
+                "description": "Implement comprehensive monitoring and alerting for system health",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "2-4 hours",
+                "risk_reduction": "Medium"
+            },
+            "backup_recovery": {
+                "title": "Implement Backup and Disaster Recovery",
+                "description": "Establish automated backup and recovery procedures",
+                "priority_base": RecommendationPriority.HIGH,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-6 hours",
+                "risk_reduction": "High"
+            },
+            "scaling": {
+                "title": "Implement Auto-Scaling Capabilities",
+                "description": "Add automatic scaling to handle variable workloads",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-5 hours",
+                "risk_reduction": "Medium"
+            },
+            
+            # Performance capabilities
+            "caching": {
+                "title": "Implement Caching for Performance",
+                "description": "Add caching layers to improve response times and reduce load",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-6 hours",
+                "risk_reduction": "Low"
+            },
+            "compute_optimization": {
+                "title": "Optimize Compute Resources",
+                "description": "Right-size and optimize compute resources for efficiency",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "4-8 hours",
+                "risk_reduction": "Low"
+            },
+            "database_optimization": {
+                "title": "Optimize Database Performance",
+                "description": "Implement database optimization techniques for better performance",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-6 hours",
+                "risk_reduction": "Low"
+            },
+            "performance_monitoring": {
+                "title": "Implement Performance Monitoring",
+                "description": "Add comprehensive performance monitoring and tracing",
+                "priority_base": RecommendationPriority.LOW,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "2-3 hours",
+                "risk_reduction": "Low"
+            },
+            
+            # Cost optimization capabilities
+            "cost_monitoring": {
+                "title": "Implement Cost Monitoring and Tracking",
+                "description": "Enable cost monitoring and budget alerts",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "1-2 hours",
+                "risk_reduction": "Low"
+            },
+            "resource_optimization": {
+                "title": "Optimize Resource Utilization",
+                "description": "Identify and eliminate underutilized resources",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "4-8 hours",
+                "risk_reduction": "Low"
+            },
+            "lifecycle_management": {
+                "title": "Implement Lifecycle Management Policies",
+                "description": "Add lifecycle policies for automated resource management",
+                "priority_base": RecommendationPriority.LOW,
+                "effort": ImplementationEffort.LOW,
+                "estimated_time": "2-3 hours",
+                "risk_reduction": "Low"
+            },
+            
+            # Operational excellence capabilities
+            "iac_automation": {
+                "title": "Implement Infrastructure as Code",
+                "description": "Adopt IaC practices for consistent and repeatable deployments",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.HIGH,
+                "estimated_time": "1-2 days",
+                "risk_reduction": "Medium"
+            },
+            "cicd_pipeline": {
+                "title": "Implement CI/CD Pipeline",
+                "description": "Establish automated CI/CD pipelines for faster, safer deployments",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.HIGH,
+                "estimated_time": "1-2 days",
+                "risk_reduction": "Medium"
+            },
+            "operational_monitoring": {
+                "title": "Enhance Operational Monitoring",
+                "description": "Implement comprehensive operational monitoring and dashboards",
+                "priority_base": RecommendationPriority.MEDIUM,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-5 hours",
+                "risk_reduction": "Medium"
+            },
+            
+            # Sustainability capabilities
+            "efficient_compute": {
+                "title": "Optimize for Energy Efficiency",
+                "description": "Use energy-efficient compute options and right-sizing",
+                "priority_base": RecommendationPriority.LOW,
+                "effort": ImplementationEffort.MEDIUM,
+                "estimated_time": "3-6 hours",
+                "risk_reduction": "Low"
+            },
+            "managed_services": {
+                "title": "Adopt Managed Services",
+                "description": "Migrate to managed services for better efficiency",
+                "priority_base": RecommendationPriority.LOW,
+                "effort": ImplementationEffort.HIGH,
+                "estimated_time": "1-3 days",
+                "risk_reduction": "Low"
+            }
+        }
+    
+    def _load_service_guidance(self):
+        """Load service-specific implementation guidance."""
+        self.service_guidance = {
+            # Compute services
+            "Lambda": {
+                "encryption": [
+                    "Enable encryption for environment variables using KMS",
+                    "Use encrypted connections to other AWS services",
+                    "Store sensitive data in Secrets Manager or Parameter Store"
+                ],
+                "monitoring": [
+                    "Enable CloudWatch Logs for function execution",
+                    "Configure CloudWatch alarms for errors and throttling",
+                    "Use X-Ray for distributed tracing"
+                ],
+                "performance": [
+                    "Optimize memory allocation to reduce cold starts",
+                    "Use provisioned concurrency for latency-sensitive functions",
+                    "Implement connection pooling for database connections",
+                    "Set appropriate timeout values"
+                ],
+                "cost": [
+                    "Right-size memory allocation based on actual usage",
+                    "Use ARM-based Graviton2 processors for cost savings",
+                    "Implement efficient code to reduce execution time"
+                ]
+            },
+            "RDS": {
+                "encryption": [
+                    "Enable encryption at rest using KMS",
+                    "Enable encryption in transit using SSL/TLS",
+                    "Encrypt automated backups and snapshots"
+                ],
+                "redundancy": [
+                    "Enable Multi-AZ deployment for high availability",
+                    "Configure automated backups with appropriate retention",
+                    "Create read replicas for read-heavy workloads"
+                ],
+                "backup": [
+                    "Enable automated backups with 7-35 day retention",
+                    "Configure backup window during low-traffic periods",
+                    "Test restore procedures regularly",
+                    "Enable point-in-time recovery"
+                ],
+                "monitoring": [
+                    "Enable Enhanced Monitoring for detailed metrics",
+                    "Configure CloudWatch alarms for CPU, storage, and connections",
+                    "Enable Performance Insights for query analysis"
+                ]
+            },
+            
+            "S3": {
+                "encryption": [
+                    "Enable default encryption for all buckets (SSE-S3 or SSE-KMS)",
+                    "Enforce encryption in transit using bucket policies",
+                    "Use KMS for additional key management control"
+                ],
+                "versioning": [
+                    "Enable versioning for data protection",
+                    "Configure lifecycle policies to manage old versions",
+                    "Use MFA Delete for additional protection"
+                ],
+                "backup": [
+                    "Enable Cross-Region Replication for disaster recovery",
+                    "Configure lifecycle policies for archival to Glacier",
+                    "Use S3 Object Lock for compliance requirements"
+                ],
+                "cost": [
+                    "Implement lifecycle policies to transition to cheaper storage classes",
+                    "Use Intelligent-Tiering for automatic cost optimization",
+                    "Enable S3 Analytics to understand access patterns"
+                ]
+            },
+            
+            "API Gateway": {
+                "security": [
+                    "Enable AWS WAF for API protection",
+                    "Implement API keys and usage plans",
+                    "Use Cognito or Lambda authorizers for authentication",
+                    "Enable request validation"
+                ],
+                "performance": [
+                    "Enable caching to reduce backend load",
+                    "Configure appropriate cache TTL values",
+                    "Use edge-optimized endpoints for global users"
+                ],
+                "monitoring": [
+                    "Enable CloudWatch Logs for API requests",
+                    "Configure CloudWatch alarms for 4xx and 5xx errors",
+                    "Enable X-Ray tracing for request analysis"
+                ],
+                "throttling": [
+                    "Configure throttling limits to protect backend",
+                    "Set burst limits for traffic spikes",
+                    "Implement usage plans for different client tiers"
+                ]
+            },
+            "DynamoDB": {
+                "encryption": [
+                    "Enable encryption at rest using AWS managed or customer managed KMS keys",
+                    "Use VPC endpoints for private connectivity"
+                ],
+                "backup": [
+                    "Enable point-in-time recovery (PITR)",
+                    "Configure on-demand backups for critical tables",
+                    "Enable continuous backups for compliance"
+                ],
+                "performance": [
+                    "Use DynamoDB Accelerator (DAX) for caching",
+                    "Implement efficient partition key design",
+                    "Use Global Secondary Indexes strategically"
+                ],
+                "scaling": [
+                    "Enable auto-scaling for read and write capacity",
+                    "Consider on-demand billing for unpredictable workloads",
+                    "Monitor consumed capacity and adjust accordingly"
+                ]
+            },
+            
+            "EC2": {
+                "redundancy": [
+                    "Deploy instances across multiple Availability Zones",
+                    "Use Auto Scaling groups for automatic recovery",
+                    "Implement Elastic Load Balancing"
+                ],
+                "monitoring": [
+                    "Enable detailed CloudWatch monitoring",
+                    "Configure CloudWatch alarms for CPU, disk, and network",
+                    "Use Systems Manager for patch management"
+                ],
+                "cost": [
+                    "Right-size instances based on actual usage",
+                    "Use Reserved Instances or Savings Plans for predictable workloads",
+                    "Implement auto-scaling to match demand"
+                ]
+            },
+            
+            "CloudFront": {
+                "security": [
+                    "Use Origin Access Identity (OAI) for S3 origins",
+                    "Enable AWS WAF for application protection",
+                    "Implement signed URLs or cookies for private content"
+                ],
+                "performance": [
+                    "Configure appropriate cache behaviors and TTLs",
+                    "Use compression for text-based content",
+                    "Enable HTTP/2 and HTTP/3 support"
+                ],
+                "cost": [
+                    "Use price class to limit edge locations",
+                    "Optimize cache hit ratio to reduce origin requests"
+                ]
+            }
+        }
+    
+    def _load_pattern_recommendations(self):
+        """Load pattern-specific recommendation adjustments."""
+        self.pattern_recommendations = {
+            "serverless": {
+                "emphasize": ["event_driven_scaling", "managed_service_redundancy", "pay_per_use"],
+                "de_emphasize": ["ec2_auto_scaling", "load_balancer_redundancy"],
+                "specific_recommendations": [
+                    "Use Lambda layers for shared code and dependencies",
+                    "Implement dead letter queues for failed event processing",
+                    "Use Step Functions for complex workflows",
+                    "Leverage EventBridge for event-driven architecture"
+                ]
+            },
+            "microservices": {
+                "emphasize": ["distributed_tracing", "api_management", "service_isolation"],
+                "de_emphasize": ["monolithic_patterns"],
+                "specific_recommendations": [
+                    "Implement service mesh for inter-service communication",
+                    "Use API Gateway for centralized API management",
+                    "Enable X-Ray for distributed tracing",
+                    "Implement circuit breakers for fault isolation",
+                    "Use separate databases per service"
+                ]
+            },
+            
+            "traditional_web": {
+                "emphasize": ["infrastructure_resilience", "load_balancing", "database_redundancy"],
+                "de_emphasize": ["serverless_patterns"],
+                "specific_recommendations": [
+                    "Implement Multi-AZ deployment for all tiers",
+                    "Use Application Load Balancer with health checks",
+                    "Configure RDS Multi-AZ for database tier",
+                    "Implement Auto Scaling for web and app tiers",
+                    "Use ElastiCache for session management"
+                ]
+            },
+            
+            "container_based": {
+                "emphasize": ["container_orchestration", "service_discovery", "container_security"],
+                "specific_recommendations": [
+                    "Use ECS or EKS for container orchestration",
+                    "Implement service discovery with Cloud Map",
+                    "Scan container images for vulnerabilities",
+                    "Use Fargate for serverless container execution",
+                    "Implement proper resource limits and requests"
+                ]
+            },
+            
+            "data_analytics": {
+                "emphasize": ["data_lake", "etl_automation", "query_optimization"],
+                "specific_recommendations": [
+                    "Use S3 for data lake storage with proper partitioning",
+                    "Implement Glue for ETL automation",
+                    "Use Athena for ad-hoc queries",
+                    "Configure appropriate data retention policies",
+                    "Implement data cataloging with Glue Data Catalog"
+                ]
+            },
+            
+            "machine_learning": {
+                "emphasize": ["model_versioning", "training_optimization", "inference_scaling"],
+                "specific_recommendations": [
+                    "Use SageMaker for managed ML workflows",
+                    "Implement model versioning and A/B testing",
+                    "Use spot instances for training jobs",
+                    "Configure auto-scaling for inference endpoints",
+                    "Implement model monitoring and retraining pipelines"
+                ]
+            }
+        }
+    
+    # Subtask 5.1: Implement capability gap analysis
+    def identify_capability_gaps(
+        self,
+        capability_matrix: CapabilityMatrix,
+        pillar_scores: Dict[str, PillarScore]
+    ) -> List[CapabilityGap]:
+        """
+        Identify missing or poorly implemented capabilities.
+        
+        Analyzes the capability matrix to find:
+        - Missing capabilities (0% coverage)
+        - Partial capabilities (<60% coverage)
+        - Prioritizes by pillar importance and business impact
+        
+        Args:
+            capability_matrix: Detected capabilities
+            pillar_scores: Calculated pillar scores
+            
+        Returns:
+            List of capability gaps sorted by priority
+        """
+        self.logger.info("🔍 Identifying capability gaps...")
+        
+        gaps = []
+        
+        # Define target coverage levels by pillar importance
+        target_coverage = {
+            "security": 0.85,  # High target for security
+            "reliability": 0.80,
+            "performance": 0.70,
+            "cost_optimization": 0.65,
+            "operational_excellence": 0.70,
+            "sustainability": 0.60
+        }
+        
+        # Analyze each pillar
+        for pillar_name, pillar_score in pillar_scores.items():
+            capabilities = capability_matrix.get_capabilities_for_pillar(pillar_name)
+            target = target_coverage.get(pillar_name, 0.70)
+            
+            # Check for missing capabilities (not detected at all)
+            expected_capabilities = self._get_expected_capabilities_for_pillar(pillar_name)
+            detected_capability_names = {c.name for c in capabilities}
+            
+            for expected_cap in expected_capabilities:
+                if expected_cap not in detected_capability_names:
+                    # Missing capability
+                    impact = self._calculate_impact(pillar_name, expected_cap, 0.0)
+                    gap = CapabilityGap(
+                        capability_name=expected_cap,
+                        pillar=pillar_name,
+                        current_coverage=0.0,
+                        target_coverage=target,
+                        impact=impact,
+                        missing_services=self._get_services_for_capability(expected_cap)
+                    )
+                    gaps.append(gap)
+                    self.logger.debug(f"  ❌ Missing capability: {expected_cap} in {pillar_name}")
+            
+            # Check for partial capabilities (low coverage)
+            for capability in capabilities:
+                if capability.coverage < 0.60:  # Less than 60% coverage
+                    impact = self._calculate_impact(pillar_name, capability.name, capability.coverage)
+                    gap = CapabilityGap(
+                        capability_name=capability.name,
+                        pillar=pillar_name,
+                        current_coverage=capability.coverage,
+                        target_coverage=target,
+                        impact=impact,
+                        affected_services=capability.evidence,
+                        missing_services=capability.missing_services
+                    )
+                    gaps.append(gap)
+                    self.logger.debug(
+                        f"  ⚠️  Partial capability: {capability.name} "
+                        f"({capability.coverage:.0%} coverage) in {pillar_name}"
+                    )
+        
+        # Sort by priority score (highest first)
+        gaps.sort(key=lambda g: g.priority_score, reverse=True)
+        
+        self.logger.info(f"✅ Identified {len(gaps)} capability gaps")
+        return gaps
+    
+    def _get_expected_capabilities_for_pillar(self, pillar: str) -> List[str]:
+        """Get list of expected capabilities for a pillar."""
+        expected = {
+            "security": ["encryption", "identity_access", "network_security", 
+                        "monitoring_detection", "data_protection"],
+            "reliability": ["redundancy", "monitoring_alerting", "backup_recovery", "scaling"],
+            "performance": ["caching", "compute_optimization", "database_optimization", 
+                           "performance_monitoring"],
+            "cost_optimization": ["cost_monitoring", "resource_optimization", 
+                                 "lifecycle_management", "rightsizing"],
+            "operational_excellence": ["iac_automation", "cicd_pipeline", 
+                                      "operational_monitoring", "incident_response"],
+            "sustainability": ["efficient_compute", "managed_services", "resource_efficiency"]
+        }
+        return expected.get(pillar, [])
+    
+    def _get_services_for_capability(self, capability_name: str) -> List[str]:
+        """Get AWS services that provide a capability."""
+        service_mapping = {
+            "encryption": ["KMS", "S3 encryption", "RDS encryption", "DynamoDB encryption"],
+            "identity_access": ["IAM", "Cognito", "Secrets Manager"],
+            "network_security": ["VPC", "Security Groups", "WAF", "Shield"],
+            "monitoring_detection": ["CloudTrail", "GuardDuty", "Security Hub", "Config"],
+            "data_protection": ["Backup", "S3 versioning", "RDS snapshots"],
+            "redundancy": ["Multi-AZ", "Auto Scaling", "Multiple regions"],
+            "monitoring_alerting": ["CloudWatch", "CloudWatch Alarms", "SNS"],
+            "backup_recovery": ["AWS Backup", "RDS snapshots", "S3 replication"],
+            "scaling": ["Auto Scaling", "Lambda", "DynamoDB auto-scaling"],
+            "caching": ["CloudFront", "ElastiCache", "API Gateway caching"],
+            "compute_optimization": ["Lambda", "Fargate", "Compute Optimizer"],
+            "database_optimization": ["RDS read replicas", "DynamoDB DAX", "Aurora"],
+            "performance_monitoring": ["CloudWatch", "X-Ray", "Performance Insights"],
+            "cost_monitoring": ["Cost Explorer", "Budgets", "Cost Anomaly Detection"],
+            "resource_optimization": ["Trusted Advisor", "Compute Optimizer"],
+            "lifecycle_management": ["S3 Lifecycle", "EBS Lifecycle Manager"],
+            "iac_automation": ["CloudFormation", "CDK", "Terraform"],
+            "cicd_pipeline": ["CodePipeline", "CodeBuild", "CodeDeploy"],
+            "operational_monitoring": ["CloudWatch", "Systems Manager", "X-Ray"],
+            "efficient_compute": ["Graviton", "Lambda", "Fargate"],
+            "managed_services": ["RDS", "DynamoDB", "Lambda", "Fargate"]
+        }
+        return service_mapping.get(capability_name, [])
+    
+    def _calculate_impact(self, pillar: str, capability: str, current_coverage: float) -> str:
+        """
+        Calculate impact level of a capability gap.
+        
+        Args:
+            pillar: Pillar name
+            capability: Capability name
+            current_coverage: Current coverage level (0.0-1.0)
+            
+        Returns:
+            Impact level: 'critical', 'high', 'medium', or 'low'
+        """
+        # Security and reliability gaps are higher priority
+        high_priority_pillars = {"security", "reliability"}
+        
+        # Critical security/reliability capabilities
+        critical_capabilities = {
+            "encryption", "identity_access", "network_security",
+            "redundancy", "backup_recovery"
+        }
+        
+        # Determine impact
+        if pillar in high_priority_pillars and capability in critical_capabilities:
+            if current_coverage == 0.0:
+                return "critical"
+            elif current_coverage < 0.40:
+                return "high"
+            else:
+                return "medium"
+        elif pillar in high_priority_pillars:
+            if current_coverage == 0.0:
+                return "high"
+            elif current_coverage < 0.40:
+                return "medium"
+            else:
+                return "low"
+        else:
+            if current_coverage == 0.0:
+                return "medium"
+            elif current_coverage < 0.40:
+                return "low"
+            else:
+                return "low"
+    
+    # Subtask 5.2: Implement capability-specific recommendation generation
+    def generate_capability_recommendation(
+        self,
+        gap: CapabilityGap,
+        detected_services: List[str],
+        service_configurations: Dict[str, Any]
+    ) -> EnhancedRecommendation:
+        """
+        Generate a capability-specific recommendation for a gap.
+        
+        Creates detailed, actionable recommendations for:
+        - Encryption gaps
+        - Redundancy gaps
+        - Monitoring gaps
+        - All capability types
+        
+        Args:
+            gap: Capability gap to address
+            detected_services: List of detected AWS services
+            service_configurations: Service configuration details
+            
+        Returns:
+            Enhanced recommendation with implementation guidance
+        """
+        self.logger.debug(f"📝 Generating recommendation for {gap.capability_name} gap...")
+        
+        # Get template for this capability
+        template = self.recommendation_templates.get(gap.capability_name, {})
+        
+        # Generate unique ID
+        rec_id = f"rec-{gap.pillar}-{gap.capability_name}-{uuid.uuid4().hex[:8]}"
+        
+        # Determine priority (adjust template based on gap impact)
+        priority = self._determine_priority(gap, template.get("priority_base"))
+        
+        # Generate implementation steps
+        impl_steps = self._generate_implementation_steps(
+            gap, detected_services, service_configurations
+        )
+        
+        # Calculate score improvement estimate
+        score_improvement = self._estimate_score_improvement(gap)
+        
+        # Get AWS documentation links
+        doc_links = self._get_documentation_links(gap.capability_name, detected_services)
+        
+        # Get best practices
+        best_practices = self._get_best_practices(gap.capability_name)
+        
+        # Create recommendation
+        recommendation = EnhancedRecommendation(
+            id=rec_id,
+            title=template.get("title", f"Improve {gap.capability_name.replace('_', ' ').title()}"),
+            description=template.get("description", f"Address {gap.capability_name} capability gap"),
+            pillar=gap.pillar,
+            priority=priority,
+            capability_addressed=gap.capability_name,
+            affected_services=gap.affected_services,
+            missing_services=gap.missing_services,
+            implementation_steps=impl_steps,
+            implementation_effort=template.get("effort", ImplementationEffort.MEDIUM),
+            estimated_time=template.get("estimated_time", "3-6 hours"),
+            estimated_score_improvement=score_improvement,
+            risk_reduction=template.get("risk_reduction", "Medium"),
+            business_impact=self._get_business_impact(gap),
+            aws_documentation_links=doc_links,
+            best_practices=best_practices,
+            recommendation_type="capability",
+            confidence=0.9
+        )
+        
+        self.logger.debug(f"  ✅ Generated recommendation: {recommendation.title}")
+        return recommendation
+    
+    def _determine_priority(
+        self,
+        gap: CapabilityGap,
+        base_priority: Optional[RecommendationPriority]
+    ) -> RecommendationPriority:
+        """Determine final priority based on gap impact."""
+        if gap.impact == "critical":
+            return RecommendationPriority.CRITICAL
+        elif gap.impact == "high":
+            return RecommendationPriority.HIGH
+        elif gap.impact == "medium":
+            return RecommendationPriority.MEDIUM
+        else:
+            return base_priority or RecommendationPriority.LOW
+    
+    # Subtask 5.3: Add service-specific implementation guidance
+    def _generate_implementation_steps(
+        self,
+        gap: CapabilityGap,
+        detected_services: List[str],
+        service_configurations: Dict[str, Any]
+    ) -> List[ImplementationStep]:
+        """
+        Generate service-specific implementation steps.
+        
+        Provides specific guidance for:
+        - Lambda (cold starts, concurrency, timeouts)
+        - RDS (Multi-AZ, encryption, backups)
+        - API Gateway (throttling, caching, authorization)
+        - S3 (encryption, versioning, lifecycle)
+        - And other AWS services
+        
+        Args:
+            gap: Capability gap
+            detected_services: Detected AWS services
+            service_configurations: Service configurations
+            
+        Returns:
+            List of implementation steps with examples
+        """
+        steps = []
+        step_num = 1
+        
+        # Get relevant services for this capability
+        relevant_services = self._get_relevant_services_for_capability(
+            gap.capability_name, detected_services
+        )
+        
+        # Generate steps for each relevant service
+        for service in relevant_services:
+            service_steps = self._get_service_specific_steps(
+                service, gap.capability_name, service_configurations.get(service, {})
+            )
+            
+            for step_desc in service_steps:
+                step = ImplementationStep(
+                    step_number=step_num,
+                    description=step_desc,
+                    aws_service=service,
+                    configuration_example=self._get_configuration_example(
+                        service, gap.capability_name
+                    ),
+                    documentation_link=self._get_service_doc_link(service, gap.capability_name)
+                )
+                steps.append(step)
+                step_num += 1
+        
+        # Add general steps if no service-specific steps
+        if not steps:
+            general_steps = self._get_general_steps_for_capability(gap.capability_name)
+            for step_desc in general_steps:
+                step = ImplementationStep(
+                    step_number=step_num,
+                    description=step_desc
+                )
+                steps.append(step)
+                step_num += 1
+        
+        return steps
+    
+    def _get_relevant_services_for_capability(
+        self,
+        capability: str,
+        detected_services: List[str]
+    ) -> List[str]:
+        """Get services relevant to a capability from detected services."""
+        capability_services = self._get_services_for_capability(capability)
+        
+        # Match detected services with capability services
+        relevant = []
+        for detected in detected_services:
+            for cap_service in capability_services:
+                if cap_service.lower() in detected.lower() or detected.lower() in cap_service.lower():
+                    relevant.append(detected)
+                    break
+        
+        return relevant
+    
+    def _get_service_specific_steps(
+        self,
+        service: str,
+        capability: str,
+        config: Dict[str, Any]
+    ) -> List[str]:
+        """Get service-specific implementation steps."""
+        # Map capability to guidance category
+        capability_to_category = {
+            "encryption": "encryption",
+            "identity_access": "security",
+            "network_security": "security",
+            "monitoring_detection": "monitoring",
+            "data_protection": "backup",
+            "redundancy": "redundancy",
+            "monitoring_alerting": "monitoring",
+            "backup_recovery": "backup",
+            "scaling": "scaling",
+            "caching": "performance",
+            "compute_optimization": "performance",
+            "database_optimization": "performance",
+            "performance_monitoring": "monitoring",
+            "cost_monitoring": "cost",
+            "resource_optimization": "cost",
+            "lifecycle_management": "cost"
+        }
+        
+        category = capability_to_category.get(capability, "general")
+        
+        # Get guidance for this service and category
+        service_key = self._normalize_service_name(service)
+        if service_key in self.service_guidance:
+            return self.service_guidance[service_key].get(category, [])
+        
+        return []
+    
+    def _normalize_service_name(self, service: str) -> str:
+        """Normalize service name for lookup."""
+        # Extract core service name
+        service_lower = service.lower()
+        
+        if "lambda" in service_lower:
+            return "Lambda"
+        elif "rds" in service_lower:
+            return "RDS"
+        elif "s3" in service_lower:
+            return "S3"
+        elif "api gateway" in service_lower or "apigateway" in service_lower:
+            return "API Gateway"
+        elif "dynamodb" in service_lower:
+            return "DynamoDB"
+        elif "ec2" in service_lower:
+            return "EC2"
+        elif "cloudfront" in service_lower:
+            return "CloudFront"
+        
+        return service
+    
+    def _get_configuration_example(self, service: str, capability: str) -> Optional[Dict[str, Any]]:
+        """Get configuration example for service and capability."""
+        examples = {
+            ("Lambda", "encryption"): {
+                "Environment": {
+                    "Variables": {
+                        "DB_PASSWORD": "encrypted-value",
+                        "KMS_KEY_ID": "arn:aws:kms:region:account:key/key-id"
+                    }
+                }
+            },
+            ("RDS", "encryption"): {
+                "StorageEncrypted": True,
+                "KmsKeyId": "arn:aws:kms:region:account:key/key-id"
+            },
+            ("RDS", "redundancy"): {
+                "MultiAZ": True,
+                "BackupRetentionPeriod": 7
+            },
+            ("S3", "encryption"): {
+                "ServerSideEncryptionConfiguration": {
+                    "Rules": [{
+                        "ApplyServerSideEncryptionByDefault": {
+                            "SSEAlgorithm": "aws:kms",
+                            "KMSMasterKeyID": "arn:aws:kms:region:account:key/key-id"
+                        }
+                    }]
+                }
+            },
+            ("API Gateway", "throttling"): {
+                "ThrottleSettings": {
+                    "RateLimit": 1000,
+                    "BurstLimit": 2000
+                }
+            }
+        }
+        
+        service_norm = self._normalize_service_name(service)
+        return examples.get((service_norm, capability))
+    
+    def _get_service_doc_link(self, service: str, capability: str) -> Optional[str]:
+        """Get AWS documentation link for service and capability."""
+        base_url = "https://docs.aws.amazon.com"
+        
+        doc_links = {
+            ("Lambda", "encryption"): f"{base_url}/lambda/latest/dg/configuration-envvars.html#configuration-envvars-encryption",
+            ("Lambda", "monitoring"): f"{base_url}/lambda/latest/dg/lambda-monitoring.html",
+            ("Lambda", "performance"): f"{base_url}/lambda/latest/dg/best-practices.html",
+            ("RDS", "encryption"): f"{base_url}/AmazonRDS/latest/UserGuide/Overview.Encryption.html",
+            ("RDS", "redundancy"): f"{base_url}/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html",
+            ("RDS", "backup"): f"{base_url}/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html",
+            ("S3", "encryption"): f"{base_url}/AmazonS3/latest/userguide/UsingEncryption.html",
+            ("S3", "versioning"): f"{base_url}/AmazonS3/latest/userguide/Versioning.html",
+            ("API Gateway", "security"): f"{base_url}/apigateway/latest/developerguide/security.html",
+            ("API Gateway", "throttling"): f"{base_url}/apigateway/latest/developerguide/api-gateway-request-throttling.html",
+            ("DynamoDB", "encryption"): f"{base_url}/amazondynamodb/latest/developerguide/EncryptionAtRest.html",
+            ("DynamoDB", "backup"): f"{base_url}/amazondynamodb/latest/developerguide/BackupRestore.html"
+        }
+        
+        service_norm = self._normalize_service_name(service)
+        
+        # Try specific capability first
+        link = doc_links.get((service_norm, capability))
+        if link:
+            return link
+        
+        # Fall back to general service documentation
+        general_links = {
+            "Lambda": f"{base_url}/lambda/latest/dg/welcome.html",
+            "RDS": f"{base_url}/AmazonRDS/latest/UserGuide/Welcome.html",
+            "S3": f"{base_url}/AmazonS3/latest/userguide/Welcome.html",
+            "API Gateway": f"{base_url}/apigateway/latest/developerguide/welcome.html",
+            "DynamoDB": f"{base_url}/amazondynamodb/latest/developerguide/Introduction.html",
+            "EC2": f"{base_url}/AWSEC2/latest/UserGuide/concepts.html",
+            "CloudFront": f"{base_url}/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+        }
+        
+        return general_links.get(service_norm)
+    
+    def _get_general_steps_for_capability(self, capability: str) -> List[str]:
+        """Get general implementation steps for a capability."""
+        general_steps = {
+            "encryption": [
+                "Identify all data stores and data in transit",
+                "Enable encryption at rest using AWS KMS",
+                "Enable encryption in transit using TLS/SSL",
+                "Implement key rotation policies"
+            ],
+            "redundancy": [
+                "Deploy resources across multiple Availability Zones",
+                "Implement auto-scaling for compute resources",
+                "Configure health checks and automatic recovery",
+                "Test failover procedures"
+            ],
+            "monitoring": [
+                "Enable CloudWatch metrics for all resources",
+                "Configure CloudWatch alarms for critical metrics",
+                "Set up SNS notifications for alerts",
+                "Create operational dashboards"
+            ],
+            "backup": [
+                "Enable automated backups for all data stores",
+                "Configure appropriate retention periods",
+                "Test restore procedures regularly",
+                "Implement cross-region backup replication"
+            ]
+        }
+        
+        return general_steps.get(capability, [
+            f"Review AWS best practices for {capability.replace('_', ' ')}",
+            f"Implement {capability.replace('_', ' ')} controls",
+            "Test and validate implementation",
+            "Document configuration and procedures"
+        ])
+    
+    # Subtask 5.4: Implement recommendation prioritization
+    def _estimate_score_improvement(self, gap: CapabilityGap) -> float:
+        """
+        Estimate score improvement from addressing a gap.
+        
+        Calculates expected points gained based on:
+        - Gap size (target - current coverage)
+        - Capability weight
+        - Pillar importance
+        
+        Args:
+            gap: Capability gap
+            
+        Returns:
+            Estimated score improvement in points
+        """
+        # Base improvement from closing the gap
+        # Assume max 60 points available from capabilities per pillar
+        max_capability_points = 60.0
+        
+        # Get capability weight (default to 0.20 if unknown)
+        capability_weights = {
+            "encryption": 0.25,
+            "identity_access": 0.25,
+            "network_security": 0.20,
+            "monitoring_detection": 0.15,
+            "data_protection": 0.15,
+            "redundancy": 0.30,
+            "monitoring_alerting": 0.25,
+            "backup_recovery": 0.25,
+            "scaling": 0.20,
+            "caching": 0.30,
+            "compute_optimization": 0.25,
+            "database_optimization": 0.25,
+            "performance_monitoring": 0.20
+        }
+        
+        weight = capability_weights.get(gap.capability_name, 0.20)
+        
+        # Calculate improvement
+        # If gap is fully closed, gain: max_points * weight * gap_size
+        improvement = max_capability_points * weight * gap.gap_size
+        
+        # Adjust for confidence (assume 0.9 confidence in estimate)
+        improvement *= 0.9
+        
+        return round(improvement, 1)
+    
+    def _get_business_impact(self, gap: CapabilityGap) -> str:
+        """Get business impact description for a gap."""
+        impact_descriptions = {
+            "critical": "Critical business risk - immediate attention required",
+            "high": "Significant business risk - high priority for remediation",
+            "medium": "Moderate business risk - should be addressed in near term",
+            "low": "Low business risk - can be addressed as resources allow"
+        }
+        
+        return impact_descriptions.get(gap.impact, "Business impact to be assessed")
+    
+    def _get_documentation_links(self, capability: str, services: List[str]) -> List[str]:
+        """Get relevant AWS documentation links."""
+        links = []
+        base_url = "https://docs.aws.amazon.com"
+        
+        # Add capability-specific links
+        capability_links = {
+            "encryption": [
+                f"{base_url}/kms/latest/developerguide/overview.html",
+                "https://aws.amazon.com/blogs/security/how-to-encrypt-data-at-rest/"
+            ],
+            "redundancy": [
+                "https://aws.amazon.com/architecture/well-architected/",
+                "https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-i-strategies-for-recovery-in-the-cloud/"
+            ],
+            "monitoring": [
+                f"{base_url}/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html",
+                "https://aws.amazon.com/cloudwatch/getting-started/"
+            ]
+        }
+        
+        links.extend(capability_links.get(capability, []))
+        
+        return links
+    
+    def _get_best_practices(self, capability: str) -> List[str]:
+        """Get best practices for a capability."""
+        practices = {
+            "encryption": [
+                "Use AWS KMS for centralized key management",
+                "Enable encryption by default for all data stores",
+                "Implement key rotation policies",
+                "Use separate keys for different data classifications"
+            ],
+            "redundancy": [
+                "Deploy across multiple Availability Zones",
+                "Implement automated failover mechanisms",
+                "Test disaster recovery procedures regularly",
+                "Use managed services for built-in redundancy"
+            ],
+            "monitoring": [
+                "Set up comprehensive CloudWatch dashboards",
+                "Configure alarms for all critical metrics",
+                "Implement centralized logging",
+                "Use distributed tracing for microservices"
+            ],
+            "backup": [
+                "Automate backup processes",
+                "Test restore procedures regularly",
+                "Implement cross-region backup replication",
+                "Define and enforce retention policies"
+            ]
+        }
+        
+        return practices.get(capability, [
+            f"Follow AWS Well-Architected Framework guidance for {capability.replace('_', ' ')}",
+            "Implement defense in depth",
+            "Automate where possible",
+            "Test and validate regularly"
+        ])
+    
+    # Subtask 5.5: Implement pattern-specific recommendations
+    def generate_pattern_specific_recommendations(
+        self,
+        detected_patterns: List[str],
+        detected_services: List[str],
+        capability_matrix: CapabilityMatrix
+    ) -> List[EnhancedRecommendation]:
+        """
+        Generate pattern-specific recommendations.
+        
+        Creates recommendations tailored to:
+        - Serverless architectures
+        - Microservices architectures
+        - Traditional web architectures
+        - Other detected patterns
+        
+        Avoids recommending practices that conflict with detected patterns.
+        
+        Args:
+            detected_patterns: List of detected architecture patterns
+            detected_services: List of detected AWS services
+            capability_matrix: Detected capabilities
+            
+        Returns:
+            List of pattern-specific recommendations
+        """
+        self.logger.info(f"📋 Generating pattern-specific recommendations for {len(detected_patterns)} patterns...")
+        
+        recommendations = []
+        
+        for pattern in detected_patterns:
+            pattern_lower = pattern.lower()
+            
+            # Get pattern-specific recommendations
+            if pattern_lower in self.pattern_recommendations:
+                pattern_config = self.pattern_recommendations[pattern_lower]
+                specific_recs = pattern_config.get("specific_recommendations", [])
+                
+                for idx, rec_text in enumerate(specific_recs):
+                    rec_id = f"rec-pattern-{pattern_lower}-{idx+1}"
+                    
+                    recommendation = EnhancedRecommendation(
+                        id=rec_id,
+                        title=f"{pattern.title()} Best Practice: {rec_text[:50]}...",
+                        description=rec_text,
+                        pillar=self._infer_pillar_from_recommendation(rec_text),
+                        priority=RecommendationPriority.MEDIUM,
+                        capability_addressed=self._infer_capability_from_recommendation(rec_text),
+                        affected_services=self._get_affected_services_for_pattern_rec(
+                            rec_text, detected_services
+                        ),
+                        implementation_steps=self._generate_pattern_specific_steps(rec_text),
+                        implementation_effort=ImplementationEffort.MEDIUM,
+                        estimated_time="3-6 hours",
+                        estimated_score_improvement=5.0,
+                        pattern_specific=True,
+                        applicable_patterns=[pattern],
+                        recommendation_type="pattern",
+                        confidence=0.85
+                    )
+                    
+                    recommendations.append(recommendation)
+                    self.logger.debug(f"  ✅ Generated pattern recommendation: {recommendation.title}")
+        
+        self.logger.info(f"✅ Generated {len(recommendations)} pattern-specific recommendations")
+        return recommendations
+    
+    def _infer_pillar_from_recommendation(self, rec_text: str) -> str:
+        """Infer pillar from recommendation text."""
+        rec_lower = rec_text.lower()
+        
+        if any(word in rec_lower for word in ["security", "encryption", "iam", "authentication"]):
+            return "security"
+        elif any(word in rec_lower for word in ["reliability", "redundancy", "failover", "backup"]):
+            return "reliability"
+        elif any(word in rec_lower for word in ["performance", "caching", "optimization"]):
+            return "performance"
+        elif any(word in rec_lower for word in ["cost", "savings", "budget"]):
+            return "cost_optimization"
+        elif any(word in rec_lower for word in ["operational", "monitoring", "automation", "cicd"]):
+            return "operational_excellence"
+        else:
+            return "operational_excellence"
+    
+    def _infer_capability_from_recommendation(self, rec_text: str) -> str:
+        """Infer capability from recommendation text."""
+        rec_lower = rec_text.lower()
+        
+        if "tracing" in rec_lower or "x-ray" in rec_lower:
+            return "performance_monitoring"
+        elif "service mesh" in rec_lower:
+            return "service_isolation"
+        elif "api gateway" in rec_lower or "api management" in rec_lower:
+            return "api_management"
+        elif "circuit breaker" in rec_lower:
+            return "fault_isolation"
+        elif "auto scaling" in rec_lower or "scaling" in rec_lower:
+            return "scaling"
+        elif "monitoring" in rec_lower:
+            return "operational_monitoring"
+        else:
+            return "general"
+    
+    def _get_affected_services_for_pattern_rec(
+        self,
+        rec_text: str,
+        detected_services: List[str]
+    ) -> List[str]:
+        """Get affected services for a pattern recommendation."""
+        affected = []
+        rec_lower = rec_text.lower()
+        
+        # Map recommendation keywords to services
+        service_keywords = {
+            "lambda": ["Lambda"],
+            "step functions": ["Step Functions"],
+            "eventbridge": ["EventBridge"],
+            "x-ray": ["X-Ray"],
+            "api gateway": ["API Gateway"],
+            "ecs": ["ECS"],
+            "eks": ["EKS"],
+            "load balancer": ["ELB", "ALB", "NLB"],
+            "rds": ["RDS"],
+            "elasticache": ["ElastiCache"]
+        }
+        
+        for keyword, services in service_keywords.items():
+            if keyword in rec_lower:
+                for service in services:
+                    for detected in detected_services:
+                        if service.lower() in detected.lower():
+                            affected.append(detected)
+        
+        return affected
+    
+    def _generate_pattern_specific_steps(self, rec_text: str) -> List[ImplementationStep]:
+        """Generate implementation steps for pattern recommendation."""
+        # Simple step generation based on recommendation text
+        return [
+            ImplementationStep(
+                step_number=1,
+                description=rec_text
+            ),
+            ImplementationStep(
+                step_number=2,
+                description="Review AWS documentation for implementation details"
+            ),
+            ImplementationStep(
+                step_number=3,
+                description="Test implementation in non-production environment"
+            )
+        ]
+    
+    # Main method: Generate all recommendations
+    def generate_recommendations(
+        self,
+        capability_matrix: CapabilityMatrix,
+        pillar_scores: Dict[str, PillarScore],
+        detected_patterns: List[str],
+        detected_services: List[str],
+        service_configurations: Optional[Dict[str, Any]] = None
+    ) -> RecommendationSet:
+        """
+        Generate comprehensive recommendations for architecture improvement.
+        
+        Main entry point that orchestrates all recommendation generation:
+        1. Identifies capability gaps
+        2. Generates capability-specific recommendations
+        3. Adds pattern-specific recommendations
+        4. Prioritizes and organizes recommendations
+        
+        Args:
+            capability_matrix: Detected capabilities
+            pillar_scores: Calculated pillar scores
+            detected_patterns: List of detected architecture patterns
+            detected_services: List of detected AWS services
+            service_configurations: Optional service configuration details
+            
+        Returns:
+            RecommendationSet with all generated recommendations
+        """
+        self.logger.info("🚀 Starting comprehensive recommendation generation...")
+        
+        if service_configurations is None:
+            service_configurations = {}
+        
+        all_recommendations = []
+        
+        # Step 1: Identify capability gaps
+        self.logger.info("Step 1: Identifying capability gaps...")
+        gaps = self.identify_capability_gaps(capability_matrix, pillar_scores)
+        self.logger.info(f"  Found {len(gaps)} capability gaps")
+        
+        # Step 2: Generate capability-specific recommendations
+        self.logger.info("Step 2: Generating capability-specific recommendations...")
+        for gap in gaps:
+            try:
+                recommendation = self.generate_capability_recommendation(
+                    gap, detected_services, service_configurations
+                )
+                all_recommendations.append(recommendation)
+            except Exception as e:
+                self.logger.error(f"  ❌ Failed to generate recommendation for {gap.capability_name}: {e}")
+        
+        self.logger.info(f"  Generated {len(all_recommendations)} capability recommendations")
+        
+        # Step 3: Generate pattern-specific recommendations
+        if detected_patterns:
+            self.logger.info("Step 3: Generating pattern-specific recommendations...")
+            pattern_recs = self.generate_pattern_specific_recommendations(
+                detected_patterns, detected_services, capability_matrix
+            )
+            all_recommendations.extend(pattern_recs)
+            self.logger.info(f"  Generated {len(pattern_recs)} pattern recommendations")
+        
+        # Step 4: Create recommendation set
+        recommendation_set = RecommendationSet(
+            recommendations=all_recommendations,
+            generation_timestamp=datetime.utcnow().isoformat()
+        )
+        
+        # Log summary
+        self.logger.info("=" * 60)
+        self.logger.info("📊 RECOMMENDATION GENERATION SUMMARY")
+        self.logger.info("=" * 60)
+        self.logger.info(f"Total Recommendations: {len(all_recommendations)}")
+        self.logger.info(f"Capability-Specific: {len([r for r in all_recommendations if r.recommendation_type == 'capability'])}")
+        self.logger.info(f"Pattern-Specific: {len([r for r in all_recommendations if r.recommendation_type == 'pattern'])}")
+        self.logger.info(f"Critical Priority: {len(recommendation_set.get_critical_recommendations())}")
+        self.logger.info(f"Total Estimated Improvement: +{recommendation_set.total_estimated_improvement:.1f} points")
+        self.logger.info("=" * 60)
+        
+        # Log top recommendations
+        self.logger.info("\n🎯 TOP 5 RECOMMENDATIONS BY PRIORITY:")
+        sorted_recs = recommendation_set.sort_by_priority()
+        for i, rec in enumerate(sorted_recs.recommendations[:5], 1):
+            self.logger.info(
+                f"  {i}. [{rec.priority.value.upper()}] {rec.title} "
+                f"(+{rec.estimated_score_improvement:.1f} points, {rec.implementation_effort.value} effort)"
+            )
+        
+        self.logger.info("\n💡 TOP 3 QUICK WINS:")
+        quick_wins = recommendation_set.get_quick_wins(3)
+        for i, rec in enumerate(quick_wins, 1):
+            self.logger.info(
+                f"  {i}. {rec.title} "
+                f"(+{rec.estimated_score_improvement:.1f} points, {rec.implementation_effort.value} effort)"
+            )
+        
+        self.logger.info("\n✅ Recommendation generation complete!")
+        
+        return recommendation_set
+
+
+# Global enhanced recommendation engine instance
+enhanced_recommendation_engine = EnhancedRecommendationEngine()

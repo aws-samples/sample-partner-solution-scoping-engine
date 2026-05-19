@@ -1,0 +1,1833 @@
+{
+  "version": "0.0.66",
+  "serviceName": "Titan Image Generator",
+  "serviceCode": "imageGenerator",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "bedrock",
+    "bed"
+  ],
+  "serviceDescription": "",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/bedrock/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "bedrock",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/bedrock/[currency]/current/bedrock.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Image Generator- On Demand",
+          "helpText": {
+            "aws": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfimagesedited_1",
+                "label": "Number of images edited/ generated in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of images edited/ generated",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Size",
+                "id": "model_1",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "label": "1024*1024",
+                    "id": "1"
+                  },
+                  {
+                    "label": "512*512",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "1",
+                "description": "Select the size"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Quality",
+                "id": "model_2",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1"
+                            },
+                            1
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Standard",
+                    "id": "Standard_Quality"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1"
+                            },
+                            1
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Premium",
+                    "id": "Premium_Quality"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "Standard_Quality",
+                "description": "Select the quality"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 1024 Standard",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "nz9rpcDmU6QXcuaCauU9WZHDuzF-uTpM9PL57IQACAk"
+                },
+                "id": "standardprice_1"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 1024 Premium",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "xCs2o_CLT4hJMlS8TvbQ68Fq5feHRijF-DsDpbRqGbM"
+                },
+                "id": "premiumprice_1"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 512 Standard",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "_q2KiVcn0fbhc3HNn3yvLtd_zTIzmHPdSHPKFU-Tacg"
+                },
+                "id": "standardprice_2"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 512 Premium",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "xEIplkJxvQcch6U33bVaCfcPVeyS7r_G665kU327Mvg"
+                },
+                "id": "premiumprice_2"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfimagesedited_1",
+                    "model_1",
+                    "model_2",
+                    "standardprice_1",
+                    "premiumprice_1",
+                    "standardprice_2",
+                    "premiumprice_2"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "ImageGeneratorUnitConversion"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1"
+                          },
+                          "1"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2"
+                          },
+                          "Standard_Quality"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_1024_Standard",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "standardprice_1",
+                      "variableLabel": "Price per image per size by quality for 1024 Standard",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1024 Standard Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2"
+                          },
+                          "Standard_Quality"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_512_Standard",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "standardprice_2",
+                      "variableLabel": "Price per image per size by quality for 512 Standard",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 512 Standard Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1"
+                          },
+                          "1"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2"
+                          },
+                          "Premium_Quality"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_1024_Premium",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "premiumprice_1",
+                      "variableLabel": "Price per image per size by quality for 1024 Premium",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1024 Premium Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2"
+                          },
+                          "Premium_Quality"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_512_Premium",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "premiumprice_2",
+                      "variableLabel": "Price per image per size by quality for 512 Premium",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 512 Premium Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_total",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCost_1024_Standard",
+                      "variableLabel": "[currency] per Month for 1024 Standard Image Generators",
+                      "variableUnitLabel": "images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_512_Standard",
+                      "variableLabel": "[currency] per Month for 512 Standard Image Generators",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_1024_Premium",
+                      "variableLabel": "[currency] per Month for 1024 Premium Image Generators",
+                      "variableUnitLabel": "images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_512_Premium",
+                      "variableLabel": "[currency] per Month for 512 Premium Image Generators",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "imageCost_1024_Standard",
+                    "imageCost_512_Standard",
+                    "imageCost_1024_Premium",
+                    "imageCost_512_Premium",
+                    "imageCost_total"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total On demand Cost for Image Generators",
+                  "decimalPlaces": 2,
+                  "id": "TotalimageCost_total",
+                  "subTotalRefer": "imageCost_total"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Model Customization (Fine-tuning and continued pre-training)",
+          "helpText": {
+            "aws": " "
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Steps modes",
+                "id": "mode_3",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "label": "Auto - Bedrock determines a value based on the training data",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Custom - Specify the number of steps",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "1",
+                "description": "Total number of times the model is exposed to a batch of training data during training process"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "mode_3"
+                    },
+                    1
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfimages_training",
+                "label": "Number of images in your training data corpus",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 5,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of images",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "mode_3"
+                    },
+                    0
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "number_of_steps",
+                "label": "Number of steps",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 10,
+                  "maxValue": 40000
+                },
+                "placeholder": "Enter number of steps",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "batch_size",
+                "label": "Batch size",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 8,
+                  "maxValue": 192
+                },
+                "placeholder": "Enter a value between 8 and 192 that is a multiple of 8",
+                "description": "The number of samples processed before the model is updated"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image seen",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "WuuKS7lfrlPH3U0DsyW1O_2XlYKde1E-SY1myPSUyqY"
+                },
+                "id": "inputprice_training"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "mode_3",
+                    "noOfimages_training",
+                    "number_of_steps",
+                    "batch_size",
+                    "inputprice_training"
+                  ],
+                  "subTotalRefer": "imageCost_total",
+                  "id": "TrainingUnitConversion"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberofimages_int",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "noOfimages_training",
+                      "variableLabel": "Number of images in your training data corpus",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "constant": 5,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": ""
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberofimages_int_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofimages_int",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 7000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": " ",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberofimages_int_3",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "numberofimages_int_2",
+                      "variableLabel": " ",
+                      "variableUnitLabel": "",
+                      "required": false
+                    },
+                    {
+                      "constant": 45,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "  ",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "numberofsteps_3",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableId": "numberofimages_int_3",
+                      "variableLabel": "  ",
+                      "variableUnitLabel": "",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "steps"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "operands": [
+                    {
+                      "variableId": "numberofsteps_3",
+                      "variableLabel": "steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "constant": 8000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "steps ",
+                  "decimalPlaces": 2,
+                  "id": "numberofsteps_4"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Minimum",
+                  "operands": [
+                    {
+                      "variableId": "noOfimages_training",
+                      "variableLabel": "Number of images in your training data corpus",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "batch_size",
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "batch size",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": " ",
+                  "id": "numberofsteps_5"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      1
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cost_for_training_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofsteps_4",
+                      "variableLabel": "steps ",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberofsteps_5",
+                      "variableLabel": " ",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inputprice_training",
+                      "variableLabel": "Price per image seen",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "training cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "mode_3"
+                      },
+                      0
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cost_for_training_3",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "number_of_steps",
+                      "variableLabel": "Number of steps",
+                      "variableUnitLabel": "steps",
+                      "required": true
+                    },
+                    {
+                      "variableId": "batch_size",
+                      "variableLabel": "Batch size",
+                      "variableUnitLabel": "batch size",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inputprice_training",
+                      "variableLabel": "Price per image seen",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "cost for training",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cost_for_training_4",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "cost_for_training_2",
+                      "variableLabel": "training cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "cost_for_training_3",
+                      "variableLabel": "cost for training",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "numberofimages_int",
+                    "numberofimages_int_2",
+                    "numberofimages_int_3",
+                    "numberofsteps_3",
+                    "numberofsteps_4",
+                    "numberofsteps_5",
+                    "cost_for_training_2",
+                    "cost_for_training_3",
+                    "cost_for_training_4"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Customization Training Cost for Image Generator",
+                  "decimalPlaces": 2,
+                  "id": "TotalcustomizationtrainingMonthlyCost_IG",
+                  "subTotalRefer": "cost_for_training_4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Customization - Storage",
+          "helpText": {
+            "aws": " "
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfcustmodels_storage",
+                "label": "Number of customized models stored in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter number of customized models",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for models per month",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "2AjqjtyFIMTVLKJ-EfxeXH0aBqSmUipqBsTbOrZfZx4"
+                },
+                "id": "inputprice_storage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfcustmodels_storage",
+                    "inputprice_storage"
+                  ],
+                  "subTotalRefer": "cost_for_training_4",
+                  "id": "StorageUnitConversion"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "cost_for_storage_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfcustmodels_storage",
+                      "variableLabel": "Number of customized models stored in a month",
+                      "variableUnitLabel": "models",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inputprice_storage",
+                      "variableLabel": "Price for models per month",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total storage cost",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "cost_for_storage_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Customization Storage Cost for Image Generator",
+                  "decimalPlaces": 2,
+                  "id": "TotalcustomizationstorageMonthlyCost_IG",
+                  "subTotalRefer": "cost_for_storage_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Provisioned Throughput",
+          "helpText": {
+            "aws": ""
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Is the model customized?",
+                "id": "cust_model",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "1",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Billing term",
+                "id": "billing_term",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "label": "1-month commit",
+                    "id": "1_month_commit_TIGenerator"
+                  },
+                  {
+                    "label": "6-month commit",
+                    "id": "6_month_commit_TIGenerator"
+                  },
+                  {
+                    "displayIf": {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "cust_model"
+                        },
+                        1
+                      ]
+                    },
+                    "label": "No-commit",
+                    "id": "no-commit_TIGenerator"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "1-month commit",
+                "description": "Select the billing term commit"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "billing_term"
+                        },
+                        "1_month_commit_TIGenerator"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "billing_term"
+                        },
+                        "6_month_commit_TIGenerator"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfmodels_purchased",
+                "label": "Number of model units purchased per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of models purchased",
+                "description": ""
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "billing_term"
+                    },
+                    "no-commit_TIGenerator"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfhours_used",
+                "label": "Number of billed hours MU is used in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of hours",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 1 month commit for Image Generator",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "vtz4mSx8qeVJHsWrxENHc1SKQPqgv-dfxqKjKJZu7g4"
+                },
+                "id": "commitprice_1"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 6 month commit for Image Generator",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "meHhU3zmIt3c9dlEMXfwd2SgFID-E8fZOL2TUezPvYw"
+                },
+                "id": "commitprice_2"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 1 month commit for Custom Image Generator",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "19R8nMt4kNSuXI7JxHA0dP8tG12ry34RIwg-ciAVJRA"
+                },
+                "id": "commitprice_12"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for 6 month commit for Custom Image Generator",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "TlH3pIrKkPnGCoeaZOCKm0EgngCiUAE-5cBNQvGf7DU"
+                },
+                "id": "commitprice_22"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for no commit for Image Generator",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "xVNLGclxoydq8g0l-mmvnm-XIhUYhh8wQFrZzbO-60I"
+                },
+                "id": "commitprice_32"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "cust_model",
+                    "billing_term",
+                    "noOfmodels_purchased",
+                    "noOfhours_used",
+                    "commitprice_1",
+                    "commitprice_2",
+                    "commitprice_12",
+                    "commitprice_22",
+                    "commitprice_32"
+                  ],
+                  "subTotalRefer": "cost_for_storage_2",
+                  "id": "UnitConversion_throughput_TIGenerator"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "cust_model"
+                          },
+                          "1"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "billing_term"
+                          },
+                          "1_month_commit_TIGenerator"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_12",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfmodels_purchased",
+                      "variableLabel": "Number of model units purchased per month",
+                      "variableUnitLabel": "models purchased",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commitprice_12",
+                      "variableLabel": "Price for 1 month commit for Custom Image Generator",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1 month commit ",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "cust_model"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "billing_term"
+                          },
+                          "1_month_commit_TIGenerator"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfmodels_purchased",
+                      "variableLabel": "Number of model units purchased per month",
+                      "variableUnitLabel": "models purchased",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commitprice_1",
+                      "variableLabel": "Price for 1 month commit for Image Generator",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1 month commit",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "cust_model"
+                          },
+                          "1"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "billing_term"
+                          },
+                          "6_month_commit_TIGenerator"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_22",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfmodels_purchased",
+                      "variableLabel": "Number of model units purchased per month",
+                      "variableUnitLabel": "models purchased",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commitprice_22",
+                      "variableLabel": "Price for 6 month commit for Custom Image Generator",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 6 month commit ",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "cust_model"
+                          },
+                          "0"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "billing_term"
+                          },
+                          "6_month_commit_TIGenerator"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_2",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfmodels_purchased",
+                      "variableLabel": "Number of model units purchased per month",
+                      "variableUnitLabel": "models purchased",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commitprice_2",
+                      "variableLabel": "Price for 6 month commit for Image Generator",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 6 month commit",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "billing_term"
+                      },
+                      "no-commit_TIGenerator"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_3",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfhours_used",
+                      "variableLabel": "Number of billed hours MU is used in a month",
+                      "variableUnitLabel": "billed hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "commitprice_32",
+                      "variableLabel": "Price for no commit for Image Generator",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "models purchased in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for no-commit",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "thorughputMonthlyCost_TIGenerator_total",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "thorughputMonthlyCost_TIGenerator_1",
+                      "variableLabel": "[currency] per Month for 1 month commit",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "thorughputMonthlyCost_TIGenerator_12",
+                      "variableLabel": "[currency] per Month for 1 month commit ",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "thorughputMonthlyCost_TIGenerator_2",
+                      "variableLabel": "[currency] per Month for 6 month commit",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "thorughputMonthlyCost_TIGenerator_22",
+                      "variableLabel": "[currency] per Month for 6 month commit ",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "thorughputMonthlyCost_TIGenerator_3",
+                      "variableLabel": "[currency] per Month for no-commit",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "thorughputMonthlyCost_TIGenerator_12",
+                    "thorughputMonthlyCost_TIGenerator_1",
+                    "thorughputMonthlyCost_TIGenerator_22",
+                    "thorughputMonthlyCost_TIGenerator_2",
+                    "thorughputMonthlyCost_TIGenerator_3",
+                    "thorughputMonthlyCost_TIGenerator_total"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Provisioned thorughput cost for Titan Image Generator",
+                  "decimalPlaces": 2,
+                  "id": "thorughputMonthlyCost_TIGenerator_total_2",
+                  "subTotalRefer": "thorughputMonthlyCost_TIGenerator_total"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Custom Image Generator",
+          "helpText": {
+            "aws": "With Amazon Bedrock, you will be charged for model inference and customization. You have a choice of two consumption plans for inference: 1/ On Demand: This mode allows you to use FMs on a pay-as-you-go basis without having to make any time-based term commitments. 2/ Provisioned Throughput: This mode allows you to provision sufficient throughput to meet your application's performance requirements in exchange for a time-based term commitment. "
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "noOfimagesedited_1_cust",
+                "label": "Number of images edited/ generated in a month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "placeholder": "Enter Number of images edited/ generated",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Size",
+                "id": "model_1_cust",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "label": "1024*1024",
+                    "id": "1"
+                  },
+                  {
+                    "label": "512*512",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "1",
+                "description": "Select the size"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Quality",
+                "id": "model_2_cust",
+                "mappingDefinitionName": "bedrock",
+                "options": [
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1_cust"
+                            },
+                            1
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1_cust"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Standard",
+                    "id": "Standard_Quality_cust"
+                  },
+                  {
+                    "displayIf": {
+                      "or": [
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1_cust"
+                            },
+                            1
+                          ]
+                        },
+                        {
+                          "==": [
+                            {
+                              "type": "component",
+                              "id": "model_1_cust"
+                            },
+                            0
+                          ]
+                        }
+                      ]
+                    },
+                    "label": "Premium",
+                    "id": "Premium_Quality_cust"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "Standard_Quality_cust",
+                "description": "Select the quality"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 1024 Standard",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "9znApiE9DWKLKfuub2Je60VIhuGzCoq28GEF-3UjZHI"
+                },
+                "id": "standardprice_1_cust"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 1024 Premium",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "NosAdt5o1y_KYab9a8b0Z4CmfBR6oFNlrmn8Xcx9rF0"
+                },
+                "id": "premiumprice_1_cust"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 512 Standard",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "OnliixF0nJEEGb5GhdGdSqHmL3kPqBv8O2neI0sXGC4"
+                },
+                "id": "standardprice_2_cust"
+              },
+              {
+                "type": "pricing",
+                "label": "Price per image per size by quality for 512 Premium",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "bedrock",
+                "meteredUnit": {
+                  "allRegions": "-01BvH8j0gYh0AT1O6ERAvzSKlg4U-0WzP1dzhLpRFk"
+                },
+                "id": "premiumprice_2_cust"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "noOfimagesedited_1_cust",
+                    "model_1_cust",
+                    "model_2_cust",
+                    "standardprice_1_cust",
+                    "premiumprice_1_cust",
+                    "standardprice_2_cust",
+                    "premiumprice_2_cust"
+                  ],
+                  "subTotalRefer": "thorughputMonthlyCost_TIGenerator_total",
+                  "id": "ImageGeneratorUnitConversion_cust"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1_cust"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2_cust"
+                          },
+                          "Standard_Quality_cust"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_1024_Standard_cust",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1_cust",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "standardprice_1_cust",
+                      "variableLabel": "Price per image per size by quality for 1024 Standard",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1024 Standard Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1_cust"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2_cust"
+                          },
+                          "Standard_Quality_cust"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_512_Standard_cust",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1_cust",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "standardprice_2_cust",
+                      "variableLabel": "Price per image per size by quality for 512 Standard",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 512 Standard Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1_cust"
+                          },
+                          1
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2_cust"
+                          },
+                          "Premium_Quality_cust"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_1024_Premium_cust",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1_cust",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "premiumprice_1_cust",
+                      "variableLabel": "Price per image per size by quality for 1024 Premium",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 1024 Premium Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_1_cust"
+                          },
+                          0
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "model_2_cust"
+                          },
+                          "Premium_Quality_cust"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imageCost_512_Premium_cust",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "noOfimagesedited_1_cust",
+                      "variableLabel": "Number of images edited/ generated in a month",
+                      "variableUnitLabel": "images",
+                      "required": true
+                    },
+                    {
+                      "variableId": "premiumprice_2_cust",
+                      "variableLabel": "Price per image per size by quality for 512 Premium",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for 512 Premium Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "customimageCost_total",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "imageCost_1024_Standard_cust",
+                      "variableLabel": "[currency] per Month for 1024 Standard Image Generators",
+                      "variableUnitLabel": "images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_512_Standard_cust",
+                      "variableLabel": "[currency] per Month for 512 Standard Image Generators",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_1024_Premium_cust",
+                      "variableLabel": "[currency] per Month for 1024 Premium Image Generators",
+                      "variableUnitLabel": "images",
+                      "required": false
+                    },
+                    {
+                      "variableId": "imageCost_512_Premium_cust",
+                      "variableLabel": "[currency] per Month for 512 Premium Image Generators",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per Month for Custom Image Generators",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "imageCost_1024_Standard_cust",
+                    "imageCost_512_Standard_cust",
+                    "imageCost_1024_Premium_cust",
+                    "imageCost_512_Premium_cust",
+                    "customimageCost_total"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total On demand Cost for Custom Image Generators",
+                  "decimalPlaces": 2,
+                  "id": "TotalcustomimageCost_total",
+                  "subTotalRefer": "customimageCost_total"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_bedrock"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

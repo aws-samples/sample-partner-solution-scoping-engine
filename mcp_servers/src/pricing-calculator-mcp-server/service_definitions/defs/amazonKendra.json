@@ -1,0 +1,1280 @@
+{
+  "version": "0.0.34",
+  "serviceName": "Amazon Kendra",
+  "serviceCode": "amazonKendra",
+  "type": "AWSService",
+  "slug": "Kendra",
+  "regions": [
+    "us-east-1",
+    "us-west-2",
+    "eu-west-1",
+    "ap-southeast-2"
+  ],
+  "searchKeywords": [
+    "kendra"
+  ],
+  "serviceDescription": "Amazon Kendra is an intelligent search service powered by machine learning. Kendra reimagines enterprise search for your websites and applications so your employees and customers can easily find the content they are looking for, even when it’s scattered across multiple locations and content repositories within your organization.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/kendra/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "kendra",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/kendra/[currency]/current/kendra.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Kendra",
+      "id": "amazonKendra",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/kendra/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon Kendra Edition",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/kendra/pricing/"
+            }
+          },
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "edition",
+                "label": "Amazon Kendra Edition",
+                "options": [
+                  {
+                    "label": "Choose Edition",
+                    "id": "chooseEdition"
+                  },
+                  {
+                    "label": "Amazon Kendra Developer Edition",
+                    "id": "developerEdition"
+                  },
+                  {
+                    "label": "Amazon Kendra Enterprise Edition",
+                    "id": "enterpriseEdition"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "kendra",
+                        "meteredUnit": "Xfk0QtCtCkqvcghKNRGOmEQI6Q-sQTo6QRr-WOD1U_w"
+                      }
+                    },
+                    "label": "Amazon Kendra GenAI Edition",
+                    "id": "genAIEdition"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "user0",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "developerEdition"
+            ]
+          },
+          "title": "Amazon Kendra Developer Edition usage",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Amazon Kendra Developer Edition provides developers with a lower- cost option to build a proof-of-concept; this edition is not recommended for production workloads. It supports up to 4,000 queries a day and 10,000 documents. Connector usage is charged separately, for more information please visit <a href='https://aws.amazon.com/kendra/pricing/'>Kendra Pricing</a>",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoDev"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "AmazonKendraDeveloperEditionHours(PerMonth)",
+                "label": "Amazon Kendra Developer Edition Hours (Per Month)",
+                "description": "Estimated monthly active hours.",
+                "displayInConfigSummary": true,
+                "defaultValue": 730,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "AmazonKendraDeveloperEditionPrice",
+                "label": "Amazon Kendra Developer Edition Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Developer Base Query Storage Capacity KendraDeveloperEdition per hours"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "KendraDeveloperCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "AmazonKendraDeveloperEditionHours(PerMonth)",
+                      "variableLabel": "Amazon Kendra Developer Edition Hours (Per Month)",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "AmazonKendraDeveloperEditionPrice",
+                      "variableLabel": "Amazon Kendra Developer Edition Price",
+                      "variableUnitLabel": "[currency]/hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "userTypeInfoDev",
+                    "AmazonKendraDeveloperEditionHours(PerMonth)",
+                    "AmazonKendraDeveloperEditionPrice",
+                    "KendraDeveloperCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Kendra Developer Edition pricing, excluding connector usage charges",
+                  "decimalPlaces": 2,
+                  "id": "KendraDeveloperTotalPrice",
+                  "subTotalRefer": "KendraDeveloperCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "enterpriseEdition"
+            ]
+          },
+          "title": "Amazon Kendra Enterprise Edition usage",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Kendra Enterprise Edition provides a high-availability service for production workloads. Pay for the number storage units and query units that you provision. The minimum configuration is one storage and one query unit. You can add storage or query units as needed, with the ability to store as many documents as you need. Connector usage is charged separately, for more information please visit <a href='https://aws.amazon.com/kendra/pricing/' target='_blank'>Kendra Pricing</a>.<br><br><b>AWS is running an offer for customers with more than 1 Million documents and/or 500K daily search queries. For details, please reach out to the Kendra team at <a>Kendra-support@amazon.com</a></b>.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "userTypeInfoEnt"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "amazonKendraEnterpriseEditionTotalDocuments",
+                "label": "Total number of documents connected",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "amazonKendraEnterpriseEditionTotalSearchesPerDay",
+                "label": "Total number of searches/queries per day",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraEnterpriseEditionBaseQueryStoragePrice",
+                "label": "Amazon Kendra Enterprise Edition Base Query Storage Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Base Query Storage Capacity Edition per hours"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraEnterpriseEditionAdditionalQueryStoragePrice",
+                "label": "Amazon Kendra Enterprise Edition Additional Query Storage Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Enterprise Additional Storage Capacity Kendra-Storage-Capacity-Unit per hours"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "kEEUnitConversions",
+                  "refer": [
+                    "userTypeInfoEnt",
+                    "amazonKendraEnterpriseEditionTotalDocuments",
+                    "amazonKendraEnterpriseEditionTotalSearchesPerDay",
+                    "amazonKendraEnterpriseEditionBaseQueryStoragePrice",
+                    "amazonKendraEnterpriseEditionAdditionalQueryStoragePrice"
+                  ],
+                  "subTotalRefer": "KendraDeveloperCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraEnterpriseEditionBaseCost",
+                  "variableName": "Amazon Kendra Enterprise Edition Base Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionBaseQueryStoragePrice",
+                      "variableLabel": "Amazon Kendra Enterprise Edition Base Query Storage Price",
+                      "variableUnitLabel": "[currency]/hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "amazonKendraEnterpriseEditionBaseCostVar",
+                  "label": "Monthly base cost for Amazon Kendra Enterprise Edition",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "amazonKendraEnterpriseEditionBaseCost",
+                  "referLabel": "Amazon Kendra Enterprise Edition Base Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "documentdDividedPerHunderedThousand",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionTotalDocuments",
+                      "variableLabel": "Total number of documents connected",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "documents"
+                    }
+                  ],
+                  "outputUnitLabel": "documents (per hundered thousand)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "documents (per hundered thousand)",
+                      "variableLabel": "documents (per hundered thousand)",
+                      "required": true,
+                      "variableId": "documentdDividedPerHunderedThousand"
+                    }
+                  ],
+                  "outputUnitLabel": "Rounded documents (per hundered thousand)",
+                  "id": "roundedUpDocumentdDividedPerHunderedThousand"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "additionalStorageUnits",
+                  "operands": [
+                    {
+                      "variableId": "roundedUpDocumentdDividedPerHunderedThousand",
+                      "variableUnitLabel": "documents",
+                      "variableLabel": "Rounded documents (per hundered thousand)",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "Additional storage units",
+                  "minValue": 0,
+                  "displayInConfigSummary": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalStorageUnitsCost",
+                  "variableName": "Additional Storage Units Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "additionalStorageUnits",
+                      "variableLabel": "Additional storage units",
+                      "variableUnitLabel": "storage units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionAdditionalQueryStoragePrice",
+                      "variableLabel": "Amazon Kendra Enterprise Edition Additional Query Storage Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "additionalStorageUnitsCostVar",
+                  "label": "Monthly cost for additional Storage Units",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "additionalStorageUnitsCost",
+                  "referLabel": "Additional Storage Units Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "queriesDividedPerEightThousand",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionTotalSearchesPerDay",
+                      "variableLabel": "Total number of searches/queries per day",
+                      "variableUnitLabel": "queries",
+                      "required": true
+                    },
+                    {
+                      "constant": 8000,
+                      "constantUnitLabel": "queries"
+                    }
+                  ],
+                  "outputUnitLabel": "queries (per eight thousand)",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "queries (per eight thousand)",
+                      "variableLabel": "queries (per eight thousand)",
+                      "required": true,
+                      "variableId": "queriesDividedPerEightThousand"
+                    }
+                  ],
+                  "outputUnitLabel": "Rounded queries (per eight thousand)",
+                  "id": "roundedUpQueriesDividedPerEightThousand"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "id": "additionalQueryUnits",
+                  "operands": [
+                    {
+                      "variableId": "roundedUpQueriesDividedPerEightThousand",
+                      "variableUnitLabel": "queries",
+                      "variableLabel": "Rounded queries (per eight thousand)",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "Additional query units",
+                  "minValue": 0,
+                  "displayInConfigSummary": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "additionalQueryUnitsCost",
+                  "variableName": "Additional Query Units Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "additionalQueryUnits",
+                      "variableLabel": "Additional query units",
+                      "variableUnitLabel": "query units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionAdditionalQueryStoragePrice",
+                      "variableLabel": "Amazon Kendra Enterprise Edition Additional Query Storage Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "additionalQueryUnitsCostVar",
+                  "label": "Monthly cost for additional Query Units",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "additionalQueryUnitsCost",
+                  "referLabel": "Additional Query Units Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraEnterpriseEditionTotalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraEnterpriseEditionBaseCost",
+                      "variableLabel": "Amazon Kendra Enterprise Edition Base Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "additionalStorageUnitsCost",
+                      "variableLabel": "Additional Storage Units Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    },
+                    {
+                      "variableId": "additionalQueryUnitsCost",
+                      "variableLabel": "Additional Query Units Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "amazonKendraEnterpriseEditionBaseCost",
+                    "amazonKendraEnterpriseEditionBaseCostVar",
+                    "documentdDividedPerHunderedThousand",
+                    "roundedUpDocumentdDividedPerHunderedThousand",
+                    "additionalStorageUnits",
+                    "additionalStorageUnitsCost",
+                    "additionalStorageUnitsCostVar",
+                    "queriesDividedPerEightThousand",
+                    "roundedUpQueriesDividedPerEightThousand",
+                    "additionalQueryUnits",
+                    "additionalQueryUnitsCost",
+                    "additionalQueryUnitsCostVar",
+                    "amazonKendraEnterpriseEditionTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Kendra Enterprise Edition pricing, excluding connector usage charges",
+                  "decimalPlaces": 5,
+                  "id": "AmazonKendraEnterpriseTotalPrice",
+                  "subTotalRefer": "amazonKendraEnterpriseEditionTotalCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "edition"
+              },
+              "genAIEdition"
+            ]
+          },
+          "title": "Amazon Kendra GenAI Edition usage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "With the Amazon Kendra Index, you pay for storage units, query units and connectors. Once you provision a Kendra Index, you are charged for storage unit and query unit hours from the time an index is created until it is deleted.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/kendra/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Kendra GenAI Edition delivers the highest accuracy by leveraging the latest information retrieval technologies and semantic models. It offers high-availability and is built for production workloads. For details, please reach out to the Kendra team at <a>Kendra-support@amazon.com</a></b>.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "userTypeInfoGenAI"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "amazonKendraGenAIEditionTotalDocuments",
+                "label": "Total number of documents to index",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average amount of text extracted per document",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "mb",
+                "outputSizeLabel": "MB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "id": "amazonKendraGenAIEditionAverageTextExtracted"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "amazonKendraGenAIEditionTotalUsers",
+                "label": "Total number of users",
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Total number of searches per user",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perDay",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "searches per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "numberOfSearches"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Connector Required?",
+                "id": "connector_add_on",
+                "mappingDefinitionName": "kendra",
+                "options": [
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  },
+                  {
+                    "label": "No",
+                    "id": "0"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraGenAIEditionAdditionalBasePrice",
+                "label": "Amazon Kendra GenAI Edition Base Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Xfk0QtCtCkqvcghKNRGOmEQI6Q-sQTo6QRr-WOD1U_w"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraGenAIEditionConnectorPrice",
+                "label": "Amazon Kendra GenAI Connector Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "UpoUJNToCqdVZU5ZhJdNqqigrqUgvOLFPSuD6K1HFZw"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraGenAIStorageUnitPrice",
+                "label": "Amazon Kendra GenAI Storage Unit Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Wyas3rslBcU3UYoG7bZdGG4g7NcHQFX3y6VcublB9hA"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "amazonKendraGenAIQueryUnitPrice",
+                "label": "Amazon Kendra GenAI Query Unit Price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "kendra",
+                "meteredUnit": {
+                  "allRegions": "Z3SyRNQMSpwE2Sf-xHdXlmkMCkznufkWOXIpmrabfrE"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "IndexUnitConversions",
+                  "refer": [
+                    "userTypeInfoGenAI",
+                    "amazonKendraGenAIEditionTotalDocuments",
+                    "amazonKendraGenAIEditionAverageTextExtracted",
+                    "amazonKendraGenAIEditionTotalUsers",
+                    "numberOfSearches",
+                    "connector_add_on",
+                    "amazonKendraGenAIEditionAdditionalBasePrice",
+                    "amazonKendraGenAIEditionConnectorPrice",
+                    "amazonKendraGenAIStorageUnitPrice",
+                    "amazonKendraGenAIQueryUnitPrice"
+                  ],
+                  "subTotalRefer": "amazonKendraEnterpriseEditionTotalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionBaseCost",
+                  "variableName": "Amazon Kendra Base Gen AI Index Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "(Base Index)"
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days"
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIEditionAdditionalBasePrice",
+                      "variableLabel": "Amazon Kendra GenAI Edition Base Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Base GenAI Index Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "amazonKendraGenAIEditionBaseCostVar",
+                  "label": "Base cost for Amazon Kendra Gen AI Edition",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "amazonKendraGenAIEditionBaseCost",
+                  "referLabel": "Amazon Kendra Base Gen AI Index Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "DocumentCountMultiple",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionTotalDocuments",
+                      "variableLabel": "Total number of documents to index",
+                      "variableUnitLabel": "Documents",
+                      "required": true
+                    },
+                    {
+                      "constant": 20000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "Documents",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionDocumentStorage",
+                  "variableName": "Document Storage",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionTotalDocuments",
+                      "variableLabel": "Total number of documents to index",
+                      "variableUnitLabel": "Documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIEditionAverageTextExtracted",
+                      "variableLabel": "Average amount of text extracted per document",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MB (Document Storage)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "DocumentStorageMultiple",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionDocumentStorage",
+                      "variableLabel": "Document Storage",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    },
+                    {
+                      "constant": 200,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "MB",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableId": "DocumentCountMultiple",
+                      "variableLabel": "Documents",
+                      "variableUnitLabel": "Documents",
+                      "required": true
+                    },
+                    {
+                      "variableId": "DocumentStorageMultiple",
+                      "variableLabel": "MB",
+                      "variableUnitLabel": "MB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "id": "StorageUnitsMax"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableId": "StorageUnitsMax",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "id": "StorageUnitsMax2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "StorageUnits",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "StorageUnitsMax2",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "(Storage Units)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "BillableStorageUnits",
+                  "label": "Billable Storage Units",
+                  "useCurrency": false,
+                  "displayInCalculationString": true,
+                  "refer": "StorageUnits",
+                  "referLabel": "(Storage Units)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionTotalSearches",
+                  "variableName": "Total Number of Searches",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionTotalUsers",
+                      "variableLabel": "Total number of users",
+                      "variableUnitLabel": "users",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfSearches",
+                      "variableLabel": "Total number of searches per user",
+                      "variableUnitLabel": "searches",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "(Total Searches per Month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionQPS",
+                  "variableName": "QPS",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionTotalSearches",
+                      "variableLabel": "Total Number of Searches",
+                      "variableUnitLabel": "searches",
+                      "required": true
+                    },
+                    {
+                      "constant": 2592000,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "(QPS)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionQPSDivison",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionQPS",
+                      "variableLabel": "QPS",
+                      "variableUnitLabel": "(QPS)",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "Rounding",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "",
+                      "variableLabel": "",
+                      "required": true,
+                      "variableId": "amazonKendraGenAIEditionQPSDivison"
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "id": "amazonKendraGenAIEditionQPSRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionQPSSubtraction",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionQPSRounded",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionQPSSubtraction",
+                      "variableLabel": "",
+                      "variableUnitLabel": "",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": ""
+                    }
+                  ],
+                  "outputUnitLabel": "(Query Units)",
+                  "decimalPlaces": 2,
+                  "id": "FinalQueryUnits"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "BillableQueryUnits",
+                  "label": "Billable Query Units",
+                  "useCurrency": false,
+                  "displayInCalculationString": true,
+                  "refer": "FinalQueryUnits",
+                  "referLabel": "(Query Units)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionStorageCost",
+                  "variableName": "Amazon Kendra Gen AI Storage Unit Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "StorageUnits",
+                      "variableLabel": "(Storage Units)",
+                      "variableUnitLabel": "(Storage Units)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIStorageUnitPrice",
+                      "variableLabel": "Amazon Kendra GenAI Storage Unit Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage Unit Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "amazonKendraGenAIEditionStorageCostVar",
+                  "label": "Storage Unit cost ",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "amazonKendraGenAIEditionStorageCost",
+                  "referLabel": "Amazon Kendra Gen AI Storage Unit Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionQueryCost",
+                  "variableName": "Amazon Kendra Gen AI Query Unit Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "FinalQueryUnits",
+                      "variableLabel": "(Query Units)",
+                      "variableUnitLabel": "Query Units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIQueryUnitPrice",
+                      "variableLabel": "Amazon Kendra GenAI Query Unit Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Query Unit Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "amazonKendraGenAIEditionQueryCostVar",
+                  "label": "Query Unit Cost",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "amazonKendraGenAIEditionQueryCost",
+                  "referLabel": "Amazon Kendra Gen AI Query Unit Cost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "connector_add_on"
+                      },
+                      "1"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "variableName": "Amazon Kendra Gen AI Connector Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Amazon Kendra GenAI Connector Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "amazonKendraGenAIEditionConnectorPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Connector Cost)",
+                  "decimalPlaces": 2,
+                  "id": "amazonKendraGenAIEditionConnectorCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "amazonKendraGenAIEditionConnectorCostVar",
+                  "label": "Connector Cost",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "amazonKendraGenAIEditionConnectorCost",
+                  "referLabel": "Amazon Kendra Gen AI Connector Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "amazonKendraGenAIEditionTotalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "amazonKendraGenAIEditionBaseCost",
+                      "variableLabel": "Amazon Kendra Base Gen AI Index Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIEditionStorageCost",
+                      "variableLabel": "Amazon Kendra Gen AI Storage Unit Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIEditionQueryCost",
+                      "variableLabel": "Amazon Kendra Gen AI Query Unit Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "amazonKendraGenAIEditionConnectorCost",
+                      "variableLabel": "Amazon Kendra Gen AI Connector Cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "amazonKendraGenAIEditionBaseCost",
+                    "amazonKendraGenAIEditionBaseCostVar",
+                    "DocumentCountMultiple",
+                    "amazonKendraGenAIEditionDocumentStorage",
+                    "DocumentStorageMultiple",
+                    "StorageUnitsMax",
+                    "StorageUnitsMax2",
+                    "StorageUnits",
+                    "BillableStorageUnits",
+                    "amazonKendraGenAIEditionTotalSearches",
+                    "amazonKendraGenAIEditionQPS",
+                    "amazonKendraGenAIEditionQPSDivison",
+                    "amazonKendraGenAIEditionQPSRounded",
+                    "amazonKendraGenAIEditionQPSSubtraction",
+                    "FinalQueryUnits",
+                    "BillableQueryUnits",
+                    "amazonKendraGenAIEditionStorageCost",
+                    "amazonKendraGenAIEditionStorageCostVar",
+                    "amazonKendraGenAIEditionQueryCost",
+                    "amazonKendraGenAIEditionQueryCostVar",
+                    "amazonKendraGenAIEditionConnectorCost",
+                    "amazonKendraGenAIEditionConnectorCostVar",
+                    "amazonKendraGenAIEditionTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Kendra GenAI Edition pricing",
+                  "decimalPlaces": 5,
+                  "id": "AmazonKendraGenAITotalPrice",
+                  "subTotalRefer": "amazonKendraGenAIEditionTotalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

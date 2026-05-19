@@ -1,0 +1,177 @@
+{
+  "version": "0.0.35",
+  "serviceName": "Amazon Transcribe Medical",
+  "serviceCode": "amazonTranscribeMedical",
+  "type": "AWSService",
+  "regions": [
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-west-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "transcribe",
+    "transcription",
+    "STT",
+    "VTT",
+    "audio",
+    "voice",
+    "subtitles",
+    "caption",
+    "language",
+    "scribes",
+    "vocabulary",
+    "medical",
+    "archiving",
+    "archives"
+  ],
+  "serviceDescription": "Amazon Transcribe Medical is a HIPAA-eligible automatic speech recognition (ASR) service that makes it easy for developers to add speech-to-text capabilities to their healthcare and life science applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/transcribe/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "transcribe",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/transcribe/[currency]/current/transcribe.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/transcribe/pricing/#Amazon_Transcribe_Medical_pricing"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "variableId": "numberOfMedMinutes",
+                "id": "numberofMedicalMinutes4",
+                "label": "Number of minutes of medical audio transcription per month",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "medicalRate",
+                "label": "Price for Medical Audio Transcription per second",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "transcribe",
+                "meteredUnit": {
+                  "allRegions": "Transcription Job Medical per seconds"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "comp_med",
+                  "refer": [
+                    "numberofMedicalMinutes4",
+                    "medicalRate"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "medicalAudioMonthlyCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberofMedicalMinutes4",
+                      "variableLabel": "Number of minutes of medical audio transcription per month",
+                      "variableUnitLabel": "Minutes of Medical Audio",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "Seconds per Minute"
+                    },
+                    {
+                      "variableId": "medicalRate",
+                      "variableLabel": "Price for Medical Audio Transcription per second",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for Medical Audio Transcription",
+                  "decimalPlaces": 5
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "medicalAudioMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Transcribe Medical pricing",
+                  "decimalPlaces": 2,
+                  "id": "serviceTotalPrice",
+                  "subTotalRefer": "medicalAudioMonthlyCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "slug": "TranscribeMedical",
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

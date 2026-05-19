@@ -1,0 +1,216 @@
+{
+  "version": "0.0.15",
+  "serviceName": "Standard Text-to-Speech",
+  "serviceCode": "standardTextToSpeechTts",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "polly",
+    "NLP",
+    "speech"
+  ],
+  "serviceDescription": "Amazon Polly is a service that turns text into lifelike speech, allowing you to create applications that talk, and build entirely new categories of speech-enabled products.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/polly/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "polly",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/polly/[currency]/current/polly.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "pollySST",
+      "cards": [
+        {
+          "title": "Standard Text-to-Speech (TTS)",
+          "helpText": "Amazon Polly is a service that turns text into lifelike speech, allowing you to create applications that talk, and build entirely new categories of speech-enabled products.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/polly/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "Number_of_requests",
+                "label": "Number of requests (Standard Text-to-Speech)",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 2,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000
+                },
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_characters_per_request",
+                "label": "Number of characters per request including white spaces, but excluding SSML",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for standard text",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "polly",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "meteredUnit": {
+                  "allRegions": "Standard per Characters"
+                },
+                "id": "polly_standard"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_requests",
+                    "Number_of_characters_per_request",
+                    "polly_standard"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitSPolly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests (Standard Text-to-Speech)",
+                      "variableUnitLabel": "request(s)",
+                      "required": true,
+                      "variableId": "Number_of_requests"
+                    },
+                    {
+                      "variableLabel": "Number of characters per request including white spaces, but excluding SSML",
+                      "variableUnitLabel": "character(s)",
+                      "required": true,
+                      "variableId": "Number_of_characters_per_request"
+                    }
+                  ],
+                  "outputUnitLabel": "character(s) per month",
+                  "decimalPlaces": 0,
+                  "id": "billableChars"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "character(s) per month",
+                      "variableUnitLabel": "character(s)",
+                      "required": true,
+                      "variableId": "billableChars"
+                    },
+                    {
+                      "variableLabel": "price for standard text",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "polly_standard"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Standard Text-to-Speech)",
+                  "decimalPlaces": 2,
+                  "id": "TTs_Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "billableChars",
+                    "TTs_Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Standard Text-to-Speech",
+                  "decimalPlaces": 2,
+                  "id": "Total_TTS_FINAL",
+                  "subTotalRefer": "TTs_Cost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

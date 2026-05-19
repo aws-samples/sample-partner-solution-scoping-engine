@@ -1,0 +1,1978 @@
+{
+  "version": "0.0.55",
+  "serviceName": "Amazon Neptune",
+  "serviceCode": "amazonNeptune",
+  "type": "AWSService",
+  "slug": "neptune",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Neptune",
+    "Graph database"
+  ],
+  "serviceDescription": "Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "neptune-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/neptune/[currency]/current/neptune-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "neptuneworkbench-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/neptuneworkbench-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "neptune",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/neptune/[currency]/current/neptune.json"
+    },
+    {
+      "mappingDefinitionName": "neptune-iooptimization-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/neptune/[currency]/current/neptune-iooptimization-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "neptune-analytics-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/neptune/[currency]/current/neptune-analytics-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "sagemaker-instances",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-instances.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/neptune/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Neptune Cluster",
+      "description": "The database is provided with the instance type you select.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/neptune/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Cluster Configuration Option",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "description": "Database instance, storage and IO charges will vary based on the configuration. Review <a href='https://aws.amazon.com/rds/aurora/pricing/'>Amazon Aurora pricing</a> for more information",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "edition",
+                "label": "Neptune Cluster Configuration Option",
+                "options": [
+                  {
+                    "label": "Neptune Standard",
+                    "id": "neptuneStandard"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "l4bKzTaRRGQDgYQ1hkpaEJI3jPEGGCJUl_sh9yh35Rw"
+                      }
+                    },
+                    "label": "Neptune I/O-Optimized",
+                    "id": "neptuneIOoptimized"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "neptuneStandard",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "neptuneStandard"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Cost effective pricing for many applications with moderate I/O usage (I/O costs <25% of total database costs). Pay-per-request I/O charges apply. DB instance and storage prices don't include I/O usage.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraStandard"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "edition"
+                    },
+                    "neptuneIOoptimized"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Predictable pricing for all applications. Improved price-performance for I/O-intensive applications (I/O costs >25% of total database costs).No additional charges for read/write I/O operations. DB instance and storage prices includes I/O usage. <br> Amazon Neptune automatically accounts for the price difference between the Neptune Standard and I/O-Optimized Instances. To learn more, visit Amazon Neptune pricing page",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraIOoptimized"
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "configuration selected standard rehydration support",
+                "id": "configSelectedStandard_rehydrationSupport",
+                "operands": [
+                  {
+                    "variableId": "edition"
+                  },
+                  {
+                    "constant": "rehydrationVariable"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "editionSelected",
+                "label": "edition selected",
+                "originalId": "configSelectedStandard_rehydrationSupport",
+                "replacements": [
+                  {
+                    "originalString": "neptuneStandardrehydrationVariable",
+                    "replaceString": "neptuneStandard"
+                  },
+                  {
+                    "originalString": "neptuneIOoptimizedrehydrationVariable",
+                    "replaceString": "neptuneIOoptimized"
+                  },
+                  {
+                    "originalString": "rehydrationVariable",
+                    "replaceString": "neptuneStandard"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "editionSelected"
+              },
+              "neptuneStandard"
+            ]
+          },
+          "title": "Neptune Standard Configuration Cluster Instances",
+          "helpText": "Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Neptune Cluster cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "neptune-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Number of instances",
+                    "type": "textInput",
+                    "selectorId": "Number of nodes",
+                    "description": "Enter the number of instances in your cluster",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 16,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Neptune instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Usage (Neptune instances)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Neptune Standard Configuration Cluster Instances cost",
+                  "id": "FinalCostNeptune",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "editionSelected"
+              },
+              "neptuneIOoptimized"
+            ]
+          },
+          "title": "Neptune I/O Optimized Configuration Cluster Instances",
+          "helpText": "Amazon Neptune is a fast, reliable, fully managed graph database service that makes it easy to build and run applications that work with highly connected datasets.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Neptune Cluster cost",
+                "id": "columnFormIPM_io",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "neptune-iooptimization-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Number of instances",
+                    "type": "textInput",
+                    "selectorId": "Number of nodes",
+                    "description": "Enter the number of instances in your cluster",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 16,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Neptune instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Usage (Neptune instances)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Neptune I/O Optimized Configuration Cluster Instances cost",
+                  "id": "FinalCostNeptune_io",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "sagemaker-instances",
+                  "meteredUnit": "ml.t2.xlarge - Standard Instances - Notebook - Hrs"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "sagemaker-instances",
+                  "meteredUnit": "ml.t3.large - Standard Instances - Notebook - Hrs"
+                }
+              }
+            ]
+          },
+          "title": "Amazon Neptune Workbench",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Amazon Neptune Workbench lets you quickly and easily query your Neptune databases with Jupyter notebooks – a fully managed, interactive development environment with live code and narrative text.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Neptune Workbench instances cost",
+                "id": "columnFormIPM_1",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "neptuneworkbench-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm_1"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Instance Name": [
+                    "V CPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Number of workbench instances",
+                    "type": "textInput",
+                    "selectorId": "Number of workbench nodes",
+                    "description": "",
+                    "defaultValue": 0,
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 100000000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Workbench Instances",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Name",
+                    "withTags": [
+                      "V CPU",
+                      "Memory"
+                    ]
+                  },
+                  {
+                    "label": "Usage (Neptune Workbench instances)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut1"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Neptune Workbench instances cost",
+                  "id": "FinalCostNeptuneWorkBench",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "required": false,
+                  "refer": [
+                    "monthly_ipm_1"
+                  ],
+                  "subTotalRefer": "monthly_ipm_1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "l4bKzTaRRGQDgYQ1hkpaEJI3jPEGGCJUl_sh9yh35Rw"
+                }
+              }
+            ]
+          },
+          "title": "Standard Storage and IOs",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/#Database_storage_and_I.2FOs"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data stored",
+                "id": "Neptune_storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "description": "Enter the amount of storage for the cluster in a given month"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "editionSelected"
+                        },
+                        "neptuneStandard"
+                      ]
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "KVBkhjBTRvTUeEhFdY_XjFyoX5llt5F5K80fLKhxdYk"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of I/O operations (Requests)",
+                "id": "NumberOfRequests",
+                "options": [
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter total number of I/Os in millions",
+                "description": "Enter the number of IOs (in millions) for the cluster in a given month"
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "storageMeteredUnitName",
+                "label": "storage metered unit name",
+                "originalId": "configSelectedStandard_rehydrationSupport",
+                "replacements": [
+                  {
+                    "originalString": "neptuneStandardrehydrationVariable",
+                    "replaceString": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                  },
+                  {
+                    "originalString": "neptuneIOoptimizedrehydrationVariable",
+                    "replaceString": "l4bKzTaRRGQDgYQ1hkpaEJI3jPEGGCJUl_sh9yh35Rw"
+                  },
+                  {
+                    "originalString": "rehydrationVariable",
+                    "replaceString": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for Storage Rate",
+                "mappingDefinitionName": "neptune",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "StorageRate_Price",
+                "refers": [
+                  {
+                    "variableLabel": "storage metered unit name",
+                    "variableId": "storageMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for Storage Rate single price point",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                },
+                "id": "StorageRate_PriceSinglePricePoint"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Storage Rate IO optimized",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "l4bKzTaRRGQDgYQ1hkpaEJI3jPEGGCJUl_sh9yh35Rw"
+                },
+                "id": "StorageRate_Price_IOoptimized"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Backup storage",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "8iEfk94nt1jM2lHj3K5H5sXY6QThFLylpL9wZ9UhIpM"
+                },
+                "id": "BackupstorageNeptune_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for IO Rate",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "KVBkhjBTRvTUeEhFdY_XjFyoX5llt5F5K80fLKhxdYk"
+                },
+                "id": "IORate_Price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Neptune_storageAmount",
+                    "NumberOfRequests",
+                    "storageMeteredUnitName",
+                    "StorageRate_Price",
+                    "StorageRate_PriceSinglePricePoint",
+                    "StorageRate_Price_IOoptimized",
+                    "BackupstorageNeptune_Price",
+                    "IORate_Price"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvNeptune"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data stored",
+                      "variableUnitLabel": "GB-month",
+                      "required": true,
+                      "variableId": "Neptune_storageAmount"
+                    },
+                    {
+                      "variableLabel": "price for Storage Rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "StorageRate_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "StorageCostBill"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of I/O operations (Requests)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "NumberOfRequests"
+                    },
+                    {
+                      "variableLabel": "price for IO Rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "IORate_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (I/O rate cost)",
+                  "decimalPlaces": 6,
+                  "id": "IOCostBill"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "StorageCostBill"
+                    },
+                    {
+                      "variableLabel": "[currency] (I/O rate cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "IOCostBill"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyStorage"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "StorageCostBill",
+                    "IOCostBill",
+                    "AddAllmonthlyStorage"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage and IO cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageNepTot",
+                  "subTotalRefer": "AddAllmonthlyStorage"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": " Backup Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/#Backup_storage"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Backup storage",
+                "id": "Neptune_BackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "description": "Enter the amount of backup storage in a given month"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "8iEfk94nt1jM2lHj3K5H5sXY6QThFLylpL9wZ9UhIpM"
+                },
+                "id": "Backupstorage_Price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Neptune_BackupStorage",
+                    "Backupstorage_Price"
+                  ],
+                  "subTotalRefer": "AddAllmonthlyStorage",
+                  "id": "UnitConvNeptuneBS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB-month",
+                      "required": true,
+                      "variableId": "Neptune_BackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for Backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Backupstorage_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (backup storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "backUpStorageBill"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "backUpStorageBill"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageNepTot_BS",
+                  "subTotalRefer": "backUpStorageBill"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    },
+    {
+      "deniedPartitions": [
+        "aws-iso",
+        "aws-iso-b",
+        "aws-cn"
+      ],
+      "title": "Neptune Serverless",
+      "description": "Database capacity automatically scales up or down to meet your application needs.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/neptune/pricing/"
+        }
+      },
+      "id": "neptuneServerlessCompatible",
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                }
+              }
+            ]
+          },
+          "title": "Serverless Configuration Option",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "description": "Database instance, storage and IO charges will vary based on the configuration. Review <a href='https://aws.amazon.com/rds/aurora/pricing/'>Amazon Aurora pricing</a> for more information",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "id": "editionServerless",
+                "label": "Neptune Serverless Configuration Option",
+                "options": [
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                      }
+                    },
+                    "label": "Neptune Serverless Standard",
+                    "id": "neptuneServerlessStandard"
+                  },
+                  {
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                      }
+                    },
+                    "label": "Neptune Serverless I/O-Optimized",
+                    "id": "neptuneServerlessIOoptimized"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "neptuneServerlessStandard",
+                "description": "",
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "editionServerless"
+                    },
+                    "neptuneServerlessStandard"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Cost effective pricing for many applications with moderate I/O usage (I/O costs <25% of total database costs). Pay-per-request I/O charges apply. DB instance and storage prices don't include I/O usage.",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraStandardServerless"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "editionServerless"
+                    },
+                    "neptuneServerlessIOoptimized"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": "Predictable pricing for all applications. Improved price-performance for I/O-intensive applications (I/O costs >25% of total database costs).No additional charges for read/write I/O operations. DB instance and storage prices includes I/O usage. <br> Amazon Neptune automatically accounts for the price difference between the Neptune Standard and I/O-Optimized Instances. To learn more, visit Amazon Neptune pricing page",
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "isDismissable": true,
+                "id": "userTypeInfoAuroraIOoptimizedServerless"
+              },
+              {
+                "type": "pricing",
+                "label": "price for neptune serverless standard configuration",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                },
+                "id": "neptuneServerlessPriceStandardConfiguration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for neptune serverless IO optimized configuration",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                },
+                "id": "neptuneServerlessPriceIOoptimizedConfiguration"
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                }
+              }
+            ]
+          },
+          "title": "Amazon Neptune Serverless Setting",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Neptune Serverless is a serverless deployment option for Neptune Database. It is an on-demand, auto-scaling deployment option that automatically adjusts database capacity based on application needs.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of serverless instances",
+                "id": "numberOfServerless",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 16
+                },
+                "placeholder": "Enter number of instances",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Min NCUs per hour",
+                "id": "minNCUs",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 128
+                },
+                "placeholder": "Enter NCU amount per hour",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "averageIdleStateDuration",
+                "label": "Average hours of Idle state",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 24
+                },
+                "description": "",
+                "placeholder": "Enter avg hours"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average NCUs used per hour when active",
+                "id": "averageNCUs",
+                "displayInConfigSummary": false,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 128
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "label": "configuration selected rehydration support",
+                "id": "configSelected_rehydrationSupport",
+                "operands": [
+                  {
+                    "variableId": "editionServerless"
+                  },
+                  {
+                    "constant": "rehydrationVariable"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "serverlessMeteredUnitName",
+                "label": "serverless metered unit name",
+                "originalId": "configSelected_rehydrationSupport",
+                "replacements": [
+                  {
+                    "originalString": "neptuneServerlessStandardrehydrationVariable",
+                    "replaceString": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                  },
+                  {
+                    "originalString": "neptuneServerlessIOoptimizedrehydrationVariable",
+                    "replaceString": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                  },
+                  {
+                    "originalString": "rehydrationVariable",
+                    "replaceString": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for neptune serverless",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                },
+                "id": "neptuneServerlessPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "price for neptune serverless IO optimized",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "ZJO19oNq7DhpTPQJ7BAh7-eH_-fg5i2O4ZcmPrqb4dk"
+                },
+                "id": "neptuneServerlessPriceIOoptimized"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for neptune serverless",
+                "mappingDefinitionName": "neptune",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "neptune_serverless_price",
+                "refers": [
+                  {
+                    "variableLabel": "serverless metered unit name",
+                    "variableId": "serverlessMeteredUnitName"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "neptune_serverless",
+                  "refer": [
+                    "numberOfServerless",
+                    "minNCUs",
+                    "averageIdleStateDuration",
+                    "averageNCUs",
+                    "configSelected_rehydrationSupport",
+                    "serverlessMeteredUnitName",
+                    "neptuneServerlessPrice",
+                    "neptuneServerlessPriceIOoptimized",
+                    "neptune_serverless_price"
+                  ],
+                  "subTotalRefer": "backUpStorageBill"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Idle state cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of serverless instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "numberOfServerless"
+                    },
+                    {
+                      "variableLabel": "Min NCUs per hour",
+                      "variableUnitLabel": "NCU(s) per hour",
+                      "required": true,
+                      "variableId": "minNCUs"
+                    },
+                    {
+                      "variableLabel": "price for neptune serverless",
+                      "variableUnitLabel": "[currency] per NCU(s) per hour",
+                      "required": true,
+                      "variableId": "neptune_serverless_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Idle State Cost for cluster)",
+                  "decimalPlaces": 2,
+                  "id": "IdleStateCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Idle State Cost for cluster",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Idle state cost",
+                  "refer": "IdleStateCost",
+                  "id": "idleStateCostClusterVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Idle state cost per day",
+                  "operands": [
+                    {
+                      "variableLabel": "Idle State Cost for cluster",
+                      "variableUnitLabel": "[currency] for idle state cost for cluster",
+                      "required": true,
+                      "variableId": "idleStateCostClusterVar"
+                    },
+                    {
+                      "variableLabel": "Average hours of Idle state",
+                      "variableUnitLabel": "average hour(s) for idle state",
+                      "required": true,
+                      "variableId": "averageIdleStateDuration"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Idle State Cost per day)",
+                  "decimalPlaces": 2,
+                  "id": "IdleStateAvgCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Idle State Cost per day",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Idle state cost per day",
+                  "refer": "IdleStateAvgCost",
+                  "id": "idleStateCostAvgVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "activeHoursPerDay",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "constant": 24,
+                      "constantUnitLabel": "hours"
+                    },
+                    {
+                      "variableLabel": "Average hours of Idle state",
+                      "variableId": "averageIdleStateDuration",
+                      "variableUnitLabel": "average hours",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "active hours per day",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Serverless usage cost",
+                  "operands": [
+                    {
+                      "variableLabel": "active hours per day",
+                      "variableUnitLabel": "active hours per day",
+                      "required": true,
+                      "variableId": "activeHoursPerDay"
+                    },
+                    {
+                      "variableLabel": "Average NCUs used per hour when active",
+                      "variableUnitLabel": "average hour(s) per hour when active",
+                      "required": true,
+                      "variableId": "averageNCUs"
+                    },
+                    {
+                      "variableLabel": "price for neptune serverless",
+                      "variableUnitLabel": "[currency] per NCU(s) per hour",
+                      "required": true,
+                      "variableId": "neptune_serverless_price"
+                    },
+                    {
+                      "variableLabel": "Number of serverless instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "numberOfServerless"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Serverless usage cost)",
+                  "decimalPlaces": 2,
+                  "id": "serverlessUsageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Serverless Usage Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Serverless usage cost",
+                  "refer": "serverlessUsageCost",
+                  "id": "serverlessUsageCostVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Idle State Cost per day",
+                      "variableUnitLabel": "idle state cost per day",
+                      "required": true,
+                      "variableId": "idleStateCostAvgVar"
+                    },
+                    {
+                      "variableLabel": "Serverless Usage Cost",
+                      "variableUnitLabel": "serverless usage cost",
+                      "required": true,
+                      "variableId": "serverlessUsageCostVar"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total Cost Per Day)",
+                  "decimalPlaces": 2,
+                  "id": "totalUsageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Usage Cost per Day",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "[currency] (Total Cost Per Day)",
+                  "refer": "totalUsageCost",
+                  "id": "totalUsagePerDayVar"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "finalMonthlyUsageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Total Cost Per Day)",
+                      "variableId": "totalUsageCost",
+                      "variableUnitLabel": "total usage cost per day",
+                      "required": true
+                    },
+                    {
+                      "constant": 30,
+                      "constantUnitLabel": "days in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly usage cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "IdleStateCost",
+                    "idleStateCostClusterVar",
+                    "IdleStateAvgCost",
+                    "idleStateCostAvgVar",
+                    "activeHoursPerDay",
+                    "serverlessUsageCost",
+                    "serverlessUsageCostVar",
+                    "totalUsageCost",
+                    "totalUsagePerDayVar",
+                    "finalMonthlyUsageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Neptune Serverless Pricing",
+                  "decimalPlaces": 2,
+                  "id": "naptuneServerlessCost",
+                  "subTotalRefer": "finalMonthlyUsageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage and IOs",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/#Database_storage_and_I.2FOs"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data stored",
+                "id": "Neptune_storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "description": "Enter the amount of storage for the cluster in a given month"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "serverlessMeteredUnitName"
+                        },
+                        "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                      ]
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "neptune",
+                        "meteredUnit": "KVBkhjBTRvTUeEhFdY_XjFyoX5llt5F5K80fLKhxdYk"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of I/O operations (Requests)",
+                "id": "NumberOfRequests",
+                "options": [
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter total number of I/Os in millions",
+                "description": "Enter the number of IOs (in millions) for the cluster in a given month"
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "serverlessStorageMeteredUnitName",
+                "label": "serverless storage metered unit name",
+                "originalId": "configSelected_rehydrationSupport",
+                "replacements": [
+                  {
+                    "originalString": "neptuneServerlessStandardrehydrationVariable",
+                    "replaceString": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                  },
+                  {
+                    "originalString": "neptuneServerlessIOoptimizedrehydrationVariable",
+                    "replaceString": "l4bKzTaRRGQDgYQ1hkpaEJI3jPEGGCJUl_sh9yh35Rw"
+                  },
+                  {
+                    "originalString": "rehydrationVariable",
+                    "replaceString": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "price for Storage Rate",
+                "mappingDefinitionName": "neptune",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "StorageRate_Price",
+                "refers": [
+                  {
+                    "variableLabel": "serverless storage metered unit name",
+                    "variableId": "serverlessStorageMeteredUnitName"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "label": "price for Storage Rate Single Price Point",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "JM_nH7CYSLNwiu2vSr-ik2He5UqAljSqtsQW5jrWj0k"
+                },
+                "id": "StorageRate_PriceSinglePricePoint"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Backup storage",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "8iEfk94nt1jM2lHj3K5H5sXY6QThFLylpL9wZ9UhIpM"
+                },
+                "id": "BackupstorageIO_Price"
+              },
+              {
+                "type": "pricing",
+                "label": "price for IO Rate",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "KVBkhjBTRvTUeEhFdY_XjFyoX5llt5F5K80fLKhxdYk"
+                },
+                "id": "IORate_Price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Neptune_storageAmount",
+                    "NumberOfRequests",
+                    "serverlessStorageMeteredUnitName",
+                    "StorageRate_Price",
+                    "StorageRate_PriceSinglePricePoint",
+                    "BackupstorageIO_Price",
+                    "IORate_Price"
+                  ],
+                  "subTotalRefer": "finalMonthlyUsageCost",
+                  "id": "UnitConvNeptune"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data stored",
+                      "variableUnitLabel": "GB-month",
+                      "required": true,
+                      "variableId": "Neptune_storageAmount"
+                    },
+                    {
+                      "variableLabel": "price for Storage Rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "StorageRate_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "StorageCostBill"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of I/O operations (Requests)",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "NumberOfRequests"
+                    },
+                    {
+                      "variableLabel": "price for IO Rate",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "IORate_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (I/O rate cost)",
+                  "decimalPlaces": 6,
+                  "id": "IOCostBill"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "StorageCostBill"
+                    },
+                    {
+                      "variableLabel": "[currency] (I/O rate cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "IOCostBill"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "AddAllmonthlyStorage"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "StorageCostBill",
+                    "IOCostBill",
+                    "AddAllmonthlyStorage"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage and IO cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageNepTot",
+                  "subTotalRefer": "AddAllmonthlyStorage"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "BFXjcwWfaMyrkacpLhwgp8tRhGe82gxzwyJeWLRPKS8"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "neptune",
+                  "meteredUnit": "8iEfk94nt1jM2lHj3K5H5sXY6QThFLylpL9wZ9UhIpM"
+                }
+              }
+            ]
+          },
+          "title": " Backup Storage",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/#Backup_storage"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Backup storage",
+                "id": "Neptune_BackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "description": "Enter the amount of backup storage in a given month"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "neptune",
+                "meteredUnit": {
+                  "allRegions": "8iEfk94nt1jM2lHj3K5H5sXY6QThFLylpL9wZ9UhIpM"
+                },
+                "id": "Backupstorage_Price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Neptune_BackupStorage",
+                    "Backupstorage_Price"
+                  ],
+                  "subTotalRefer": "AddAllmonthlyStorage",
+                  "id": "UnitConvNeptuneBS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB-month",
+                      "required": true,
+                      "variableId": "Neptune_BackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for Backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Backupstorage_Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (backup storage cost)",
+                  "decimalPlaces": 6,
+                  "id": "backUpStorageBill"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "backUpStorageBill"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageNepTot_BS",
+                  "subTotalRefer": "backUpStorageBill"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "deniedPartitions": [
+        "aws",
+        "aws-iso-f",
+        "aws-cn",
+        "aws-iso",
+        "aws-iso-b"
+      ],
+      "title": "Neptune Analytics",
+      "description": "The graph is provisioned to support the instance you select.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/neptune/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Neptune Analytics",
+          "helpText": "Neptune Analytics is an analytics database engine for Neptune to perform fast analytics operations over tens of billions of graph connections in seconds.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/neptune/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "Neptune Analytics cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "neptune-analytics-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm_analytics"
+                },
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": "m-NCU",
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Memory-Optimized Neptune Credit Units (m-NCU)",
+                    "type": "dropDown",
+                    "selectorId": "m-NCU",
+                    "exportValueAs": "count",
+                    "calculationLabel": "credit unit(s)"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "m-NCU Value",
+                  "displayInConfigSummary": false,
+                  "refer": "count",
+                  "referLabel": "Memory-Optimized Neptune Credit Units (m-NCU)",
+                  "id": "mNCU_Value"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "IPMSupported": true,
+                  "outputUnitLabel": "selected instance",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Neptune Analytics cost",
+                  "refer": "monthly_ipm_analytics",
+                  "id": "mNCUSelected"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Neptune Analytics cost",
+                  "id": "FinalCostNeptuneAnalytics",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm_analytics"
+                  ],
+                  "subTotalRefer": "monthly_ipm_analytics"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_analytics"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-us-gov"
+  ]
+}

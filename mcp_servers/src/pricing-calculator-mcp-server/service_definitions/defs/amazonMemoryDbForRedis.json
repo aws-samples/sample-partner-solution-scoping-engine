@@ -1,0 +1,684 @@
+{
+  "version": "0.0.43",
+  "serviceName": "Amazon MemoryDB",
+  "serviceCode": "amazonMemoryDbForRedis",
+  "type": "AWSService",
+  "slug": "memorydb",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "eu-south-1",
+    "sa-east-1"
+  ],
+  "searchKeywords": [
+    "memorydb",
+    "Amazon MemoryDB for Redis"
+  ],
+  "serviceDescription": "Amazon MemoryDB is a Redis OSS compatible, durable, in-memory database that delivers ultra-fast performance and Multi-AZ durability.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "memorydb-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/memorydb/[currency]/current/memorydb-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "memorydb-instance",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/memorydb/[currency]/current/memorydb-instance.json"
+    },
+    {
+      "mappingDefinitionName": "memorydb-datatiering-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/memorydb/[currency]/current/memorydb-datatiering-calc/metadata.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/memorydb/"
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/memorydb/"
+        }
+      },
+      "cards": [
+        {
+          "title": "MemoryDB Cluster",
+          "helpText": "On-demand nodes let you pay by the instance hour with no long-term commitments or upfront fees. This frees you from the costs and complexities of planning, purchasing, and maintaining hardware, and transforms what are commonly large fixed costs into much smaller variable costs. The node type impacts the compute, in-memory data storage capacity, and network throughput available for your MemoryDB cluster.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/memorydb/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "MemoryDB Cluster cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "memorydb-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm",
+                  "upfront": "upfront_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront",
+                        "Unit": "Hrs"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "Instance Family",
+                    "vCPU",
+                    "Memory",
+                    "Network Performance"
+                  ]
+                },
+                "secondaryKey": [
+                  "Instance Family",
+                  "TermType",
+                  "PurchaseOption",
+                  "LeaseContractLength"
+                ],
+                "row": [
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "Instance Family",
+                      "vCPU",
+                      "Memory",
+                      "Network Performance"
+                    ]
+                  },
+                  {
+                    "label": "Number of nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of nodes",
+                    "description": "Enter the number of nodes in your cluster including replica nodes",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 500,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOutDT",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances."
+                  },
+                  {
+                    "label": "Instance Family",
+                    "type": "dropDown",
+                    "selectorId": "Instance Family",
+                    "exportValueAs": "instanceFamily"
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "exportValueAs": "LeaseContractLength"
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "dependent": "LeaseContractLength",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MemoryDB Cluster cost",
+                  "id": "FinalCostMemoryDB",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "MemoryDB Cluster upfront cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipm",
+                  "id": "FinalCostMemoryDBUpfront"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.12xlarge Memory optimized datatiering"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.16xlarge Memory optimized datatiering"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.2xlarge Memory optimized datatiering"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.4xlarge Memory optimized datatiering"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.8xlarge Memory optimized datatiering"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "memorydb-instance",
+                  "meteredUnit": "db r6gd.xlarge Memory optimized datatiering"
+                }
+              }
+            ]
+          },
+          "title": "Data tiering cluster settings",
+          "helpText": "Amazon MemoryDB helps seamlessly deploy, run, and scale popular open source compatible in-memory data stores. Build data-intensive apps or improve the performance of your existing apps by retrieving data from high throughput and low latency in-memory data stores.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/memorydb/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Enter a number of nodes to add data tiering instances to your estimate.",
+                "id": "dt_bodyText"
+              },
+              {
+                "id": "columnFormIPMDT",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "memorydb-datatiering-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipmDT",
+                  "upfront": "upfront_ipmDT"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "No Upfront": "Hrs",
+                    "All Upfront": "Quantity",
+                    "Partial Upfront": [
+                      "Quantity",
+                      "Hrs"
+                    ]
+                  },
+                  "riPricingTypes": {
+                    "hourly": [
+                      {
+                        "TermType": "OnDemand"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "No Upfront",
+                        "Unit": "Hrs"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Hrs"
+                      }
+                    ],
+                    "upfront": [
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "All Upfront",
+                        "Unit": "Quantity"
+                      },
+                      {
+                        "TermType": "Reserved",
+                        "PurchaseOption": "Partial Upfront",
+                        "Unit": "Quantity"
+                      }
+                    ]
+                  }
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "Instance Family",
+                    "vCPU",
+                    "Memory",
+                    "Network Performance",
+                    "SSD"
+                  ]
+                },
+                "secondaryKey": [
+                  "Cache Engine",
+                  "Instance Family",
+                  "TermType",
+                  "LeaseContractLength",
+                  "PurchaseOption"
+                ],
+                "row": [
+                  {
+                    "label": "Nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 250,
+                      "required": false
+                    },
+                    "defaultValue": 1,
+                    "placeholder": "Enter amount",
+                    "exportValueAs": "countDT"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory",
+                      "Network Performance",
+                      "SSD"
+                    ]
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOutDT",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances."
+                  },
+                  {
+                    "label": "Pricing model",
+                    "type": "dropDown",
+                    "selectorId": "TermType",
+                    "exportValueAs": "pricingModel",
+                    "mappingValue": {
+                      "Reserved": "Reserved",
+                      "OnDemand": "Hourly"
+                    }
+                  },
+                  {
+                    "label": "Term",
+                    "type": "dropDown",
+                    "selectorId": "LeaseContractLength",
+                    "exportValueAs": "LeaseContractLength"
+                  },
+                  {
+                    "label": "Purchase option",
+                    "type": "dropDown",
+                    "dependent": "LeaseContractLength",
+                    "selectorId": "PurchaseOption",
+                    "exportValueAs": "purchaseOption"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipmDT"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MemoryDB Data Tiering instance cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipmDT",
+                  "id": "amazonmemorydb_MonthlyCostDisplayDT"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "upfront_ipmDT"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Upfront",
+                  "label": "MemoryDB Data Tiering instance cost Upfront",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "upfront_ipmDT",
+                  "id": "amazonmemorydb_UpfrontCostDisplayDT"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Written",
+          "helpText": "You pay only for the volume of data (in GB) you write to your MemoryDB cluster. This data includes the Redis key, value, and command volume. There are no associated costs for reads.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/memorydb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data Written",
+                "id": "Data_Written",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter Data Written amount",
+                "description": "Enter the amount of data written in a given month to your MemoryDB cluster"
+              },
+              {
+                "type": "pricing",
+                "label": "price for Data Written",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "memorydb-instance",
+                "meteredUnit": {
+                  "allRegions": "Data Written per GB"
+                },
+                "id": "dw_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Data_Written",
+                    "dw_price"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvDw"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data Written",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "Data_Written"
+                    },
+                    {
+                      "variableLabel": "price for Data Written",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "dw_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (data written cost)",
+                  "decimalPlaces": 2,
+                  "id": "DWCOST"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "DWCOST"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data written cost",
+                  "decimalPlaces": 2,
+                  "id": "DWmemdbTot_BS",
+                  "subTotalRefer": "DWCOST"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": " Snapshot Storage",
+          "helpText": "Snapshot storage for a MemoryDB cluster is the storage associated with the automated and user-initiated snapshots you take.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/memorydb/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Snapshot storage",
+                "id": "Mdb_BackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "description": "Enter the amount of snapshot storage that is in excess of the cluster's free snapshot storage in a given month"
+              },
+              {
+                "type": "pricing",
+                "label": "price for snapshot storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "memorydb-instance",
+                "meteredUnit": {
+                  "allRegions": "Amazon S3 per GB-Mo"
+                },
+                "id": "sn_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Mdb_BackupStorage",
+                    "sn_price"
+                  ],
+                  "subTotalRefer": "DWCOST",
+                  "id": "UnitConvNeptuneBS"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Snapshot storage",
+                      "variableUnitLabel": "GB-month",
+                      "required": true,
+                      "variableId": "Mdb_BackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for snapshot storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "sn_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (snapshot storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "snapshotUpStorageBill"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "snapshotUpStorageBill"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Snapshot storage cost",
+                  "decimalPlaces": 2,
+                  "id": "StoragememdbTot_BS",
+                  "subTotalRefer": "snapshotUpStorageBill"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

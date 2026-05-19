@@ -1,0 +1,335 @@
+{
+  "version": "0.0.17",
+  "serviceName": "Lightsail Containers",
+  "serviceCode": "lightsailContainers",
+  "subType": "subService",
+  "type": "AWSService",
+  "regions": [
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3"
+  ],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/lightsail/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "lightsail-containers-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail-containers-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "lightsail",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lightsail/[currency]/current/lightsail.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Containers",
+      "id": "lightsailContainers",
+      "cards": [
+        {
+          "title": "Containers",
+          "helpText": "Run your containerized apps in just a few clicks. Below are the prices for each node of your container service.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/lightsail/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The price estimation below does not include free tier offerings.",
+                "id": "containersText"
+              },
+              {
+                "label": "Container configuration",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "disableCalculation": false,
+                "mappingDefinitionName": "lightsail-containers-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPricingTypes": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Power": [
+                    "vCPU",
+                    "Memory",
+                    "Data Transfer Quota"
+                  ]
+                },
+                "secondaryKey": [
+                  "Operating System"
+                ],
+                "prioritizedKey": {
+                  "Power": 100
+                },
+                "row": [
+                  {
+                    "label": "Number of containers",
+                    "type": "textInput",
+                    "selectorId": "Number of Instances",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 1000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Operating system",
+                    "type": "dropDown",
+                    "selectorId": "Operating System",
+                    "defaultValue": "Linux"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Power",
+                    "withTags": [
+                      "vCPU",
+                      "Memory",
+                      "Data Transfer Quota"
+                    ]
+                  },
+                  {
+                    "label": "Container utilization",
+                    "type": "utilization",
+                    "description": "",
+                    "displayInConfigSummary": false,
+                    "defaultValue": {
+                      "unit": "730",
+                      "selectedId": "Hours/Month"
+                    },
+                    "exportValueAs": "utilization"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lightsail",
+                    "meteredUnit": "ContainerSvc Data Transfer Outbound to Global"
+                  }
+                },
+                "label": "Data transfer per container",
+                "id": "containerDataTranserAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "defaultValue": 500,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 500,
+                  "maxValue": 10240
+                },
+                "placeholder": "Enter amount",
+                "description": "Each container service includes a data transfer quota per month. Data transfer in excess of the quota will result in an overage charge.",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "id": "lightsailContainerOveragePrice",
+                "label": "Price container overage per GB",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "lightsail",
+                "meteredUnit": {
+                  "allRegions": "ContainerSvc Data Transfer Outbound to Global"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "containersText",
+                    "columnFormIPM",
+                    "count",
+                    "utilization",
+                    "containerDataTranserAmount",
+                    "lightsailContainerOveragePrice"
+                  ],
+                  "id": "containers_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataTransferOverage",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableId": "containerDataTranserAmount",
+                      "variableLabel": "Data transfer per container",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "constant": 500,
+                      "constantUnitLabel": "GB data transfer quota",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "GB data transfer overage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "dataTransferOverageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "dataTransferOverage",
+                      "variableLabel": "GB data transfer overage",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableId": "lightsailContainerOveragePrice",
+                      "variableLabel": "Price container overage per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] data transfer overage",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "IPMSupported": true,
+                  "outputUnitLabel": "container IPM variable",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Container configuration",
+                  "refer": "monthly_ipm",
+                  "id": "containerInstanceSelected"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "lightsailContainerTotalCost",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "containerInstanceSelected",
+                      "variableLabel": "container IPM variable",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "dataTransferOverageCost",
+                      "variableLabel": "[currency] data transfer overage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm",
+                    "dataTransferOverage",
+                    "dataTransferOverageCost",
+                    "lightsailContainerTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "IPMSupported": true,
+                  "required": true,
+                  "label": "Lightsail container cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "lightsailContainerTotalCost",
+                  "id": "containerCostDisplay"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

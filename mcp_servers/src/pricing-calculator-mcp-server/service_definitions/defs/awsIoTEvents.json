@@ -1,0 +1,692 @@
+{
+  "version": "0.0.16",
+  "serviceName": {
+    "aws": "AWS IoT Events",
+    "aws-us-gov": "AWS IoT Events",
+    "aws-cn": "Amazon IoT Events"
+  },
+  "serviceCode": "awsIoTEvents",
+  "type": "AWSService",
+  "slug": "iot-events",
+  "regions": [],
+  "searchKeywords": [
+    "iot",
+    "iot events"
+  ],
+  "serviceDescription": {
+    "aws": "AWS IoT Events makes it easy to detect and respond to changes indicated by IoT sensors and applications – such as malfunctioning machinery, a stuck conveyor belt, or a slowdown in production output – and automatically trigger actions or alerts in response.",
+    "aws-cn": "Amazon Web Services IoT Events makes it easy to detect and respond to changes indicated by IoT sensors and applications – such as malfunctioning machinery, a stuck conveyor belt, or a slowdown in production output – and automatically trigger actions or alerts in response.",
+    "aws-us-gov": "AWS IoT Events makes it easy to detect and respond to changes indicated by IoT sensors and applications – such as malfunctioning machinery, a stuck conveyor belt, or a slowdown in production output – and automatically trigger actions or alerts in response."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/iot-events/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "iotevents",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/iotevents/[currency]/current/iotevents.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/iot-events/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "title": "IoT Events",
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Message evaluation are metered in 1KB increments, and each message can trigger up to 2 external actions. Each set of 2 additional actions is metered as a new message evaluation.",
+                "id": "messageingTxt"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "AWS IoT Events can trigger actions to external AWS services when it detects a specified event or a state transition, such as invoking an AWS Lambda function to turn on a light when an occupancy sensor detects motion. There is no additional charge for triggering up to 2 such actions for each message evaluation. Incoming messages that trigger more than 2 actions are metered as additional message evaluations, in increments of 2 actions triggered. For example, the evaluation of a single message that triggers 2 actions will be treated as 1 message evaluation. The evaluation of a message that triggers 4 actions will be treated as 2 message evaluations.",
+                "id": "actionTrigText"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfDevices",
+                "label": "Number of devices",
+                "description": "Enter the number of devices you will utilize.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfMessages",
+                "label": "Number of messages for a device including timer expiry messages",
+                "description": "Enter the number of messages expected into AWS IoT events by the device or internally triggered by timer expiry in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 30000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfModels",
+                "label": "Number of event detector models per device",
+                "description": "Enter number of event detector models per device.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 150
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each message",
+                "id": "dataPerMessage",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1e-06,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Messages are metered in 1 KB increments."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_actions_triggered_per_message",
+                "label": "Number of actions triggered per message",
+                "description": "Enter number of actions per message evaluation.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for messages per month",
+                "id": "tieredMessagePricing",
+                "mappingDefinitionName": "iotevents",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "BatchPutMessage 0 Upto 100000000 Messages"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": 500000000,
+                      "meteredUnit": "BatchPutMessage 100000000 Upto 500000000 Messages"
+                    },
+                    {
+                      "startOfTier": 500000001,
+                      "endOfTier": 5000000000,
+                      "meteredUnit": "BatchPutMessage 500000000 Upto 5000000000 Messages"
+                    },
+                    {
+                      "startOfTier": 5000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "BatchPutMessage 5000000000 Upto Inf Messages"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "messageingTxt",
+                    "actionTrigText",
+                    "numberOfDevices",
+                    "numberOfMessages",
+                    "numberOfModels",
+                    "dataPerMessage",
+                    "Number_of_actions_triggered_per_message",
+                    "tieredMessagePricing"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvIotEvent"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "dataPerMessage",
+                      "variableLabel": "Average size of each message",
+                      "variableUnitLabel": "KB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "id": "msgRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messageMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDevices",
+                      "variableLabel": "Number of devices",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfMessages",
+                      "variableLabel": "Number of messages for a device including timer expiry messages",
+                      "variableUnitLabel": "messages per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfModels",
+                      "variableLabel": "Number of event detector models per device",
+                      "variableUnitLabel": "model(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "msgRounded",
+                      "variableLabel": "KB",
+                      "variableUnitLabel": "(message size in KB)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable message evaluations",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messageActionMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfMessages",
+                      "variableLabel": "Number of messages for a device including timer expiry messages",
+                      "variableUnitLabel": "messages per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "actions conversion factor"
+                    },
+                    {
+                      "variableId": "Number_of_actions_triggered_per_message",
+                      "variableLabel": "Number of actions triggered per message",
+                      "variableUnitLabel": "actions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "billable messages for action",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundDown",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundDown",
+                  "operands": [
+                    {
+                      "variableId": "messageActionMultiple",
+                      "variableLabel": "billable messages for action",
+                      "variableUnitLabel": "messages for action",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "messages for action",
+                  "id": "msgActionRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalbillableMesaageswithActions",
+                  "allowZero": true,
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "messageMultiple",
+                      "variableLabel": "total billable message evaluations",
+                      "variableUnitLabel": "message evaluations",
+                      "required": false
+                    },
+                    {
+                      "variableId": "msgActionRounded",
+                      "variableLabel": "messages for action",
+                      "variableUnitLabel": "additional message evaluations",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total billable messages",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredMsgMonthlyCost",
+                  "tieredPricingRefer": "tieredMessagePricing",
+                  "tieredPricingReferLabel": "Price for messages per month",
+                  "inputRefer": "totalbillableMesaageswithActions",
+                  "inputReferLabel": "total billable messages",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "message(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "msgRounded",
+                    "messageMultiple",
+                    "messageActionMultiple",
+                    "msgActionRounded",
+                    "totalbillableMesaageswithActions",
+                    "tieredMsgMonthlyCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Message cost",
+                  "decimalPlaces": 2,
+                  "id": "messageTotalPrice",
+                  "subTotalRefer": "tieredMsgMonthlyCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws",
+            "aws-us-gov"
+          ],
+          "title": "IoT Events",
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Message evaluation are metered in 1KB increments, and each message can trigger up to 2 external actions. Each set of 2 additional actions is metered as a new message evaluation.",
+                "id": "messageingTxt"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "Amazon IoT Events can trigger actions to external Amazon Web services when it detects a specified event or a state transition, such as invoking an Amazon Lambda function to turn on a light when an occupancy sensor detects motion. There is no additional charge for triggering up to 2 such actions for each message evaluation. Incoming messages that trigger more than 2 actions are metered as additional message evaluations, in increments of 2 actions triggered. For example, the evaluation of a single message that triggers 2 actions will be treated as 1 message evaluation. The evaluation of a message that triggers 4 actions will be treated as 2 message evaluations.",
+                "id": "actionTrigText_cn"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfDevices_cn",
+                "label": "Number of devices",
+                "description": "Enter the number of devices you will utilize.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfMessages_cn",
+                "label": "Number of messages for a device including timer expiry messages",
+                "description": "Enter the number of messages expected into Amazon IoT events by the device or internally triggered by timer expiry in a month.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 30000000
+                }
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfModels_cn",
+                "label": "Number of event detector models per device",
+                "description": "Enter number of event detector models per device.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 150
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average size of each message",
+                "id": "dataPerMessage_cn",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1e-06,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Messages are metered in 1 KB increments."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_actions_triggered_per_message_cn",
+                "label": "Number of actions triggered per message",
+                "description": "Enter number of actions per message evaluation.",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price for messages per month",
+                "id": "tieredMessagePricing_cn",
+                "mappingDefinitionName": "iotevents",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000000,
+                      "meteredUnit": "BatchPutMessage 0 Upto 100000000 Messages"
+                    },
+                    {
+                      "startOfTier": 100000001,
+                      "endOfTier": 500000000,
+                      "meteredUnit": "BatchPutMessage 100000000 Upto 500000000 Messages"
+                    },
+                    {
+                      "startOfTier": 500000001,
+                      "endOfTier": 5000000000,
+                      "meteredUnit": "BatchPutMessage 500000000 Upto 5000000000 Messages"
+                    },
+                    {
+                      "startOfTier": 5000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "BatchPutMessage 5000000000 Upto Inf Messages"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "messageingTxt",
+                    "actionTrigText_cn",
+                    "numberOfDevices_cn",
+                    "numberOfMessages_cn",
+                    "numberOfModels_cn",
+                    "dataPerMessage_cn",
+                    "Number_of_actions_triggered_per_message_cn",
+                    "tieredMessagePricing_cn"
+                  ],
+                  "subTotalRefer": "tieredMsgMonthlyCost",
+                  "id": "UnitConvIotEvent_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "dataPerMessage_cn",
+                      "variableLabel": "Average size of each message",
+                      "variableUnitLabel": "KB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "KB",
+                  "id": "msgRounded_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messageMultiple_cn",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfDevices_cn",
+                      "variableLabel": "Number of devices",
+                      "variableUnitLabel": "devices",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfMessages_cn",
+                      "variableLabel": "Number of messages for a device including timer expiry messages",
+                      "variableUnitLabel": "messages per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfModels_cn",
+                      "variableLabel": "Number of event detector models per device",
+                      "variableUnitLabel": "model(s)",
+                      "required": true
+                    },
+                    {
+                      "variableId": "msgRounded_cn",
+                      "variableLabel": "KB",
+                      "variableUnitLabel": "(message size in KB)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total billable message evaluations",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "messageActionMultiple",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfMessages_cn",
+                      "variableLabel": "Number of messages for a device including timer expiry messages",
+                      "variableUnitLabel": "messages per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 0.5,
+                      "constantUnitLabel": "actions conversion factor"
+                    },
+                    {
+                      "variableId": "Number_of_actions_triggered_per_message_cn",
+                      "variableLabel": "Number of actions triggered per message",
+                      "variableUnitLabel": "actions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "billable messages for action",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundDown",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundDown",
+                  "operands": [
+                    {
+                      "variableId": "messageActionMultiple",
+                      "variableLabel": "billable messages for action",
+                      "variableUnitLabel": "messages for action",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "messages for action",
+                  "id": "msgActionRounded_cn"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalbillableMesaageswithActions_cn",
+                  "allowZero": true,
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "messageMultiple_cn",
+                      "variableLabel": "total billable message evaluations",
+                      "variableUnitLabel": "message evaluations",
+                      "required": false
+                    },
+                    {
+                      "variableId": "msgActionRounded_cn",
+                      "variableLabel": "messages for action",
+                      "variableUnitLabel": "additional message evaluations",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total billable messages",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "tieredMsgMonthlyCost_cn",
+                  "tieredPricingRefer": "tieredMessagePricing_cn",
+                  "tieredPricingReferLabel": "Price for messages per month",
+                  "inputRefer": "totalbillableMesaageswithActions_cn",
+                  "inputReferLabel": "total billable messages",
+                  "outputUnitLabel": "[currency]",
+                  "inputUnitLabel": "message(s)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "msgRounded_cn",
+                    "messageMultiple_cn",
+                    "messageActionMultiple",
+                    "msgActionRounded_cn",
+                    "totalbillableMesaageswithActions_cn",
+                    "tieredMsgMonthlyCost_cn"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Message cost",
+                  "decimalPlaces": 2,
+                  "id": "messageTotalPrice",
+                  "subTotalRefer": "tieredMsgMonthlyCost_cn"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

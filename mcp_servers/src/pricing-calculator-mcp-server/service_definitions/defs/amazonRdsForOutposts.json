@@ -1,0 +1,293 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Amazon RDS on AWS Outposts",
+  "serviceCode": "amazonRdsForOutposts",
+  "slug": "RDSOutposts",
+  "type": "AWSService",
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-east-1",
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [],
+  "serviceDescription": "Amazon Relational Database Service (Amazon RDS) on AWS Outposts allows you to deploy fully managed database instances in your on-premises environments. AWS Outposts is a fully managed service that extends AWS infrastructure, AWS services, APIs, and tools to virtually any datacenter, co-location space, or on-premises facility for a truly consistent hybrid experience. You can deploy Amazon RDS on Outposts to set up, operate, and scale Microsoft SQL Server, MySQL and PostgreSQL relational databases on premises, just as you would in the cloud. Amazon RDS on Outposts provides cost-efficient and resizable capacity for on-premises databases, while automating time-consuming administration tasks including infrastructure provisioning, database setup, patching, and backups, freeing you to focus on your applications.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rds-outposts-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-outposts-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "rds-storage-ops",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rds/[currency]/current/rds-storage-ops.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/rds/outposts/"
+    }
+  },
+  "hasDataTransfer": false,
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon RDS for AWS Outposts",
+      "description": "",
+      "id": "rdsForOutposts",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/rds/outposts/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Select number of RDS on Outposts instances",
+          "inputSection": {
+            "components": [
+              {
+                "label": "RDS for Outposts",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "rds-outposts-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "prioritizedKey": {
+                  "Instance Type": 200,
+                  "Database Engine": 100
+                },
+                "primaryKey": {
+                  "Instance Type": [
+                    "vCPU",
+                    "Memory"
+                  ]
+                },
+                "secondaryKey": [
+                  "Database Engine",
+                  "Database Edition",
+                  "Deployment Option"
+                ],
+                "row": [
+                  {
+                    "label": "Number of RDS for Outposts instances",
+                    "type": "textInput",
+                    "selectorId": "Number of Nodes",
+                    "description": "",
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 0,
+                      "maxValue": 1000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "autoSuggest",
+                    "selectorId": "Instance Type",
+                    "withTags": [
+                      "vCPU",
+                      "Memory"
+                    ],
+                    "exportValueAs": "instanceType"
+                  },
+                  {
+                    "label": "Utilization (On-Demand only)",
+                    "type": "utilization",
+                    "exportValueAs": "utilizationOut",
+                    "description": "With utilization, you still have to stop the instance to get the cost benefit. Utilization only affects OnDemand pricing for instances and not the storage, backups, etc."
+                  },
+                  {
+                    "label": "Database Engine",
+                    "type": "dropDown",
+                    "selectorId": "Database Engine",
+                    "exportValueAs": "databaseEngine"
+                  },
+                  {
+                    "label": "Database edition",
+                    "selectorId": "Database Edition",
+                    "type": "dropDown",
+                    "exportValueAs": "databaseEdition",
+                    "dependent": "Database Engine"
+                  },
+                  {
+                    "label": "Deployment option",
+                    "type": "dropDown",
+                    "selectorId": "Deployment Option",
+                    "exportValueAs": "deploymentStrategy",
+                    "dependent": "Database Engine"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "RDS for Outposts cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "amazonRdsForAwsOutposts_generated_0"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Additional Backup Storage",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "Backup storage for Amazon RDS for Outposts is the storage associated with your automated database backups and any customer-initiated DB snapshots. There is no additional charge for backup storage of up to 100% of your total database storage in the destination region and Outposts combined.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rds/outposts/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Additional backup storage",
+                "id": "additionalBackupStorage",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for backup storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rds-storage-ops",
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot"
+                },
+                "id": "priceForUnitBackupStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "additionalBackupStorage",
+                    "priceForUnitBackupStorage"
+                  ],
+                  "id": "amazonRdsForAwsOutposts_generated_1",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Additional backup storage",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "additionalBackupStorage"
+                    },
+                    {
+                      "variableLabel": "price for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceForUnitBackupStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalBackupStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalBackupStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional backup storage cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "totalBackupStorageCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

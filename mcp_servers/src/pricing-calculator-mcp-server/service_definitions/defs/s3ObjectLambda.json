@@ -1,0 +1,546 @@
+{
+  "version": "0.0.18",
+  "serviceName": "S3 Object Lambda",
+  "serviceCode": "s3ObjectLambda",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage",
+    "S3",
+    "s3"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    },
+    {
+      "mappingDefinitionName": "glacier",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glacier/[currency]/current/glacier.json"
+    },
+    {
+      "mappingDefinitionName": "lambda",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/lambda/[currency]/current/lambda.json"
+    },
+    {
+      "mappingDefinitionName": "s3glacierdeeparchive",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3glacierdeeparchive/[currency]/current/s3glacierdeeparchive.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "s3",
+              "meteredUnit": "Bytes Returned by OL APs per GB"
+            }
+          },
+          "title": "S3 Object Lambda",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "With S3 Object Lambda you can add your own code to S3 GET requests to modify and process data as it is returned to an application. For the first time, you can use custom code to modify the data returned by standard S3 GET requests to filter rows, dynamically resize images, redact confidential data, and much more. Powered by AWS Lambda functions, your code runs on infrastructure that is fully managed by AWS, eliminating the need to create and store derivative copies of your data or to run expensive proxies, all with no changes required to applications.",
+          "helpText": "With S3 Object Lambda you can add your own code to S3 GET requests to modify and process data as it is returned to an application. For the first time, you can use custom code to modify the data returned by standard S3 GET requests to filter rows, dynamically resize images, redact confidential data, and much more. Powered by AWS Lambda functions, your code runs on infrastructure that is fully managed by AWS, eliminating the need to create and store derivative copies of your data or to run expensive proxies, all with no changes required to applications.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude Free Tier discounts.",
+                "id": "_generated_0"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "s3",
+                        "meteredUnit": "GET and all other requests per Requests"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "lambda",
+                        "meteredUnit": "Lambda Requests"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "GET requests from S3",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of requests",
+                "id": "GET_requests_from_S3_Object_Lambda"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lambda",
+                    "meteredUnit": "Lambda Duration"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Duration that the Lambda function is set to execute per request (in ms)",
+                "id": "durationOfEachRequest_s3",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 900000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter duration in ms",
+                "description": "Duration is calculated as the time your code begins executing until it returns a response or otherwise terminates."
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "lambda",
+                    "meteredUnit": "Lambda Duration"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Amount of memory allocated to the Lambda function",
+                "id": "sizeOfMemoryAllocated_s3",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "mb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0.125,
+                  "maxValue": 10
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter the amount between 128 MB and 10 GB",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of data returned by S3 Object Lambda",
+                "id": "Size_of_data_returned_by_Lambda_function",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9.5367432e-07,
+                  "maxValue": 10000000
+                },
+                "placeholder": "Enter amount",
+                "description": "Enter size of data returned by S3 Object Lambda",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for lamda requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Requests"
+                },
+                "id": "_generated_1"
+              },
+              {
+                "type": "pricing",
+                "label": "price for lamda duration",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "lambda",
+                "meteredUnit": {
+                  "allRegions": "Lambda Duration"
+                },
+                "id": "_generated_2"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "GET and all other requests per Requests"
+                },
+                "label": "pricing for GET/Select and similar Requests",
+                "id": "_generated_3"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Bytes Returned by OL APs per GB"
+                },
+                "label": "pricing for OL per GB",
+                "id": "pricing_for_OL_per_GB"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "OL_UnitConv",
+                  "refer": [
+                    "_generated_0",
+                    "GET_requests_from_S3_Object_Lambda",
+                    "durationOfEachRequest_s3",
+                    "sizeOfMemoryAllocated_s3",
+                    "Size_of_data_returned_by_Lambda_function",
+                    "_generated_1",
+                    "_generated_2",
+                    "_generated_3",
+                    "pricing_for_OL_per_GB"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET requests from S3",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "GET_requests_from_S3_Object_Lambda"
+                    },
+                    {
+                      "variableLabel": "pricing for GET/Select and similar Requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "_generated_3"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Standard GET requests charges)",
+                  "decimalPlaces": 7,
+                  "id": "getCostS3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Amazon S3 GET request charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (S3 Standard GET requests charges)",
+                  "id": "s3getVarCost",
+                  "refer": "getCostS3",
+                  "decimalPlaces": 7
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET requests from S3",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "GET_requests_from_S3_Object_Lambda"
+                    },
+                    {
+                      "variableLabel": "Duration that the Lambda function is set to execute per request (in ms)",
+                      "variableUnitLabel": "ms",
+                      "required": true,
+                      "variableId": "durationOfEachRequest_s3"
+                    },
+                    {
+                      "constant": 0.001,
+                      "constantUnitLabel": "ms to sec conversion factor"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (seconds)",
+                  "decimalPlaces": 7,
+                  "id": "_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory allocated to the Lambda function",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "sizeOfMemoryAllocated_s3"
+                    },
+                    {
+                      "variableLabel": "total compute (seconds)",
+                      "variableUnitLabel": "seconds",
+                      "required": true,
+                      "variableId": "_generated_4"
+                    }
+                  ],
+                  "outputUnitLabel": "total compute (GB-s)",
+                  "decimalPlaces": 7,
+                  "id": "_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total compute (GB-s)",
+                      "variableUnitLabel": "GB-s",
+                      "required": true,
+                      "variableId": "_generated_5"
+                    },
+                    {
+                      "variableLabel": "price for lamda duration",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly compute charges)",
+                  "decimalPlaces": 7,
+                  "id": "_generated_6"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET requests from S3",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "GET_requests_from_S3_Object_Lambda"
+                    },
+                    {
+                      "variableLabel": "price for lamda requests",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly request charges)",
+                  "decimalPlaces": 7,
+                  "id": "_generated_7"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (monthly compute charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "_generated_6"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly request charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 7,
+                  "id": "_generated_8"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "AWS Lambda charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency]",
+                  "id": "s3LambdaVarCost",
+                  "refer": "_generated_8",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GET requests from S3",
+                      "variableUnitLabel": "GET requests in a month",
+                      "required": true,
+                      "variableId": "GET_requests_from_S3_Object_Lambda"
+                    },
+                    {
+                      "variableLabel": "Size of data returned by S3 Object Lambda",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "Size_of_data_returned_by_Lambda_function"
+                    },
+                    {
+                      "variableLabel": "pricing for OL per GB",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricing_for_OL_per_GB"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly S3 Object Lambda charges)",
+                  "decimalPlaces": 9,
+                  "id": "OL_Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "S3 Object Lambda charges",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (monthly S3 Object Lambda charges)",
+                  "id": "s3OlVarCost",
+                  "refer": "OL_Cost",
+                  "decimalPlaces": 9
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 Standard GET requests charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "getCostS3"
+                    },
+                    {
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "_generated_8"
+                    },
+                    {
+                      "variableLabel": "[currency] (monthly S3 Object Lambda charges)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "OL_Cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (monthly total charges)",
+                  "decimalPlaces": 7,
+                  "id": "OL_Cost_final"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "getCostS3",
+                    "s3getVarCost",
+                    "_generated_4",
+                    "_generated_5",
+                    "_generated_6",
+                    "_generated_7",
+                    "_generated_8",
+                    "s3LambdaVarCost",
+                    "OL_Cost",
+                    "s3OlVarCost",
+                    "OL_Cost_final"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "tot_OL_cost",
+                  "subTotalRefer": "OL_Cost_final"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,300 @@
+{
+  "version": "0.0.1",
+  "serviceName": "AWS Telco Network Builder",
+  "serviceCode": "awsTelcoNetworkBuilder",
+  "type": "AWSService",
+  "excludeZeroSubTotals": false,
+  "regions": [
+    "us-east-1"
+  ],
+  "searchKeywords": [
+    "API requests",
+    "managed network function item",
+    "MNFI",
+    "AWS TNB",
+    "CSPs",
+    "networks",
+    "telecom",
+    "tnb",
+    "telco"
+  ],
+  "serviceDescription": "AWS Telco Network Builder (TNB) helps communication service providers (CSPs) automate the deployment and management of their telco networks on AWS. You pay for two dimensions when using AWS TNB: by managed network function item (MNFI) hours and by number of API requests. You also incur additional charges for the other services you use with AWS TNB.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/tnb/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "telconetworkbuilder",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/telconetworkbuilder/[currency]/current/telconetworkbuilder.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "AWS Telco Network Builder",
+      "id": "template",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/tnb/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "telconetworkbuilder",
+              "meteredUnit": "MNFI Hourly"
+            }
+          },
+          "title": "Managed Network Function Items",
+          "bodyText": "",
+          "helpText": "You pay by the hour for each MNFI in your telco network. MNFI hourly charges begin when you instantiate the telco network that a network function belongs to. Hourly charges end when you terminate that telco network. Charges are prorated by the minute for partial hours.<br/><br/>You pay separately for AWS services that are needed to run network functions on the AWS infrastructure such as Amazon Elastic Compute Cloud (EC2), Elastic Load Balancing (ELB), and Amazon Simple Storage Service (S3).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/tnb/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfMNF",
+                "label": "Number of network functions in a month",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "description": "",
+                "placeholder": "Enter the number of network functions in a month"
+              },
+              {
+                "type": "pricing",
+                "id": "mnfiHourly",
+                "label": "Price for managed network function item",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "telconetworkbuilder",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "MNFI Hourly"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfMNF",
+                    "mnfiHourly"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "ConversionMNF"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalMNFhours",
+                  "operation": "multiplication",
+                  "variableName": "Total monthly MNFI hours",
+                  "operands": [
+                    {
+                      "variableId": "numberOfMNF",
+                      "variableLabel": "Number of network functions in a month",
+                      "variableUnitLabel": "MNFIs",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "MNFI hours",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCost_MNF",
+                  "operation": "multiplication",
+                  "variableName": "Total cost for manageed network functions",
+                  "operands": [
+                    {
+                      "variableId": "totalMNFhours",
+                      "variableLabel": "Total monthly MNFI hours",
+                      "variableUnitLabel": "MNFI hours",
+                      "required": true
+                    },
+                    {
+                      "variableId": "mnfiHourly",
+                      "variableLabel": "Price for managed network function item",
+                      "variableUnitLabel": "[currency] per MNFI",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalMNFhours",
+                    "totalCost_MNF"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total MNFI cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCostMNF1",
+                  "subTotalRefer": "totalCost_MNF"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "telconetworkbuilder",
+                  "meteredUnit": "API Calls from 0 to 45000"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "telconetworkbuilder",
+                  "meteredUnit": "API Calls from 45000 to Inf"
+                }
+              }
+            ]
+          },
+          "title": "API Requests",
+          "bodyText": "",
+          "helpText": "You can use the AWS Command Line Interface (CLI), AWS SDKs, or the AWS TNB console to make API calls, such as CREATE, UPLOAD, INSTANTIATE, TERMINATE, UPDATE, GET, POST, ENABLE/DISABLE, and LIST. Refer to the complete list of supported APIs in the <a href='https://docs.aws.amazon.com/tnb/' target='_blank'>documentation</a>. You pay for API requests when they exceed 45,000 requests per month, per AWS Region, across all the network functions that you manage using AWS TNB",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/tnb/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "numberOfAPIrequest",
+                "label": "Number of API requests in a month",
+                "displayInConfigSummary": true,
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1e+22
+                },
+                "description": "",
+                "placeholder": "Enter the number of API requests in a month"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "API request tiered pricing",
+                "id": "APITieredPrice",
+                "mappingDefinitionName": "telconetworkbuilder",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 45000,
+                      "meteredUnit": "API Calls from 0 to 45000"
+                    },
+                    {
+                      "startOfTier": 45001,
+                      "endOfTier": -1,
+                      "meteredUnit": "API Calls from 45000 to Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfAPIrequest",
+                    "APITieredPrice"
+                  ],
+                  "subTotalRefer": "totalCost_MNF",
+                  "id": "conversionAPI"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "decimalPlaces": 2,
+                  "id": "totalCostAPI",
+                  "tieredPricingRefer": "APITieredPrice",
+                  "tieredPricingReferLabel": "API request tiered pricing",
+                  "inputRefer": "numberOfAPIrequest",
+                  "inputReferLabel": "Number of API requests in a month",
+                  "inputUnitLabel": "requests",
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalCostAPI"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total API requests cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCostAPIDisplay",
+                  "subTotalRefer": "totalCostAPI"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "TelcoNetworkBuilder",
+  "partitions": [
+    "aws"
+  ]
+}

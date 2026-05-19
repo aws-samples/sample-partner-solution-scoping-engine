@@ -1,0 +1,433 @@
+{
+  "version": "0.0.22",
+  "serviceName": "Amazon CodeGuru Reviewer",
+  "serviceCode": "amazonCodeGuru",
+  "type": "AWSService",
+  "slug": "CodeGuruReviewer",
+  "regions": [
+    "ap-northeast-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "CodeGuru",
+    "Reviewer",
+    "code reviews",
+    "package scan",
+    "pull request",
+    "code analysis",
+    "code quality"
+  ],
+  "serviceDescription": "Amazon CodeGuru Reviewer is a service that uses program analysis and machine learning to detect potential defects that are difficult for developers to find and recommends fixes in your Java code.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/codeguru/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "codeguru",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/codeguru/[currency]/current/codeguru.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "title": "",
+      "id": "template_0",
+      "helpUrl": {
+        "$LINK": {
+          "type": "documentation",
+          "path": "/codeguru/index.html"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "codeguru",
+                  "meteredUnit": "CodeGuru MachineLearningRepositorySizeLowPriceTierBuildModels for 0 to Inf per 100K-LinesofCode"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "codeguru",
+                  "meteredUnit": "CodeGuru MachineLearningRepositorySizeHighPriceTierBuildModels for 0 to Inf per 100K-LinesofCode"
+                }
+              }
+            ]
+          },
+          "title": "Amazon CodeGuru Reviewer",
+          "helpText": "When you enable Amazon CodeGuru Reviewer on a source code repository, you can set it up to perform a scan for every source code pull request made on that repository. For the initial code review pull request and all subsequent revisions, Amazon CodeGuru Reviewer analyzes all lines of code in the files added to the pull request. In subsequent revisions, for files that already existed in the pull request, Amazon CodeGuru Reviewer only analyzes the changed lines of code. In both cases, non-code lines such as comments and import statements are not analyzed.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/codeguru/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of repositories",
+                "id": "Total_number_of_repositories",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000000
+                },
+                "defaultValue": 1,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of repositories"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average lines of code (LOC) per repository",
+                "id": "Lines_of_code_(LOC)_per_repository",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1000,
+                  "maxValue": 1000000000000000
+                },
+                "displayInConfigSummary": true,
+                "defaultValue": 1000,
+                "placeholder": "Enter LOC per repository"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The monthly charges include all incremental pull request code reviews for associated repositories, and up to two full scans per repository per month.",
+                "id": "messagingCG"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "codeguru",
+                    "meteredUnit": "CodeGuru MachineLearningRepositorySizeAboveThresholdsBuildModels for 0 to Inf per 100K-LinesofCode"
+                  }
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Do you plan to run additional full repository scans?",
+                "id": "additionalRepScan",
+                "options": [
+                  {
+                    "label": "No",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Yes",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd Pricing codeGuru",
+                "id": "Tierd_Pricing_codeGuru",
+                "mappingDefinitionName": "codeguru",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 1,
+                      "meteredUnit": "CodeGuru MachineLearningRepositorySizeLowPriceTierBuildModels for 0 to Inf per 100K-LinesofCode"
+                    },
+                    {
+                      "startOfTier": 2,
+                      "endOfTier": -1,
+                      "meteredUnit": "CodeGuru MachineLearningRepositorySizeHighPriceTierBuildModels for 0 to Inf per 100K-LinesofCode"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Total_number_of_repositories",
+                    "Lines_of_code_(LOC)_per_repository",
+                    "messagingCG",
+                    "additionalRepScan",
+                    "Tierd_Pricing_codeGuru"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "unitCovCodeGuru1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of repositories",
+                      "variableUnitLabel": "repositories",
+                      "required": true,
+                      "variableId": "Total_number_of_repositories"
+                    },
+                    {
+                      "variableLabel": "Average lines of code (LOC) per repository",
+                      "variableUnitLabel": "lines of code",
+                      "required": true,
+                      "variableId": "Lines_of_code_(LOC)_per_repository"
+                    }
+                  ],
+                  "outputUnitLabel": "lines of code across all repositories",
+                  "id": "total_repository_size"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "lines of code across all repositories",
+                      "variableUnitLabel": "lines of code",
+                      "required": true,
+                      "variableId": "total_repository_size"
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "lines of code"
+                    }
+                  ],
+                  "outputUnitLabel": "repository size pricing tier",
+                  "id": "billable_repository_size"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "billable_repository_size",
+                      "variableLabel": "repository size pricing tier",
+                      "variableUnitLabel": "repository size pricing tier",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "repository size pricing tier (rounded)",
+                  "id": "roundedRepo"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "roundedRepo",
+                  "inputReferLabel": "repository size pricing tier (rounded)",
+                  "tieredPricingRefer": "Tierd_Pricing_codeGuru",
+                  "tieredPricingReferLabel": "Tierd Pricing codeGuru",
+                  "inputUnitLabel": "repository size pricing tier",
+                  "decimalPlaces": 2,
+                  "id": "codeGuru_tier",
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "total_repository_size",
+                    "billable_repository_size",
+                    "roundedRepo",
+                    "codeGuru_tier"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "CodeGuru Reviewer cost",
+                  "decimalPlaces": 2,
+                  "id": "FinalCost",
+                  "subTotalRefer": "codeGuru_tier"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "additionalRepScan"
+              },
+              "1"
+            ]
+          },
+          "title": "Additional full repository scans",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of full repository scans",
+                "id": "Number_of_full_repository_scans_per_repository_(repository analysis code reviews)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of full repository scans"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for above threshold",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "codeguru",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "CodeGuru MachineLearningRepositorySizeAboveThresholdsBuildModels for 0 to Inf per 100K-LinesofCode"
+                },
+                "id": "Price_for_above_threshold"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_full_repository_scans_per_repository_(repository analysis code reviews)",
+                    "Price_for_above_threshold"
+                  ],
+                  "subTotalRefer": "codeGuru_tier",
+                  "id": "unitCovCodeGuru"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Average lines of code per repository",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "referLabel": "Average lines of code (LOC) per repository",
+                  "id": "AdditionalVar",
+                  "refer": "Lines_of_code_(LOC)_per_repository",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Average lines of code (LOC) per repository",
+                      "variableUnitLabel": "lines of code",
+                      "required": true,
+                      "variableId": "Lines_of_code_(LOC)_per_repository"
+                    },
+                    {
+                      "constant": 100000,
+                      "constantUnitLabel": "lines of code"
+                    }
+                  ],
+                  "outputUnitLabel": "unit charge per repository scan",
+                  "id": "billable_lines_of_code"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "billable_lines_of_code",
+                      "variableLabel": "unit charge per repository scan",
+                      "variableUnitLabel": "lines of code",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "rounded unit charge per repository scan",
+                  "id": "rounded_billable_lines_of_code"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of full repository scans",
+                      "variableUnitLabel": "number of full repository scans",
+                      "required": true,
+                      "variableId": "Number_of_full_repository_scans_per_repository_(repository analysis code reviews)"
+                    },
+                    {
+                      "variableLabel": "rounded unit charge per repository scan",
+                      "variableUnitLabel": "unit charge",
+                      "required": true,
+                      "variableId": "rounded_billable_lines_of_code"
+                    },
+                    {
+                      "variableLabel": "Price for above threshold",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "Price_for_above_threshold"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (additional cost across repository scans)",
+                  "id": "scan_cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "AdditionalVar",
+                    "billable_lines_of_code",
+                    "rounded_billable_lines_of_code",
+                    "scan_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional cost",
+                  "decimalPlaces": 2,
+                  "id": "FinalCostAdditional",
+                  "subTotalRefer": "scan_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Well-Architected Framework Assessment Report</title>
+</head>
+<body>
+    <h1>AWS Well-Architected Framework Assessment Report</h1>
+    
+    <!-- Executive Summary -->
+    <h2>Executive Summary</h2>
+    {% if executive_summary %}
+    <p><strong>Overall Score:</strong> {{ executive_summary.overall_score }}%</p>
+    <p><strong>Grade:</strong> {{ executive_summary.grade_letter }}</p>
+    <p><strong>Assessment Date:</strong> {{ timestamp }}</p>
+    
+    {% if enhanced_scoring_enabled %}
+    <div style="background-color: #e8f5e8; padding: 10px; border-left: 4px solid #4caf50; margin: 10px 0;">
+        <p><strong>✅ Enhanced Scoring Enabled:</strong> This assessment uses advanced capability-based scoring for more accurate and architecture-specific results.</p>
+    </div>
+    {% endif %}
+    
+    {% if executive_summary.key_strengths %}
+    <h3>Key Strengths</h3>
+    <ul>
+    {% for strength in executive_summary.key_strengths %}
+        <li>{{ strength }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if executive_summary.critical_risks %}
+    <h3>Critical Risks</h3>
+    <ul>
+    {% for risk in executive_summary.critical_risks %}
+        <li>{{ risk }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if executive_summary.business_impact_summary %}
+    <p><strong>Business Impact:</strong> {{ executive_summary.business_impact_summary }}</p>
+    {% endif %}
+    {% endif %}
+    
+    <!-- Architecture Overview -->
+    {% if architecture_overview %}
+    <h2>Architecture Overview</h2>
+    <p>{{ architecture_overview }}</p>
+    {% endif %}
+    
+    <!-- Identified AWS Services -->
+    {% if identified_services %}
+    <h2>Identified AWS Services</h2>
+    <p>The following AWS services were identified in your architecture:</p>
+    <ul>
+    {% for service in identified_services %}
+        <li><strong>{{ service.name }}</strong>{% if service.description %}: {{ service.description }}{% endif %}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <!-- Pillar Assessments -->
+    <h2>Pillar Assessment Results</h2>
+    
+    {% for pillar_name, pillar_data in pillar_assessments.items() %}
+    <h3>{{ pillar_name.replace('_', ' ').title() }} Pillar</h3>
+    
+    <p><strong>Score:</strong> {{ pillar_data.score }}%
+    {% if pillar_data.enhanced_scoring_used %}
+        <span style="color: green; font-weight: bold;">✅ Enhanced Scoring</span>
+    {% endif %}
+    {% if pillar_data.capability_based_scoring %}
+        <span style="color: blue; font-weight: bold;">🎯 Capability-Based</span>
+    {% endif %}
+    </p>
+    <p><strong>Risk Level:</strong> {{ pillar_data.risk_level }}</p>
+    
+    {% if pillar_data.description %}
+    <p>{{ pillar_data.description }}</p>
+    {% endif %}
+    
+    {% if pillar_data.detected_capabilities %}
+    <h4>Detected Capabilities</h4>
+    <ul>
+    {% for capability in pillar_data.detected_capabilities %}
+        <li>{{ capability }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if pillar_data.missing_capabilities %}
+    <h4>Missing Capabilities</h4>
+    <ul>
+    {% for capability in pillar_data.missing_capabilities %}
+        <li>{{ capability }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if pillar_data.recommendations %}
+    <h4>Recommendations</h4>
+    <ul>
+    {% for rec in pillar_data.recommendations %}
+        <li>
+            <strong>[{{ rec.priority | upper }}]</strong> {{ rec.title }}
+            {% if rec.description %}: {{ rec.description }}{% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% if pillar_data.score_breakdown %}
+    <h4>Score Breakdown</h4>
+    <p>Baseline Score: {{ pillar_data.score_breakdown.baseline_score }}</p>
+    <p>Capability Contributions: {{ pillar_data.score_breakdown.capability_contributions | length }} capabilities detected</p>
+    <p>Complexity Adjustment: {{ pillar_data.score_breakdown.complexity_adjustment }}</p>
+    <p>Final Score: {{ pillar_data.score }}</p>
+    {% endif %}
+    {% endfor %}
+    
+    <!-- High Priority Actions -->
+    {% if high_priority_actions %}
+    <h2>High Priority Actions</h2>
+    <p>Focus on these critical improvements for maximum impact:</p>
+    <ul>
+    {% for action in high_priority_actions %}
+        <li>
+            <strong>[{{ action.priority | upper }}]</strong> {{ action.title }}
+            {% if action.description %}: {{ action.description }}{% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <!-- Next Steps -->
+    {% if next_steps %}
+    <h2>Next Steps</h2>
+    <ul>
+    {% for step in next_steps %}
+        <li>{{ step }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <!-- Industry Benchmarks -->
+    {% if industry_benchmarks %}
+    <h2>Industry Benchmarking</h2>
+    <p><strong>Overall Percentile:</strong> {{ industry_benchmarks.overall_percentile }}th percentile</p>
+    <p><strong>Competitive Position:</strong> {{ industry_benchmarks.competitive_position }}</p>
+    {% endif %}
+    
+    <!-- Footer -->
+    <hr>
+    <p><em>This report was generated using the AWS Well-Architected Framework assessment tool.</em></p>
+    <p><em>For more information, visit: https://aws.amazon.com/architecture/well-architected/</em></p>
+</body>
+</html>

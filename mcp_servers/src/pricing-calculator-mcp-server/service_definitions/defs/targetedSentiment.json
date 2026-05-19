@@ -1,0 +1,271 @@
+{
+  "version": "0.0.20",
+  "serviceName": "Targeted Sentiment",
+  "serviceCode": "targetedSentiment",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics",
+    "Targeted Sentiment"
+  ],
+  "serviceDescription": "With Amazon Comprehend, you only pay for what you use. You are charged based on the amount of text processed on a monthly basis. Amazon Comprehend provides natural language processing, topic modeling, and Custom Classification capabilities, enabling a broad range of applications that can analyze text.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehend",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehend/[currency]/current/comprehend.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Targeted Sentiment",
+          "deniedPartitions": [
+            "aws-iso"
+          ],
+          "helpText": "Targeted Sentiment provides granular sentiment insights by identifying the sentiment (positive, negative, neutral, or mixed) towards entities within text.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerComments_async_targeted",
+                "label": "Number of documents asynchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text documents to be analyzed",
+                "description": "Number of text documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerChars_async_targeted",
+                "label": "Average characters in a document asynchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text document",
+                "description": "Average number of characters in each text document to be analyzed"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Targeted_Sentiment",
+                "id": "targetedSentimentDetection",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Process Targeted Sentiment text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Process Targeted Sentiment text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Process Targeted Sentiment text request over 50M"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_async_targeted",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "CustomerChars_async_targeted",
+                      "variableLabel": "Average characters in a document asynchronous",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    },
+                    {
+                      "variableId": "CustomerComments_async_targeted",
+                      "variableLabel": "Number of documents asynchronous",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "characters per request asynchronous",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "unitsPerRequest_async_targeted"
+                    },
+                    {
+                      "constant": 300,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "characters",
+                  "decimalPlaces": 2,
+                  "id": "minMaxAsync_targeted"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_async_targeted",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "minMaxAsync_targeted",
+                      "variableLabel": "characters",
+                      "variableUnitLabel": "characters",
+                      "required": false
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units for asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_async_targeted",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_async_targeted",
+                      "variableLabel": "units for asynchronous",
+                      "variableUnitLabel": "units rounded up",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "unitsRounded_async_targeted",
+                  "inputReferLabel": "units rounded up to nearest 1 unit asynchronous",
+                  "tieredPricingRefer": "targetedSentimentDetection",
+                  "tieredPricingReferLabel": "Tierd_Targeted_Sentiment",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 2,
+                  "id": "targeted_Cost",
+                  "outputUnitLabel": "[currency] for month"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1",
+                    "CustomerComments_async_targeted",
+                    "CustomerChars_async_targeted",
+                    "targetedSentimentDetection",
+                    "unitsPerRequest_async_targeted",
+                    "minMaxAsync_targeted",
+                    "unitsChar_async_targeted",
+                    "unitsRounded_async_targeted",
+                    "targeted_Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] for Targeted Sentiment",
+                  "decimalPlaces": 2,
+                  "id": "targetedTotCost",
+                  "subTotalRefer": "targeted_Cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_targeted"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

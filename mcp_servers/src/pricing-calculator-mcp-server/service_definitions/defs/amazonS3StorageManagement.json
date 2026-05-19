@@ -1,0 +1,1020 @@
+{
+  "version": "0.0.52",
+  "serviceName": "S3 Management and Insights",
+  "serviceCode": "amazonS3StorageManagement",
+  "subType": "subService",
+  "displayAutomation": true,
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage"
+  ],
+  "serviceDescription": "S3 Storage Management and Analytics is priced per feature (Amazon S3 Inventory, S3 Storage Class Analysis, S3 Storage Lens, and S3 Object Tagging) that is enabled on your account’s bucket.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    }
+  ],
+  "excludeZeroSubTotals": true,
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Storage analytics and insights",
+      "description": "is best used for data with unknown or changing access patterns.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/s3/pricing/"
+        }
+      },
+      "id": "s3StorageManagementFeatures",
+      "cards": [
+        {
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Per object fee for objects included in Storage Lens 0 25000000000"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Per object fee for objects included in Storage Lens 25000000000 100000000000"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Per object fee for objects included in Storage Lens 100000000000 Inf"
+                }
+              }
+            ]
+          },
+          "title": "S3 Storage Lens",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "helpText": "S3 Storage Lens delivers organization-wide visibility into object storage usage, activity trends, and makes actionable recommendations to improve cost-efficiency and apply data protection best practices.",
+          "bodyText": "You will be charged object monitoring fees for each Storage Lens dashboard used.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Storage Lens Objects",
+                "id": "S3StorageLensObjects",
+                "options": [
+                  {
+                    "label": "million per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "million per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "type": "pricing",
+                "id": "s3StorageLensCost",
+                "label": "price for S3 Storage Lens Objects",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "s3",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 25000000000,
+                      "meteredUnit": "Per object fee for objects included in Storage Lens 0 25000000000"
+                    },
+                    {
+                      "startOfTier": 25000000001,
+                      "endOfTier": 100000000000,
+                      "meteredUnit": "Per object fee for objects included in Storage Lens 25000000000 100000000000"
+                    },
+                    {
+                      "startOfTier": 100000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Per object fee for objects included in Storage Lens 100000000000 Inf"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3StorageLensDisp",
+                  "refer": [
+                    "S3StorageLensObjects",
+                    "s3StorageLensCost"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Storage Lens Objects",
+                      "variableUnitLabel": "storage lens objects",
+                      "required": true,
+                      "variableId": "S3StorageLensObjects"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "multiplier for million"
+                    }
+                  ],
+                  "outputUnitLabel": "million objects",
+                  "id": "s3StorageLensMillionObjects"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "id": "s3StorageManagement_storageLens",
+                  "inputRefer": "s3StorageLensMillionObjects",
+                  "inputReferLabel": "million objects",
+                  "inputUnitLabel": "objects",
+                  "tieredPricingRefer": "s3StorageLensCost",
+                  "tieredPricingReferLabel": "price for S3 Storage Lens Objects",
+                  "outputUnitLabel": "[currency] (S3 storage lens objects)"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "s3StorageLensMillionObjects",
+                    "s3StorageManagement_storageLens"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "S3 Storage Lens cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "s3StorageManagement_StorageLens_FinalDisp",
+                  "subTotalRefer": "s3StorageManagement_storageLens"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "S3 Batch Operations",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "helpText": "S3 Storage Management is priced per feature (Amazon S3 inventory, analytics, and object tagging) that is enabled on your account’s bucket",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Batch Operations Jobs",
+                "id": "S3BatchJobs",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Batch Operations Objects",
+                "id": "S3BatchOperationsObjects",
+                "options": [
+                  {
+                    "label": "million per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "million per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "million per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Per job fee for Batch Operations jobs"
+                },
+                "label": "price for S3 Batch Jobs",
+                "id": "storageAnalyticsAndInsights_generated_0"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Per object fee for object operations performed by Batch Operations"
+                },
+                "label": "price for S3 Batch Objects",
+                "id": "storageAnalyticsAndInsights_generated_1"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "storageAnalyticsAndInsights_generated_2",
+                  "refer": [
+                    "S3BatchJobs",
+                    "S3BatchOperationsObjects",
+                    "storageAnalyticsAndInsights_generated_0",
+                    "storageAnalyticsAndInsights_generated_1"
+                  ],
+                  "subTotalRefer": "s3StorageManagement_storageLens"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Batch Operations Jobs",
+                      "variableUnitLabel": "batch operations jobs",
+                      "required": true,
+                      "variableId": "S3BatchJobs"
+                    },
+                    {
+                      "variableLabel": "price for S3 Batch Jobs",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageAnalyticsAndInsights_generated_0"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 batch operations jobs)",
+                  "decimalPlaces": 4,
+                  "id": "storageAnalyticsAndInsights_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Batch Operations Objects",
+                      "variableUnitLabel": "batch operations objects",
+                      "required": true,
+                      "variableId": "S3BatchOperationsObjects"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "multiplier for million"
+                    },
+                    {
+                      "variableLabel": "price for S3 Batch Objects",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageAnalyticsAndInsights_generated_1"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 batch operations objects)",
+                  "decimalPlaces": 4,
+                  "id": "storageAnalyticsAndInsights_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "outputUnitLabel": "[currency] (S3 Batch Operations cost)",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 batch operations jobs)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageAnalyticsAndInsights_generated_3"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 batch operations objects)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageAnalyticsAndInsights_generated_4"
+                    }
+                  ],
+                  "decimalPlaces": 2,
+                  "id": "storageAnalyticsAndInsights_generated_5"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storageAnalyticsAndInsights_generated_3",
+                    "storageAnalyticsAndInsights_generated_4",
+                    "storageAnalyticsAndInsights_generated_5"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "S3 Batch Operations cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "storageAnalyticsAndInsights_generated_6",
+                  "subTotalRefer": "storageAnalyticsAndInsights_generated_5"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "S3 Encryption",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "helpText": "",
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "content": {
+                  "aws": "Amazon S3 automatically offers 4 encryption types: SSE-S3, SSE-C, SSE-KMS and DSSE-KMS. Amazon S3 applies server-side encryption with Amazon S3 managed keys (SSE-S3) as a base layer of encryption to all new objects added to S3, at no additional cost and with no impact on performance. SSE-C also does not incur any additional S3 charges. <br>For SSE-KMS, you pay AWS KMS charges to generate or retrieve the data key used for encryption and decryption. For pricing on AWS KMS, visit the <a href='https://aws.amazon.com/kms/pricing/'>AWS KMS pricing Page</a>. You can also optimize your SSE-KMS costs with <a href='https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html'>Amazon S3 Bucket Keys</a>. <br>For DSSE-KMS, in addition to the charges for AWS KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data.",
+                  "aws-cn": "Amazon S3 automatically offers 4 encryption types: SSE-S3, SSE-C, SSE-KMS and DSSE-KMS. Amazon S3 applies server-side encryption with Amazon S3 managed keys (SSE-S3) as a base layer of encryption to all new objects added to S3, at no additional cost and with no impact on performance. SSE-C also does not incur any additional S3 charges. <br>For SSE-KMS, you pay Amazon KMS charges to generate or retrieve the data key used for encryption and decryption. For pricing on Amazon KMS, visit the <a href='https://amazonaws.cn/kms/pricing/'>Amazon KMS pricing Page</a>. You can also optimize your SSE-KMS costs with <a href='https://docs.amazonaws.cn/AmazonS3/latest/userguide/bucket-key.html'>Amazon S3 Bucket Keys</a>. <br>For DSSE-KMS, in addition to the charges for Amazon KMS mentioned above, you pay an additional per gigabyte encryption fee for the second layer of encryption and decryption of data."
+                },
+                "alertType": "info",
+                "partitions": [
+                  "aws",
+                  "aws-cn",
+                  "aws-iso",
+                  "aws-iso-b",
+                  "aws-us-gov",
+                  "aws-iso-e"
+                ],
+                "isDismissable": true,
+                "id": "disclaimerS3Encryption"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Size of encrypted data",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter amount",
+                "help": "",
+                "id": "dataEncrypted"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Bytes Encrypted using Dual Layer Server-Side Encryption per GB"
+                },
+                "label": "price for S3 Encryption",
+                "id": "priceS3Encryption"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "s3EncryptionDisp",
+                  "refer": [
+                    "disclaimerS3Encryption",
+                    "dataEncrypted",
+                    "priceS3Encryption"
+                  ],
+                  "subTotalRefer": "storageAnalyticsAndInsights_generated_5"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Size of encrypted data",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "dataEncrypted"
+                    },
+                    {
+                      "variableLabel": "price for S3 Encryption",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceS3Encryption"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "id": "s3EncryptionCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "s3EncryptionCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "S3 Encryption Cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "s3EncryptionTotal",
+                  "subTotalRefer": "s3EncryptionCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Per object fee for objects listed in an Inventory"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Per object fee for objects included in Analytics"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "Tags Storage per Tag Mo"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "s3",
+                  "meteredUnit": "7VZGzxiub4RgFMgvUjZSqdE2tzqH1HZZvmMGb6pQZcE"
+                }
+              }
+            ]
+          },
+          "title": "Other management and analytics features",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "helpText": "S3 Storage Management and Analytics is priced per feature (S3 General Purpose Buckets, Amazon S3 Inventory, S3 Storage Class Analysis, and S3 Object Tagging) that is enabled on your account’s bucket",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "7VZGzxiub4RgFMgvUjZSqdE2tzqH1HZZvmMGb6pQZcE"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 General Purpose Buckets",
+                "id": "s3GeneralPurposeBuckets",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultValue": 2,
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 2,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "7VZGzxiub4RgFMgvUjZSqdE2tzqH1HZZvmMGb6pQZcE"
+                },
+                "label": "price for S3 General Purpose Buckets",
+                "id": "priceGeneralPurposeBuckets"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "Per object fee for objects listed in an Inventory"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Inventory",
+                "id": "s3Inventory",
+                "options": [
+                  {
+                    "label": "million per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "million per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "Per object fee for objects included in Analytics"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Storage Class Analysis",
+                "id": "s3Analytics",
+                "options": [
+                  {
+                    "label": "million per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "million per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "s3",
+                    "meteredUnit": "Tags Storage per Tag Mo"
+                  }
+                },
+                "type": "input",
+                "subType": "frequency",
+                "label": "S3 Object Tagging",
+                "id": "s3ObjectTagging",
+                "options": [
+                  {
+                    "label": "thousand per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "thousand per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "thousand per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "placeholder": "Enter a number"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Per object fee for objects listed in an Inventory"
+                },
+                "label": "price for S3 Inventory",
+                "id": "storageAnalyticsAndInsights_generated_7"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Per object fee for objects included in Analytics"
+                },
+                "label": "price for S3 Analytics",
+                "id": "storageAnalyticsAndInsights_generated_8"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Tags Storage per Tag Mo"
+                },
+                "label": "price for S3 Object Tagging",
+                "id": "storageAnalyticsAndInsights_generated_9"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "storageAnalyticsAndInsights_generated_10",
+                  "refer": [
+                    "s3GeneralPurposeBuckets",
+                    "priceGeneralPurposeBuckets",
+                    "s3Inventory",
+                    "s3Analytics",
+                    "s3ObjectTagging",
+                    "storageAnalyticsAndInsights_generated_7",
+                    "storageAnalyticsAndInsights_generated_8",
+                    "storageAnalyticsAndInsights_generated_9"
+                  ],
+                  "subTotalRefer": "s3EncryptionCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 General Purpose Buckets",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "s3GeneralPurposeBuckets"
+                    },
+                    {
+                      "constant": 2000,
+                      "constantUnitLabel": "(free tier discount)"
+                    }
+                  ],
+                  "outputUnitLabel": "(S3 Billable General Purpose Buckets)",
+                  "decimalPlaces": 4,
+                  "id": "BillableGeneralPurposeBuckets"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "id": "MinBillableGeneralPurposeBuckets",
+                  "operation": "Maximum",
+                  "displayInConfigSummary": false,
+                  "operands": [
+                    {
+                      "variableUnitLabel": "[currency] (S3 Billable General Purpose Buckets)",
+                      "variableId": "BillableGeneralPurposeBuckets",
+                      "required": true
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable buckets"
+                    }
+                  ],
+                  "outputUnitLabel": "total billable General Purpose Buckets"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "variablename": "S3 General Purpose Buckets Total cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total billable General Purpose Buckets",
+                      "variableUnitLabel": "buckets",
+                      "required": true,
+                      "variableId": "MinBillableGeneralPurposeBuckets"
+                    },
+                    {
+                      "variableLabel": "price for S3 General Purpose Buckets",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceGeneralPurposeBuckets"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 General Purpose Buckets cost)",
+                  "decimalPlaces": 4,
+                  "id": "GeneralPurposeBucketsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Inventory",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "s3Inventory"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "multiplier for million"
+                    },
+                    {
+                      "variableLabel": "price for S3 Inventory",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageAnalyticsAndInsights_generated_7"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Inventory cost)",
+                  "decimalPlaces": 4,
+                  "id": "storageAnalyticsAndInsights_generated_11"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Storage Class Analysis",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "s3Analytics"
+                    },
+                    {
+                      "constant": 1000000,
+                      "constantUnitLabel": "multiplier for million"
+                    },
+                    {
+                      "variableLabel": "price for S3 Analytics",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageAnalyticsAndInsights_generated_8"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Storage Class Analysis cost)",
+                  "decimalPlaces": 4,
+                  "id": "storageAnalyticsAndInsights_generated_12"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "S3 Object Tagging",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "s3ObjectTagging"
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "multiplier for thousand"
+                    },
+                    {
+                      "variableLabel": "price for S3 Object Tagging",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageAnalyticsAndInsights_generated_9"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (S3 Object Tagging cost)",
+                  "decimalPlaces": 4,
+                  "id": "storageAnalyticsAndInsights_generated_13"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "outputUnitLabel": "[currency] (S3 Storage Management features cost)",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (S3 General Purpose Buckets cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "GeneralPurposeBucketsCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Inventory cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageAnalyticsAndInsights_generated_11"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Storage Class Analysis cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageAnalyticsAndInsights_generated_12"
+                    },
+                    {
+                      "variableLabel": "[currency] (S3 Object Tagging cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storageAnalyticsAndInsights_generated_13"
+                    }
+                  ],
+                  "decimalPlaces": 2,
+                  "id": "storageAnalyticsAndInsights_generated_14"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "BillableGeneralPurposeBuckets",
+                    "MinBillableGeneralPurposeBuckets",
+                    "GeneralPurposeBucketsCost",
+                    "storageAnalyticsAndInsights_generated_11",
+                    "storageAnalyticsAndInsights_generated_12",
+                    "storageAnalyticsAndInsights_generated_13",
+                    "storageAnalyticsAndInsights_generated_14"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "S3 Storage Management cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "storageAnalyticsAndInsights_generated_15",
+                  "subTotalRefer": "storageAnalyticsAndInsights_generated_14"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

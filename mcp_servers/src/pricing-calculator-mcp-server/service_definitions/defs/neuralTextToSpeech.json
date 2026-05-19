@@ -1,0 +1,207 @@
+{
+  "version": "0.0.14",
+  "serviceName": "Neural Text-to-Speech",
+  "serviceCode": "neuralTextToSpeech",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "polly",
+    "NLP",
+    "speech",
+    "Neural Text-to-Speech"
+  ],
+  "serviceDescription": "Amazon Polly is a service that turns text into lifelike speech, allowing you to create applications that talk, and build entirely new categories of speech-enabled products.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/polly/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "polly",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/polly/[currency]/current/polly.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "pollyNSST",
+      "cards": [
+        {
+          "title": "Neural Text-to-Speech (TTS)",
+          "helpText": "Amazon Polly offers Neural Text-to-Speech (NTTS) voices that deliver advanced improvements in speech quality through a new machine learning approach.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/polly/pricing/"
+            }
+          },
+          "description": "The calculations below exclude free tier discounts.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "id": "Number_of_requests_ntts",
+                "label": "Number of requests (Neural Text-to-Speech)",
+                "options": [
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "thousand per month",
+                    "id": "thousandPerMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_characters_per_request_ntts",
+                "label": "Number of characters per request including white spaces, but excluding SSML",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for neural text",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "polly",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "meteredUnit": {
+                  "allRegions": "Neural per Characters"
+                },
+                "id": "polly_neural"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "Number_of_requests_ntts",
+                    "Number_of_characters_per_request_ntts",
+                    "polly_neural"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "UnitConvPollyNtts"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of requests (Neural Text-to-Speech)",
+                      "variableUnitLabel": "request(s)",
+                      "required": true,
+                      "variableId": "Number_of_requests_ntts"
+                    },
+                    {
+                      "variableLabel": "Number of characters per request including white spaces, but excluding SSML",
+                      "variableUnitLabel": "character(s)",
+                      "required": true,
+                      "variableId": "Number_of_characters_per_request_ntts"
+                    }
+                  ],
+                  "outputUnitLabel": "character(s) per month",
+                  "decimalPlaces": 0,
+                  "id": "billableChars_ntts"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "character(s) per month",
+                      "variableUnitLabel": "character(s)",
+                      "required": true,
+                      "variableId": "billableChars_ntts"
+                    },
+                    {
+                      "variableLabel": "price for neural text",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "polly_neural"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for Neural Text-to-Speech)",
+                  "decimalPlaces": 2,
+                  "id": "TTs_Cost_ntts"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "billableChars_ntts",
+                    "TTs_Cost_ntts"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Neural Text-to-Speech",
+                  "decimalPlaces": 2,
+                  "id": "Total_TTS_FINAL_Ntts",
+                  "subTotalRefer": "TTs_Cost_ntts"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

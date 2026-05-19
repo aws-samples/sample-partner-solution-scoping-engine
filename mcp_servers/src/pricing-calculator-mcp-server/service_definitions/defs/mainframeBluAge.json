@@ -1,0 +1,337 @@
+{
+  "version": "0.0.55",
+  "serviceName": "AWS Blu Age automated refactoring",
+  "serviceCode": "mainframeBluAge",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-west-2"
+  ],
+  "serviceDescription": "For AWS M2 Blu Age managed runtime, you can choose on-demand instances and pay for the runtime by the hour with no long-term commitments or upfront fees, or choose committed plans for additional savings.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/mainframe-modernization/pricing/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "m2-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/m2/[currency]/current/m2-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Blu Age",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/mainframe-modernization/pricing/"
+        }
+      },
+      "id": "template_bluAge",
+      "cards": [
+        {
+          "title": "Info",
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "Committed plans",
+                "label": "Committed plans",
+                "content": "<p> With AWS Mainframe Modernization service, various components have different prices. You only pay for what you use with no upfront commitment or minimum fee. Alternatively, you can select committed plans for additional savings. Committed plans are appropriate for steady-state workloads and offer significant savings over on-demand pricing. Feel free to contact your AWS representative for specific commitment discount rates.</p>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "blueAge_infoAlert"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Blu Age runtime - Production environment(s)",
+          "helpText": "For AWS M2 Blu Age managed runtime, you can choose on-demand instances and pay for the runtime by the hour with no long-term commitments or upfront fees, or choose committed plans for additional savings",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mainframe-modernization/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "m2-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_bluAgeProd",
+                "calculationId": {
+                  "hourly": "bluAgeRuntimePrice"
+                },
+                "remap": {
+                  "constant": {
+                    "Product Name": "Blu Age Runtime"
+                  }
+                },
+                "primaryKey": "Product Name",
+                "secondaryKey": [
+                  "Instance Type"
+                ],
+                "row": [
+                  {
+                    "type": "textInput",
+                    "label": "Number of instances",
+                    "selectorId": "Number of Directories",
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 10000000000
+                    },
+                    "exportValueAs": "numberOfInstances"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "m5.large"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Monthly utilization",
+                "id": "utilized_bluAgeProd",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 160,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "columnFormIPM_bluAgeProd",
+                    "utilized_bluAgeProd"
+                  ],
+                  "id": "unitConvertBluProd",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "numberOfInstances",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Blu Age Runtime Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "bluAgeRuntimePrice",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "utilized_bluAgeProd"
+                    }
+                  ],
+                  "refer": [
+                    "numberOfInstances",
+                    "bluAgeRuntimePrice"
+                  ],
+                  "outputUnitLabel": "[currency] (Blu Age runtime production environment(s) cost)",
+                  "decimalPlaces": 2,
+                  "id": "bluAgeProdCost"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "refer": [
+                    "bluAgeProdCost"
+                  ],
+                  "costType": "Monthly",
+                  "label": "Blu Age runtime production environment(s) cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "bluAgeProdCost",
+                  "id": "bluAge_Prod"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Blu Age runtime - Development and test environment(s)",
+          "helpText": "For AWS M2 Blu Age managed runtime, you can choose on-demand instances and pay for the runtime by the hour with no long-term commitments or upfront fees, or choose committed plans for additional savings",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/mainframe-modernization/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "m2-calc",
+                "disableCalculation": true,
+                "id": "columnFormIPM_bluAgeTest",
+                "calculationId": {
+                  "hourly": "bluAgeRuntimeTestPrice"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "remap": {
+                  "constant": {
+                    "Product Name": "Blu Age Runtime"
+                  }
+                },
+                "primaryKey": "Product Name",
+                "secondaryKey": [
+                  "Instance Type"
+                ],
+                "row": [
+                  {
+                    "type": "textInput",
+                    "label": "Number of instances",
+                    "selectorId": "Number of Directories",
+                    "validations": {
+                      "required": true,
+                      "allowDecimals": false,
+                      "minValue": 1,
+                      "maxValue": 10000000000
+                    },
+                    "exportValueAs": "bluAgeTest_numberOfInstances"
+                  },
+                  {
+                    "label": "Instance type",
+                    "type": "dropDown",
+                    "selectorId": "Instance Type",
+                    "defaultValue": "m5.large"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "utilization",
+                "label": "Monthly utilization",
+                "id": "utilized_bluAgeTest",
+                "placeholder": "Enter number",
+                "displayInConfigSummary": true,
+                "defaultValue": 160,
+                "defaultDuration": "hoursPerMonth",
+                "roundUpToHours": true,
+                "validations": {
+                  "required": true
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "columnFormIPM_bluAgeTest",
+                    "utilized_bluAgeTest"
+                  ],
+                  "id": "unitConvertBluTest",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "bluAgeProdCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of instances",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true,
+                      "variableId": "bluAgeTest_numberOfInstances",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableLabel": "Blu Age Runtime Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "bluAgeRuntimeTestPrice",
+                      "IPMSupported": true
+                    },
+                    {
+                      "variableUnitLabel": "hours per month",
+                      "required": true,
+                      "variableId": "utilized_bluAgeTest"
+                    }
+                  ],
+                  "refer": [
+                    "bluAgeTest_numberOfInstances",
+                    "bluAgeRuntimeTestPrice"
+                  ],
+                  "outputUnitLabel": "[currency] (Blu Age runtime development and test environment(s) cost)",
+                  "decimalPlaces": 2,
+                  "id": "bluAgeTestCost"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "refer": [
+                    "bluAgeTestCost"
+                  ],
+                  "costType": "Monthly",
+                  "label": "Blu Age runtime development and test environment(s) cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "bluAgeTestCost",
+                  "id": "bluAge_generated_0"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

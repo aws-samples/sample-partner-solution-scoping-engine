@@ -1,0 +1,2526 @@
+{
+  "version": "0.0.94",
+  "serviceName": {
+    "aws": "Amazon FSx for Lustre",
+    "aws-cn": "Amazon FSx for Lustre"
+  },
+  "serviceCode": "amazonFSxForLustre",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "storage",
+    "file storage",
+    "windows",
+    "lustre",
+    "hpc",
+    "enterprise applications",
+    "file shares",
+    "file system",
+    "cloud storage",
+    "smb",
+    "ntfs",
+    "posix",
+    "managed storage"
+  ],
+  "serviceDescription": {
+    "aws": "Amazon FSx for Lustre provides a simple, high-performance file system integrated with S3 for fast processing of workloads such as machine learning, high performance computing (HPC), video processing, financial modeling, and electronic design automation (EDA).",
+    "aws-cn": "Amazon FSx for Lustre provides a simple, high-performance file system integrated with S3 for fast processing of workloads such as machine learning, high performance computing (HPC), video processing, financial modeling, and electronic design automation (EDA)."
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/fsx/lustre/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "fsx",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/fsx/[currency]/current/fsx.json"
+    },
+    {
+      "mappingDefinitionName": "fsx-lustre-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/fsx/[currency]/current/fsx-lustre-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Persistent - SSD or Persistent - HDD",
+      "description": "All-SSD based or All-HDD based Persistent Storage with optional SSD cache",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/fsx/lustre/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage settings",
+          "helpText": "You only pay for the resources you use. You will be billed for each hour that your FSx for Lustre file system remains provisioned. Such hourly billing will stop when you delete the file system.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fsx/lustre/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "columnFormIPM",
+                "id": "columnFormIPM",
+                "label": "Storage Type and throughput",
+                "mappingDefinitionName": "fsx-lustre-calc",
+                "disableCalculation": true,
+                "calculationId": {
+                  "hourly": "monthly_ipm"
+                },
+                "primaryKey": "Storage type",
+                "secondaryKey": [
+                  "Cache Type",
+                  "Throughput capacity"
+                ],
+                "remap": {
+                  "keyValue": {
+                    "12": "12 MBps/TiB",
+                    "40": "40 MBps/TiB",
+                    "50": "50 MBps/TiB",
+                    "60": "60 MBps/TiB",
+                    "100": "100 MBps/TiB",
+                    "125": "125 MBps/TiB",
+                    "200": "200 MBps/TiB",
+                    "250": "250 MBps/TiB",
+                    "500": "500 MBps/TiB",
+                    "1000": "1000 MBps/TiB",
+                    "N/A": "No Cache",
+                    "RC20": "SSD cache"
+                  }
+                },
+                "prioritizedKey": {
+                  "Storage type": 16,
+                  "Cache Type": 4
+                },
+                "row": [
+                  {
+                    "label": "Storage Type",
+                    "type": "dropDown",
+                    "selectorId": "Storage type",
+                    "defaultValue": "SSD",
+                    "exportValueAs": "StorageType"
+                  },
+                  {
+                    "label": "Cache Type",
+                    "type": "dropDown",
+                    "selectorId": "Cache Type",
+                    "dependent": "Storage type"
+                  },
+                  {
+                    "label": "Throughput  Capacity",
+                    "type": "dropDown",
+                    "selectorId": "Throughput capacity",
+                    "defaultValue": "50 MBps/TiB",
+                    "exportValueAs": "ThroughputCapacity"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "id": "persThrouputConcat",
+                "operands": [
+                  {
+                    "variableId": "ThroughputCapacity"
+                  },
+                  {
+                    "constant": " test"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "concatenate",
+                "id": "persStorageTypeConcat",
+                "operands": [
+                  {
+                    "variableId": "StorageType"
+                  },
+                  {
+                    "constant": " test"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "persThrouput",
+                "originalId": "persThrouputConcat",
+                "replacements": [
+                  {
+                    "originalString": " test",
+                    "replaceString": ""
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "replace",
+                "id": "persStorageType",
+                "originalId": "persStorageTypeConcat",
+                "replacements": [
+                  {
+                    "originalString": " test",
+                    "replaceString": ""
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage capacity",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1200,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the amount of storage",
+                "description": "Enter the amount of storage you want to provision*",
+                "id": "persistent_generated_0"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "persStorageType"
+                    },
+                    "SSD"
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<small>*(1200 GB, 2400 GB or increments of 2400 GB)</small>",
+                "id": "SDDProvisionSize"
+              },
+              {
+                "type": "pricing",
+                "label": "Price for Metadata IOPS",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "9sbTjDzjP93JvLdEUjKYr_QBO2qKGv3wuK3tctkNa3I"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "metadataiops_pricing"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "persStorageType"
+                    },
+                    "SSD"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Metadata IOPS (optional)",
+                "id": "metadata_iops_input",
+                "description": "Enter the amount of metadata IOPS you want to provisioned above the default level included with storage capacity (1500, 3000, 6000 or increments of 12000 Metadata IOPS)",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1500,
+                  "maxValue": 1000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter the amount of Metadata IOPS"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "persThrouput"
+                        },
+                        "12 MBps/TiB"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "persStorageType"
+                        },
+                        "HDD"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<small>*(increments of 6000 GB)</small>",
+                "id": "HDD12ProvisionSize"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "persThrouput"
+                        },
+                        "40 MBps/TiB"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "persStorageType"
+                        },
+                        "HDD"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "bodyText",
+                "text": "<small>*(increments of 1800 GB)</small>",
+                "id": "HDD40ProvisionSize"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentDataCompressionSavings",
+                "label": "Data Compression savings",
+                "description": "Enter the % storage savings you expect with data compression",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 50,
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "fsx",
+                    "meteredUnit": "AJdsxXgiJKopicgOiG1AtOM1fu2edZxWYNsb4idp0ms"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Backup storage",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the amount of backup storage",
+                "description": "Enter the amount of backup storage you expect to use.",
+                "id": "backupStorage"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for FSx Lustre backup storage",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "AJdsxXgiJKopicgOiG1AtOM1fu2edZxWYNsb4idp0ms"
+                },
+                "id": "pricingBackupStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "persistent_generated_1",
+                  "refer": [
+                    "columnFormIPM",
+                    "StorageType",
+                    "ThroughputCapacity",
+                    "persThrouputConcat",
+                    "persStorageTypeConcat",
+                    "persThrouput",
+                    "persStorageType",
+                    "persistent_generated_0",
+                    "SDDProvisionSize",
+                    "metadataiops_pricing",
+                    "metadata_iops_input",
+                    "HDD12ProvisionSize",
+                    "HDD40ProvisionSize",
+                    "percentDataCompressionSavings",
+                    "backupStorage",
+                    "pricingBackupStorage"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage capacity",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_0"
+                    },
+                    {
+                      "variableLabel": "Data Compression savings",
+                      "variableUnitLabel": "Data Compression savings factor",
+                      "required": true,
+                      "variableId": "percentDataCompressionSavings"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Storage saving)",
+                  "decimalPlaces": 2,
+                  "id": "PersistantDeployment_generated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage capacity",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_0"
+                    },
+                    {
+                      "variableLabel": "GB per month (Storage saving)",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "PersistantDeployment_generated"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Effective provisioned storage capacity for FSx for Lustre File Server)",
+                  "decimalPlaces": 2,
+                  "id": "persistent_generated_2"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "<=": [
+                          {
+                            "type": "component",
+                            "id": "persistent_generated_4"
+                          },
+                          2400
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persStorageType"
+                          },
+                          "SSD"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1200,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 1200",
+                  "id": "persistant_billed_storage_low"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        ">": [
+                          {
+                            "type": "component",
+                            "id": "persistent_generated_4"
+                          },
+                          2400
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persStorageType"
+                          },
+                          "SSD"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 2400,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 2400",
+                  "id": "persistant_billed_storage_high"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persThrouput"
+                          },
+                          "12 MBps/TiB"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persStorageType"
+                          },
+                          "HDD"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 6000,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 6000",
+                  "id": "persistant_billed_storage_HDD_12"
+                },
+                {
+                  "displayIf": {
+                    "and": [
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persThrouput"
+                          },
+                          "40 MBps/TiB"
+                        ]
+                      },
+                      {
+                        "==": [
+                          {
+                            "type": "component",
+                            "id": "persStorageType"
+                          },
+                          "HDD"
+                        ]
+                      }
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1800,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_2"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 1800",
+                  "id": "persistant_billed_storage_HDD-40"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 1200",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "persistant_billed_storage_low"
+                    },
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 2400",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "persistant_billed_storage_high"
+                    },
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 6000",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "persistant_billed_storage_HDD_12"
+                    },
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 1800",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "persistant_billed_storage_HDD-40"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month",
+                  "decimalPlaces": 2,
+                  "id": "persistant_billed_storage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Throughput Cost",
+                  "id": "throughputCostMonthly",
+                  "decimalPlaces": 2,
+                  "IPMSupported": true,
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "subTotalRefer": "monthly_ipm"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Throughput Cost",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "monthly_ipm",
+                      "IPMSupported": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per hour",
+                  "decimalPlaces": 6,
+                  "id": "persistent_generated_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Monthly cost for FSx for Lustre metadata IOPS",
+                  "operands": [
+                    {
+                      "variableLabel": "Metadata IOPS (optional)",
+                      "variableUnitLabel": "IOPS",
+                      "required": false,
+                      "variableId": "metadata_iops_input"
+                    },
+                    {
+                      "variableLabel": "Price for Metadata IOPS",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "metadataiops_pricing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "metadataIOPSCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Total cost for FSx for Lustre storage",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistant_billed_storage"
+                    },
+                    {
+                      "variableLabel": "[currency] per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "persistent_generated_3"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "storageCostMonthly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Total cost for FSx for Lustre storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "storageCostMonthly"
+                    },
+                    {
+                      "variableLabel": "Monthly cost for FSx for Lustre metadata IOPS",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "metadataIOPSCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Total cost for FSx for Lustre storage",
+                  "decimalPlaces": 2,
+                  "id": "storagePlusMetadataCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for FSx for Lustre file system storage",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] Total cost for FSx for Lustre storage",
+                  "id": "totalStorageDisplay",
+                  "refer": "storagePlusMetadataCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "backupStorage"
+                    },
+                    {
+                      "variableLabel": "Data Compression savings",
+                      "variableUnitLabel": "Data Compression savings factor",
+                      "required": true,
+                      "variableId": "percentDataCompressionSavings"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Backup saving)",
+                  "decimalPlaces": 2,
+                  "id": "PersistantBackup_generated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "backupStorage"
+                    },
+                    {
+                      "variableLabel": "GB per month (Backup saving)",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "PersistantBackup_generated"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Effective provisioned Backup storage)",
+                  "decimalPlaces": 2,
+                  "id": "persistent_generated_4"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Monthly cost for FSx for Lustre backup storage",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned Backup storage)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "persistent_generated_4"
+                    },
+                    {
+                      "variableLabel": "pricing for FSx Lustre backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingBackupStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "backupStorageTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for FSx for Lustre backup storage",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Monthly cost for FSx for Lustre backup storage",
+                  "id": "totalBackupDisplay",
+                  "refer": "backupStorageTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] Total cost for FSx for Lustre storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "storagePlusMetadataCost"
+                    },
+                    {
+                      "variableLabel": "Monthly cost for FSx for Lustre backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "backupStorageTotal"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalLustreCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "PersistantDeployment_generated",
+                    "persistent_generated_2",
+                    "persistant_billed_storage_low",
+                    "persistant_billed_storage_high",
+                    "persistant_billed_storage_HDD_12",
+                    "persistant_billed_storage_HDD-40",
+                    "persistant_billed_storage",
+                    "throughputCostMonthly",
+                    "persistent_generated_3",
+                    "metadataIOPSCost",
+                    "storageCostMonthly",
+                    "storagePlusMetadataCost",
+                    "totalStorageDisplay",
+                    "PersistantBackup_generated",
+                    "persistent_generated_4",
+                    "backupStorageTotal",
+                    "totalBackupDisplay",
+                    "totalLustreCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for FSx for Lustre",
+                  "decimalPlaces": 2,
+                  "id": "persistent_generated_5",
+                  "subTotalRefer": "totalLustreCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "persistent"
+    },
+    {
+      "title": "Persistent - Intelligent Tiering",
+      "description": "Fully elastic, intelligently tiered storage with optional SSD cache ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/fsx/lustre/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Storage settings",
+          "helpText": "Configure storage settings for your Amazon FSx for Lustre file system",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Intelligent-Tiering storage used",
+                "description": "Average amount of data stored on your file system in a month",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the amount of storage",
+                "id": "intelligent_tiering_storage"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "frequentAccessTier",
+                "label": "Frequent Access Tier",
+                "description": "(Accessed in the last 30 days)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 20,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "infrequentAccessTier",
+                "label": "Infrequent Access Tier",
+                "description": "(Accessed in the last 30-90 days ago)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 20,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "archiveInstantAccessTier",
+                "label": "Archive Instant Access Tier",
+                "description": "(Accessed in the last 90+ days ago)",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 60,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Backup storage",
+                "description": "Enter the amount of backup storage you expect to use.",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the amount of backup storage",
+                "id": "backup_storage"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "compressionSavings",
+                "label": "Savings from compression",
+                "description": "Intelligent-Tiering storage and backups support data compression. Enter the % of savings you expect with compression.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 50,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Frequent Access Tier",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "V3JbT1jc6aRWtQoWwg6_F2icSlO4lrRF4BH406bIoDc"
+                },
+                "id": "pricingFrequentAccessTier"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Infrequent Access Tier",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "h3aJiLOEZKc5mtTL_HYXYdylZ2LlVbSn816q2VBwJsA"
+                },
+                "id": "pricingInfrequentAccessTier"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Archive Instant Access Tier",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "f_gIahfoNGqPyI7MqYEpAHde35PYAmIZRmpHASdGqYU"
+                },
+                "id": "pricingArchiveInstantAccessTier"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for FSx Lustre backup storage",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "AJdsxXgiJKopicgOiG1AtOM1fu2edZxWYNsb4idp0ms"
+                },
+                "id": "pricingBackupStorage"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for FSx Lustre Monitoring",
+                "subType": "singlePricePoint",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "3AsiBXEHKoy2aQ4lT3IUEoB_SwFT1CD_4ykYDMhk8Qw"
+                },
+                "id": "pricingMonitoring"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "intelligentTiering_conversions",
+                  "refer": [
+                    "intelligent_tiering_storage",
+                    "frequentAccessTier",
+                    "infrequentAccessTier",
+                    "archiveInstantAccessTier",
+                    "backup_storage",
+                    "compressionSavings",
+                    "pricingFrequentAccessTier",
+                    "pricingInfrequentAccessTier",
+                    "pricingArchiveInstantAccessTier",
+                    "pricingBackupStorage",
+                    "pricingMonitoring"
+                  ],
+                  "subTotalRefer": "totalLustreCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "variableName": "Savings from compression factor",
+                  "operands": [
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": ""
+                    },
+                    {
+                      "variableLabel": "Savings from compression",
+                      "variableUnitLabel": "Savings from compression",
+                      "required": true,
+                      "variableId": "compressionSavings"
+                    }
+                  ],
+                  "outputUnitLabel": "(Savings from compression factor)",
+                  "decimalPlaces": 5,
+                  "isZeroValid": true,
+                  "id": "storagePercentAfterCompressionSavings1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Intelligent-Tiering storage used",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "intelligent_tiering_storage"
+                    },
+                    {
+                      "variableLabel": "Savings from compression factor",
+                      "variableUnitLabel": "(Savings from compression factor)",
+                      "required": true,
+                      "variableId": "storagePercentAfterCompressionSavings1"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Effective storage capacity)",
+                  "variableName": "Storage after compression",
+                  "decimalPlaces": 2,
+                  "id": "storageAfterCompression"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage after compression",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storageAfterCompression"
+                    },
+                    {
+                      "variableLabel": "Frequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "frequentAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Frequent Access Tier Storage)",
+                  "variableName": "Frequent Access Tier storage",
+                  "decimalPlaces": 2,
+                  "id": "frequentAccessTierStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Frequent Access Tier storage",
+                      "variableUnitLabel": "GB per month (Frequent Access Tier)",
+                      "required": true,
+                      "variableId": "frequentAccessTierStorage"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Frequent Access Tier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingFrequentAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Frequent Access Tier cost)",
+                  "variableName": "Frequent Access Tier cost",
+                  "decimalPlaces": 2,
+                  "id": "frequentAccessTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage after compression",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storageAfterCompression"
+                    },
+                    {
+                      "variableLabel": "Infrequent Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "infrequentAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Infrequent Access Tier Storage)",
+                  "variableName": "Infrequent Access Tier storage",
+                  "decimalPlaces": 2,
+                  "id": "infrequentAccessTierStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Infrequent Access Tier storage",
+                      "variableUnitLabel": "GB per month (Infrequent Access Tier)",
+                      "required": true,
+                      "variableId": "infrequentAccessTierStorage"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Infrequent Access Tier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingInfrequentAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Infrequent Access Tier cost)",
+                  "variableName": "Infrequent Access Tier cost",
+                  "decimalPlaces": 2,
+                  "id": "infrequentAccessTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage after compression",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storageAfterCompression"
+                    },
+                    {
+                      "variableLabel": "Archive Instant Access Tier",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "archiveInstantAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Archive Instant Access Tier Storage)",
+                  "variableName": "Archive Instant Access Tier storage",
+                  "decimalPlaces": 2,
+                  "id": "archiveInstantAccessTierStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Archive Instant Access Tier storage",
+                      "variableUnitLabel": "GB per month (Archive Instant Access Tier)",
+                      "required": true,
+                      "variableId": "archiveInstantAccessTierStorage"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Archive Instant Access Tier",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingArchiveInstantAccessTier"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Archive Instant Access Tier cost)",
+                  "variableName": "Archive Instant Access Tier cost",
+                  "decimalPlaces": 2,
+                  "id": "archiveInstantAccessTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Frequent Access Tier cost",
+                      "variableUnitLabel": "[currency] (Frequent Access Tier cost)",
+                      "required": false,
+                      "variableId": "frequentAccessTierCost"
+                    },
+                    {
+                      "variableLabel": "Infrequent Access Tier cost",
+                      "variableUnitLabel": "[currency] (Infrequent Access Tier cost)",
+                      "required": false,
+                      "variableId": "infrequentAccessTierCost"
+                    },
+                    {
+                      "variableLabel": "Archive Instant Access Tier cost",
+                      "variableUnitLabel": "[currency] (Archive Instant Access Tier cost)",
+                      "required": false,
+                      "variableId": "archiveInstantAccessTierCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "Monthly cost for Persistent - Intelligent Tiering storage",
+                  "decimalPlaces": 2,
+                  "id": "totalStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for Persistent - Intelligent Tiering storage",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Monthly cost for Persistent - Intelligent Tiering storage",
+                  "id": "totalStorageDisplay",
+                  "refer": "totalStorageTierCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage after compression",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "storageAfterCompression"
+                    },
+                    {
+                      "variableLabel": "pricing for FSx Lustre Monitoring",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingMonitoring"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Monitoring and Automation cost)",
+                  "variableName": "Monitoring cost",
+                  "decimalPlaces": 2,
+                  "id": "MonitoringCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for Monitoring and Automation",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Monitoring cost",
+                  "id": "totalMonitorDisplay",
+                  "refer": "MonitoringCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "backup_storage"
+                    },
+                    {
+                      "variableLabel": "Savings from compression",
+                      "variableUnitLabel": "compression savings factor",
+                      "required": true,
+                      "variableId": "compressionSavings"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Backup saving)",
+                  "decimalPlaces": 2,
+                  "id": "intelligentTieringBackupSaving"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "Backup storage",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "backup_storage"
+                    },
+                    {
+                      "variableLabel": "GB per month (Backup saving)",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "intelligentTieringBackupSaving"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Effective provisioned Backup storage)",
+                  "decimalPlaces": 2,
+                  "id": "effectiveBackupStorage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Monthly cost for backup storage",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective provisioned Backup storage)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "effectiveBackupStorage"
+                    },
+                    {
+                      "variableLabel": "pricing for FSx Lustre backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "pricingBackupStorage"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "backupStorageTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost for backup storage",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Monthly cost for backup storage",
+                  "id": "totalBackupDisplay",
+                  "refer": "backupStorageTotal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Monthly cost for Persistent - Intelligent Tiering storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalStorageTierCost"
+                    },
+                    {
+                      "variableLabel": "Monitoring cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "MonitoringCost"
+                    },
+                    {
+                      "variableLabel": "Monthly cost for backup storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "backupStorageTotal"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "Total cost for FSx for Lustre Persistent - Intelligent Tiering",
+                  "decimalPlaces": 2,
+                  "id": "totalIntelligentTieringCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storagePercentAfterCompressionSavings1",
+                    "storageAfterCompression",
+                    "frequentAccessTierStorage",
+                    "frequentAccessTierCost",
+                    "infrequentAccessTierStorage",
+                    "infrequentAccessTierCost",
+                    "archiveInstantAccessTierStorage",
+                    "archiveInstantAccessTierCost",
+                    "totalStorageTierCost",
+                    "totalStorageDisplay",
+                    "MonitoringCost",
+                    "totalMonitorDisplay",
+                    "intelligentTieringBackupSaving",
+                    "effectiveBackupStorage",
+                    "backupStorageTotal",
+                    "totalBackupDisplay",
+                    "totalIntelligentTieringCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for FSx for Lustre Persistent - Intelligent Tiering storage",
+                  "decimalPlaces": 2,
+                  "id": "finalCostDisplay",
+                  "subTotalRefer": "totalIntelligentTieringCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "fsx",
+              "meteredUnit": "6QfWfp9qVnjkcAtansNHFfWnoPImH2ZNSzlYq9Dk5Tg"
+            }
+          },
+          "title": "Throughput, Metadata IOPS, SSD read cache, requests",
+          "expandable": true,
+          "defaultExpansion": true,
+          "helpText": "Configure the performance characteristics of your FSx for Lustre file system",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fsx/lustre/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "throughput",
+                "description": "Enter the aggregate throughput capacity you want to provision. Each Amazon FSx for Lustre file system supports 4,000 or increments of 4,000 MB/s of throughput capacity.",
+                "label": "Throughput Capacity",
+                "options": [
+                  {
+                    "label": "MBps",
+                    "value": "mbps",
+                    "id": "1"
+                  },
+                  {
+                    "label": "GBps",
+                    "value": "gbps",
+                    "id": "2"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 4000,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": "",
+                "placeholder": "Enter the aggregate throughput capacity you want to provision",
+                "id": "throughputCapacity"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Metadata IOPS",
+                "description": "Enter the amount of Metadata IOPS you want to provision (6,000 or 12,000 Metadata IOPS).",
+                "id": "metadataIops",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "0"
+                  },
+                  {
+                    "label": "6000 IOPs",
+                    "id": "6000"
+                  },
+                  {
+                    "label": "12000 IOPs",
+                    "id": "12000"
+                  }
+                ],
+                "defaultDropDownItem": "None",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "SSD read cache",
+                "description": "You can optionally provision an SSD read cache to provide lower-latency reads of recently accessed data. By default, FSx chooses a read cache size based on your provisional throughput. If you know the approximate size of your active working data set, you can customize the size of the SSD read cache to fit this active working set. If your workload is not latency-sensitive, you can choose to have no SSD cache to reduce costs.",
+                "id": "ssdReadCache",
+                "options": [
+                  {
+                    "label": "None",
+                    "id": "none"
+                  },
+                  {
+                    "label": "User Provisioned",
+                    "id": "user_provisioned"
+                  },
+                  {
+                    "label": "Proportional to Throughput",
+                    "id": "proportional_throughput"
+                  }
+                ],
+                "defaultDropDownItem": "none",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ssdReadCache"
+                    },
+                    "user_provisioned"
+                  ]
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "User-Provisioned SSD Read Cache",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 32,
+                  "maxValue": 102400000
+                },
+                "placeholder": "Enter the user-provisioned SSD Read Cache",
+                "id": "usercacheamount"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "ssdReadCache"
+                    },
+                    "proportional_throughput"
+                  ]
+                },
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "'Proportional to Throughput' comes with 5 GB per MBps throughput ",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "alertPropThroughput"
+              },
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "With FSx Intelligent Tiering, you pay per request when you write data or read uncached data from the Intelligent Tiering storage class",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "alertReadWrite"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average read requests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "requests per month ",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter amount",
+                "id": "averageReadRequests"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Average write requests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "requests per month ",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter amount",
+                "id": "averageWriteRequests"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre SSD Read Cache",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "kBTy7_CUfHCll7EQWoP9wgGtciDK9uO5aPBw3c-uVII"
+                },
+                "id": "pricingSSDReadCache"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Metadata IOPS",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "9sbTjDzjP93JvLdEUjKYr_QBO2qKGv3wuK3tctkNa3I"
+                },
+                "id": "pricingMetadataIOPS"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Throughput",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "Orhq-KzKqjKre-_hCKcVrTbr2rnGuSujI1kogQ_GuQU"
+                },
+                "id": "pricingThroughput"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Read Requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "7PaIaQ-dXUzMKkf7MxIluyQN4_z1bKsJnaz8S5mHXy0"
+                },
+                "id": "pricingReadRequests"
+              },
+              {
+                "type": "pricing",
+                "label": "Pricing for FSx Lustre Write Requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "fsx",
+                "meteredUnit": {
+                  "allRegions": "6QfWfp9qVnjkcAtansNHFfWnoPImH2ZNSzlYq9Dk5Tg"
+                },
+                "id": "pricingWriteRequests"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "throughputCapacity",
+                    "metadataIops",
+                    "ssdReadCache",
+                    "usercacheamount",
+                    "alertPropThroughput",
+                    "alertReadWrite",
+                    "averageReadRequests",
+                    "averageWriteRequests",
+                    "pricingSSDReadCache",
+                    "pricingMetadataIOPS",
+                    "pricingThroughput",
+                    "pricingReadRequests",
+                    "pricingWriteRequests"
+                  ],
+                  "id": "throughput_conversions",
+                  "subTotalRefer": "totalIntelligentTieringCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ssdReadCache"
+                      },
+                      "user_provisioned"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "User-Provisioned SSD Read Cache",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "usercacheamount"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre SSD Read Cache",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingSSDReadCache"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month (SSD Read Cache cost)",
+                  "variableName": "SSD Read Cache cost",
+                  "decimalPlaces": 2,
+                  "id": "ssdReadCacheCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ssdReadCache"
+                      },
+                      "user_provisioned"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost FSx for Lustre SSD Read Cache cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "SSD Read Cache cost",
+                  "id": "SSDReadDisplay",
+                  "refer": "ssdReadCacheCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ssdReadCache"
+                      },
+                      "proportional_throughput"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Monthly cost for Proportional to Throughput Cache",
+                  "operands": [
+                    {
+                      "variableLabel": "Throughput Capacity",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "throughputCapacity"
+                    },
+                    {
+                      "constant": 5,
+                      "constantUnitLabel": "GB/MBps"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre SSD Read Cache",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingSSDReadCache"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for proportional to throughput SSD Cache",
+                  "decimalPlaces": 5,
+                  "id": "proportional_throughputCost"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "ssdReadCache"
+                      },
+                      "proportional_throughput"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Monthly cost for FSx for Lustre SSD Read Cache",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Monthly cost for Proportional to Throughput Cache",
+                  "id": "SSDReadPropDisplay",
+                  "refer": "proportional_throughputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "IOPS",
+                  "displayInConfigSummary": true,
+                  "referLabel": "Metadata IOPS",
+                  "refer": "metadataIops",
+                  "variableName": "Metadata IOPs Count",
+                  "id": "metadataIopsVariable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Metadata IOPs Count",
+                      "variableUnitLabel": "IOPS",
+                      "required": true,
+                      "variableId": "metadataIopsVariable"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Metadata IOPS",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingMetadataIOPS"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month (Metadata IOPS cost)",
+                  "variableName": "Metadata IOPS cost",
+                  "decimalPlaces": 2,
+                  "id": "metadataIopsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost Metadata IOPs",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Metadata IOPS cost",
+                  "id": "MetadataIOPSDisplay",
+                  "refer": "metadataIopsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Throughput Capacity",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "throughputCapacity"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Throughput",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingThroughput"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month (Throughput cost)",
+                  "variableName": "Throughput cost",
+                  "decimalPlaces": 2,
+                  "id": "throughputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost Throughput Capacity",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Throughput cost",
+                  "id": "ThroughputCapacityDisplay",
+                  "refer": "throughputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average read requests",
+                      "variableUnitLabel": "read requests",
+                      "required": true,
+                      "variableId": "averageReadRequests"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Read Requests",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingReadRequests"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month (Read Requests cost)",
+                  "variableName": "Read Requests cost",
+                  "decimalPlaces": 2,
+                  "id": "readRequestsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost Read Requests",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Read Requests cost",
+                  "id": "ReadDisplay",
+                  "refer": "readRequestsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Average write requests",
+                      "variableUnitLabel": "write requests",
+                      "required": true,
+                      "variableId": "averageWriteRequests"
+                    },
+                    {
+                      "variableLabel": "Pricing for FSx Lustre Write Requests",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "pricingWriteRequests"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month (Write Requests cost)",
+                  "variableName": "Write Requests cost",
+                  "decimalPlaces": 2,
+                  "id": "writeRequestsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total monthly cost Write Requests",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "Write Requests cost",
+                  "id": "WriteDisplay",
+                  "refer": "writeRequestsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "SSD Read Cache cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "ssdReadCacheCost"
+                    },
+                    {
+                      "variableLabel": "Monthly cost for Proportional to Throughput Cache",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "proportional_throughputCost"
+                    },
+                    {
+                      "variableLabel": "Metadata IOPS cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "metadataIopsCost"
+                    },
+                    {
+                      "variableLabel": "Throughput cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "throughputCost"
+                    },
+                    {
+                      "variableLabel": "Read Requests cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "readRequestsCost"
+                    },
+                    {
+                      "variableLabel": "Write Requests cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "writeRequestsCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "variableName": "Total FSx for Lustre Throughput, Metadata IOPS, SSD read cache, requests Cost",
+                  "decimalPlaces": 2,
+                  "id": "totalFSxLustreCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ssdReadCacheCost",
+                    "SSDReadDisplay",
+                    "proportional_throughputCost",
+                    "SSDReadPropDisplay",
+                    "metadataIopsVariable",
+                    "metadataIopsCost",
+                    "MetadataIOPSDisplay",
+                    "throughputCost",
+                    "ThroughputCapacityDisplay",
+                    "readRequestsCost",
+                    "ReadDisplay",
+                    "writeRequestsCost",
+                    "WriteDisplay",
+                    "totalFSxLustreCost"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total FSx for Lustre Throughput, Metadata IOPS, SSD read cache, requests Costs",
+                  "decimalPlaces": 2,
+                  "id": "performanceCostsDisplay",
+                  "subTotalRefer": "totalFSxLustreCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "persistentIT"
+    },
+    {
+      "title": "Scratch - SSD",
+      "description": "All-SSD based temporary storage",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/fsx/lustre/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "fsx",
+              "meteredUnit": "6F5Y8-LREA3C7XZ-HkJAJTOW7_qP9HXyM8_u0Lub4W4"
+            }
+          },
+          "title": "Storage settings",
+          "helpText": "You only pay for the resources you use. You will be billed for each hour that your FSx for Lustre file system remains provisioned. Such hourly billing will stop when you delete the file system.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fsx/lustre/"
+            }
+          },
+          "bodyText": "This monthly calculation assumes that the file system stays provisioned for the entire month. For fewer hours of up-time per month, reduce the cost as per the calculations.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage capacity",
+                "dropDownSize": [
+                  {
+                    "label": "GB per month",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB per month",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB per month",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1200,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter the amount of storage",
+                "description": "Enter the amount of storage you want to provision (1200 GB, 2400 GB or increments of 2400 GB)",
+                "id": "scratch_generated_6"
+              },
+              {
+                "type": "input",
+                "subType": "percentInput",
+                "id": "percentDataCompressionScratchSavings",
+                "label": "Data Compression savings",
+                "description": "Enter the % storage savings you expect with data compression",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 100
+                },
+                "defaultValue": 50,
+                "displayInConfigSummary": false,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Per unit Storage throughput",
+                "id": "ScratchStorageThroughput",
+                "mappingDefinitionName": "fsx",
+                "options": [
+                  {
+                    "label": "200 MBps/TiB",
+                    "id": "6F5Y8-LREA3C7XZ-HkJAJTOW7_qP9HXyM8_u0Lub4W4"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "6F5Y8-LREA3C7XZ-HkJAJTOW7_qP9HXyM8_u0Lub4W4",
+                "description": "Throughtput (MB/s) per unit of storage (TiB)"
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Scratch Price",
+                "id": "ScratchPrice",
+                "mappingDefinitionName": "fsx",
+                "refers": [
+                  {
+                    "variableLabel": "Per unit Storage throughput",
+                    "variableId": "ScratchStorageThroughput"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "scratch_generated_7",
+                  "refer": [
+                    "scratch_generated_6",
+                    "percentDataCompressionScratchSavings",
+                    "ScratchStorageThroughput",
+                    "ScratchPrice"
+                  ],
+                  "subTotalRefer": "totalFSxLustreCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "Scratch Price",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true,
+                      "variableId": "ScratchPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per GB per hour",
+                  "decimalPlaces": 6,
+                  "id": "ScratchPriceHourly"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "GB per month",
+                      "variableLabel": "Storage capacity",
+                      "required": true,
+                      "variableId": "scratch_generated_6"
+                    },
+                    {
+                      "variableLabel": "Data Compression savings",
+                      "variableUnitLabel": "Data Compression savings factor",
+                      "required": true,
+                      "variableId": "percentDataCompressionScratchSavings"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Storage saving)",
+                  "decimalPlaces": 2,
+                  "id": "ScratchDeployment_generated"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "GB per month",
+                      "variableLabel": "Storage capacity",
+                      "required": true,
+                      "variableId": "scratch_generated_6"
+                    },
+                    {
+                      "variableLabel": "GB per month (Storage saving)",
+                      "variableUnitLabel": "GB per month",
+                      "required": false,
+                      "variableId": "ScratchDeployment_generated"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Effective Scratch storage capacity for FSx for Lustre File Server)",
+                  "decimalPlaces": 2,
+                  "id": "scratch_Effective_Sorage"
+                },
+                {
+                  "displayIf": {
+                    "<=": [
+                      {
+                        "type": "component",
+                        "id": "scratch_Effective_Sorage"
+                      },
+                      2400
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1200,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective Scratch storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "scratch_Effective_Sorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 1200",
+                  "id": "scratch_billed_storage_low"
+                },
+                {
+                  "displayIf": {
+                    ">": [
+                      {
+                        "type": "component",
+                        "id": "scratch_Effective_Sorage"
+                      },
+                      2400
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 2400,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Effective Scratch storage capacity for FSx for Lustre File Server)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "scratch_Effective_Sorage"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "variableName": "GB per month (Billed Storage) 2400",
+                  "id": "scratch_billed_storage_high"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 1200",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "scratch_billed_storage_low"
+                    },
+                    {
+                      "variableLabel": "GB per month (Billed Storage) 2400",
+                      "variableUnitLabel": "GB per month (Billed Storage)",
+                      "required": false,
+                      "variableId": "scratch_billed_storage_high"
+                    }
+                  ],
+                  "outputUnitLabel": "GB per month (Billed Storage)",
+                  "decimalPlaces": 2,
+                  "id": "scratch_billed_storage"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "GB per month (Billed Storage)",
+                      "variableUnitLabel": "GB per month",
+                      "required": true,
+                      "variableId": "scratch_billed_storage"
+                    },
+                    {
+                      "variableLabel": "[currency] per GB per hour",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true,
+                      "variableId": "ScratchPriceHourly"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "scratch_monthly_final"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "ScratchPriceHourly",
+                    "ScratchDeployment_generated",
+                    "scratch_Effective_Sorage",
+                    "scratch_billed_storage_low",
+                    "scratch_billed_storage_high",
+                    "scratch_billed_storage",
+                    "scratch_monthly_final"
+                  ],
+                  "required": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for FSx for Lustre file system storage",
+                  "decimalPlaces": 2,
+                  "id": "scratch_generated_8",
+                  "subTotalRefer": "scratch_monthly_final"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "scratch"
+    }
+  ],
+  "slug": "FSxForLustre",
+  "partitions": [
+    "aws",
+    "aws-iso-b"
+  ]
+}

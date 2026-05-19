@@ -1,0 +1,700 @@
+{
+  "version": "0.0.72",
+  "serviceName": "Amazon Fraud Detector",
+  "serviceCode": "amazonFraudDetector",
+  "slug": "frauddetector",
+  "type": "AWSService",
+  "regions": [],
+  "searchKeywords": [
+    "fraud",
+    "fraud detector",
+    "detector"
+  ],
+  "serviceDescription": "Amazon Fraud Detector, a fully managed service built on over 20 years of insights from Amazon, helps customers identify potentially fraudulent activities and catch more online fraud faster. With Amazon Fraud Detector, you pay only for what you use, and there are no minimum fees or upfront commitments. You are charged based on the compute hours used to train and host your models, the amount of storage you use, and the quantity of fraud predictions you make.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/fraud-detector/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "frauddetector",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/frauddetector/[currency]/current/frauddetector.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/fraud-detector/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Data Processing and Storage",
+          "helpText": "You are charged by the Gigabyte (GB) for storing event data in Amazon Fraud Detector. Data storage is optional. Event data can be stored both through uploads of historic events and when generating predictions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fraud-detector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "dataProcessed",
+                "label": "Event data processed and stored",
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": "",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "defaultSize": "gb",
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 9.5367432e-06,
+                  "maxValue": 10000
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "priceDataProcessesing",
+                "label": "Price for data processed and storage",
+                "description": "",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "frauddetector",
+                "meteredUnit": {
+                  "allRegions": "Stored Dataset"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "_generated_1",
+                  "refer": [
+                    "dataProcessed",
+                    "priceDataProcessesing"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalPriceForDataProcesses",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Event data processed and stored",
+                      "variableUnitLabel": "GB data processed and stored",
+                      "required": true,
+                      "variableId": "dataProcessed"
+                    },
+                    {
+                      "variableLabel": "Price for data processed and storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceDataProcessesing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalPriceForDataProcesses"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data Processing and Storage pricing",
+                  "decimalPlaces": 2,
+                  "id": "dataProcessingPriceMonthly",
+                  "subTotalRefer": "totalPriceForDataProcesses"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Model Training ",
+          "helpText": "Fraud Detector charges for compute capacity by the hour for on-demand hosting of deployed models, so that they are available for real-time predictions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fraud-detector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of model versions",
+                "id": "numberOfModeVersions",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Training time per model version in hours",
+                "id": "timeFortrainingPerModel",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "id": "priceTraining",
+                "label": "Price for training models",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "frauddetector",
+                "meteredUnit": {
+                  "allRegions": "Training"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "hostingTrainingUnitConversion",
+                  "refer": [
+                    "numberOfModeVersions",
+                    "timeFortrainingPerModel",
+                    "priceTraining"
+                  ],
+                  "subTotalRefer": "totalPriceForDataProcesses"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalPriceForTraining",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of model versions",
+                      "variableUnitLabel": "model versions",
+                      "required": true,
+                      "variableId": "numberOfModeVersions"
+                    },
+                    {
+                      "variableLabel": "Training time per model version in hours",
+                      "variableUnitLabel": "hours",
+                      "required": true,
+                      "variableId": "timeFortrainingPerModel"
+                    },
+                    {
+                      "variableLabel": "Price for training models",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceTraining"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for Training",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalPriceForTraining"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Model Training Pricing",
+                  "decimalPlaces": 2,
+                  "id": "trainingMonthly",
+                  "subTotalRefer": "totalPriceForTraining"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Model Hosting",
+          "helpText": "Fraud Detector charges for compute capacity by the hour for on-demand hosting of deployed models, so that they are available for real-time predictions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fraud-detector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of active model versions",
+                "id": "numberOfModelsHosted",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "id": "priceHosting",
+                "label": "Price for hosting models",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "frauddetector",
+                "meteredUnit": {
+                  "allRegions": "Hosting"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "hostingTrainingUnitConversion1",
+                  "refer": [
+                    "numberOfModelsHosted",
+                    "priceHosting"
+                  ],
+                  "subTotalRefer": "totalPriceForTraining"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalPriceForHosting",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of active model versions",
+                      "variableUnitLabel": "models hosted",
+                      "required": true,
+                      "variableId": "numberOfModelsHosted"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "Price for hosting models",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "priceHosting"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month for Hosting",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalPriceForHosting"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Model Hosting Pricing",
+                  "decimalPlaces": 2,
+                  "id": "hostingMonthly",
+                  "subTotalRefer": "totalPriceForHosting"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Fraud Prediction",
+          "helpText": "Fraud Detector charges for compute capacity by the hour for on-demand hosting of deployed models, so that they are available for real-time predictions.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/fraud-detector/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Online Fraud Insights 0 to 100000 Predictions"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Online Fraud Insights 100000 to Inf Predictions"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of monthly predictions with Online Fraud Insights (OFI) model type",
+                "id": "numberOfPredictionsOFI",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Transaction Fraud Insights 0 to 100000 Predictions"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Transaction Fraud Insights 100000 to Inf Predictions"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of monthly predictions with Transaction Fraud Insights (TFI) model type",
+                "id": "numberOfPredictionsTFI",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Rules Only 0 to 400000 Predictions"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Rules Only 400000 to 1200000 Predictions"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "frauddetector",
+                        "meteredUnit": "Predictions Rules Only 1200000 to Inf Predictions"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of monthly predictions with rules only (no ML model)",
+                "id": "numberOfPredictionsRFI",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000000
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Online Fraud Insights Price",
+                "id": "onlineFraudTieredPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "frauddetector",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "Predictions Online Fraud Insights 0 to 100000 Predictions"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Predictions Online Fraud Insights 100000 to Inf Predictions"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Transaction Fraud Insights Price",
+                "id": "transactionFraudTieredPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "frauddetector",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 100000,
+                      "meteredUnit": "Predictions Transaction Fraud Insights 0 to 100000 Predictions"
+                    },
+                    {
+                      "startOfTier": 100001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Predictions Transaction Fraud Insights 100000 to Inf Predictions"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Rule-based Fraud Insights Price",
+                "id": "ruleBasedFraudTieredPrice",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "mappingDefinitionName": "frauddetector",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 400000,
+                      "meteredUnit": "Predictions Rules Only 0 to 400000 Predictions"
+                    },
+                    {
+                      "startOfTier": 400001,
+                      "endOfTier": 1200000,
+                      "meteredUnit": "Predictions Rules Only 400000 to 1200000 Predictions"
+                    },
+                    {
+                      "startOfTier": 1200001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Predictions Rules Only 1200000 to Inf Predictions"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "fraudPredictionUnitConversion",
+                  "refer": [
+                    "numberOfPredictionsOFI",
+                    "numberOfPredictionsTFI",
+                    "numberOfPredictionsRFI",
+                    "onlineFraudTieredPrice",
+                    "transactionFraudTieredPrice",
+                    "ruleBasedFraudTieredPrice"
+                  ],
+                  "subTotalRefer": "totalPriceForHosting"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Online Fraud Insights Price",
+                  "tieredPricingRefer": "onlineFraudTieredPrice",
+                  "inputReferLabel": "Number of monthly predictions with Online Fraud Insights (OFI) model type",
+                  "inputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]",
+                  "id": "tieredPricingForOnlineFraud",
+                  "inputRefer": "numberOfPredictionsOFI",
+                  "variableName": "Tiered Pricing Online Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "onlineFraudInsightsVar",
+                  "label": "Monthly cost for online fraud insights",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "tieredPricingForOnlineFraud",
+                  "referLabel": "Tiered Pricing Online Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Transaction Fraud Insights Price",
+                  "tieredPricingRefer": "transactionFraudTieredPrice",
+                  "inputReferLabel": "Number of monthly predictions with Transaction Fraud Insights (TFI) model type",
+                  "inputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]",
+                  "id": "tieredPricingForTransactionFraud",
+                  "inputRefer": "numberOfPredictionsTFI",
+                  "variableName": "Tiered Pricing Transactions Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "transactionFraudInsightsVar",
+                  "label": "Monthly cost for transactions fraud insights",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "tieredPricingForTransactionFraud",
+                  "referLabel": "Tiered Pricing Transactions Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Rule-based Fraud Insights Price",
+                  "tieredPricingRefer": "ruleBasedFraudTieredPrice",
+                  "inputReferLabel": "Number of monthly predictions with rules only (no ML model)",
+                  "inputUnitLabel": "",
+                  "decimalPlaces": 2,
+                  "outputUnitLabel": "[currency]",
+                  "id": "tieredPricingForRuleBasedFraud",
+                  "inputRefer": "numberOfPredictionsRFI",
+                  "variableName": "Tiered Pricing Rulebased Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "ruleBasedFraudInsightsVar",
+                  "label": "Monthly cost for rule-based fraud insights",
+                  "useCurrency": true,
+                  "displayInCalculationString": true,
+                  "refer": "tieredPricingForRuleBasedFraud",
+                  "referLabel": "Tiered Pricing Rulebased Fraud"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "FinalCalcFraudPrediction",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "Tiered Pricing Online Fraud",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tieredPricingForOnlineFraud"
+                    },
+                    {
+                      "variableLabel": "Tiered Pricing Transactions Fraud",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tieredPricingForTransactionFraud"
+                    },
+                    {
+                      "variableLabel": "Tiered Pricing Rulebased Fraud",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "tieredPricingForRuleBasedFraud"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredPricingForOnlineFraud",
+                    "onlineFraudInsightsVar",
+                    "tieredPricingForTransactionFraud",
+                    "transactionFraudInsightsVar",
+                    "tieredPricingForRuleBasedFraud",
+                    "ruleBasedFraudInsightsVar",
+                    "FinalCalcFraudPrediction"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Fraud Prediction Pricing",
+                  "decimalPlaces": 2,
+                  "id": "fraudPredictionPriceMonthly",
+                  "subTotalRefer": "FinalCalcFraudPrediction"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "Frauddetector"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

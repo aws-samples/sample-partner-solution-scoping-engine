@@ -1,0 +1,158 @@
+{
+  "version": "0.0.20",
+  "serviceName": "S3 Access Grants",
+  "serviceCode": "s3AccessGrants",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Storage",
+    "Simple Storage Service",
+    "bucket",
+    "file storage",
+    "cloud storage",
+    "static website hosting",
+    "object storage",
+    "store objects",
+    "store files",
+    "data migration",
+    "ongoing data ingestion",
+    "backup and recovery",
+    "big data analytics",
+    "nearline archive",
+    "disaster recovery",
+    "content distribution",
+    "cloud storage",
+    "S3",
+    "s3"
+  ],
+  "serviceDescription": "Amazon Simple Storage Service (Amazon S3) is storage for the internet. You can use Amazon S3 to store and retrieve any amount of data at any time, from anywhere on the web.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/s3/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "s3",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3/[currency]/current/s3.json"
+    },
+    {
+      "mappingDefinitionName": "glacier",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/glacier/[currency]/current/glacier.json"
+    },
+    {
+      "mappingDefinitionName": "s3glacierdeeparchive",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/s3glacierdeeparchive/[currency]/current/s3glacierdeeparchive.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "S3 Access Grants",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/s3/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "description": "Amazon S3 Access Grants map identities in directories such as Active Directory, or AWS Identity and Access Management (IAM) Principals, to datasets in S3. This helps you manage data permissions at scale by automatically granting S3 access to end-users based on their corporate identity. Additionally, S3 Access Grants log end-user identity, as well as the application used to access S3 data, in AWS CloudTrail. This helps to provide a detailed audit history down to the end-user identity for all access to the data in your S3 buckets.",
+          "helpText": "S3 Access Grants is priced on a per-request basis. You are charged a flat rate for all Access Grants requests, such as GetDataAccess to obtain credentials. Delete-related requests, such as DeleteAccessGrant, are free.",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of AccessGrants Requests",
+                "id": "numberofrequests_S3",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of requests",
+                "description": "S3 Access Grants is priced on a per-request basis. You are charged a flat rate for all Access Grants requests, such as GetDataAccess to obtain credentials. Delete-related requests, such as DeleteAccessGrant, are free."
+              },
+              {
+                "type": "pricing",
+                "label": "price per request",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "s3",
+                "meteredUnit": {
+                  "allRegions": "Access Grants Requests CreateAGGrant per Requests"
+                },
+                "id": "accessgrants_pricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "OL_UnitConv_1",
+                  "refer": [
+                    "numberofrequests_S3",
+                    "accessgrants_pricing"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of AccessGrants Requests",
+                      "variableUnitLabel": "requests",
+                      "required": true,
+                      "variableId": "numberofrequests_S3"
+                    },
+                    {
+                      "variableLabel": "price per request",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "accessgrants_pricing"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 7,
+                  "id": "RequestsCostS3"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "RequestsCostS3"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost",
+                  "decimalPlaces": 2,
+                  "displayInConfigSummary": true,
+                  "id": "tot_AccessGrants_cost",
+                  "subTotalRefer": "RequestsCostS3"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

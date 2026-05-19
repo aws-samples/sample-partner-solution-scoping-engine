@@ -1,0 +1,199 @@
+{
+  "version": "0.0.15",
+  "serviceName": "AppSync GraphQL Caching",
+  "serviceCode": "appSyncCaching",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-3",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "query",
+    "graphql",
+    "api"
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/appsync/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "appsync",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/appsync/[currency]/current/appsync.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/appsync/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Caching",
+          "helpText": {
+            "aws": "To further improve the speed of query and data modification operations, you can optionally provision a dedicated cache for your AWS AppSync GraphQL APIs.",
+            "aws-cn": "To further improve the speed of query and data modification operations, you can optionally provision a dedicated cache for your Amazon AppSync GraphQL APIs."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/appsync/pricing/"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Cache memory size (GB)",
+                "id": "cacheSize",
+                "mappingDefinitionName": "appsync",
+                "options": [
+                  {
+                    "label": "cache.small (vCPU: 1, Memory: 1.55 GB)",
+                    "id": "API Calls CacheMemorySize 1 55 per Hrs"
+                  },
+                  {
+                    "label": "cache.medium (vCPU: 2, Memory: 3.22 GB)",
+                    "id": "API Calls CacheMemorySize 3 22 per Hrs"
+                  },
+                  {
+                    "label": "cache.large (vCPU: 2, Memory: 12.3 GB)",
+                    "id": "API Calls CacheMemorySize 12 3 per Hrs"
+                  },
+                  {
+                    "label": "cache.xlarge (vCPU: 4, Memory: 25.05 GB)",
+                    "id": "API Calls CacheMemorySize 25 05 per Hrs"
+                  },
+                  {
+                    "label": "cache.2xlarge (vCPU: 8, Memory: 50.47 GB)",
+                    "id": "Caching Memory Size 28 4"
+                  },
+                  {
+                    "label": "cache.4xlarge (vCPU: 16, Memory: 101.38 GB)",
+                    "id": "API Calls CacheMemorySize 101 38 per Hrs"
+                  },
+                  {
+                    "label": "cache.8xlarge (vCPU: 32, Memory: 203.26 GB)",
+                    "id": "API Calls CacheMemorySize 203 26 per Hrs"
+                  },
+                  {
+                    "label": "cache.12xlarge (vCPU: 48, Memory: 317.77 GB)",
+                    "id": "API Calls CacheMemorySize 317 77 per Hrs"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false
+                },
+                "defaultOption": "API Calls CacheMemorySize 1 55 per Hrs",
+                "description": "Choose cache memory size in GB. Each selection results in a different price."
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Price for item selected in drop down",
+                "id": "selectedCachePrice",
+                "mappingDefinitionName": "appsync",
+                "refers": [
+                  {
+                    "variableLabel": "Cache memory size (GB)",
+                    "variableId": "cacheSize"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "display the selected price using a variable",
+                  "displayInConfigSummary": false,
+                  "useCurrency": true,
+                  "referLabel": "Price for item selected in drop down",
+                  "refer": "selectedCachePrice",
+                  "id": "cachingPricingCombov2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Price for item selected in drop down",
+                      "variableUnitLabel": "cache price per hour",
+                      "required": true,
+                      "variableId": "selectedCachePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for cache",
+                  "decimalPlaces": 2,
+                  "id": "appsync_pricingComboV2Cost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "cacheSize",
+                    "selectedCachePrice",
+                    "cachingPricingCombov2",
+                    "appsync_pricingComboV2Cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Cache Cost",
+                  "decimalPlaces": 4,
+                  "id": "cacheTotalPrice",
+                  "subTotalRefer": "appsync_pricingComboV2Cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "cacheSpeed"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

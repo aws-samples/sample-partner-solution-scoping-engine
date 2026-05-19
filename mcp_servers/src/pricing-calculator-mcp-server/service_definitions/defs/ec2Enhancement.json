@@ -1,0 +1,2856 @@
+{
+  "version": "0.0.68",
+  "serviceName": "Amazon EC2 ",
+  "serviceCode": "ec2Enhancement",
+  "slug": "ec2-enhancement",
+  "type": "AWSService",
+  "excludeZeroSubTotals": true,
+  "regions": [
+    "af-south-1",
+    "ap-east-1"
+  ],
+  "bulkImportEnabled": {
+    "aws": [
+      {
+        "label": "EC2 Instances",
+        "filename": "Amazon_EC2_Instances_BulkUpload_Template_Commercial.xlsx"
+      },
+      {
+        "label": "EC2 Dedicated Hosts",
+        "filename": "Amazon_EC2_DedicatedHosts_BulkUpload_Template_Commercial.xlsx"
+      }
+    ],
+    "aws-cn": [],
+    "aws-iso": [],
+    "aws-iso-b": [],
+    "aws-iso-e": [
+      {
+        "label": "EC2 Instances",
+        "filename": "Amazon_EC2_Instances_BulkUpload_Template_NCL.xlsx"
+      },
+      {
+        "label": "EC2 Dedicated Hosts",
+        "filename": "Amazon_EC2_DedicatedHosts_BulkUpload_Template_NCL.xlsx"
+      }
+    ],
+    "aws-iso-f": [
+      {
+        "label": "EC2 Instances",
+        "filename": "Amazon_EC2_Instances_BulkUpload_Template_ALE.xlsx"
+      },
+      {
+        "label": "EC2 Dedicated Hosts",
+        "filename": "Amazon_EC2_DedicatedHosts_BulkUpload_Template_ALE.xlsx"
+      }
+    ]
+  },
+  "searchKeywords": [
+    "EC2 Dedicated Hosts",
+    "Dedicated Hosts",
+    "EC2"
+  ],
+  "serviceDescription": "Amazon EC2 provides a wide selection of instance types optimized to fit different use cases. Instance types comprise varying combinations of CPU, memory, storage, and networking capacity and give you the flexibility to choose the appropriate mix of resources for your applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/ec2/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    },
+    {
+      "mappingDefinitionName": "ebs-calculator",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ec2/[currency]/current/ebs-calculator.json"
+    },
+    {
+      "deniedPartitions": [
+        "aws-cn"
+      ],
+      "mappingDefinitionName": "cloudwatch",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cloudwatch/[currency]/current/cloudwatch.json"
+    },
+    {
+      "deniedPartitions": [
+        "aws-cn"
+      ],
+      "mappingDefinitionName": "dedicatedhost-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/ec2/[currency]/current/dedicatedhost-calc/metadata.json"
+    }
+  ],
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/ec2/"
+        }
+      },
+      "cards": [
+        {
+          "title": "EC2 specifications",
+          "helpText": "An Amazon Machine Image (AMI) is a template that contains the software configuration (operating system, application server, and applications) required to launch an instance. AMIs are preconfigured with an ever-growing list of operating system. We work with our partners and community to provide you with the most choice possible. You are also empowered to use our bundling tools to upload your own operating systems.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/instance-types/",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/ec2/",
+                "aws-iso-b": "https://awshome.scloud/ec2/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Tenancy",
+                "id": "tenancy",
+                "options": [
+                  {
+                    "label": "Shared Instances",
+                    "id": "shared"
+                  },
+                  {
+                    "label": "Dedicated Instances",
+                    "id": "dedicated"
+                  },
+                  {
+                    "label": "Dedicated Hosts",
+                    "id": "host",
+                    "partitions": [
+                      "aws",
+                      "aws-us-gov",
+                      "aws-iso",
+                      "aws-iso-b",
+                      "aws-iso-e",
+                      "aws-iso-f"
+                    ]
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "shared",
+                "attributeId": "aws:ec2:tenancy",
+                "validations": {
+                  "required": true
+                },
+                "description": "Choose the tenancy type to run your Amazon EC2 instances on."
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "shared"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "dedicated"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Operating system",
+                "id": "selectedOS",
+                "options": [
+                  {
+                    "label": "Linux",
+                    "id": "linux"
+                  },
+                  {
+                    "label": "Windows Server",
+                    "id": "windows"
+                  },
+                  {
+                    "label": "Windows Server with SQL Server Standard",
+                    "id": "windows-std"
+                  },
+                  {
+                    "label": "Windows Server with SQL Server Web",
+                    "id": "windows-web"
+                  },
+                  {
+                    "label": "Windows Server with SQL Server Enterprise",
+                    "id": "windows-enterprise"
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux",
+                    "id": "rhel",
+                    "partitions": [
+                      "aws",
+                      "aws-us-gov",
+                      "aws-cn",
+                      "aws-iso",
+                      "aws-iso-b",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "SUSE Linux Enterprise Server",
+                    "id": "suse",
+                    "partitions": [
+                      "aws",
+                      "aws-us-gov",
+                      "aws-cn"
+                    ]
+                  },
+                  {
+                    "label": "Linux with SQL Server Standard",
+                    "id": "linux-std",
+                    "partitions": [
+                      "aws"
+                    ]
+                  },
+                  {
+                    "label": "Linux with SQL Server Web",
+                    "id": "linux-web",
+                    "partitions": [
+                      "aws"
+                    ]
+                  },
+                  {
+                    "label": "Linux with SQL Server Enterprise",
+                    "id": "linux-enterprise",
+                    "partitions": [
+                      "aws"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with HA",
+                    "id": "rhel-ha",
+                    "partitions": [
+                      "aws",
+                      "aws-us-gov",
+                      "aws-cn",
+                      "aws-iso",
+                      "aws-iso-b",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with SQL Server Web",
+                    "id": "rhel-web",
+                    "partitions": [
+                      "aws",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with SQL Server Standard",
+                    "id": "rhel-std",
+                    "partitions": [
+                      "aws",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with SQL Server Enterprise",
+                    "id": "rhel-enterprise",
+                    "partitions": [
+                      "aws",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with HA and SQL Server Standard",
+                    "id": "rhel-ha-std",
+                    "partitions": [
+                      "aws",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Red Hat Enterprise Linux with HA and SQL Server Enterprise",
+                    "id": "rhel-ha-enterprise",
+                    "partitions": [
+                      "aws",
+                      "aws-iso-f"
+                    ]
+                  },
+                  {
+                    "label": "Ubuntu Pro",
+                    "id": "ubuntu-pro",
+                    "partitions": [
+                      "aws",
+                      "aws-cn"
+                    ]
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "linux",
+                "attributeId": "aws:ec2:operatingSystem",
+                "validations": {
+                  "required": true
+                },
+                "description": "Choose the operating system to run your Amazon EC2 instances on."
+              },
+              {
+                "type": "pricing",
+                "subType": "ec2PriceFetcher",
+                "id": "advancedEstimate_generated_25",
+                "label": "EC2 price fetcher",
+                "refers": [
+                  {
+                    "variableLabel": "Operating system",
+                    "variableId": "selectedOS"
+                  },
+                  {
+                    "variableLabel": "Tenancy",
+                    "variableId": "tenancy"
+                  }
+                ]
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "shared"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "dedicated"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "radioTiles",
+                "fieldLabel": "Workloads",
+                "fieldDescription": "Choose the graph that best represents your monthly workload",
+                "defaultSelection": "consistent",
+                "errorText": "fieldDescription",
+                "validation": true,
+                "radioOptionsColCount": 4,
+                "displayView": "popover",
+                "label": "Advance workload selection",
+                "radioOptions": [
+                  {
+                    "label": "Constant usage",
+                    "value": "consistent",
+                    "fileName": "workload-consistent.png",
+                    "description": "This workload is suitable for use cases that have a constant, predicable load. This includes use cases such as logging traffic to a website or running processes in the background.",
+                    "img": "https://s3.us-east-2.amazonaws.com/aws.calculator.platform.assets/workload-consistent.png"
+                  },
+                  {
+                    "label": "Daily spike traffic",
+                    "value": "daily",
+                    "fileName": "workload-daily.png",
+                    "description": "This workload is best for usage patterns that peak once a day. This is suitable for scenarios where, for example, you need to run several jobs at midnight or have a morning news spike.",
+                    "img": "https://s3.us-east-2.amazonaws.com/aws.calculator.platform.assets/workload-daily.png"
+                  },
+                  {
+                    "label": "Weekly spike traffic",
+                    "value": "weekly",
+                    "fileName": "workload-weekly.png",
+                    "description": "This workload is best for patterns that peak once a week. This is suitable for scenarios such as blogs that post once a week and weekly television shows.",
+                    "img": "https://s3.us-east-2.amazonaws.com/aws.calculator.platform.assets/workload-weekly.png"
+                  },
+                  {
+                    "label": "Monthly spike traffic",
+                    "value": "monthly",
+                    "fileName": "workload-monthly.png",
+                    "description": "This workload is best for traffic that spikes once a month, such as monthly invoices, payroll, or other monthly reports.",
+                    "img": "https://s3.us-east-2.amazonaws.com/aws.calculator.platform.assets/workload-monthly.png"
+                  }
+                ],
+                "id": "workloadSelection"
+              },
+              {
+                "displayIf": {
+                  "or": [
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "shared"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "dedicated"
+                      ]
+                    },
+                    {
+                      "==": [
+                        {
+                          "type": "component",
+                          "id": "tenancy"
+                        },
+                        "host"
+                      ]
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "workload",
+                "label": "Advance workloads",
+                "displayInConfigSummary": true,
+                "refers": [
+                  {
+                    "variableLabel": "Advance workload selection",
+                    "variableId": "workloadSelection"
+                  },
+                  {
+                    "variableLabel": "Tenancy",
+                    "variableId": "tenancy"
+                  }
+                ],
+                "id": "workload"
+              },
+              {
+                "type": "input",
+                "label": "Advance EC2 instance",
+                "subType": "ec2InstanceSearch",
+                "displayInConfigSummary": true,
+                "refers": [
+                  {
+                    "variableLabel": "Operating system",
+                    "path": "value",
+                    "variableId": "selectedOS"
+                  },
+                  {
+                    "variableLabel": "Tenancy",
+                    "variableId": "tenancy"
+                  }
+                ],
+                "columnDefinitions": [
+                  {
+                    "id": "instanceType",
+                    "header": "Instance name",
+                    "attributeId": "attributes.aws:ec2:instanceType"
+                  },
+                  {
+                    "id": "instanceFamily",
+                    "header": "Instance Family",
+                    "attributeId": "attributes.aws:ec2:instanceType",
+                    "tenancy": "host"
+                  },
+                  {
+                    "id": "instanceCategory",
+                    "header": "Instance Category",
+                    "attributeId": "attributes.aws:ec2:instanceFamily",
+                    "tenancy": "host"
+                  },
+                  {
+                    "id": "vcpu",
+                    "header": "vCPUs",
+                    "attributeId": "attributes.aws:ec2:vcpu",
+                    "tenancy": "host"
+                  },
+                  {
+                    "id": "physicalCores",
+                    "header": "Physical Cores",
+                    "attributeId": "attributes.aws:ec2:physicalCores",
+                    "tenancy": "host"
+                  },
+                  {
+                    "id": "memory",
+                    "header": "Memory",
+                    "attributeId": "attributes.aws:ec2:memory"
+                  },
+                  {
+                    "id": "networkPerformance",
+                    "header": "Network Performance",
+                    "attributeId": "attributes.aws:ec2:networkPerformance"
+                  },
+                  {
+                    "id": "storage",
+                    "header": "Storage",
+                    "attributeId": "attributes.aws:ec2:storage"
+                  },
+                  {
+                    "id": "onDemandRate",
+                    "header": "On-Demand Hourly Cost",
+                    "attributeId": "onDemandRate.[currency]",
+                    "tenancy": "host"
+                  },
+                  {
+                    "id": "currentGeneration",
+                    "header": "CurrentGeneration",
+                    "attributeId": "attributes.aws:ec2:currentGeneration"
+                  },
+                  {
+                    "id": "potentialRate",
+                    "header": "Potential Effective Hourly Cost",
+                    "attributeId": "attributes.aws:ec2:currentGeneration"
+                  }
+                ],
+                "id": "instanceType"
+              },
+              {
+                "type": "input",
+                "subType": "ec2AdvPricingStrategyV2",
+                "label": "Advance pricing strategy",
+                "options": [
+                  {
+                    "partitions": [
+                      "aws",
+                      "aws-cn",
+                      "aws-us-gov",
+                      "aws-iso-e",
+                      "aws-iso-f",
+                      "aws-iso",
+                      "aws-iso-b"
+                    ],
+                    "type": "reserveOptions",
+                    "value": "compute-savings",
+                    "label": "Compute Savings Plans",
+                    "description": {
+                      "aws": "One plan that automatically applies to all usage on EC2, Fargate, and Lambda. Up to 66% discount. <a href='https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html' target='_blank' aria-label='Learn more about Compute Savings Plan. Opens in a new tab'>Learn more</a>",
+                      "aws-cn": "One plan that automatically applies to all usage on EC2, Fargate, and Lambda. Up to 66% discount. <a href='https://www.amazonaws.cn/ec2/pricing' ' target='_blank' aria-label='Learn more about Compute Savings Plan. Opens in a new tab'>Learn more</a>",
+                      "aws-iso": "One plan that automatically applies to all usage on EC2, Fargate, and Lambda. Up to 66% discount. <a href='https://awshome.ic.gov/ec2/pricing' target='_blank' aria-label='Learn more about Compute Savings Plan. Opens in a new tab'>Learn more</a>",
+                      "aws-iso-b": "One plan that automatically applies to all usage on EC2, Fargate, and Lambda. Up to 66% discount. <a href='https://awshome.scloud/ec2/pricing' target='_blank' aria-label='Learn more about Compute Savings Plan. Opens in a new tab'>Learn more</a>"
+                    },
+                    "disabledOnTenancy": [
+                      "dedicated"
+                    ]
+                  },
+                  {
+                    "partitions": [
+                      "aws",
+                      "aws-cn",
+                      "aws-us-gov",
+                      "aws-iso-e",
+                      "aws-iso-f",
+                      "aws-iso",
+                      "aws-iso-b"
+                    ],
+                    "type": "reserveOptions",
+                    "value": "instance-savings",
+                    "label": "EC2 Instance Savings Plans",
+                    "description": {
+                      "aws": "Get deeper discount when you only need one instance family and region. Up to 72% discount. <a href='https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html' target='_blank' aria-label='Learn more about Instance Savings Plans. Opens in a new tab'>Learn more</a>",
+                      "aws-cn": "Get deeper discount when you only need one instance family and region. Up to 72% discount. <a href='https://www.amazonaws.cn/ec2/pricing' target='_blank' aria-label='Learn more about Instance Savings Plans. Opens in a new tab'>Learn more</a>",
+                      "aws-iso": "Get deeper discount when you only need one instance family and region. Up to 72% discount. <a href='https://awshome.ic.gov/ec2/pricing' target='_blank' aria-label='Learn more about Instance Savings Plans. Opens in a new tab'>Learn more</a>",
+                      "aws-iso-b": "Get deeper discount when you only need one instance family and region. Up to 72% discount. <a href='https://awshome.scloud/ec2/pricing' target='_blank' aria-label='Learn more about Instance Savings Plans. Opens in a new tab'>Learn more</a>"
+                    },
+                    "disabledOnTenancy": [
+                      "dedicated"
+                    ]
+                  },
+                  {
+                    "type": "onDemand",
+                    "value": "on-demand",
+                    "label": "On-Demand",
+                    "description": {
+                      "aws": "Maximize flexibility. <a href='https://aws.amazon.com/ec2/pricing/on-demand/' target='_blank' aria-label='Learn more about On-Demand Intances. Opens in a new tab'>Learn more</a>",
+                      "aws-cn": "Maximize flexibility. <a href='https://www.amazonaws.cn/ec2/pricing' target='_blank' aria-label='Learn more about On-Demand Intances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso": "Maximize flexibility. <a href='https://awshome.ic.gov/ec2/pricing' target='_blank' aria-label='Learn more about On-Demand Intances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso-b": "Maximize flexibility. <a href='https://awshome.scloud/ec2/pricing' target='_blank' aria-label='Learn more about On-Demand Intances. Opens in a new tab'>Learn more</a>"
+                    }
+                  },
+                  {
+                    "type": "spot",
+                    "value": "spot",
+                    "label": "Spot Instances",
+                    "partitions": [
+                      "aws",
+                      "aws-us-gov",
+                      "aws-cn"
+                    ],
+                    "description": {
+                      "aws": "Minimize cost by leveraging EC2's spare capacity. Recommended for fault tolerant and interruption tolerant applications. <a href='https://aws.amazon.com/ec2/spot/' target='_blank' aria-label='Learn more about Spot Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-cn": "Minimize cost by leveraging EC2's spare capacity. Recommended for fault tolerant and interruption tolerant applications. <a href='https://www.amazonaws.cn/ec2/pricing' target='_blank' aria-label='Learn more about Spot Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso": "Minimize cost by leveraging EC2's spare capacity. Recommended for fault tolerant and interruption tolerant applications. <a href='https://awshome.ic.gov/ec2/pricing' target='_blank' aria-label='Learn more about Spot Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso-b": "Minimize cost by leveraging EC2's spare capacity. Recommended for fault tolerant and interruption tolerant applications. <a href='https://awshome.scloud/ec2/pricing' target='_blank' aria-label='Learn more about Spot Instances. Opens in a new tab'>Learn more</a>"
+                    },
+                    "disabledOnTenancy": [
+                      "host"
+                    ]
+                  },
+                  {
+                    "type": "reserveOptions",
+                    "value": "standard",
+                    "label": "Standard Reserved Instances",
+                    "description": {
+                      "aws": "Learn about <a href='https://aws.amazon.com/ec2/pricing/reserved-instances/' target='_blank'>Standard Reserved Instances</a>.",
+                      "aws-cn": "Learn about <a href='https://www.amazonaws.cn/ec2/pricing' target='_blank'>Standard Reserved Instances</a>.",
+                      "aws-iso": "Learn about <a href='https://awshome.ic.gov/ec2/pricing' target='_blank'>Standard Reserved Instances</a>.",
+                      "aws-iso-b": "Learn about <a href='https://awshome.scloud/ec2/pricing' target='_blank'>Standard Reserved Instances</a>."
+                    },
+                    "hiddenOnTenancy": [
+                      "shared"
+                    ]
+                  },
+                  {
+                    "type": "reserveOptions",
+                    "value": "convertible",
+                    "label": "Convertible Reserved Instances",
+                    "description": {
+                      "aws": "<a href='https://aws.amazon.com/ec2/pricing/reserved-instances/' target='_blank' aria-label='Learn more about Convertible Reserved Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-cn": "<a href='https://www.amazonaws.cn/ec2/pricing' target='_blank' aria-label='Learn more about Convertible Reserved Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso": "<a href='https://awshome.ic.gov/ec2/pricing' target='_blank' aria-label='Learn more about Convertible Reserved Instances. Opens in a new tab'>Learn more</a>",
+                      "aws-iso-b": "<a href='https://awshome.scloud/ec2/pricing' target='_blank' aria-label='Learn more about Convertible Reserved Instances. Opens in a new tab'>Learn more</a>"
+                    },
+                    "hiddenOnTenancy": [
+                      "shared"
+                    ],
+                    "disabledOnTenancy": [
+                      "host"
+                    ]
+                  }
+                ],
+                "refers": [
+                  {
+                    "variableLabel": "Advance EC2 instance",
+                    "path": "value",
+                    "variableId": "instanceType"
+                  },
+                  {
+                    "variableLabel": "Advance workloads",
+                    "path": "value",
+                    "variableId": "workload"
+                  },
+                  {
+                    "variableLabel": "Tenancy",
+                    "path": "value",
+                    "variableId": "tenancy"
+                  }
+                ],
+                "id": "pricingStrategy"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "ec2AdvPricingStrategyMath",
+                  "label": "EC2 advanced pricing strategy math",
+                  "displayInConfigSummary": false,
+                  "id": "advancedEstimate_generated_28",
+                  "operands": [
+                    {
+                      "variableLabel": "Advance pricing strategy",
+                      "variableId": "pricingStrategy"
+                    },
+                    {
+                      "variableLabel": "Tenancy",
+                      "variableId": "tenancy"
+                    }
+                  ]
+                },
+                {
+                  "type": "ec2PriceDisplay",
+                  "subType": "ec2PriceDisplay",
+                  "label": "Amazon EC2 On-Demand instances cost",
+                  "costType": "Monthly",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "path": "onDemandCost",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "advancedEstimate_generated_29"
+                },
+                {
+                  "type": "ec2PriceDisplay",
+                  "subType": "ec2PriceDisplay",
+                  "label": "Amazon EC2 upfront cost",
+                  "costType": "Upfront",
+                  "path": "upfrontCost",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "advancedEstimate_generated_30"
+                },
+                {
+                  "type": "ec2PriceDisplay",
+                  "subType": "ec2PriceDisplay",
+                  "label": "Amazon EC2 Reserved instances cost",
+                  "costType": "Monthly",
+                  "path": "monthlyCost",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "advancedEstimate_generated_31"
+                },
+                {
+                  "type": "ec2PriceDisplay",
+                  "subType": "ec2PriceDisplay",
+                  "label": "Amazon EC2 Instance Savings Plans",
+                  "costType": "Monthly",
+                  "path": "instanceSavingsCost",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "advancedEstimate_generated_32"
+                },
+                {
+                  "type": "ec2PriceDisplay",
+                  "subType": "ec2PriceDisplay",
+                  "label": "Amazon EC2 Compute Savings Plans",
+                  "costType": "Monthly",
+                  "path": "computeSavingsCost",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "advancedEstimate_generated_33"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "tenancy"
+                  },
+                  "shared"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "tenancy"
+                  },
+                  "dedicated"
+                ]
+              }
+            ]
+          },
+          "expandable": true,
+          "title": "Amazon Elastic Block Store (EBS) - optional",
+          "description": "Attach persistent block storage volumes for your Amazon EC2 instances",
+          "helpText": "Amazon Elastic Block Store (EBS) allows you to create storage volumes and attach them to Amazon EC2 instances. Once attached, you can create a file system on top of these volumes, run a database, or use them in any other way you would use block storage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ebs/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "type": "input",
+                "subType": "alert",
+                "header": "Calculating EBS snapshots",
+                "content": "<a href='https://docs.aws.amazon.com/pricing-calculator/latest/userguide/advanced-estimate.html#ec2-advanced-memory' aria-label='Learn more about how EBS snapshot prices are calculated. Opens in a new tab'>Learn more</a> on how EBS snapshot prices are calculated.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "advancedEstimate_generated_34"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage for each EC2 instance",
+                "id": "storageType",
+                "mappingDefinitionName": "ebs-calculator",
+                "options": [
+                  {
+                    "label": "General Purpose SSD (gp3)",
+                    "id": "Storage General Purpose gp3 GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage General Purpose gp3 GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "Storage General Purpose GB Mo"
+                  },
+                  {
+                    "label": "Provisioned IOPS SSD (io1)",
+                    "id": "Storage Provisioned IOPS GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Provisioned IOPS GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Provisioned IOPS SSD (io2)",
+                    "id": "Storage Provisioned IOPS io2 GB month",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Provisioned IOPS io2 GB month"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Throughput Optimized HDD (st 1)",
+                    "id": "Storage Throughput Optimized HDD GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Throughput Optimized HDD GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Cold HDD (sc1)",
+                    "id": "Storage Cold HDD GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Cold HDD GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Magnetic (previous generation)",
+                    "id": "Storage Magnetic GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Magnetic GB Mo"
+                      }
+                    }
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "Storage General Purpose GB Mo",
+                "description": "Choose EBS volume storage type."
+              },
+              {
+                "type": "pricing",
+                "subType": "pricingComboV2",
+                "label": "Storage for each EC2 instance Price",
+                "id": "EC2InstanceStoragePrice",
+                "mappingDefinitionName": "ebs-calculator",
+                "refers": [
+                  {
+                    "variableLabel": "Storage for each EC2 instance",
+                    "variableId": "storageType"
+                  }
+                ]
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Storage Provisioned IOPS GB Mo"
+                  ]
+                },
+                "label": "Provisioning IOPS io1",
+                "apiDescription": "Required only if the storageType is Provisioned IOPS",
+                "id": "iops",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 64000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "io1 supports a max of 64,000 IOPS per volume"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Storage Provisioned IOPS io2 GB month"
+                  ]
+                },
+                "label": "Provisioning IOPS io2",
+                "apiDescription": "Required only if the storageType is Provisioned IOPS",
+                "id": "iops2",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 256000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "Only io2 block express supports volumes with more than 64,000 IOPS. Available in limited regions."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Storage General Purpose gp3 GB Mo"
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - IOPS",
+                "apiDescription": "Required only if the storageType is General Purpose SSD (gp3)",
+                "id": "gp3Iops",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 80000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "gp3 supports a max of 80,000 IOPS per volume"
+              },
+              {
+                "type": "input",
+                "subType": "throughput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Storage General Purpose gp3 GB Mo"
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - Throughput",
+                "options": [
+                  {
+                    "label": "MBps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 2000
+                },
+                "description": "gp3 supports a max of 2000 MBps per volume",
+                "id": "gp3Throughput"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 65536
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageType"
+                    },
+                    "Storage Provisioned IOPS io2 GB month"
+                  ]
+                },
+                "label": "Storage amount per io2 volume",
+                "id": "storageAmountIo2",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 65536
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "ebs-calculator",
+                    "meteredUnit": "Storage Snapshot Amazon S3 GB Mo"
+                  }
+                },
+                "label": "Snapshot Frequency",
+                "id": "snapshotFrequency",
+                "options": [
+                  {
+                    "label": "No snapshot storage",
+                    "id": "0"
+                  },
+                  {
+                    "label": "Hourly",
+                    "id": "729"
+                  },
+                  {
+                    "label": "Daily",
+                    "id": "30"
+                  },
+                  {
+                    "label": "2x Daily",
+                    "id": "59.83"
+                  },
+                  {
+                    "label": "3x Daily",
+                    "id": "90.25"
+                  },
+                  {
+                    "label": "4x Daily",
+                    "id": "120.67"
+                  },
+                  {
+                    "label": "6x Daily",
+                    "id": "181.5"
+                  },
+                  {
+                    "label": "Weekly",
+                    "id": "3"
+                  },
+                  {
+                    "label": "Monthly",
+                    "id": "1"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "0",
+                "validations": {
+                  "required": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "displayIf": {
+                  ">": [
+                    {
+                      "type": "component",
+                      "id": "snapshotFrequency"
+                    },
+                    "0"
+                  ]
+                },
+                "label": "Amount changed per snapshot",
+                "id": "snapshotAmount",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 16384
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Iops",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned EBS IOPS Volumes per IOPS Mo"
+                },
+                "id": "io1Price"
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "IOPS2 tiered pricing",
+                "id": "iops2TieredPricing",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 32000,
+                      "meteredUnit": "Provisioned EBS IOPS io2 Volumes per IOPS Mo"
+                    },
+                    {
+                      "startOfTier": 32001,
+                      "endOfTier": 64000,
+                      "meteredUnit": "Provisioned EBS IOPS Tier 2 io2 Volumes per IOPS Mo"
+                    },
+                    {
+                      "startOfTier": 64001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Provisioned EBS IOPS Tier 3 io2 Volumes per IOPS Mo"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for snapshot",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Storage Snapshot Amazon S3 GB Mo"
+                },
+                "id": "priceForSnapshot"
+              },
+              {
+                "type": "pricing",
+                "label": "gp3 iops price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned EBS IOPS gp3 Volumes per IOPS Mo"
+                },
+                "id": "gp3IopsPrice"
+              },
+              {
+                "type": "pricing",
+                "label": "gp3 throughput price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned Throughput gp3 per GiBps mo"
+                },
+                "id": "gp3ThroughputPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "advancedEstimate_generated_34",
+                    "storageType",
+                    "EC2InstanceStoragePrice",
+                    "iops",
+                    "iops2",
+                    "gp3Iops",
+                    "gp3Throughput",
+                    "storageAmount",
+                    "storageAmountIo2",
+                    "snapshotFrequency",
+                    "snapshotAmount",
+                    "io1Price",
+                    "iops2TieredPricing",
+                    "priceForSnapshot",
+                    "gp3IopsPrice",
+                    "gp3ThroughputPrice"
+                  ],
+                  "id": "ebs_unitConvert",
+                  "subTotalRefer": "advancedEstimate_generated_28"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected snapshot frequency",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Snapshot Frequency",
+                  "id": "advancedEstimate_generated_35",
+                  "refer": "snapshotFrequency"
+                },
+                {
+                  "type": "variable",
+                  "subType": "ec2Variable",
+                  "path": "totalInstanceHours",
+                  "label": "total EC2 hours",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "totalHours"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "total EC2 hours",
+                      "variableUnitLabel": "total EC2 hours",
+                      "required": true,
+                      "variableId": "totalHours"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "instance months",
+                  "decimalPlaces": 2,
+                  "id": "instanceAmount"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "selected snapshot frequency",
+                  "displayInConfigSummary": false,
+                  "referLabel": "Snapshot Frequency",
+                  "refer": "snapshotFrequency",
+                  "id": "snapshotFrequencyVal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableUnitLabel": "GB",
+                      "required": true,
+                      "variableId": "storageAmount"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    },
+                    {
+                      "variableLabel": "Storage for each EC2 instance Price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "EC2InstanceStoragePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS Storage Cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalEBS_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "EBS Storage Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (EBS Storage Cost)",
+                  "id": "ebsStorageCostSubtotal",
+                  "refer": "totalEBS_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS io1",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "iops"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    },
+                    {
+                      "variableLabel": "price for Iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "io1Price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS IOPS Cost)",
+                  "decimalPlaces": 2,
+                  "id": "total_iops1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "IOPS2 tiered pricing",
+                  "inputReferLabel": "Provisioning IOPS io2",
+                  "outputUnitLabel": "[currency] (EBS IOPS io2 Cost)",
+                  "inputUnitLabel": "iops",
+                  "decimalPlaces": 4,
+                  "minValue": 1,
+                  "id": "iopscost2",
+                  "inputRefer": "iops2",
+                  "tieredPricingRefer": "iops2TieredPricing"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS IOPS io2 Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "iopscost2"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Total IOPS io2 cost",
+                  "decimalPlaces": 2,
+                  "id": "total_iops2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3Iops"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "GP3 iops free"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 iops",
+                  "decimalPlaces": 2,
+                  "id": "gp3IOPSFree"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 iops",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "gp3IOPSFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable iops"
+                    }
+                  ],
+                  "outputUnitLabel": "total billable gp3 iops",
+                  "decimalPlaces": 2,
+                  "id": "gp3IOPSBillable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total billable gp3 iops",
+                      "variableUnitLabel": "iops",
+                      "required": true,
+                      "variableId": "gp3IOPSBillable"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    },
+                    {
+                      "variableLabel": "gp3 iops price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gp3IopsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS IOPS gp3 Cost)",
+                  "decimalPlaces": 2,
+                  "id": "gp3IopsCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "gp3Throughput"
+                    },
+                    {
+                      "constant": 125,
+                      "constantUnitLabel": "GP3 MBps free"
+                    }
+                  ],
+                  "outputUnitLabel": "billable MBps",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputFree"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable MBps",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "gp3ThroughputFree"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum mbps"
+                    }
+                  ],
+                  "outputUnitLabel": "billable throughput (MBps)",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputBillable"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "billable throughput (MBps)",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "gp3ThroughputBillable"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "MB per GB"
+                    }
+                  ],
+                  "outputUnitLabel": "billable throughput (GBps)",
+                  "decimalPlaces": 4,
+                  "id": "gp3ThroughputBillableGbps"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable throughput (GBps)",
+                      "variableUnitLabel": "GBps",
+                      "required": true,
+                      "variableId": "gp3ThroughputBillableGbps"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    },
+                    {
+                      "variableLabel": "gp3 throughput price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gp3ThroughputPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS gp3 throughput Cost)",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS Storage Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalEBS_StorageCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS IOPS Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "total_iops1"
+                    },
+                    {
+                      "variableLabel": "[currency] Total IOPS io2 cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "total_iops2"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS IOPS gp3 Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3IopsCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS gp3 throughput Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3ThroughputCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total EBS storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "EBS_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "snapShotMaths",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "operand": "ebsStorage",
+                      "variableId": "storageAmount"
+                    },
+                    {
+                      "variableLabel": "Amount changed per snapshot",
+                      "operand": "amountSnapShotChanged",
+                      "required": true,
+                      "variableId": "snapshotAmount"
+                    },
+                    {
+                      "variableLabel": "selected snapshot frequency",
+                      "operand": "snapShotFrequency",
+                      "required": true,
+                      "variableId": "snapshotFrequencyVal"
+                    },
+                    {
+                      "variableLabel": "price for snapshot",
+                      "operand": "snapShotPricing",
+                      "required": true,
+                      "variableId": "priceForSnapshot"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS snapshot cost)",
+                  "id": "totalSnapshotPrice"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS snapshot cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "totalSnapshotPrice"
+                    },
+                    {
+                      "variableLabel": "instance months",
+                      "variableUnitLabel": "instance months",
+                      "required": true,
+                      "variableId": "instanceAmount"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total EBS snapshot cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalEBSSnapshotCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Total EBS storage cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "EBS_StorageCost"
+                    },
+                    {
+                      "variableLabel": "[currency] (total EBS snapshot cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "totalEBSSnapshotCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total EBS cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalEBSCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "advancedEstimate_generated_35",
+                    "totalHours",
+                    "instanceAmount",
+                    "snapshotFrequencyVal",
+                    "totalEBS_StorageCost",
+                    "ebsStorageCostSubtotal",
+                    "total_iops1",
+                    "iopscost2",
+                    "total_iops2",
+                    "gp3IOPSFree",
+                    "gp3IOPSBillable",
+                    "gp3IopsCost",
+                    "gp3ThroughputFree",
+                    "gp3ThroughputBillable",
+                    "gp3ThroughputBillableGbps",
+                    "gp3ThroughputCost",
+                    "EBS_StorageCost",
+                    "totalSnapshotPrice",
+                    "totalEBSSnapshotCost",
+                    "totalEBSCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Amazon Elastic Block Store (EBS) total cost",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalEBSCost",
+                  "id": "advancedEstimate_generated_36"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "==": [
+              {
+                "type": "component",
+                "id": "tenancy"
+              },
+              "host"
+            ]
+          },
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "expandable": true,
+          "title": "Amazon Elastic Block Store (EBS) - optional",
+          "description": "Attach persistent block storage volumes for your Amazon EC2 instances.",
+          "helpText": "Amazon Elastic Block Store (EBS) allows you to create storage volumes and attach them to Amazon EC2 instances. Once attached, you can create a file system on top of these volumes, run a database, or use them in any other way you would use block storage.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ebs/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Storage per instance",
+                "id": "EC2Dedicated_17"
+              },
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Storage for each EC2 instance",
+                "id": "storageTypeDH",
+                "mappingDefinitionName": "ebs-calculator",
+                "options": [
+                  {
+                    "label": "General Purpose SSD (gp2)",
+                    "id": "Storage General Purpose GB Mo"
+                  },
+                  {
+                    "label": "General Purpose SSD (gp3)",
+                    "id": "Storage General Purpose gp3 GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage General Purpose gp3 GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Provisioned IOPS SSD (io1)",
+                    "id": "Storage Provisioned IOPS GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Provisioned IOPS GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Provisioned IOPS SSD (io2)",
+                    "id": "Storage Provisioned IOPS io2 GB month",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Provisioned IOPS io2 GB month"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Throughput Optimized HDD (st 1)",
+                    "id": "Storage Throughput Optimized HDD GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Throughput Optimized HDD GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Cold HDD (sc1)",
+                    "id": "Storage Cold HDD GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Cold HDD GB Mo"
+                      }
+                    }
+                  },
+                  {
+                    "label": "Magnetic (previous generation)",
+                    "id": "Storage Magnetic GB Mo",
+                    "displayIf": {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "ebs-calculator",
+                        "meteredUnit": "Storage Magnetic GB Mo"
+                      }
+                    }
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultOption": "Storage General Purpose GB Mo",
+                "description": "Choose EBS volume storage type."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageTypeDH"
+                    },
+                    "Storage Provisioned IOPS GB Mo"
+                  ]
+                },
+                "label": "Provisioning IOPS io1",
+                "apiDescription": "Required only if the storageType is Provisioned IOPS",
+                "id": "iopsDH",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 64000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "io1 supports a max of 64,000 IOPS per volume"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageTypeDH"
+                    },
+                    "Storage Provisioned IOPS io2 GB month"
+                  ]
+                },
+                "label": "Provisioning IOPS io2",
+                "apiDescription": "Required only if the storageType is Provisioned IOPS",
+                "id": "iops2DH",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 256000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "Only io2 block express supports volumes with more than 64,000 IOPS. Available in limited regions."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageTypeDH"
+                    },
+                    "Storage General Purpose gp3 GB Mo"
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - IOPS",
+                "apiDescription": "Required only if the storageType is General Purpose SSD (gp3)",
+                "id": "gp3IopsDH",
+                "defaultValue": 3000,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 80000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount of IOPS per volume",
+                "description": "gp3 supports a max of 80,000 IOPS per volume"
+              },
+              {
+                "type": "input",
+                "subType": "throughput",
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "storageTypeDH"
+                    },
+                    "Storage General Purpose gp3 GB Mo"
+                  ]
+                },
+                "label": "General Purpose SSD (gp3) - Throughput",
+                "options": [
+                  {
+                    "label": "MBps",
+                    "value": "mbps",
+                    "id": "1"
+                  }
+                ],
+                "defaultThroughput": "mbps",
+                "defaultValue": 125,
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MBps",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 2000
+                },
+                "description": "gp3 supports a max of 2000 MBps per volume",
+                "id": "gp3ThroughputDH"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage amount",
+                "id": "storageAmountDH",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 65536
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for EBS",
+                "id": "ebsPricingDH",
+                "subType": "pricingComboV2",
+                "mappingDefinitionName": "ebs-calculator",
+                "refers": [
+                  {
+                    "variableLabel": "Storage for each EC2 instance",
+                    "variableId": "storageTypeDH"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "IOPS2 tiered pricing",
+                "id": "iops2TieredPricingDH",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 32000,
+                      "meteredUnit": "Provisioned EBS IOPS io2 Volumes per IOPS Mo"
+                    },
+                    {
+                      "startOfTier": 32001,
+                      "endOfTier": 64000,
+                      "meteredUnit": "Provisioned EBS IOPS Tier 2 io2 Volumes per IOPS Mo"
+                    },
+                    {
+                      "startOfTier": 64001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Provisioned EBS IOPS Tier 3 io2 Volumes per IOPS Mo"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for Iops",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned EBS IOPS Volumes per IOPS Mo"
+                },
+                "id": "iopsPricingDH"
+              },
+              {
+                "type": "pricing",
+                "label": "gp3 iops price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned EBS IOPS gp3 Volumes per IOPS Mo"
+                },
+                "id": "gp3IopsPriceDH"
+              },
+              {
+                "type": "pricing",
+                "label": "gp3 throughput price",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "ebs-calculator",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "meteredUnit": {
+                  "allRegions": "Provisioned Throughput gp3 per GiBps mo"
+                },
+                "id": "gp3ThroughputPriceDH"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "EC2Dedicated_21",
+                  "refer": [
+                    "EC2Dedicated_17",
+                    "storageTypeDH",
+                    "iopsDH",
+                    "iops2DH",
+                    "gp3IopsDH",
+                    "gp3ThroughputDH",
+                    "storageAmountDH",
+                    "ebsPricingDH",
+                    "iops2TieredPricingDH",
+                    "iopsPricingDH",
+                    "gp3IopsPriceDH",
+                    "gp3ThroughputPriceDH"
+                  ],
+                  "subTotalRefer": "totalEBSCost"
+                },
+                {
+                  "type": "variable",
+                  "subType": "ec2Variable",
+                  "path": "totalInstanceHours",
+                  "label": "total EC2 hours",
+                  "referLabel": "EC2 advanced pricing strategy math",
+                  "refer": "advancedEstimate_generated_28",
+                  "id": "totalHoursDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "total EC2 hours",
+                      "variableUnitLabel": "total EC2 hours",
+                      "required": true,
+                      "variableId": "totalHoursDH"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "Number of dedicated hosts",
+                  "decimalPlaces": 2,
+                  "id": "instanceAmountDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "EC2Dedicated_22",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Storage amount",
+                      "variableId": "storageAmountDH",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Number of dedicated hosts",
+                      "variableId": "instanceAmountDH",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for EBS",
+                      "variableId": "ebsPricingDH",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS Storage Cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "EBS Storage Cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] (EBS Storage Cost)",
+                  "id": "ebsStorageCostSubtotalDH",
+                  "refer": "EC2Dedicated_22"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - IOPS",
+                      "variableUnitLabel": "iopsDH",
+                      "required": true,
+                      "variableId": "gp3IopsDH"
+                    },
+                    {
+                      "constant": 3000,
+                      "constantUnitLabel": "GP3 iops free"
+                    }
+                  ],
+                  "outputUnitLabel": "billable gp3 iops",
+                  "decimalPlaces": 2,
+                  "id": "gp3IOPSFreeDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable gp3 iops",
+                      "variableUnitLabel": "iopsDH",
+                      "required": true,
+                      "minValue": 1,
+                      "variableId": "gp3IOPSFreeDH"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum billable iops"
+                    }
+                  ],
+                  "outputUnitLabel": "total billable gp3 iops",
+                  "decimalPlaces": 2,
+                  "id": "gp3IOPSBillableDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total billable gp3 iops",
+                      "variableUnitLabel": "iopsDH",
+                      "required": true,
+                      "variableId": "gp3IOPSBillableDH"
+                    },
+                    {
+                      "variableLabel": "Number of dedicated hosts",
+                      "variableId": "instanceAmountDH",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "gp3 iops price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gp3IopsPriceDH"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS IOPS gp3 Cost)",
+                  "decimalPlaces": 2,
+                  "id": "gp3IopsCostDH"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageTypeDH"
+                      },
+                      "Storage General Purpose gp3 GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "subtraction",
+                  "operands": [
+                    {
+                      "variableLabel": "General Purpose SSD (gp3) - Throughput",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "gp3ThroughputDH"
+                    },
+                    {
+                      "constant": 125,
+                      "constantUnitLabel": "GP3 MBps free"
+                    }
+                  ],
+                  "outputUnitLabel": "billable MBps",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputFreeDH"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageTypeDH"
+                      },
+                      "Storage General Purpose gp3 GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "billable MBps",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "minValue": 0.05,
+                      "variableId": "gp3ThroughputFreeDH"
+                    },
+                    {
+                      "constant": 0,
+                      "constantUnitLabel": "minimum mbps"
+                    }
+                  ],
+                  "outputUnitLabel": "billable throughput (MBps)",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputBillableDH"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageTypeDH"
+                      },
+                      "Storage General Purpose gp3 GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "billable throughput (MBps)",
+                      "variableUnitLabel": "MBps",
+                      "required": true,
+                      "variableId": "gp3ThroughputBillableDH"
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "MB per GB"
+                    }
+                  ],
+                  "outputUnitLabel": "billable throughput (GBps)",
+                  "decimalPlaces": 4,
+                  "id": "gp3ThroughputBillableGbpsDH"
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "storageTypeDH"
+                      },
+                      "Storage General Purpose gp3 GB Mo"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "billable throughput (GBps)",
+                      "variableUnitLabel": "GBps",
+                      "required": true,
+                      "variableId": "gp3ThroughputBillableGbpsDH"
+                    },
+                    {
+                      "variableLabel": "Number of dedicated hosts",
+                      "variableId": "instanceAmountDH",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "gp3 throughput price",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "gp3ThroughputPriceDH"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS gp3 throughput Cost)",
+                  "decimalPlaces": 2,
+                  "id": "gp3ThroughputCostDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Provisioning IOPS io1",
+                      "variableUnitLabel": "iopsDH",
+                      "required": true,
+                      "variableId": "iopsDH"
+                    },
+                    {
+                      "variableLabel": "Number of dedicated hosts",
+                      "variableId": "instanceAmountDH",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for Iops",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "iopsPricingDH"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (EBS IOPS Cost)",
+                  "decimalPlaces": 2,
+                  "id": "EC2Dedicated_23"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "IOPS2 tiered pricing",
+                  "inputReferLabel": "Provisioning IOPS io2",
+                  "outputUnitLabel": "[currency] (EBS IOPS io2 Cost)",
+                  "inputUnitLabel": "iopsDH",
+                  "decimalPlaces": 4,
+                  "minValue": 1,
+                  "inputRefer": "iops2DH",
+                  "id": "iopscost2DH",
+                  "tieredPricingRefer": "iops2TieredPricingDH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS IOPS io2 Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "iopscost2DH"
+                    },
+                    {
+                      "variableLabel": "Number of dedicated hosts",
+                      "variableId": "instanceAmountDH",
+                      "variableUnitLabel": "instance(s)",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] Total IOPS io2 cost",
+                  "decimalPlaces": 2,
+                  "id": "total_iops2DH"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (EBS Storage Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "EC2Dedicated_22"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS IOPS Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "EC2Dedicated_23"
+                    },
+                    {
+                      "variableLabel": "[currency] Total IOPS io2 cost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "total_iops2DH"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS IOPS gp3 Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3IopsCostDH"
+                    },
+                    {
+                      "variableLabel": "[currency] (EBS gp3 throughput Cost)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "gp3ThroughputCostDH"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total EBS storage cost)",
+                  "decimalPlaces": 2,
+                  "id": "EC2Dedicated_24"
+                },
+                {
+                  "type": "display",
+                  "id": "EC2Dedicated_25",
+                  "refer": [
+                    "totalHoursDH",
+                    "instanceAmountDH",
+                    "EC2Dedicated_22",
+                    "ebsStorageCostSubtotalDH",
+                    "gp3IOPSFreeDH",
+                    "gp3IOPSBillableDH",
+                    "gp3IopsCostDH",
+                    "gp3ThroughputFreeDH",
+                    "gp3ThroughputBillableDH",
+                    "gp3ThroughputBillableGbpsDH",
+                    "gp3ThroughputCostDH",
+                    "EC2Dedicated_23",
+                    "iopscost2DH",
+                    "total_iops2DH",
+                    "EC2Dedicated_24"
+                  ],
+                  "subTotalRefer": "EC2Dedicated_24",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "doNotDisplayForZeroValue": true,
+                  "label": "Amazon Elastic Block Store (EBS) pricing",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "or": [
+                  {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "tenancy"
+                      },
+                      "shared"
+                    ]
+                  },
+                  {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "tenancy"
+                      },
+                      "dedicated"
+                    ]
+                  }
+                ]
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "cloudwatch",
+                  "meteredUnit": "Metric for the first 10000"
+                }
+              }
+            ]
+          },
+          "title": "Detailed monitoring - optional",
+          "expandable": true,
+          "defaultExpansion": false,
+          "helpText": "By default, your instance is enabled for basic monitoring. You can optionally enable detailed monitoring. Check the box if you want to enable Detailed Monitoring (at 1-minute frequency) on these instances.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/cloudwatch/pricing/",
+              "overrides": {
+                "aws": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html",
+                "aws-us-gov": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html"
+              }
+            }
+          },
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "checkbox",
+                "label": "Enable monitoring",
+                "displayInConfigSummary": true,
+                "description": "Check the box if you want to enable Detailed Monitoring (at 1-minute frequency) on these instances.",
+                "defaultValue": false,
+                "validations": {
+                  "required": false
+                },
+                "id": "detailedMonitoringCheckbox"
+              },
+              {
+                "type": "input",
+                "subType": "ec2AdvPricingMetrics",
+                "label": "EC2 number of metrics",
+                "displayInConfigSummary": false,
+                "id": "ec2AdvancedPricingMetrics",
+                "refers": [
+                  {
+                    "variableLabel": "Advance workloads",
+                    "path": "value",
+                    "variableId": "workload"
+                  },
+                  {
+                    "variableLabel": "Advance pricing strategy",
+                    "path": "value",
+                    "variableId": "pricingStrategy"
+                  }
+                ]
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "mappingDefinitionName": "cloudwatch",
+                "label": "Price for metrics per month",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000,
+                      "meteredUnit": "Metric for the first 10000"
+                    },
+                    {
+                      "startOfTier": 10001,
+                      "endOfTier": 250000,
+                      "meteredUnit": "Metric for the next 240000"
+                    },
+                    {
+                      "startOfTier": 250001,
+                      "endOfTier": 1000000,
+                      "meteredUnit": "Metric for the next 750000"
+                    },
+                    {
+                      "startOfTier": 1000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Metric for over 1000000"
+                    }
+                  ]
+                },
+                "id": "tierPricing"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "detailedMonitoringCheckbox"
+                      },
+                      true
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalNumberOfMetrics",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "ec2AdvancedPricingMetrics",
+                      "variableLabel": "EC2 number of metrics",
+                      "variableUnitLabel": "instances",
+                      "required": false
+                    },
+                    {
+                      "constant": 7,
+                      "constantUnitLabel": "metrics"
+                    }
+                  ],
+                  "outputUnitLabel": "Number of Metrics",
+                  "decimalPlaces": 6
+                },
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "detailedMonitoringCheckbox",
+                    "ec2AdvancedPricingMetrics",
+                    "tierPricing",
+                    "totalNumberOfMetrics"
+                  ],
+                  "subTotalRefer": "totalNumberOfMetrics",
+                  "id": "displayConverter"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Price for metrics per month",
+                  "inputReferLabel": "Number of Metrics",
+                  "outputUnitLabel": "[currency] (Metrics cost)",
+                  "inputUnitLabel": "metrics",
+                  "decimalPlaces": 2,
+                  "id": "tierPricingMath",
+                  "inputRefer": "totalNumberOfMetrics",
+                  "tieredPricingRefer": "tierPricing"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tierPricingMath"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Metrics cost",
+                  "decimalPlaces": 2,
+                  "id": "totalCost",
+                  "subTotalRefer": "tierPricingMath"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "or": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "tenancy"
+                  },
+                  "shared"
+                ]
+              },
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "tenancy"
+                  },
+                  "dedicated"
+                ]
+              }
+            ]
+          },
+          "title": "Data transfer - optional",
+          "expandable": true,
+          "defaultExpansion": false,
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransferForEC2"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "advancedEstimate_generated_37",
+                  "refer": [
+                    "dataTransferForEC2"
+                  ],
+                  "subTotalRefer": "tierPricingMath"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransferForEC2",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": false,
+                  "id": "advancedEstimate_generated_38"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "doNotDisplayForZeroValue": true,
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "advancedEstimate_generated_39",
+                  "refer": [
+                    "advancedEstimate_generated_38"
+                  ],
+                  "subTotalRefer": "advancedEstimate_generated_38"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Additional costs - optional",
+          "expandable": true,
+          "defaultExpansion": false,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "aditionalCost",
+                "label": "Enter any placeholder cost such as Licensing to add to your estimate",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 10000000000
+                },
+                "placeholder": ""
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "outputUnitLabel": "Additional cost",
+                  "displayInConfigSummary": true,
+                  "referLabel": "Enter any placeholder cost such as Licensing to add to your estimate",
+                  "refer": "aditionalCost",
+                  "id": "aditionalTotalCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "aditionalCost",
+                    "aditionalTotalCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Additional Cost",
+                  "decimalPlaces": 2,
+                  "id": "configTotalPrice",
+                  "subTotalRefer": "aditionalTotalCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov",
+    "aws-cn",
+    "aws-iso",
+    "aws-iso-b"
+  ]
+}

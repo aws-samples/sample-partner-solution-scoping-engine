@@ -1,0 +1,319 @@
+{
+  "version": "0.0.14",
+  "serviceName": "DynamoDB change data capture",
+  "serviceCode": "dynamoDbChangeDateCapture",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-northeast-1",
+    "ap-northeast-2",
+    "ap-south-1",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-north-1",
+    "eu-south-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "me-central-1",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "Database",
+    "DDB",
+    "NoSQL",
+    "SQL",
+    "Table",
+    "nosql databases",
+    "database schema",
+    "database software",
+    "cloud database",
+    "document database",
+    "key value store",
+    "database as a service",
+    "database scheme",
+    "nosql hosting",
+    "hosted nosql",
+    "data store",
+    "unstructured database",
+    "Accelerator",
+    "DAX",
+    "change data capture",
+    "Kinesis"
+  ],
+  "serviceDescription": "Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale. It's a fully managed, multiregion, multimaster, durable database with built-in security, backup and restore, and in-memory caching for internet-scale applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/dynamodb/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "dynamodb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/dynamodb/[currency]/current/dynamodb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "DynamoDB change data capture",
+      "helpText": "",
+      "cards": [
+        {
+          "title": "Change data capture for Amazon Kinesis Data Streams",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "DynamoDB charges for change data capture for Amazon Kinesis Data Streams in change data capture units. DynamoDB charges one change data capture unit for each write (up to 1 KB). You pay only for the writes your application performs without having to manage throughput capacity on the table.",
+                "id": "streamsFreeTierWarning"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of writes captured",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  },
+                  {
+                    "label": "trillion per month",
+                    "id": "trillionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number",
+                "id": "KDS_writesCaptured"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "id": "KDS_AvgDataSize",
+                "label": "Average write size",
+                "dropDownSize": [
+                  {
+                    "label": "Bytes",
+                    "id": "bytes"
+                  },
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1e-07,
+                  "maxValue": 10000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for change data capture kinesis data streams",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "dynamodb",
+                "meteredUnit": {
+                  "allRegions": "Change Data Capture Units for Kinesis Data Streams"
+                },
+                "id": "KDS_changeDataCapturePrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "streamsFreeTierWarning",
+                    "KDS_writesCaptured",
+                    "KDS_AvgDataSize",
+                    "KDS_changeDataCapturePrice"
+                  ],
+                  "id": "KDS_unitConversion",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableLabel": "Average write size",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "KDS_AvgDataSize"
+                    }
+                  ],
+                  "outputUnitLabel": "KB (rounded up to nearest 1 KB increment)",
+                  "id": "KDS_WriteSizeRounded"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "KB (rounded up to nearest 1 KB increment)",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "KDS_WriteSizeRounded"
+                    },
+                    {
+                      "constant": 1,
+                      "constantUnitLabel": "KB per change data capture unit"
+                    }
+                  ],
+                  "outputUnitLabel": "change data capture unit(s) per write",
+                  "decimalPlaces": 0,
+                  "id": "KDS_changeDataCaptureUnitPerWrite"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of writes captured",
+                      "variableUnitLabel": "writes captured",
+                      "required": true,
+                      "variableId": "KDS_writesCaptured"
+                    },
+                    {
+                      "variableLabel": "change data capture unit(s) per write",
+                      "variableUnitLabel": "change data capture unit(s) per write",
+                      "required": true,
+                      "variableId": "KDS_changeDataCaptureUnitPerWrite"
+                    }
+                  ],
+                  "outputUnitLabel": "total change data capture units",
+                  "decimalPlaces": 4,
+                  "id": "KDS_changeDataCaptureUnits"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total change data capture units",
+                      "variableUnitLabel": "change data capture units",
+                      "required": true,
+                      "variableId": "KDS_changeDataCaptureUnits"
+                    },
+                    {
+                      "variableLabel": "price for change data capture kinesis data streams",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "KDS_changeDataCapturePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (DynamoDB change data capture for Amazon Kinesis Data Streams)",
+                  "decimalPlaces": 4,
+                  "id": "KDS_changeDataCaptureCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "KDS_WriteSizeRounded",
+                    "KDS_changeDataCaptureUnitPerWrite",
+                    "KDS_changeDataCaptureUnits",
+                    "KDS_changeDataCaptureCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "DynamoDB change data capture for Amazon Kinesis Data Streams cost",
+                  "displayInConfigSummary": true,
+                  "decimalPlaces": 2,
+                  "id": "KDS_changeDataCaptureDisplay",
+                  "subTotalRefer": "KDS_changeDataCaptureCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "dynamoDBChangeDataCapture"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

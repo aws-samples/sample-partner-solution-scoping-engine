@@ -1,0 +1,146 @@
+{
+  "version": "0.0.7",
+  "serviceName": "Reachability Analyzer",
+  "serviceCode": "reachabilityAnalyzerVpc",
+  "type": "AWSService",
+  "subType": "subService",
+  "excludeZeroSubTotals": false,
+  "partitions": [
+    "aws"
+  ],
+  "regions": [],
+  "searchKeywords": [
+    "access control",
+    "ACL",
+    "AWS Privatelink",
+    "Cloud connectivity",
+    "corporate network",
+    "elastic IP",
+    "Gateway load balancer",
+    "home network VPN",
+    "IPAM",
+    "NAT",
+    "NAT gateway",
+    "Network Access Analyzer",
+    "Network Address Translation",
+    "Networking Content Delivery",
+    "PrivateLink",
+    "Reachability Analyzer",
+    "security",
+    "single tenant hardware",
+    "static ip",
+    "subnets",
+    "Traffic mirroring",
+    "Transit Gateway",
+    "Virtual Private Cloud",
+    "VPN"
+  ],
+  "serviceDescription": "WS Virtual Private Network solutions establish secure connections between your on-premises networks, remote offices, client devices, and the AWS global network. AWS VPN is comprised of two services: AWS Site-to-Site VPN and AWS Client VPN. Each service provides a highly-available, managed, and elastic cloud VPN solution to protect your network traffic.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "vpc",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/vpc/[currency]/current/vpc.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Reachability Analyzer",
+      "id": "template_ReachabilityAnalyzer",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/vpc/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Service settings",
+          "description": "",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/vpc/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of connectivity analysis per month",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 1000000
+                },
+                "defaultValue": 0,
+                "description": "Enter the number of times you analyze connectivity between a a given source and destination using Reachability Analyzer in a month.",
+                "placeholder": "Enter the number of times you analyze connectivity.",
+                "displayInConfigSummary": true,
+                "id": "numberOfConnectivityAnalysis"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "vpc",
+                "meteredUnit": {
+                  "allRegions": "Charge per analysis processed by VPC Reachability Analyzer per ReachabilityAnalyses"
+                },
+                "label": "pricing for Reachability Analyzer",
+                "id": "priceOfReachabilityAnalyzer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of connectivity analysis per month",
+                      "variableUnitLabel": "connections",
+                      "required": true,
+                      "variableId": "numberOfConnectivityAnalysis"
+                    },
+                    {
+                      "variableLabel": "pricing for Reachability Analyzer",
+                      "variableUnitLabel": "[currency] per connection",
+                      "required": true,
+                      "variableId": "priceOfReachabilityAnalyzer"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "monthlyReachbilityAnalyzerCost"
+                },
+                {
+                  "type": "display",
+                  "label": "Total Reachability Analyzer charge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "numberOfConnectivityAnalysis",
+                    "priceOfReachabilityAnalyzer",
+                    "monthlyReachbilityAnalyzerCost"
+                  ],
+                  "id": "totalReachabilityAnalyzerMonthlyCharge",
+                  "subTotalRefer": "monthlyReachbilityAnalyzerCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

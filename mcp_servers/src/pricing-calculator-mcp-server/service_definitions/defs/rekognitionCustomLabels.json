@@ -1,0 +1,629 @@
+{
+  "version": "0.0.9",
+  "serviceName": "Rekognition Custom Labels",
+  "serviceCode": "rekognitionCustomLabels",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "rekognition",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/rekognition/[currency]/current/rekognition.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "id": "amazonRekognitionCustom",
+      "cards": [
+        {
+          "title": "Estimation type",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Estimate based on",
+                "id": "RekognitionEstimate",
+                "options": [
+                  {
+                    "label": "Number of inference hours per month",
+                    "id": "1"
+                  },
+                  {
+                    "label": "Number of images processed per month",
+                    "id": "2"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "defaultDropDownItem": "1",
+                "validations": {
+                  "required": false
+                }
+              }
+            ]
+          }
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "RekognitionEstimate"
+                  },
+                  "1"
+                ]
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Training API per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Inference API per minutes"
+                }
+              }
+            ]
+          },
+          "title": "Custom Labels Pricing",
+          "helpText": "With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rekognition/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "For Amazon Rekognition Custom Labels, there are two types of costs: Training hours and Inference hours. Please refer to <a href='https://aws.amazon.com/rekognition/pricing'>Amazon Rekognition Custom Labels</a> pricing page for more details.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "customLabels_infoAlert"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of model training hours (one-time)",
+                "id": "durationTraining",
+                "description": "There is a cost for each hour of training required to build a custom model with Amazon Rekognition Custom Labels.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 2.5,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inference hours per day",
+                "id": "durationInference",
+                "description": "There is a cost for each hour your trained custom model is available to process images.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 24
+                },
+                "defaultValue": 8,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of inference units",
+                "description": "You can increase or decrease your inference capacity by utilizing additional inference units.",
+                "id": "inferenceUnits",
+                "defaultValue": 1,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000,
+                  "allowDecimal": false
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Inference processed for number of days  per month",
+                "description": "Defaulted to 22 days assuming you are not running the process during the weekends that excludes 8 days in the month.",
+                "id": "inferenceUsage",
+                "defaultValue": 22,
+                "validations": {
+                  "required": true,
+                  "minValue": 0,
+                  "maxValue": 30,
+                  "allowDecimal": false
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "id": "trainingRate_inferenceCard",
+                "label": "Price for Training usage per minute on inference card",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Training API per minutes"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "inferenceRateRate",
+                "label": "Price for Inference usage per minute",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Inference API per minutes"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "customLabelsCard2UnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "customLabels_infoAlert",
+                    "durationTraining",
+                    "durationInference",
+                    "inferenceUnits",
+                    "inferenceUsage",
+                    "trainingRate_inferenceCard",
+                    "inferenceRateRate"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "trainingCharges",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "durationTraining",
+                      "variableLabel": "Number of model training hours (one-time)",
+                      "variableUnitLabel": "training hours",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes"
+                    },
+                    {
+                      "variableId": "trainingRate_inferenceCard",
+                      "variableLabel": "Price for Training usage per minute on inference card",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Training cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency]",
+                  "id": "trainingCostVarCard1",
+                  "refer": "trainingCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "inferenceCharges",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "durationInference",
+                      "variableLabel": "Number of inference hours per day",
+                      "variableUnitLabel": "inference hours",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes"
+                    },
+                    {
+                      "variableId": "inferenceUnits",
+                      "variableLabel": "Number of inference units",
+                      "variableUnitLabel": "units",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inferenceUsage",
+                      "variableLabel": "Inference processed for number of days  per month",
+                      "variableUnitLabel": "days",
+                      "required": true
+                    },
+                    {
+                      "variableId": "inferenceRateRate",
+                      "variableLabel": "Price for Inference usage per minute",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Inference cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency]",
+                  "id": "InferenceCostVarCard1",
+                  "refer": "inferenceCharges"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalChargesCard1",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "trainingCostVarCard1",
+                      "variableLabel": "Training cost (monthly)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "InferenceCostVarCard1",
+                      "variableLabel": "Inference cost (monthly)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "display",
+                  "id": "rekognitionCustomLabelsDisplayCard1",
+                  "label": "Custom labels usage pricing",
+                  "refer": [
+                    "trainingCharges",
+                    "trainingCostVarCard1",
+                    "inferenceCharges",
+                    "InferenceCostVarCard1",
+                    "totalChargesCard1"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalChargesCard1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "and": [
+              {
+                "==": [
+                  {
+                    "type": "component",
+                    "id": "RekognitionEstimate"
+                  },
+                  "2"
+                ]
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Training API per minutes"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "rekognition",
+                  "meteredUnit": "Inference API per minutes"
+                }
+              }
+            ]
+          },
+          "title": "Custom Labels Pricing",
+          "helpText": "With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/rekognition/pricing/"
+            }
+          },
+          "expandable": true,
+          "defaultExpansion": true,
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "label": "info alert",
+                "content": "For Amazon Rekognition Custom Labels, there are two types of costs: Training hours and Inference hours. Please refer to <a href='https://aws.amazon.com/rekognition/pricing'>Amazon Rekognition Custom Labels</a> pricing page for more details.",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "customLabels_infoAlert2"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of model training hours (one-time)",
+                "id": "durationTraining1",
+                "description": "There is a cost for each hour of training required to build a custom model with Amazon Rekognition Custom Labels.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 2.5,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Estimated number of transactions per second",
+                "id": "estimatedTPS",
+                "description": "Defaulted to 10, depending on the complexity of your model you could expect between 1 and 15 TPS.",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 15
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of images processed per month",
+                "id": "imagesProcessed",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "pricing",
+                "id": "trainingRate",
+                "label": "Price for Training usage per minute",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Training API per minutes"
+                }
+              },
+              {
+                "type": "pricing",
+                "id": "inferenceRate",
+                "label": "Price for Inference usage per minute",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "rekognition",
+                "meteredUnit": {
+                  "allRegions": "Inference API per minutes"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "id": "customLabelsCard1UnitConv",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "customLabels_infoAlert2",
+                    "durationTraining1",
+                    "estimatedTPS",
+                    "imagesProcessed",
+                    "trainingRate",
+                    "inferenceRate"
+                  ],
+                  "subTotalRefer": "totalChargesCard1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "trainingCharges1",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "durationTraining1",
+                      "variableLabel": "Number of model training hours (one-time)",
+                      "variableUnitLabel": "training hours",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes"
+                    },
+                    {
+                      "variableId": "trainingRate",
+                      "variableLabel": "Price for Training usage per minute",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Training cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency]",
+                  "id": "trainingCostVar",
+                  "refer": "trainingCharges1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "tpsMinute",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "estimatedTPS",
+                      "variableLabel": "Estimated number of transactions per second",
+                      "variableUnitLabel": "transactions per second",
+                      "required": true
+                    },
+                    {
+                      "constant": 60,
+                      "constantUnitLabel": "minutes"
+                    }
+                  ],
+                  "outputUnitLabel": "transactions per minute",
+                  "decimalPlaces": 0,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "pricePerTransaction",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "inferenceRate",
+                      "variableLabel": "Price for Inference usage per minute",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": true
+                    },
+                    {
+                      "variableId": "tpsMinute",
+                      "variableLabel": "transactions per minute",
+                      "variableUnitLabel": "transactions per minute",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per transaction",
+                  "decimalPlaces": 6,
+                  "allowDecimals": true
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "imagesCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "imagesProcessed",
+                      "variableLabel": "Number of images processed per month",
+                      "variableUnitLabel": "images processed",
+                      "required": true
+                    },
+                    {
+                      "variableId": "pricePerTransaction",
+                      "variableLabel": "[currency] per transaction",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for processing images",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Inference cost (monthly)",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "referLabel": "[currency] for processing images",
+                  "id": "InferenceCostVar",
+                  "refer": "imagesCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalCharges",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "trainingCostVar",
+                      "variableLabel": "Training cost (monthly)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableId": "InferenceCostVar",
+                      "variableLabel": "Inference cost (monthly)",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total",
+                  "decimalPlaces": 2,
+                  "allowDecimals": false
+                },
+                {
+                  "type": "display",
+                  "id": "rekognitionCustomLabels",
+                  "label": "Custom labels usage pricing",
+                  "refer": [
+                    "trainingCharges1",
+                    "trainingCostVar",
+                    "tpsMinute",
+                    "pricePerTransaction",
+                    "imagesCost",
+                    "InferenceCostVar",
+                    "totalCharges"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "totalCharges"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

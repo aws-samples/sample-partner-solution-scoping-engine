@@ -1,0 +1,332 @@
+{
+  "version": "0.0.67",
+  "serviceName": "Call Analytics and Recording",
+  "serviceCode": "chimeSdkCallAnalyticsAndRecording",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "serviceDescription": "Amazon Chime lets you meet, chat, and collaborate with the security of AWS. You can work seamlessly on your devices, and meet from your desk or on the go - ensuring you always stay connected.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/chime/chime-sdk/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "chimefeatures",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/chimefeatures/[currency]/current/chimefeatures.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Amazon Chime SDK",
+      "description": "Quick estimate: Use the quick estimate for a fast route to a rough estimate. ",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/chime/chime-sdk/"
+        }
+      },
+      "id": "template_callAnalyticsRecording_chimesdk",
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "chimefeatures",
+              "meteredUnit": "Chime Analytics per minutes"
+            }
+          },
+          "title": "Call Analytics",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "<b>This calculator only estimates cost of chimesdk call analytics.</b> <br> <i> *Additional fees apply for Amazon Transcribe, Transcribe call analytics, Amazon Kinesis Video Streams, Amazon Kinesis Data Streams and Amazon S3. </i>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "analytics_additional_Info"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of calls per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of calls",
+                "id": "noOfCalls"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of each call",
+                "id": "callRecDuration",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for call analytics",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime Analytics per minutes"
+                },
+                "id": "amazonChime_analytics_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "analytics_additional_Info",
+                    "noOfCalls",
+                    "callRecDuration",
+                    "amazonChime_analytics_price"
+                  ],
+                  "subTotalRefer": "",
+                  "id": "unitConvAnalytics"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of calls per month",
+                      "variableUnitLabel": "call(s)",
+                      "required": true,
+                      "variableId": "noOfCalls"
+                    },
+                    {
+                      "variableLabel": "Average duration of each call",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "callRecDuration"
+                    },
+                    {
+                      "variableLabel": "price for call analytics",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": false,
+                      "variableId": "amazonChime_analytics_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for call analytics",
+                  "decimalPlaces": 2,
+                  "id": "callAnalyticsCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "callAnalyticsCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Call Analytics pricing",
+                  "decimalPlaces": 2,
+                  "id": "callAnalyticFinal",
+                  "subTotalRefer": "callAnalyticsCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "chimefeatures",
+              "meteredUnit": "Chime Recording per minutes"
+            }
+          },
+          "title": "Call Recording",
+          "helpText": "",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/chime/chime-sdk/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "<b>This calculator only estimates cost of chimesdk call recording.</b> <br> <i> *Additional fees apply for Amazon Kinesis Video Streams, and Amazon S3. </i>",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "recording_additional_Info"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Total number of calls per month",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of calls",
+                "id": "noOfCalls_recording"
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "label": "Average duration of each call",
+                "id": "callRecDuration_recording",
+                "dropDownDuration": [
+                  {
+                    "label": "seconds",
+                    "value": "sec"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  },
+                  {
+                    "label": "hour",
+                    "value": "hr"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "min",
+                "outputDurationLabel": "minutes",
+                "validations": {
+                  "required": false,
+                  "minValue": 0,
+                  "maxValue": 100000000000000000,
+                  "allowDecimal": false
+                },
+                "placeholder": "Enter duration"
+              },
+              {
+                "type": "pricing",
+                "label": "price for call recording",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "chimefeatures",
+                "meteredUnit": {
+                  "allRegions": "Chime Recording per minutes"
+                },
+                "id": "amazonChime_recording_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "recording_additional_Info",
+                    "noOfCalls_recording",
+                    "callRecDuration_recording",
+                    "amazonChime_recording_price"
+                  ],
+                  "subTotalRefer": "callAnalyticsCost",
+                  "id": "unitConvRecording"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total number of calls per month",
+                      "variableUnitLabel": "call(s)",
+                      "required": true,
+                      "variableId": "noOfCalls_recording"
+                    },
+                    {
+                      "variableLabel": "Average duration of each call",
+                      "variableUnitLabel": "minutes",
+                      "required": true,
+                      "variableId": "callRecDuration_recording"
+                    },
+                    {
+                      "variableLabel": "price for call recording",
+                      "variableUnitLabel": "[currency] per minute",
+                      "required": false,
+                      "variableId": "amazonChime_recording_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for call recording",
+                  "decimalPlaces": 2,
+                  "id": "callRecordingCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "callRecordingCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Call Recording pricing",
+                  "decimalPlaces": 2,
+                  "id": "callRecFinal",
+                  "subTotalRefer": "callRecordingCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-us-gov"
+  ]
+}

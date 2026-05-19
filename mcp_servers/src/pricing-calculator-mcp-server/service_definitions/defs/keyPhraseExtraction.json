@@ -1,0 +1,628 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Keyphrase Extraction",
+  "serviceCode": "keyPhraseExtraction",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "us-gov-west-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2",
+    "us-iso-east-1"
+  ],
+  "searchKeywords": [
+    "Comprehend",
+    "NLP",
+    "Natural language processing",
+    "Sentiment analysis",
+    "Text analytics",
+    "Entity extraction",
+    "Named entity recognition",
+    "NER",
+    "Key phrase extraction",
+    "Topic modeling",
+    "Unsupervised clustering",
+    "Supervised machine learning",
+    "Custom entity recognition",
+    "Custom classification",
+    "Document classifier",
+    "Personally identifiable information",
+    "PII",
+    "Redaction",
+    "Language detection",
+    "Free form text analytics"
+  ],
+  "serviceDescription": "With Amazon Comprehend, you only pay for what you use. You are charged based on the amount of text processed on a monthly basis. Amazon Comprehend provides natural language processing, topic modeling, and Custom Classification capabilities, enabling a broad range of applications that can analyze text.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "comprehend",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/comprehend/[currency]/current/comprehend.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "cards": [
+        {
+          "title": "Keyphrase extraction",
+          "helpText": "The Keyphrase Extraction API returns the key phrases or talking points and a confidence score to support that this is a key phrase.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/comprehend/features/",
+              "overrides": {
+                "aws-iso": "https://awshome.ic.gov/comprehend/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations below exclude free tier discounts.",
+                "id": "NLP_Services_1",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ]
+              },
+              {
+                "IPMSupported": "true",
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Type of API call",
+                "id": "ApiCall_key",
+                "mappingDefinitionName": "comprehend",
+                "options": [
+                  {
+                    "label": "Asynchronous",
+                    "id": "AsyncKeyPhrase"
+                  },
+                  {
+                    "label": "Synchronous",
+                    "id": "SyncKeyPhrase"
+                  }
+                ],
+                "displayInConfigSummary": false,
+                "defaultDropDownItem": "AsyncKeyPhrase",
+                "description": "Pick an API Call"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerComments_sync_key",
+                "label": "Number of documents synchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text documents to be analyzed",
+                "description": "Number of text documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerChars_sync_key",
+                "label": "Average characters in a document synchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text document",
+                "description": "Average number of characters in each text document to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerComments_async_key",
+                "label": "Number of documents asynchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter the total number of text documents to be analyzed",
+                "description": "Number of text documents to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "CustomerChars_async_key",
+                "label": "Average characters in a document asynchronous",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "placeholder": "Enter average number of characters per text document",
+                "description": "Average number of characters in each text document to be analyzed"
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "synccomponent_key",
+                "id": "SyncId_key",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "Type of API call",
+                        "variableId": "ApiCall_key"
+                      },
+                      "trigger": "equal",
+                      "triggerValue": "SyncKeyPhrase"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Number of documents synchronous",
+                        "variableId": "CustomerComments_sync_key"
+                      },
+                      {
+                        "variableLabel": "Average characters in a document synchronous",
+                        "variableId": "CustomerChars_sync_key"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "input",
+                "subType": "condition",
+                "label": "AsyncComponent_key",
+                "id": "ASyncId_key",
+                "rule": {
+                  "conditions": [
+                    {
+                      "triggerComponent": {
+                        "variableLabel": "Type of API call",
+                        "variableId": "ApiCall_key"
+                      },
+                      "trigger": "equal",
+                      "triggerValue": "AsyncKeyPhrase"
+                    }
+                  ],
+                  "render": {
+                    "action": "display",
+                    "subComponents": [
+                      {
+                        "variableLabel": "Number of documents asynchronous",
+                        "variableId": "CustomerComments_async_key"
+                      },
+                      {
+                        "variableLabel": "Average characters in a document asynchronous",
+                        "variableId": "CustomerChars_async_key"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Language_Detection",
+                "id": "languageDetection",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Language Detection text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Language Detection text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Language Detection text request over 50M"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Syntax_Analysis",
+                "id": "syntaxAnalysis",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Syntax Analysis text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Syntax Analysis text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Syntax Analysis text request over 50M"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_KeyPhrase_Detection",
+                "id": "keyPhaseDetection",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Key Phrase detection text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Key Phrase detection text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Key Phrase detection text request over 50M"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Entity_Analysis",
+                "id": "entityAnalysis",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Entity Analysis text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Entity Analysis text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Entity Analysis text request over 50M"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Tierd_Sentiment_Analysis",
+                "id": "sentimentAnalysis",
+                "mappingDefinitionName": "comprehend",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 10000000,
+                      "meteredUnit": "Processes Sentiment Analysis text request upto 10M"
+                    },
+                    {
+                      "startOfTier": 10000000,
+                      "endOfTier": 50000000,
+                      "meteredUnit": "Processes Sentiment Analysis text request from 10M to 50M"
+                    },
+                    {
+                      "startOfTier": 50000000,
+                      "endOfTier": -1,
+                      "meteredUnit": "Processes Sentiment Analysis text request over 50M"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "Average characters in a document synchronous",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "CustomerChars_sync_key"
+                    },
+                    {
+                      "constant": 300,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "characters",
+                  "decimalPlaces": 2,
+                  "id": "minMaxsync_key"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "NLP requests are measured in units of 100 characters, with a 3 unit (300 character) minimum charge per document. Characters per document is",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "minValue": 0,
+                  "id": "variablesyncTest",
+                  "referLabel": "characters",
+                  "refer": "minMaxsync_key"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_sync_key",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "minMaxsync_key",
+                      "variableLabel": "characters",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    },
+                    {
+                      "variableId": "CustomerComments_sync_key",
+                      "variableLabel": "Number of documents synchronous",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_sync_key",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "unitsPerRequest_sync_key",
+                      "variableLabel": "characters per request",
+                      "variableUnitLabel": "characters",
+                      "required": false
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units for synchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_sync_key",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_sync_key",
+                      "variableLabel": "units for synchronous",
+                      "variableUnitLabel": "units rounded up",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit synchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsPerRequest_async_key",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "CustomerChars_async_key",
+                      "variableLabel": "Average characters in a document asynchronous",
+                      "variableUnitLabel": "characters per document",
+                      "required": true
+                    },
+                    {
+                      "variableId": "CustomerComments_async_key",
+                      "variableLabel": "Number of documents asynchronous",
+                      "variableUnitLabel": "documents",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "characters per request asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "maxMin",
+                  "operation": "Maximum",
+                  "operands": [
+                    {
+                      "variableLabel": "characters per request asynchronous",
+                      "variableUnitLabel": "characters",
+                      "required": true,
+                      "minValue": 0,
+                      "variableId": "unitsPerRequest_async_key"
+                    },
+                    {
+                      "constant": 300,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "characters",
+                  "decimalPlaces": 2,
+                  "id": "minMaxAsync_key"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "NLP requests are measured in units of 100 characters, with a 3 unit (300 character) minimum charge per request. Characters per request is",
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "minValue": 0,
+                  "id": "variablesyncTest1",
+                  "referLabel": "characters",
+                  "refer": "minMaxAsync_key"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "unitsChar_async_key",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "minMaxAsync_key",
+                      "variableLabel": "characters",
+                      "variableUnitLabel": "characters",
+                      "required": false
+                    },
+                    {
+                      "constant": 100,
+                      "constantUnitLabel": "characters"
+                    }
+                  ],
+                  "outputUnitLabel": "units for asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": "1",
+                  "operationLabel": "RoundUp",
+                  "id": "unitsRounded_async_key",
+                  "operands": [
+                    {
+                      "variableId": "unitsChar_async_key",
+                      "variableLabel": "units for asynchronous",
+                      "variableUnitLabel": "units rounded up",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "units rounded up to nearest 1 unit asynchronous",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "addC_key",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "unitsRounded_async_key",
+                      "variableLabel": "units rounded up to nearest 1 unit asynchronous",
+                      "variableUnitLabel": "units",
+                      "required": false
+                    },
+                    {
+                      "variableId": "unitsRounded_sync_key",
+                      "variableLabel": "units rounded up to nearest 1 unit synchronous",
+                      "variableUnitLabel": "units",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "units that are rounded",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "inputRefer": "addC_key",
+                  "inputReferLabel": "units that are rounded",
+                  "tieredPricingRefer": "keyPhaseDetection",
+                  "tieredPricingReferLabel": "Tierd_KeyPhrase_Detection",
+                  "inputUnitLabel": "units",
+                  "decimalPlaces": 2,
+                  "id": "keyPhraseCost",
+                  "outputUnitLabel": "[currency] for month"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "NLP_Services_1",
+                    "ApiCall_key",
+                    "CustomerComments_sync_key",
+                    "CustomerChars_sync_key",
+                    "CustomerComments_async_key",
+                    "CustomerChars_async_key",
+                    "SyncId_key",
+                    "ASyncId_key",
+                    "languageDetection",
+                    "syntaxAnalysis",
+                    "keyPhaseDetection",
+                    "entityAnalysis",
+                    "sentimentAnalysis",
+                    "minMaxsync_key",
+                    "variablesyncTest",
+                    "unitsPerRequest_sync_key",
+                    "unitsChar_sync_key",
+                    "unitsRounded_sync_key",
+                    "unitsPerRequest_async_key",
+                    "minMaxAsync_key",
+                    "variablesyncTest1",
+                    "unitsChar_async_key",
+                    "unitsRounded_async_key",
+                    "addC_key",
+                    "keyPhraseCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "[currency] for keyphrase extraction",
+                  "decimalPlaces": 2,
+                  "id": "keyPhraseTotCost",
+                  "subTotalRefer": "keyPhraseCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,47 @@
+[Unit]
+Description=SERA Backend API Server
+Documentation=https://github.com/your-org/sera
+After=network.target redis6.service
+Wants=redis6.service
+
+[Service]
+Type=exec
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/sera-version/backend
+Environment=PATH=/home/ec2-user/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=FLASK_ENV=production
+Environment=FLASK_DEBUG=false
+Environment=PYTHONPATH=/home/ec2-user/sera-version/backend
+Environment=LOG_LEVEL=info
+Environment=HOME=/home/ec2-user
+
+# Main process using uv to run gunicorn
+ExecStart=/home/ec2-user/.local/bin/uv run gunicorn --config gunicorn.conf.py wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+# Process management
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStartSec=60
+TimeoutStopSec=30
+RestartSec=10
+Restart=always
+RestartPreventExitStatus=255
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sera-backend
+
+[Install]
+WantedBy=multi-user.target

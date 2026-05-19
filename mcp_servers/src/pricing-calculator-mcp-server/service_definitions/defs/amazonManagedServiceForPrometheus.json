@@ -1,0 +1,1601 @@
+{
+  "version": "0.0.68",
+  "serviceName": "Amazon Managed Service for Prometheus",
+  "serviceCode": "amazonManagedServiceForPrometheus",
+  "type": "AWSService",
+  "slug": "Prometheus",
+  "excludeZeroSubTotals": true,
+  "partitions": [
+    "aws"
+  ],
+  "regions": [
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-north-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-2"
+  ],
+  "searchKeywords": [
+    "MSP",
+    "Prometheus",
+    "Managed Service for Prometheus"
+  ],
+  "serviceDescription": "Amazon Managed Service for Prometheus is a Prometheus-compatible monitoring service that makes it easy to monitor containerized applications at scale. The Cloud Native Computing Foundation’s Prometheus project is a popular open source monitoring and alerting solution optimized for container environments. With Amazon Managed Service for Prometheus, you can use the open source Prometheus query language (PromQL) to monitor the performance of containerized workloads, without having to manage the underlying infrastructure.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/prometheus/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "prometheus",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/prometheus/[currency]/current/prometheus.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Calculate the cost using your existing self-hosted Prometheus",
+      "id": "prometheusSimple",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/prometheus/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Metric sample ingestion",
+          "helpText": "Amazon Managed Service for Prometheus counts each metric sample ingested to the secured Prometheus-compatible endpoint.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dropdown",
+                "label": "Select Metric",
+                "options": [
+                  {
+                    "label": "Active Series",
+                    "id": "activeSeriesSelect"
+                  },
+                  {
+                    "label": "Ingestion Rate",
+                    "id": "IngestionRateSelect"
+                  }
+                ],
+                "defaultDropDownItem": "activeSeriesSelect",
+                "id": "prometheusSimple_selector"
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "prometheusSimple_selector"
+                    },
+                    "IngestionRateSelect"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "IngestionRate",
+                "label": "Ingestion Rate",
+                "description": "Run rate(prometheus_tsdb_head_samples_appended_total[5m]) in your local prometheus",
+                "defaultValue": 2500,
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0
+                }
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "prometheusSimple_selector"
+                    },
+                    "activeSeriesSelect"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average active time series",
+                "description": "Run prometheus_tsdb_head_series in your local prometheus",
+                "id": "avgActiveSeriesActive",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false
+                },
+                "defaultValue": 150000,
+                "displayInConfigSummary": true
+              },
+              {
+                "displayIf": {
+                  "==": [
+                    {
+                      "type": "component",
+                      "id": "prometheusSimple_selector"
+                    },
+                    "activeSeriesSelect"
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "id": "avgCollectionInterval",
+                "label": "Avg Collection Interval (in seconds)",
+                "defaultValue": 60,
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 60
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Metrics tiered pricing",
+                "id": "metricsTieredPricing",
+                "mappingDefinitionName": "prometheus",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 2000000000,
+                      "meteredUnit": "Metric from 40000000 to 2000000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 2000000001,
+                      "endOfTier": 252000000000,
+                      "meteredUnit": "Metric from 2000000000 to 252000000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 252000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Metric from 252000000000 to Inf per Metric Datapoints"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "prometheusSimple_selector",
+                    "IngestionRate",
+                    "avgActiveSeriesActive",
+                    "avgCollectionInterval",
+                    "metricsTieredPricing"
+                  ],
+                  "id": "greenfield_unitConvert",
+                  "subTotalRefer": ""
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "prometheusSimple_selector"
+                      },
+                      "IngestionRateSelect"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "totalMonthlySamplesIngestion",
+                  "operands": [
+                    {
+                      "variableId": "IngestionRate",
+                      "variableLabel": "Ingestion Rate",
+                      "variableUnitLabel": "samples per second",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds in an hour"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly samples",
+                  "variableName": "total monthly samples - Ingestion",
+                  "decimalPlaces": 0
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "prometheusSimple_selector"
+                      },
+                      "activeSeriesSelect"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "MonthlySamplesPerSec",
+                  "operands": [
+                    {
+                      "variableId": "avgActiveSeriesActive",
+                      "variableLabel": "Average active time series",
+                      "variableUnitLabel": "Average active time series",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds in an hour"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "monthly samples per second",
+                  "decimalPlaces": 2
+                },
+                {
+                  "displayIf": {
+                    "==": [
+                      {
+                        "type": "component",
+                        "id": "prometheusSimple_selector"
+                      },
+                      "activeSeriesSelect"
+                    ]
+                  },
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "id": "totalMonthlySamplesActive",
+                  "operands": [
+                    {
+                      "variableId": "MonthlySamplesPerSec",
+                      "variableLabel": "monthly samples per second",
+                      "variableUnitLabel": "samples per second",
+                      "required": true
+                    },
+                    {
+                      "variableId": "avgCollectionInterval",
+                      "variableLabel": "Avg Collection Interval (in seconds)",
+                      "variableUnitLabel": "seconds collection interval",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly samples",
+                  "variableName": "total monthly samples - Actvie",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "id": "totalMonthlySamples",
+                  "operands": [
+                    {
+                      "variableId": "totalMonthlySamplesIngestion",
+                      "variableLabel": "total monthly samples - Ingestion",
+                      "variableUnitLabel": "total monthly samples",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totalMonthlySamplesActive",
+                      "variableLabel": "total monthly samples - Actvie",
+                      "variableUnitLabel": "total monthly samples",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly samples",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "metricsSimpleTiered",
+                  "inputRefer": "totalMonthlySamples",
+                  "inputReferLabel": "total monthly samples",
+                  "inputUnitLabel": "total monthly samples",
+                  "tieredPricingRefer": "metricsTieredPricing",
+                  "tieredPricingReferLabel": "Metrics tiered pricing"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalMonthlySamplesIngestion",
+                    "MonthlySamplesPerSec",
+                    "totalMonthlySamplesActive",
+                    "totalMonthlySamples",
+                    "metricsSimpleTiered"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly metrics ingested total costs",
+                  "decimalPlaces": 2,
+                  "id": "GreenfieldTotalCostDisplay",
+                  "subTotalRefer": "metricsSimpleTiered"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "helpText": "Amazon Managed Service for Prometheus calculates the stored metric samples and metric metadata in gigabytes (GB), where 1GB is 2^30 bytes. The storage charge is determined by the Prometheus metrics samples (typically 1 or 2 bytes) and metadata.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "RentionPeriod",
+                "label": "Retention Period (in days)",
+                "defaultValue": 150,
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for prometheus storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "Storage from 10 to Inf per GB-Mo"
+                },
+                "id": "prometheusStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 6.67e-05,
+                      "constantUnitLabel": "storage ratio"
+                    },
+                    {
+                      "variableId": "RentionPeriod",
+                      "variableLabel": "Retention Period (in days)",
+                      "variableUnitLabel": "days of retention",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency] ",
+                      "required": true,
+                      "variableId": "metricsSimpleTiered"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] storage cost",
+                  "variableName": "monthly total sample seconds - ingest",
+                  "decimalPlaces": 0,
+                  "id": "storageCost_p"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "RentionPeriod",
+                    "prometheusStorage",
+                    "storageCost_p"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Approximate total monthly storage cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageTotalCostDisplay",
+                  "subTotalRefer": "storageCost_p"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Query Samples Processed",
+          "helpText": "Amazon Managed Service for Prometheus meters the Query Samples Processed (QSP) from all QueryMetric API requests. QSP is the total number of data points queried using Prometheus Query Language (PromQL) for a given time range.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Monitoring",
+                "id": "QueryMonitoring"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Number of Dashboard users per day",
+                "id": "NumberOfDashboard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "placeholder": "Users per day"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Alerting and Recording Rules",
+                "id": "QueryAlerting"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Prometheus rules",
+                "id": "numberOfPrometheusRules",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "placeholder": "Number"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "ruleExecutionInterval",
+                "label": "Average rule execution interval (in seconds)",
+                "defaultValue": 60,
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 60
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Advanced Settings - Optional",
+                "id": "QueryAdvancedSettings"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of queries per day per dashboard user",
+                "id": "numberOfQueriesPerDayPerUser",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 2400,
+                "displayInConfigSummary": true,
+                "placeholder": "Avg queries per day per dashboard user"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average samples per query for Monitoring queries",
+                "id": "numberOfSamplesPerQueryMonitoring",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 100000,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average samples per query for Alerting queries",
+                "id": "numberOfSamplesPerQueryAlerting",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 100000,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "id": "QueryPricing",
+                "label": "Query pricing",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "API Request from 0 to Inf per Metric Datapoints"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "QueryMonitoring",
+                    "NumberOfDashboard",
+                    "QueryAlerting",
+                    "numberOfPrometheusRules",
+                    "ruleExecutionInterval",
+                    "QueryAdvancedSettings",
+                    "numberOfQueriesPerDayPerUser",
+                    "numberOfSamplesPerQueryMonitoring",
+                    "numberOfSamplesPerQueryAlerting",
+                    "QueryPricing"
+                  ],
+                  "id": "query_unitConvert",
+                  "subTotalRefer": "storageCost_p"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "NumberOfDashboard",
+                      "variableLabel": "Average Number of Dashboard users per day",
+                      "variableUnitLabel": "dashboard users per day",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfQueriesPerDayPerUser",
+                      "variableLabel": "Average number of queries per day per dashboard user",
+                      "variableUnitLabel": "average queries per day per user",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30.42
+                    }
+                  ],
+                  "outputUnitLabel": "average queries per month",
+                  "decimalPlaces": 0,
+                  "id": "avgQueriesPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "avgQueriesPerMonth",
+                      "variableLabel": "average queries per month",
+                      "variableUnitLabel": "avg queries per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfSamplesPerQueryMonitoring",
+                      "variableLabel": "Average samples per query for Monitoring queries",
+                      "variableUnitLabel": "avg samples per query",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total samples processed for Monitoring",
+                  "decimalPlaces": 0,
+                  "id": "SamplesMonitoring"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Monitoring Samples",
+                  "displayInConfigSummary": true,
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "id": "totSamplesMonitoring",
+                  "refer": "SamplesMonitoring",
+                  "referLabel": "Total samples processed for Monitoring"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "constantUnitLabel": "seconds per minute",
+                      "constant": 60
+                    },
+                    {
+                      "variableId": "ruleExecutionInterval",
+                      "variableLabel": "Average rule execution interval (in seconds)",
+                      "variableUnitLabel": "second intervals",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "executions per minute",
+                  "decimalPlaces": 0,
+                  "id": "executionsPerMinute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "executionsPerMinute",
+                      "variableLabel": "executions per minute",
+                      "variableUnitLabel": "executions per min",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "minutes per hour",
+                      "constant": 60
+                    },
+                    {
+                      "constantUnitLabel": "hours per month",
+                      "constant": 730
+                    }
+                  ],
+                  "outputUnitLabel": "executions per month",
+                  "decimalPlaces": 0,
+                  "id": "executionsPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfPrometheusRules",
+                      "variableLabel": "Number of Prometheus rules",
+                      "variableUnitLabel": "prometheus rules",
+                      "required": true
+                    },
+                    {
+                      "variableId": "executionsPerMonth",
+                      "variableLabel": "executions per month",
+                      "variableUnitLabel": "executions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfSamplesPerQueryAlerting",
+                      "variableLabel": "Average samples per query for Alerting queries",
+                      "variableUnitLabel": "avg samples per alerting queries executed"
+                    }
+                  ],
+                  "outputUnitLabel": "Total samples processed for alerting",
+                  "decimalPlaces": 0,
+                  "id": "SamplesAlerting"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Alerting Samples",
+                  "displayInConfigSummary": true,
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "id": "totSamplesAlerting",
+                  "refer": "SamplesAlerting",
+                  "referLabel": "Total samples processed for alerting"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totSamplesMonitoring",
+                      "variableLabel": "Total Monitoring Samples",
+                      "variableUnitLabel": "Total monitoring samples",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totSamplesAlerting",
+                      "variableLabel": "Total Alerting Samples",
+                      "variableUnitLabel": "Total alerting samples",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly query samples",
+                  "decimalPlaces": 2,
+                  "id": "totMonthlyQuerySamples"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totMonthlyQuerySamples",
+                      "variableLabel": "Total monthly query samples",
+                      "variableUnitLabel": "query samples per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "QueryPricing",
+                      "variableLabel": "Query pricing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total Query cost",
+                  "decimalPlaces": 2,
+                  "id": "queryCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "avgQueriesPerMonth",
+                    "SamplesMonitoring",
+                    "totSamplesMonitoring",
+                    "executionsPerMinute",
+                    "executionsPerMonth",
+                    "SamplesAlerting",
+                    "totSamplesAlerting",
+                    "totMonthlyQuerySamples",
+                    "queryCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Query Sample Processed for Prometheus costs",
+                  "decimalPlaces": 2,
+                  "id": "QueryTotalCostDisplay",
+                  "subTotalRefer": "queryCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Managed Collector",
+          "helpText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of collectors",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000
+                },
+                "displayInConfigSummary": true,
+                "description": "The number of collectors generally corresponds to the number of EKS clusters being monitored using fully-managed collectors",
+                "placeholder": "Enter the number of collectors",
+                "id": "numberof_collectors"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of Samples collected",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number samples collected",
+                "id": "numberOfsamples_collected"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "Metric from 0 to Inf per Collector Hours"
+                },
+                "label": "price for collector hours",
+                "id": "collectorhour_price"
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "Metric from 0 to Inf per Metric Datapoints"
+                },
+                "label": "price for samples collected",
+                "id": "samplescollected_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberof_collectors",
+                    "numberOfsamples_collected",
+                    "collectorhour_price",
+                    "samplescollected_price"
+                  ],
+                  "id": "poseidon_unitconversion",
+                  "subTotalRefer": "queryCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of collectors",
+                      "variableUnitLabel": "collectors",
+                      "required": true,
+                      "variableId": "numberof_collectors"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for collector hours",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "collectorhour_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "collectorhours_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Samples collected",
+                      "variableUnitLabel": "samples",
+                      "required": true,
+                      "variableId": "numberOfsamples_collected"
+                    },
+                    {
+                      "variableLabel": "price for samples collected",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "samplescollected_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] for samples collected",
+                  "decimalPlaces": 2,
+                  "id": "samplecollected_cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "collectorhours_cost"
+                    },
+                    {
+                      "variableLabel": "[currency] for samples collected",
+                      "variableUnitLabel": "[currency]",
+                      "required": false,
+                      "variableId": "samplecollected_cost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Total cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalcost_3"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "collectorhours_cost",
+                    "samplecollected_cost",
+                    "totalcost_3"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Managed Collector cost",
+                  "decimalPlaces": 2,
+                  "id": "totalcost3_monthy",
+                  "subTotalRefer": "totalcost_3"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Calculate the cost using your infrastructure details",
+      "id": "prometheus",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/prometheus/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Metric sample ingestion",
+          "helpText": "Amazon Managed Service for Prometheus counts each metric sample ingested to the secured Prometheus-compatible endpoint.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of EC2 instances (e.g EKS nodes)",
+                "id": "numberOfNodes",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "description": "Note: If you only know the total number of Prometheus metrics, enter 1 as the “Number of EC2 instances” and enter the total number of metrics as the “Prometheus metrics per EC2 instances”."
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Prometheus metrics per EC2 instances",
+                "id": "numberOfMetrics",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 1000,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Metric collection interval (in seconds)",
+                "id": "collectionInterval",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 2628000
+                },
+                "defaultValue": 60,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Metrics tiered pricing",
+                "id": "metricsTieredPricing",
+                "mappingDefinitionName": "prometheus",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 2000000000,
+                      "meteredUnit": "Metric from 40000000 to 2000000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 2000000001,
+                      "endOfTier": 252000000000,
+                      "meteredUnit": "Metric from 2000000000 to 252000000000 per Metric Datapoints"
+                    },
+                    {
+                      "startOfTier": 252000000001,
+                      "endOfTier": -1,
+                      "meteredUnit": "Metric from 252000000000 to Inf per Metric Datapoints"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "numberOfNodes",
+                    "numberOfMetrics",
+                    "collectionInterval",
+                    "metricsTieredPricing"
+                  ],
+                  "id": "prometheous_unitConvert",
+                  "subTotalRefer": "totalcost_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of EC2 instances (e.g EKS nodes)",
+                      "variableUnitLabel": "nodes",
+                      "required": true,
+                      "variableId": "numberOfNodes"
+                    },
+                    {
+                      "variableLabel": "Prometheus metrics per EC2 instances",
+                      "variableUnitLabel": "metrics per node",
+                      "required": true,
+                      "variableId": "numberOfMetrics"
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds in an hour"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "monthly samples per second",
+                  "decimalPlaces": 0,
+                  "id": "totalSample"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableLabel": "monthly samples per second",
+                      "variableUnitLabel": "samples per second",
+                      "required": true,
+                      "variableId": "totalSample"
+                    },
+                    {
+                      "variableLabel": "Metric collection interval (in seconds)",
+                      "variableUnitLabel": "seconds collection interval",
+                      "required": true,
+                      "variableId": "collectionInterval"
+                    }
+                  ],
+                  "outputUnitLabel": "total monthly samples",
+                  "decimalPlaces": 0,
+                  "id": "totalSample2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "metricsTiered",
+                  "inputRefer": "totalSample2",
+                  "inputReferLabel": "total monthly samples",
+                  "inputUnitLabel": "total monthly samples",
+                  "tieredPricingRefer": "metricsTieredPricing",
+                  "tieredPricingReferLabel": "Metrics tiered pricing"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "totalSample",
+                    "totalSample2",
+                    "metricsTiered"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Monthly metrics ingested total costs",
+                  "decimalPlaces": 2,
+                  "id": "PrometheusTotalCostDisplay",
+                  "subTotalRefer": "metricsTiered"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Storage",
+          "helpText": "Amazon Managed Service for Prometheus calculates the stored metric samples and metric metadata in gigabytes (GB), where 1GB is 2^30 bytes. The storage charge is determined by the Prometheus metrics samples (typically 1 or 2 bytes) and metadata.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "RentionPeriod",
+                "label": "Retention Period (in days)",
+                "defaultValue": 150,
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for prometheus storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "Storage from 10 to Inf per GB-Mo"
+                },
+                "id": "prometheusStorage"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "constant": 6.67e-05,
+                      "constantUnitLabel": "storage ratio"
+                    },
+                    {
+                      "variableId": "RentionPeriod",
+                      "variableLabel": "Retention Period (in days)",
+                      "variableUnitLabel": "days of retention",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency]",
+                      "variableUnitLabel": "[currency] ",
+                      "required": true,
+                      "variableId": "metricsTiered"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] storage cost",
+                  "variableName": "monthly total sample seconds - ingest",
+                  "decimalPlaces": 0,
+                  "id": "totalStorageCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "RentionPeriod",
+                    "prometheusStorage",
+                    "totalStorageCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Approximate total monthly storage cost",
+                  "decimalPlaces": 2,
+                  "id": "StorageTotalCostDisplay",
+                  "subTotalRefer": "totalStorageCost"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Query Samples Processed",
+          "helpText": "Amazon Managed Service for Prometheus meters the Query Samples Processed (QSP) from all QueryMetric API requests. QSP is the total number of data points queried using Prometheus Query Language (PromQL) for a given time range.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/prometheus/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Monitoring",
+                "id": "QueryMonitoring"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average Number of Dashboard users per day",
+                "id": "NumberOfDashboard",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "placeholder": "Users per day"
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Alerting and Recording Rules",
+                "id": "QueryAlerting"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of Prometheus rules",
+                "id": "numberOfPrometheusRules",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0
+                },
+                "defaultValue": 10,
+                "displayInConfigSummary": true,
+                "placeholder": "Number"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "ruleExecutionInterval",
+                "label": "Average rule execution interval (in seconds)",
+                "defaultValue": 60,
+                "validations": {
+                  "required": false,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 60
+                }
+              },
+              {
+                "type": "input",
+                "subType": "headerText",
+                "title": "Advanced Settings - Optional",
+                "id": "QueryAdvancedSettings"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average number of queries per day per dashboard user",
+                "id": "numberOfQueriesPerDayPerUser",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 2400,
+                "displayInConfigSummary": true,
+                "placeholder": "Avg queries per day per dashboard user"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average samples per query for Monitoring queries",
+                "id": "numberOfSamplesPerQueryMonitoring",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 100000,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Average samples per query for Alerting queries",
+                "id": "numberOfSamplesPerQueryAlerting",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1
+                },
+                "defaultValue": 100000,
+                "displayInConfigSummary": true,
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "subType": "singlePricePoint",
+                "id": "QueryPricing",
+                "label": "Query pricing",
+                "mappingDefinitionName": "prometheus",
+                "meteredUnit": {
+                  "allRegions": "API Request from 0 to Inf per Metric Datapoints"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "refer": [
+                    "QueryMonitoring",
+                    "NumberOfDashboard",
+                    "QueryAlerting",
+                    "numberOfPrometheusRules",
+                    "ruleExecutionInterval",
+                    "QueryAdvancedSettings",
+                    "numberOfQueriesPerDayPerUser",
+                    "numberOfSamplesPerQueryMonitoring",
+                    "numberOfSamplesPerQueryAlerting",
+                    "QueryPricing"
+                  ],
+                  "id": "query_unitConvert",
+                  "subTotalRefer": "totalStorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "NumberOfDashboard",
+                      "variableLabel": "Average Number of Dashboard users per day",
+                      "variableUnitLabel": "dashboard users per day",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfQueriesPerDayPerUser",
+                      "variableLabel": "Average number of queries per day per dashboard user",
+                      "variableUnitLabel": "average queries per day per user",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "days per month",
+                      "constant": 30.42
+                    }
+                  ],
+                  "outputUnitLabel": "average queries per month",
+                  "decimalPlaces": 0,
+                  "id": "avgQueriesPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "avgQueriesPerMonth",
+                      "variableLabel": "average queries per month",
+                      "variableUnitLabel": "avg queries per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfSamplesPerQueryMonitoring",
+                      "variableLabel": "Average samples per query for Monitoring queries",
+                      "variableUnitLabel": "avg samples per query",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total samples processed for Monitoring",
+                  "decimalPlaces": 0,
+                  "id": "SamplesMonitoring"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Monitoring Samples",
+                  "displayInConfigSummary": true,
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "id": "totSamplesMonitoring",
+                  "refer": "SamplesMonitoring",
+                  "referLabel": "Total samples processed for Monitoring"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "constantUnitLabel": "seconds per minute",
+                      "constant": 60
+                    },
+                    {
+                      "variableId": "ruleExecutionInterval",
+                      "variableLabel": "Average rule execution interval (in seconds)",
+                      "variableUnitLabel": "second intervals",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "executions per minute",
+                  "decimalPlaces": 0,
+                  "id": "executionsPerMinute"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "executionsPerMinute",
+                      "variableLabel": "executions per minute",
+                      "variableUnitLabel": "executions per min",
+                      "required": true
+                    },
+                    {
+                      "constantUnitLabel": "minutes per hour",
+                      "constant": 60
+                    },
+                    {
+                      "constantUnitLabel": "hours per month",
+                      "constant": 730
+                    }
+                  ],
+                  "outputUnitLabel": "executions per month",
+                  "decimalPlaces": 0,
+                  "id": "executionsPerMonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "numberOfPrometheusRules",
+                      "variableLabel": "Number of Prometheus rules",
+                      "variableUnitLabel": "prometheus rules",
+                      "required": true
+                    },
+                    {
+                      "variableId": "executionsPerMonth",
+                      "variableLabel": "executions per month",
+                      "variableUnitLabel": "executions",
+                      "required": true
+                    },
+                    {
+                      "variableId": "numberOfSamplesPerQueryAlerting",
+                      "variableLabel": "Average samples per query for Alerting queries",
+                      "variableUnitLabel": "avg samples per alerting queries executed"
+                    }
+                  ],
+                  "outputUnitLabel": "Total samples processed for alerting",
+                  "decimalPlaces": 0,
+                  "id": "SamplesAlerting"
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "label": "Total Alerting Samples",
+                  "displayInConfigSummary": true,
+                  "displayInCalculationString": true,
+                  "useCurrency": false,
+                  "id": "totSamplesAlerting",
+                  "refer": "SamplesAlerting",
+                  "referLabel": "Total samples processed for alerting"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "totSamplesMonitoring",
+                      "variableLabel": "Total Monitoring Samples",
+                      "variableUnitLabel": "Total monitoring samples",
+                      "required": false
+                    },
+                    {
+                      "variableId": "totSamplesAlerting",
+                      "variableLabel": "Total Alerting Samples",
+                      "variableUnitLabel": "Total alerting samples",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "Total monthly query samples",
+                  "decimalPlaces": 2,
+                  "id": "totMonthlyQuerySamples"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "totMonthlyQuerySamples",
+                      "variableLabel": "Total monthly query samples",
+                      "variableUnitLabel": "query samples per month",
+                      "required": true
+                    },
+                    {
+                      "variableId": "QueryPricing",
+                      "variableLabel": "Query pricing",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total Query cost",
+                  "decimalPlaces": 2,
+                  "id": "queryCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "avgQueriesPerMonth",
+                    "SamplesMonitoring",
+                    "totSamplesMonitoring",
+                    "executionsPerMinute",
+                    "executionsPerMonth",
+                    "SamplesAlerting",
+                    "totSamplesAlerting",
+                    "totMonthlyQuerySamples",
+                    "queryCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total Query Sample Processed for Prometheus costs",
+                  "decimalPlaces": 2,
+                  "id": "QueryTotalCostDisplay",
+                  "subTotalRefer": "queryCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

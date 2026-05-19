@@ -1,0 +1,208 @@
+{
+  "version": "0.0.82",
+  "serviceName": "DynamoDB Streams",
+  "serviceCode": "amazonDynamoDbStreams",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Database",
+    "DDB",
+    "NoSQL",
+    "SQL",
+    "Table",
+    "nosql databases",
+    "database schema",
+    "database software",
+    "cloud database",
+    "document database",
+    "key value store",
+    "database as a service",
+    "database scheme",
+    "nosql hosting",
+    "hosted nosql",
+    "data store",
+    "unstructured database",
+    "Accelerator",
+    "DAX"
+  ],
+  "serviceDescription": "Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale. It's a fully managed, multiregion, multimaster, durable database with built-in security, backup and restore, and in-memory caching for internet-scale applications.",
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/dynamodb/"
+    }
+  },
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "dynamodb",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/dynamodb/[currency]/current/dynamodb.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "DynamoDB On-Demand",
+      "helpText": "",
+      "cards": [
+        {
+          "title": "DynamoDB Streams",
+          "helpText": "",
+          "expandable": true,
+          "defaultExpansion": true,
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "The calculations in this section exclude AWS Free Tier discounts. DynamoDB does not charge for GetRecords API calls invoked by AWS Lambda as part of DynamoDB triggers or for GetRecords API calls invoked by DynamoDB global tables. These GetRecords API calls do not need to be estimated.",
+                "partitions": [
+                  "aws",
+                  "aws-us-gov"
+                ],
+                "id": "streamsFreeTierWarning"
+              },
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "DynamoDB does not charge for GetRecords API calls invoked by AWS Lambda as part of DynamoDB triggers or for GetRecords API calls invoked by DynamoDB global tables. These GetRecords API calls do not need to be estimated.",
+                "partitions": [
+                  "aws-iso",
+                  "aws-iso-b"
+                ],
+                "id": "streamsFreeTierWarningISO"
+              },
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of DynamoDB Streams GetRecord API requests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per week",
+                    "id": "perWeek"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  },
+                  {
+                    "label": "billion per month",
+                    "id": "billionPerMonth"
+                  },
+                  {
+                    "label": "trillion per month",
+                    "id": "trillionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "perMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number",
+                "id": "streamReadRequests"
+              },
+              {
+                "type": "pricing",
+                "label": "price for dynamodb stream",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "dynamodb",
+                "meteredUnit": {
+                  "allRegions": "Streams Read Requests"
+                },
+                "id": "streamReadRequestsPrice"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "streamsFreeTierWarning",
+                    "streamsFreeTierWarningISO",
+                    "streamReadRequests",
+                    "streamReadRequestsPrice"
+                  ],
+                  "id": "streamUnitConversion",
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of DynamoDB Streams GetRecord API requests",
+                      "variableUnitLabel": "GetRecord API requests",
+                      "required": true,
+                      "variableId": "streamReadRequests"
+                    },
+                    {
+                      "variableLabel": "price for dynamodb stream",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "streamReadRequestsPrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (DynamoDB streams cost)",
+                  "decimalPlaces": 4,
+                  "id": "streamCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "streamCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "DynamoDB Streams cost",
+                  "displayInConfigSummary": true,
+                  "decimalPlaces": 2,
+                  "id": "streamDisplay",
+                  "subTotalRefer": "streamCost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "dynamoDBOnDemandStreams"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-iso",
+    "aws-iso-b",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

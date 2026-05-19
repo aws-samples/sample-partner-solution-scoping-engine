@@ -1,0 +1,287 @@
+{
+  "version": "0.0.6",
+  "serviceName": "AgentCore Identity",
+  "serviceCode": "agentCoreIdentity",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [],
+  "searchKeywords": [
+    "Agentcore"
+  ],
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "cognito",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/cognito/[currency]/current/cognito.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "Identity",
+      "description": "figure out what to add",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/bedrock/agentcore/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Identity",
+          "helpText": {
+            "aws": "AgentCore Identity enables the AI agent to maintain context and memory across multiple interactions with users."
+          },
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/bedrock/agentcore/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "alert",
+                "header": "",
+                "label": "info alert",
+                "content": "AgentCore Identity is available at no additional charge to customers when they use it through either AgentCore Runtime or AgentCore Gateway",
+                "alertType": "info",
+                "isDismissable": true,
+                "id": "info"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Number_of_agentsessions_per_month",
+                "label": "Number of agent sessions per month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000000000000
+                },
+                "description": "The total number of agent sessions expected to run per month"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_tool_invocations_per_session",
+                "label": "Average number of tool invocations per session",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 10000
+                },
+                "description": "The average number of times agent calls a tool API (includes ListTools and InvokeTool) within a single session"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_tokens_per_tool",
+                "label": "Average tokens requested per Tool use",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                },
+                "description": "average number of tokens consumed each time the AI agent invokes one of its configured tools"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "id": "Average_tokens_per_user",
+                "label": "Average tokens per user",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 100000
+                },
+                "description": "the average number of tokens consumed for all interactions by a single user over a specified time period"
+              },
+              {
+                "type": "pricing",
+                "id": "Price_for_identity",
+                "label": "Price for identity",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "cognito",
+                "meteredUnit": {
+                  "allRegions": "qjre4o-QjF62pK0Kosxy5el4_XMeMwnI1xYXEKL2KKo"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions Standard Workflows",
+                  "refer": [
+                    "info",
+                    "Number_of_agentsessions_per_month",
+                    "Average_tool_invocations_per_session",
+                    "Average_tokens_per_tool",
+                    "Average_tokens_per_user",
+                    "Price_for_identity"
+                  ],
+                  "id": "unitConvertExecutions",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_tokens_from_tools",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Average_tokens_per_tool",
+                      "variableLabel": "Average tokens requested per Tool use",
+                      "variableUnitLabel": "tokens",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Average_tool_invocations_per_session",
+                      "variableLabel": "Average number of tool invocations per session",
+                      "variableUnitLabel": "invocations",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total tokens from tools",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_tokens_from_users",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Average_tokens_per_user",
+                      "variableLabel": "Average tokens per user",
+                      "variableUnitLabel": "tokens",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Number_of_agentsessions_per_month",
+                      "variableLabel": "Number of agent sessions per month",
+                      "variableUnitLabel": "sessions",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total tokens from users",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Total_tokens_requested",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "Total_tokens_from_tools",
+                      "variableLabel": "Total tokens from tools",
+                      "variableUnitLabel": "tokens",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Total_tokens_from_users",
+                      "variableLabel": "Total tokens from users",
+                      "variableUnitLabel": "tokens",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "Total tokens requested",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Tokens_per_thousand",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "Total_tokens_requested",
+                      "variableLabel": "Total tokens requested",
+                      "variableUnitLabel": "tokens",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "tokens"
+                    }
+                  ],
+                  "outputUnitLabel": "Thousands of tokens",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "Monthly_identity_cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableId": "Tokens_per_thousand",
+                      "variableLabel": "Thousands of tokens",
+                      "variableUnitLabel": "thousands",
+                      "required": true
+                    },
+                    {
+                      "variableId": "Price_for_identity",
+                      "variableLabel": "Price for identity",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true
+                    },
+                    {
+                      "constant": 1000,
+                      "constantUnitLabel": "unit conversion"
+                    }
+                  ],
+                  "outputUnitLabel": "Monthly identity cost",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "Total_tokens_from_tools",
+                    "Total_tokens_from_users",
+                    "Total_tokens_requested",
+                    "Tokens_per_thousand",
+                    "Monthly_identity_cost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Identity cost",
+                  "decimalPlaces": 2,
+                  "id": "tot_cost_identity",
+                  "subTotalRefer": "Monthly_identity_cost"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws"
+  ]
+}

@@ -1,0 +1,1420 @@
+{
+  "version": "0.0.15",
+  "serviceName": "SageMaker Feature Store",
+  "serviceCode": "sageMakerFeatureStore",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "searchKeywords": [
+    "Sagemaker",
+    "Model",
+    "ML",
+    "Machine Learning",
+    "EI",
+    "data scientist"
+  ],
+  "serviceDescription": "With Amazon SageMaker, you pay only for what you use. Building, training, and deploying ML models is billed by the second, with no minimum fees and no upfront commitments.",
+  "hasDataTransfer": true,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "sagemaker-datastore",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/sagemaker/[currency]/current/sagemaker-datastore.json"
+    },
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/sagemaker/"
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "SageMaker Feature Store",
+      "description": "",
+      "id": "sagemakerFeature",
+      "helpText": "Amazon SageMaker Feature Store is a central repository to ingest, store and serve features for machine learning. You are charged for writes, reads, and data storage on the SageMaker Feature Store. Writes are charged as write request units per KB, reads are charged as read request units per 4KB, and data storage is charged per GB per month.",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/sagemaker/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Feature Store data storage (standard)",
+          "helpText": "Amazon SageMaker Feature Store is a central repository to ingest, store and serve features for machine learning. You are charged for feature group writes, reads, and data storage, with different pricing for the standard online store and in-memory online store. For the standard online store, data storage is charged per GB per month.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "bodyText": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data storage size",
+                "id": "SM_storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000
+                },
+                "placeholder": "Enter storage amount",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average record size",
+                "id": "averageItemSizeForAllAttributes",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  },
+                  {
+                    "label": "Byte",
+                    "id": "bytes"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0.0009,
+                  "maxValue": 400
+                },
+                "defaultValue": 1,
+                "placeholder": "Enter Average record size",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for Feature Store storage",
+                "id": "FeatureStoreCost",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "meteredUnit": {
+                  "allRegions": "J0Cfp7hpTWCppyLWB-ZfPPnvXzkj6ORb3pm6pMfsHZg"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "SMFS_unitConvert",
+                  "refer": [
+                    "SM_storageAmount",
+                    "averageItemSizeForAllAttributes",
+                    "FeatureStoreCost"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "SMFS_StorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data storage size",
+                      "variableId": "SM_storageAmount",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for Feature Store storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "FeatureStoreCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "SMFS_StorageDisplayType",
+                  "refer": [
+                    "SMFS_StorageCost"
+                  ],
+                  "subTotalRefer": "SMFS_StorageCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage pricing",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store write request units (standard on-demand)",
+          "helpText": "For throughput with standard online store, you can choose between on-demand or provisioned capacity mode. For on-demand, writes are charged as write request units (WRUs) per KB.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of writes",
+                "id": "WriteRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of writes"
+              },
+              {
+                "type": "pricing",
+                "label": "price for sagemaker datastore write requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "meteredUnit": {
+                  "allRegions": "CAll1P6gsGQmOK30XCZ4-OfNUV1cXbFZoL-09YJzNlc"
+                },
+                "id": "WriteCost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "featureUnitConv_1",
+                  "refer": [
+                    "WriteRequests",
+                    "WriteCost"
+                  ],
+                  "subTotalRefer": "SMFS_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "averageItemSizeForAllAttributes",
+                      "variableUnitLabel": "KB average record size"
+                    },
+                    {
+                      "constantUnitLabel": "KB",
+                      "constant": "1"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded write request units needed per record",
+                  "decimalPlaces": 9,
+                  "id": "unroundedWriteRequestperItem"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "unroundedWriteRequestperItem",
+                      "required": true,
+                      "variableUnitLabel": "KB Average record size"
+                    }
+                  ],
+                  "outputUnitLabel": "write request units needed per record",
+                  "id": "roundedWriteRequestperItem"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of writes",
+                      "variableUnitLabel": "number of writes",
+                      "required": true,
+                      "variableId": "WriteRequests"
+                    },
+                    {
+                      "variableId": "roundedWriteRequestperItem",
+                      "variableLabel": "write request units needed per record",
+                      "variableUnitLabel": "write request units needed per record",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total write request units",
+                  "decimalPlaces": 4,
+                  "id": "totWriteRequest"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total write request units",
+                      "variableUnitLabel": "total write request units",
+                      "required": true,
+                      "variableId": "totWriteRequest"
+                    },
+                    {
+                      "variableLabel": "price for sagemaker datastore write requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "WriteCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for write requests)",
+                  "decimalPlaces": 2,
+                  "id": "WriteCostFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "unroundedWriteRequestperItem",
+                    "roundedWriteRequestperItem",
+                    "totWriteRequest",
+                    "WriteCostFinal"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for write requests",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerFeatureFinal",
+                  "subTotalRefer": "WriteCostFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store read request units (standard on-demand)",
+          "helpText": "For throughput with standard online store, you can choose between on-demand or provisioned capacity mode. For on-demand, reads are charged as read request units (RRUs) per 4 KB.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of reads",
+                "id": "ReadRequests",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the number of reads"
+              },
+              {
+                "type": "pricing",
+                "label": "price for sagemaker datastore read requests",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "meteredUnit": {
+                  "allRegions": "qZBSr2ANxTmoIllSobOPiCHVJaASQYXKD_mFGevp4xY"
+                },
+                "id": "ReadCost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "featureUnitConv_3",
+                  "refer": [
+                    "ReadRequests",
+                    "ReadCost"
+                  ],
+                  "subTotalRefer": "WriteCostFinal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "averageItemSizeForAllAttributes",
+                      "variableUnitLabel": "KB average record size"
+                    },
+                    {
+                      "constantUnitLabel": "KB",
+                      "constant": "4"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded read request units needed per record",
+                  "decimalPlaces": 9,
+                  "id": "unroundedRequestperItem"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "unroundedRequestperItem"
+                    }
+                  ],
+                  "outputUnitLabel": "read request units needed per record",
+                  "id": "roundedRequestperItem"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of reads",
+                      "variableUnitLabel": "number of reads",
+                      "required": true,
+                      "variableId": "ReadRequests"
+                    },
+                    {
+                      "variableId": "roundedRequestperItem",
+                      "variableLabel": "read request units needed per record",
+                      "variableUnitLabel": "read request units needed per record",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "total read request units",
+                  "decimalPlaces": 4,
+                  "id": "totReadRequest"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "total read request units",
+                      "variableUnitLabel": "total read request units",
+                      "required": true,
+                      "variableId": "totReadRequest"
+                    },
+                    {
+                      "variableLabel": "price for sagemaker datastore read requests",
+                      "variableUnitLabel": "[currency] per request",
+                      "required": true,
+                      "variableId": "ReadCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (cost for read requests)",
+                  "decimalPlaces": 2,
+                  "id": "ReadCostFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "unroundedRequestperItem",
+                    "roundedRequestperItem",
+                    "totReadRequest",
+                    "ReadCostFinal"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for read requests",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerFeatureFinal2",
+                  "subTotalRefer": "ReadCostFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store write capacity units (standard provisioned)",
+          "helpText": "For throughput with standard online store, you can choose between on-demand or provisioned capacity mode. For provisioned, you will be charged for the throughput capacity you provision for your feature group, even if you do not fully utilize the provisioned capacity. For provisioned, writes are charged as one write capacity unit (WCU) for each write per second (up to 1 KB).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Write rate",
+                "id": "WriteRate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the write rate"
+              },
+              {
+                "type": "pricing",
+                "label": "price for sagemaker datastore write rates",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "meteredUnit": {
+                  "allRegions": "NH3lw754eUDY9uUi7AKQXXfEXiuTTTF0w1P4GwSeRq8"
+                },
+                "id": "WriteRateCost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "featureUnitConv_2",
+                  "refer": [
+                    "WriteRate",
+                    "WriteRateCost"
+                  ],
+                  "subTotalRefer": "ReadCostFinal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "averageItemSizeForAllAttributes",
+                      "variableUnitLabel": "KB average record size"
+                    },
+                    {
+                      "constantUnitLabel": "KB",
+                      "constant": "1"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded write capacity units needed per record",
+                  "decimalPlaces": 9,
+                  "id": "unroundedWriteRequestperItem_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "unroundedWriteRequestperItem_2",
+                      "required": true,
+                      "variableUnitLabel": "KB Average record size"
+                    }
+                  ],
+                  "outputUnitLabel": "WCUs needed per record",
+                  "id": "roundedWriteRateperItem_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Write rate",
+                      "variableUnitLabel": "number of writes",
+                      "required": true,
+                      "variableId": "WriteRate"
+                    },
+                    {
+                      "variableId": "roundedWriteRateperItem_2",
+                      "variableLabel": "WCUs needed per record",
+                      "variableUnitLabel": "WCUs needed per record",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "WCUs for writes",
+                  "decimalPlaces": 4,
+                  "id": "WCUforwrites"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "WCUs for writes",
+                      "variableUnitLabel": "WCUs",
+                      "required": true,
+                      "variableId": "WCUforwrites"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "WCU-hours per month",
+                  "decimalPlaces": 4,
+                  "id": "WCUhourspermonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "WCU-hours per month",
+                      "variableUnitLabel": "WCU-hours per month",
+                      "required": true,
+                      "variableId": "WCUhourspermonth"
+                    },
+                    {
+                      "variableLabel": "price for sagemaker datastore write rates",
+                      "variableUnitLabel": "[currency] per WCU per hour",
+                      "required": true,
+                      "variableId": "WriteRateCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] monthly write cost",
+                  "decimalPlaces": 2,
+                  "id": "WriteRateCostFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "unroundedWriteRequestperItem_2",
+                    "roundedWriteRateperItem_2",
+                    "WCUforwrites",
+                    "WCUhourspermonth",
+                    "WriteRateCostFinal"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for write capacity units",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerFeatureFinal_2",
+                  "subTotalRefer": "WriteRateCostFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store read capacity units (standard provisioned)",
+          "helpText": "For throughput with standard online store, you can choose between on-demand or provisioned capacity mode. For provisioned, you will be charged for the throughput capacity you provision for your feature group, even if you do not fully utilize the provisioned capacity. For provisioned, reads are charged as one read capacity unit (RCU) for each read per second (up to 4 KB).",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Read rate",
+                "id": "ReadRate",
+                "options": [
+                  {
+                    "label": "per second",
+                    "id": "perSecond"
+                  },
+                  {
+                    "label": "per minute",
+                    "id": "perMinute"
+                  },
+                  {
+                    "label": "per hour",
+                    "id": "perHour"
+                  },
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  }
+                ],
+                "defaultFrequency": "perSecond",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per second",
+                  "id": "perSecond"
+                },
+                "displayInConfigSummary": false,
+                "decimalPlaces": 4,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000000000
+                },
+                "placeholder": "Enter the read rate"
+              },
+              {
+                "type": "pricing",
+                "label": "price for sagemaker datastore read rates",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "meteredUnit": {
+                  "allRegions": "N0pS-4_UPoUTsNYHSd_WyYs_gxjJ3D_fHd3MC_noIZQ"
+                },
+                "id": "ReadRateCost"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "id": "featureUnitConv_4",
+                  "refer": [
+                    "ReadRate",
+                    "ReadRateCost"
+                  ],
+                  "subTotalRefer": "WriteRateCostFinal"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "division",
+                  "operands": [
+                    {
+                      "variableId": "averageItemSizeForAllAttributes",
+                      "variableUnitLabel": "KB average record size"
+                    },
+                    {
+                      "constantUnitLabel": "KB",
+                      "constant": "4"
+                    }
+                  ],
+                  "outputUnitLabel": "unrounded read capacity units needed per record",
+                  "decimalPlaces": 9,
+                  "id": "unroundedRCUperItem_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "rounding",
+                  "method": "roundUp",
+                  "factor": 1,
+                  "allowZero": true,
+                  "operationLabel": "RoundUp",
+                  "operands": [
+                    {
+                      "variableId": "unroundedRCUperItem_3",
+                      "required": true,
+                      "variableUnitLabel": "unrounded read capacity units needed per record"
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs needed per record",
+                  "id": "roundedReadRateperItem_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Read rate",
+                      "variableUnitLabel": "number of reads",
+                      "required": true,
+                      "variableId": "ReadRate"
+                    },
+                    {
+                      "variableId": "roundedReadRateperItem_3",
+                      "variableLabel": "RCUs needed per record",
+                      "variableUnitLabel": "RCUs needed per record",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "RCUs for reads",
+                  "decimalPlaces": 4,
+                  "id": "RCUforreads"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RCUs for reads",
+                      "variableUnitLabel": "RCUs",
+                      "required": true,
+                      "variableId": "RCUforreads"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "RCU-hours per month",
+                  "decimalPlaces": 4,
+                  "id": "RCUhourspermonth"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "RCU-hours per month",
+                      "variableUnitLabel": "RCU-hours per month",
+                      "required": true,
+                      "variableId": "RCUhourspermonth"
+                    },
+                    {
+                      "variableLabel": "price for sagemaker datastore read rates",
+                      "variableUnitLabel": "[currency] per RCU per hour",
+                      "required": true,
+                      "variableId": "ReadRateCost"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] monthly read cost",
+                  "decimalPlaces": 2,
+                  "id": "ReadRateCostFinal"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "unroundedRCUperItem_3",
+                    "roundedReadRateperItem_3",
+                    "RCUforreads",
+                    "RCUhourspermonth",
+                    "ReadRateCostFinal"
+                  ],
+                  "required": false,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Total cost for Read capacity units",
+                  "decimalPlaces": 2,
+                  "id": "sageMakerFeatureFinal_3",
+                  "subTotalRefer": "ReadRateCostFinal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store data storage (in-memory)",
+          "helpText": "For the in-memory online store, data storage is charged per GB per hour. There is a minimum data storage charge of 5 GiB (5.37 GB) per hour for the in-memory online store.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data storage size",
+                "id": "dataStorageSize",
+                "dropDownSize": [
+                  {
+                    "label": "MB",
+                    "id": "mb"
+                  },
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0
+                },
+                "placeholder": "Enter storage size",
+                "description": "Data storage size per hour",
+                "help": ""
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Average record size",
+                "id": "average_recordsize",
+                "dropDownSize": [
+                  {
+                    "label": "KB",
+                    "id": "kb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "kb",
+                  "frequency": "NA"
+                },
+                "outputSize": "kb",
+                "defaultValue": 1,
+                "outputSizeLabel": "KB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 1e-06,
+                  "maxValue": 400
+                },
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for data storage",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "meteredUnit": {
+                  "allRegions": "v-44CHH_iNYiHhSfLhKCtaEKbHSBFiAqopibzMCWWPQ"
+                },
+                "id": "datastorage_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "dataStorageSize",
+                    "average_recordsize",
+                    "datastorage_price"
+                  ],
+                  "subTotalRefer": "ReadRateCostFinal",
+                  "id": "UnitConvsagemakerfds"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Data storage size",
+                      "variableUnitLabel": "GB-hr",
+                      "required": true,
+                      "variableId": "dataStorageSize"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price for data storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "datastorage_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 0,
+                  "id": "storage_cost_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "storage_cost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Data Storage cost",
+                  "decimalPlaces": 2,
+                  "id": "data_storage_cost",
+                  "subTotalRefer": "storage_cost_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store write request units (in-memory)",
+          "helpText": "For the in-memory online store, writes are charged as write request units (WRUs) per KB with a minimum of 1 unit per write.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of writes",
+                "id": "numberOfwrites",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1
+                },
+                "placeholder": "Enter number of writes"
+              },
+              {
+                "type": "pricing",
+                "label": "price for writes",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "meteredUnit": {
+                  "allRegions": "TenEfk6h2B_dIDN4lfry1CNTSt_lhkp3y8VRzkOtcpM"
+                },
+                "id": "writesettings_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfwrites",
+                    "writesettings_price"
+                  ],
+                  "subTotalRefer": "storage_cost_2",
+                  "id": "UnitConvsagemakerfds_2"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of writes",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfwrites"
+                    },
+                    {
+                      "variableLabel": "Average record size",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "average_recordsize"
+                    },
+                    {
+                      "variableLabel": "price for writes",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "writesettings_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 0,
+                  "id": "write_cost_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "write_cost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Writes cost",
+                  "decimalPlaces": 2,
+                  "id": "writes_storage_cost",
+                  "subTotalRefer": "write_cost_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Feature Store read request units (in-memory)",
+          "helpText": "For the in-memory online store, reads are charged as read request units (RRUs) per KB with a minimum of 1 unit per read.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "frequency",
+                "label": "Number of reads",
+                "id": "numberOfreads",
+                "options": [
+                  {
+                    "label": "per day",
+                    "id": "perDay"
+                  },
+                  {
+                    "label": "per month",
+                    "id": "perMonth"
+                  },
+                  {
+                    "label": "million per month",
+                    "id": "millionPerMonth"
+                  }
+                ],
+                "defaultFrequency": "millionPerMonth",
+                "lookupValue": "",
+                "outputFrequency": {
+                  "label": "per month",
+                  "id": "perMonth"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1
+                },
+                "placeholder": "Enter number of reads"
+              },
+              {
+                "type": "pricing",
+                "label": "price for reads",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "sagemaker-datastore",
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": true
+                },
+                "meteredUnit": {
+                  "allRegions": "9xSQu0Q--IKUT6lBWOUgj5g0sgPnmu4jvIysui1wxdM"
+                },
+                "id": "readsettings_price"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "label": "Unit conversions",
+                  "subType": "conversionDisplay",
+                  "refer": [
+                    "numberOfreads",
+                    "readsettings_price"
+                  ],
+                  "subTotalRefer": "write_cost_2",
+                  "id": "UnitConvsagemakerfds_3"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of reads",
+                      "variableUnitLabel": "",
+                      "required": true,
+                      "variableId": "numberOfreads"
+                    },
+                    {
+                      "variableLabel": "Average record size",
+                      "variableUnitLabel": "KB",
+                      "required": true,
+                      "variableId": "average_recordsize"
+                    },
+                    {
+                      "variableLabel": "price for reads",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "readsettings_price"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] per month",
+                  "decimalPlaces": 0,
+                  "id": "read_cost_2"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "read_cost_2"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Reads cost",
+                  "decimalPlaces": 2,
+                  "id": "reads_storage_cost",
+                  "subTotalRefer": "read_cost_2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Transfer",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/sagemaker/latest/dg/feature-store-getting-started.html"
+            }
+          },
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "sageMakerFeatureStore_generated_0",
+                  "refer": [
+                    "dataTransfer"
+                  ],
+                  "subTotalRefer": "read_cost_2"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "sageMakerFeatureStore_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "sageMakerFeatureStore_generated_2",
+                  "refer": [
+                    "sageMakerFeatureStore_generated_1"
+                  ],
+                  "subTotalRefer": "sageMakerFeatureStore_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

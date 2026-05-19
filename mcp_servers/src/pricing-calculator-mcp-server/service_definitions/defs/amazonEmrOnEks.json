@@ -1,0 +1,272 @@
+{
+  "version": "0.0.11",
+  "serviceName": "Amazon EMR on EKS",
+  "serviceCode": "amazonEmrOnEks",
+  "type": "AWSService",
+  "subType": "subService",
+  "regions": [
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-west-3",
+    "eu-north-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [],
+  "serviceDescription": "",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "elasticmapreduce",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/elasticmapreduce/[currency]/current/elasticmapreduce.json"
+    }
+  ],
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/emr/",
+      "overrides": {
+        "aws-cn": "https://www.amazonaws.cn/en/elasticmapreduce/"
+      }
+    }
+  },
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "EKS node",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/emr/pricing/",
+          "overrides": {
+            "aws-cn": "https://www.amazonaws.cn/en/elasticmapreduce/pricing/"
+          }
+        }
+      },
+      "cards": [
+        {
+          "title": "Amazon EMR pricing on EKS",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/emr/pricing/",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/elasticmapreduce/pricing/"
+              }
+            }
+          },
+          "helpText": "This pricing is for Amazon EMR applications running on Amazon EMR clusters with Amazon EC2 instances.",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of vCPU per hour",
+                "id": "numberOfvCPU",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Amount of memory per hour (GB)",
+                "id": "memoryGB",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "jobRuntime",
+                "label": "Job runtime",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "minutes",
+                    "value": "min"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 0,
+                  "maxValue": 730
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per CPUhour",
+                "id": "EKS_CPU",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce",
+                "meteredUnit": {
+                  "allRegions": "EMR Containers EC2 CPUHours"
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per GBhour",
+                "id": "EKS_GB",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "elasticmapreduce",
+                "meteredUnit": {
+                  "allRegions": "EMR Containers EC2 GBHours"
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "EMREKS_unitConvert",
+                  "decimalPlaces": 0,
+                  "refer": [
+                    "numberOfvCPU",
+                    "memoryGB",
+                    "jobRuntime",
+                    "EKS_CPU",
+                    "EKS_GB"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "vCPUCost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of vCPU per hour",
+                      "variableId": "numberOfvCPU",
+                      "variableUnitLabel": "vCPU",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "jobRuntime",
+                      "variableUnitLabel": "hours runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per CPUhour",
+                      "variableId": "EKS_CPU",
+                      "variableUnitLabel": "per vCPU per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] uplift on vCPU",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "memoryCost",
+                  "operands": [
+                    {
+                      "variableLabel": "Amount of memory per hour (GB)",
+                      "variableId": "memoryGB",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Job runtime",
+                      "variableId": "jobRuntime",
+                      "variableUnitLabel": "hours runtime",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price per GBhour",
+                      "variableId": "EKS_GB",
+                      "variableUnitLabel": "per GB per hour",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] uplift on memory",
+                  "decimalPlaces": 0
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "EKSTotal",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableId": "vCPUCost",
+                      "variableLabel": "[currency] uplift on vCPU",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    },
+                    {
+                      "variableId": "memoryCost",
+                      "variableLabel": "[currency] uplift on memory",
+                      "variableUnitLabel": "[currency]",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] total EMR uplift for the EMR job",
+                  "decimalPlaces": 5
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "EMR uplift for the EMR job",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "vCPUCost",
+                    "memoryCost",
+                    "EKSTotal"
+                  ],
+                  "subTotalRefer": "EKSTotal",
+                  "id": "EMRtotalEKS"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "id": "template_0"
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn"
+  ]
+}

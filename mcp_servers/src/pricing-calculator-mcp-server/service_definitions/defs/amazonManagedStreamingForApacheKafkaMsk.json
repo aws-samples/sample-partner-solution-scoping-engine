@@ -1,0 +1,1496 @@
+{
+  "version": "0.0.55",
+  "serviceName": "Amazon Managed Streaming for Apache Kafka (MSK)",
+  "serviceCode": "amazonManagedStreamingForApacheKafkaMsk",
+  "type": "AWSService",
+  "displayAutomation": true,
+  "regions": [
+    "af-south-1",
+    "ap-east-1",
+    "ap-south-1",
+    "ap-northeast-2",
+    "ap-southeast-1",
+    "ap-southeast-2",
+    "ap-northeast-1",
+    "ap-northeast-3",
+    "us-gov-east-1",
+    "us-gov-west-1",
+    "ca-central-1",
+    "eu-central-1",
+    "eu-west-1",
+    "eu-west-2",
+    "eu-south-1",
+    "eu-west-3",
+    "eu-north-1",
+    "me-south-1",
+    "sa-east-1",
+    "us-east-1",
+    "us-east-2",
+    "us-west-1",
+    "us-west-2",
+    "cn-north-1",
+    "cn-northwest-1"
+  ],
+  "searchKeywords": [
+    "MSK",
+    "Apache Kafka",
+    "managed Kafka",
+    "MSK Connect",
+    "MSK Serverless",
+    "MSK Provisioned"
+  ],
+  "serviceDescription": "Amazon MSK is a fully managed service that makes it easy for you to build and run applications that use Apache Kafka to process streaming data. With Amazon MSK, you can use native Apache Kafka APIs to populate data lakes, stream changes to and from databases, and power machine learning and analytics applications.",
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "msk",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/msk/[currency]/current/msk.json"
+    },
+    {
+      "mappingDefinitionName": "msk-calc",
+      "mappingDefinitionVersion": "PLC_2.0",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/msk/[currency]/current/msk-calc/metadata.json"
+    },
+    {
+      "mappingDefinitionName": "datatransfer-calc",
+      "includeRegions": false,
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/datatransfer/[currency]/current/datatransfer-calc.json"
+    }
+  ],
+  "helpUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/msk/",
+      "overrides": {
+        "aws-cn": "https://www.amazonaws.cn/en/msk/pricing/"
+      }
+    }
+  },
+  "costType": [
+    "Monthly",
+    "Upfront"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": "MSK Provisioned",
+      "description": "",
+      "id": "amazonMSK",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/msk/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "Broker instances",
+          "description": "Instance usage by default is accounted for a month",
+          "helpText": "To learn about right-sizing your MSK cluster, see the cluster sizing tool in our best practices : ",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/msk/latest/developerguide/bestpractices.html#bestpractices-right-size-cluster",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/msk/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "label": "MSK Cost",
+                "id": "columnFormIPM",
+                "type": "input",
+                "subType": "columnFormIPM",
+                "mappingDefinitionName": "msk-calc",
+                "calculationId": {
+                  "monthly": "monthly_ipm"
+                },
+                "pricingUnitModel": {
+                  "riPaymentOptions": {
+                    "hourly": "*"
+                  }
+                },
+                "primaryKey": {
+                  "Compute Family": [
+                    "vCPU",
+                    "Memory (GiB)"
+                  ]
+                },
+                "secondaryKey": [],
+                "row": [
+                  {
+                    "label": "Number of Kafka broker nodes",
+                    "type": "textInput",
+                    "selectorId": "Number of Kafka broker nodes",
+                    "description": "",
+                    "defaultValue": 3,
+                    "validations": {
+                      "allowDecimals": false,
+                      "minValue": 2,
+                      "maxValue": 10000000000000,
+                      "required": true
+                    },
+                    "exportValueAs": "count"
+                  },
+                  {
+                    "label": "Compute Family",
+                    "type": "autoSuggest",
+                    "selectorId": "Compute Family",
+                    "withTags": [
+                      "vCPU",
+                      "Memory (GiB)"
+                    ],
+                    "defaultValue": "m5.large"
+                  }
+                ]
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "refer": [
+                    "monthly_ipm"
+                  ],
+                  "IPMSupported": true,
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MSK broker instance charges",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": "monthly_ipm",
+                  "id": "MSKDisp"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "msk",
+              "meteredUnit": "CIdz_Ql1ujlp9BTcjM_ocOK-IxgN4vZXNxnqFt5tV5g"
+            }
+          },
+          "title": "Storage",
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "msk",
+                    "meteredUnit": "CIdz_Ql1ujlp9BTcjM_ocOK-IxgN4vZXNxnqFt5tV5g"
+                  }
+                },
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Storage per Broker",
+                "id": "msk_storageAmount",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "defaultOption": {
+                  "size": "gb",
+                  "frequency": "NA"
+                },
+                "outputSize": "gb",
+                "defaultValue": 100,
+                "outputSizeLabel": "GB",
+                "outputFrequency": "NA",
+                "outputFrequencyLabel": "NA",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 1,
+                  "maxValue": 16000
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "help": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "id": "msk_StoragePrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "RunVolume"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "msk_unitConvert",
+                  "refer": [
+                    "msk_storageAmount",
+                    "msk_StoragePrice"
+                  ],
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "msk_StorageCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Kafka broker nodes",
+                      "variableId": "count",
+                      "variableUnitLabel": "broker nodes",
+                      "IPMSupported": true,
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Storage per Broker",
+                      "variableId": "msk_storageAmount",
+                      "variableUnitLabel": "GB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableUnitLabel": "[currency]",
+                      "required": true,
+                      "variableId": "msk_StoragePrice"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Storage cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "msk_storagePriceDisplay",
+                  "refer": [
+                    "msk_StorageCost"
+                  ],
+                  "subTotalRefer": "msk_StorageCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Storage cost",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "msk",
+              "meteredUnit": "xqyk4U-a4bffMCBnylkMrAqaUBstkau6GHiWJ6UmRiM"
+            }
+          },
+          "title": "(Optional) Provisioned Storage Throughput",
+          "helpText": "For a simple real world example of the throughput component, see the Fsx for windows file server calculator. Read more about the throughput input component in Wiki.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/msk/latest/developerguide/msk-provision-throughput.html",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/msk/pricing/"
+              }
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "msk",
+                    "meteredUnit": "xqyk4U-a4bffMCBnylkMrAqaUBstkau6GHiWJ6UmRiM"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Desired Provisioned Storage Throughput (MiBps)",
+                "placeholder": "Enter the Provisioned Storage Throughput (MiBps).",
+                "displayInConfigSummary": true,
+                "id": "throughputCapacity",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 250,
+                  "maxValue": 1000
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for MSK Provisioned Storage Throughput",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "RunVolume General"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "pricingProvisionedStorageThroughput"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions for throughput components",
+                  "refer": [
+                    "throughputCapacity",
+                    "pricingProvisionedStorageThroughput"
+                  ],
+                  "id": "throughputConvert",
+                  "subTotalRefer": "msk_StorageCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of Kafka broker nodes",
+                      "variableId": "count",
+                      "variableUnitLabel": "broker nodes",
+                      "IPMSupported": true,
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Desired Provisioned Storage Throughput (MiBps)",
+                      "variableId": "throughputCapacity",
+                      "variableUnitLabel": "MBps",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "pricing for MSK Provisioned Storage Throughput",
+                      "variableId": "pricingProvisionedStorageThroughput",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "throughputTotalCost"
+                },
+                {
+                  "type": "display",
+                  "id": "msk_throughputPriceDisplay",
+                  "refer": [
+                    "throughputTotalCost"
+                  ],
+                  "subTotalRefer": "throughputTotalCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MSK Throughput cost",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "deniedPartitions": [
+            "aws-cn"
+          ],
+          "displayIf": {
+            "and": [
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "msk",
+                  "meteredUnit": "PrivateConnectivity hours per authentication scheme"
+                }
+              },
+              {
+                "exists": {
+                  "type": "meteredUnit",
+                  "mappingDefinitionName": "msk",
+                  "meteredUnit": "PrivateConnectivity Bytes Processed"
+                }
+              }
+            ]
+          },
+          "title": "(Optional) Multi-VPC Private Connectivity",
+          "helpText": "Multi-VPC private connectivity allows you to easily connect Kafka clients hosted in different Virtual Private Clouds (VPCs) and AWS accounts to an Amazon MSK cluster.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "documentation",
+              "path": "/msk/latest/developerguide/client-access.html"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of authentication schemes configured for private connectivity",
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 0,
+                  "maxValue": 3
+                },
+                "defaultValue": 0,
+                "displayInConfigSummary": true,
+                "placeholder": "Enter number of authentication schemes configured for private connectivity",
+                "id": "numberOfPrivateConnHours"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for private connectivity",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "PrivateConnectivity hours per authentication scheme"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "pricingPrivateConnectivityCharge"
+              },
+              {
+                "type": "input",
+                "subType": "fileSize",
+                "label": "Data processed for private connectivity",
+                "dropDownSize": [
+                  {
+                    "label": "GB",
+                    "id": "gb"
+                  },
+                  {
+                    "label": "TB",
+                    "id": "tb"
+                  }
+                ],
+                "dropDownFrequency": [
+                  {
+                    "label": "hour",
+                    "id": "hour"
+                  },
+                  {
+                    "label": "month",
+                    "id": "month"
+                  }
+                ],
+                "outputSize": "gb",
+                "outputSizeLabel": "GB",
+                "outputFrequency": "month",
+                "outputFrequencyLabel": "month",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 1000000000
+                },
+                "placeholder": "Enter data processed for private connectivity",
+                "description": "",
+                "id": "dataProcessedForPrivateConn"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for data processed for private connect",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "PrivateConnectivity Bytes Processed"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "pricingDataProcessedForPrivateConn"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions for private connectivity",
+                  "refer": [
+                    "numberOfPrivateConnHours",
+                    "pricingPrivateConnectivityCharge",
+                    "dataProcessedForPrivateConn",
+                    "pricingDataProcessedForPrivateConn"
+                  ],
+                  "id": "privateConnectivityConvert",
+                  "subTotalRefer": "throughputTotalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Private connectivity total charge",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of authentication schemes configured for private connectivity",
+                      "variableId": "numberOfPrivateConnHours",
+                      "variableUnitLabel": "authentication scheme(s)",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "pricing for private connectivity",
+                      "variableId": "pricingPrivateConnectivityCharge",
+                      "variableUnitLabel": "[currency] per hour",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total monthly cost for private connectivity)",
+                  "decimalPlaces": 2,
+                  "id": "privateConnectivityTotalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "variableName": "Data processed for private connectivity total charge",
+                  "operands": [
+                    {
+                      "variableLabel": "Data processed for private connectivity",
+                      "variableId": "dataProcessedForPrivateConn",
+                      "variableUnitLabel": "GB per month",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "pricing for data processed for private connect",
+                      "variableId": "pricingDataProcessedForPrivateConn",
+                      "variableUnitLabel": "[currency] per GB",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (total monthly cost for data processed for private connectivity)",
+                  "decimalPlaces": 2,
+                  "id": "dataprocessForPrivateConnectivityTotalCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "variableName": "Total private connectivity monthly charge",
+                  "operands": [
+                    {
+                      "variableLabel": "Private connectivity total charge",
+                      "variableId": "privateConnectivityTotalCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    },
+                    {
+                      "variableLabel": "Data processed for private connectivity total charge",
+                      "variableId": "dataprocessForPrivateConnectivityTotalCost",
+                      "variableUnitLabel": "[currency]",
+                      "required": false
+                    }
+                  ],
+                  "outputUnitLabel": "[currency]",
+                  "decimalPlaces": 2,
+                  "id": "totalMonthlyPrivateConnectivityCharge"
+                },
+                {
+                  "type": "display",
+                  "id": "privateConnectivityTotalCostDisplay",
+                  "refer": [
+                    "privateConnectivityTotalCost",
+                    "dataprocessForPrivateConnectivityTotalCost",
+                    "totalMonthlyPrivateConnectivityCharge"
+                  ],
+                  "subTotalRefer": "totalMonthlyPrivateConnectivityCharge",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Multi VPC Private Connectivity cost",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Data Transfer",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/ec2/pricing/on-demand/#Data_Transfer",
+              "overrides": {
+                "aws-cn": "https://www.amazonaws.cn/en/msk/pricing/"
+              }
+            }
+          },
+          "cardType": "dataTransferV2",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "dataTransferV2",
+                "mappingDefinitionName": "datatransfer-calc",
+                "label": "Data Transfer",
+                "displayInConfigSummary": true,
+                "title": "Enter the data you expect to transfer out of $[Region]",
+                "summaryText": "Data Transfer",
+                "dataTransferTypes": [
+                  "INBOUND",
+                  "INTRA_REGION",
+                  "OUTBOUND"
+                ],
+                "dataTransferTypesConfig": {
+                  "INBOUND": {
+                    "title": "Inbound Data Transfer"
+                  },
+                  "INTRA_REGION": {
+                    "title": "Intra-Region Data Transfer",
+                    "description": "Enter the data you expect to transfer between Availability Zones in [region]. Note: Replication across Availability Zones is included in the cost of Amazon MSK."
+                  },
+                  "OUTBOUND": {
+                    "title": "Outbound Data Transfer"
+                  }
+                },
+                "preferredUnit": "gb",
+                "id": "dataTransfer"
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "mskProvisioned_generated_0",
+                  "refer": [
+                    "dataTransfer"
+                  ],
+                  "subTotalRefer": "totalMonthlyPrivateConnectivityCharge"
+                },
+                {
+                  "label": "Data transfer cost",
+                  "refer": "dataTransfer",
+                  "referLabel": "Data Transfer",
+                  "subType": "variable",
+                  "type": "maths",
+                  "displayInConfigSummary": true,
+                  "id": "mskProvisioned_generated_1"
+                },
+                {
+                  "type": "display",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "decimalPlaces": 2,
+                  "label": "Data Transfer cost",
+                  "displayInConfigSummary": true,
+                  "id": "mskProvisioned_generated_2",
+                  "refer": [
+                    "mskProvisioned_generated_1"
+                  ],
+                  "subTotalRefer": "mskProvisioned_generated_1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "MSK Serverless",
+      "description": "",
+      "id": "awsMSKServerless",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/msk/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "title": "MSK Serverless",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/msk/pricing/"
+            }
+          },
+          "helpText": "With MSK Serverless, you pay an hourly rate for your serverless clusters and an hourly rate for each partition that you create. Additionally, you pay per GB of data that your producers write to and your consumers read from the topics in your cluster. Amazon MSK charges you only for the storage you consume.",
+          "description": "",
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "throughput",
+                "label": "Average monthly ingress throughput",
+                "options": [
+                  {
+                    "label": "KB/s per month",
+                    "value": "kbps",
+                    "id": "1"
+                  },
+                  {
+                    "label": "MB/s per month",
+                    "value": "mbps",
+                    "id": "2"
+                  }
+                ],
+                "defaultValue": "5",
+                "defaultThroughput": "mbps",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MB/s per month",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 200
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageDataIngressed"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for MSK Serverless Ingress Throughput",
+                "subType": "singlePricePoint",
+                "id": "pricingServerlessIngressThroughput",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "W0ajQJ3dJu5UHrR4V-PVzywRAQmF0LZo_XEWMXwBx1I"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "input",
+                "subType": "throughput",
+                "label": "Average monthly egress throughput",
+                "options": [
+                  {
+                    "label": "KB/s per month",
+                    "value": "kbps",
+                    "id": "1"
+                  },
+                  {
+                    "label": "MB/s per month",
+                    "value": "mbps",
+                    "id": "2"
+                  }
+                ],
+                "defaultValue": "10",
+                "defaultThroughput": "mbps",
+                "lookupValue": "",
+                "outputThroughput": {
+                  "label": "MB/s per month",
+                  "value": "mbps"
+                },
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": true,
+                  "allowDecimals": true,
+                  "minValue": 0,
+                  "maxValue": 400
+                },
+                "placeholder": "Enter amount",
+                "description": "",
+                "id": "averageDataEgressed"
+              },
+              {
+                "type": "pricing",
+                "label": "pricing for MSK Serverless Egress Throughput",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "Z7HmUrHMOXkLfG5toSGBUDbjGfSvucar3zpShXa4T20"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                },
+                "id": "pricingServerlessEgressThroughput"
+              },
+              {
+                "displayIf": {
+                  "and": [
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "msk",
+                        "meteredUnit": "Z7HmUrHMOXkLfG5toSGBUDbjGfSvucar3zpShXa4T20"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "msk",
+                        "meteredUnit": "FFXKzHcH1JgU4nJN7jcYpgMSku4fN0bJgwIrgK775do"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "msk",
+                        "meteredUnit": "W0ajQJ3dJu5UHrR4V-PVzywRAQmF0LZo_XEWMXwBx1I"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "msk",
+                        "meteredUnit": "Tp-597O6ILUeyWTCLCbOO7KFzOibN3qXUJ4_vBO5ddk"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "type": "meteredUnit",
+                        "mappingDefinitionName": "msk",
+                        "meteredUnit": "nkHUFY5mZ_SE5hwJJ_vZyUoGU42u-vhHWiwa-Fcmhas"
+                      }
+                    }
+                  ]
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of partitions (leader partition only)",
+                "id": "totalPartitions",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 2400
+                },
+                "defaultValue": "100",
+                "placeholder": "Enter number of partitions",
+                "displayInConfigSummary": true
+              },
+              {
+                "type": "input",
+                "subType": "durationInput",
+                "id": "MSK_Serverless_dataretention",
+                "label": "Data retention period",
+                "dropDownDuration": [
+                  {
+                    "label": "hours",
+                    "value": "hr"
+                  },
+                  {
+                    "label": "days",
+                    "value": "day"
+                  },
+                  {
+                    "label": "months",
+                    "value": "month"
+                  }
+                ],
+                "displayInConfigSummary": true,
+                "outputDurationUnit": "hr",
+                "outputDurationLabel": "hours",
+                "defaultValue": "24",
+                "validations": {
+                  "required": true,
+                  "allowDecimal": false,
+                  "minValue": 1,
+                  "maxValue": 1000000000000
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per retention hour",
+                "id": "MSKServerlessPartitionHourCharge",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "FFXKzHcH1JgU4nJN7jcYpgMSku4fN0bJgwIrgK775do"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price per cluster hour",
+                "id": "MSKServerlessClusterHourCharge",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "Tp-597O6ILUeyWTCLCbOO7KFzOibN3qXUJ4_vBO5ddk"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              },
+              {
+                "type": "pricing",
+                "label": "price for storage",
+                "id": "serverless_StoragePrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "nkHUFY5mZ_SE5hwJJ_vZyUoGU42u-vhHWiwa-Fcmhas"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "MSKServerless_conversion",
+                  "decimalPlaces": 2,
+                  "refer": [
+                    "averageDataIngressed",
+                    "pricingServerlessIngressThroughput",
+                    "averageDataEgressed",
+                    "pricingServerlessEgressThroughput",
+                    "totalPartitions",
+                    "MSK_Serverless_dataretention",
+                    "MSKServerlessPartitionHourCharge",
+                    "MSKServerlessClusterHourCharge",
+                    "serverless_StoragePrice"
+                  ],
+                  "subTotalRefer": "mskProvisioned_generated_1"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "MSKServerlessClusterCost",
+                  "operands": [
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price per cluster hour",
+                      "variableId": "MSKServerlessClusterHourCharge",
+                      "variableUnitLabel": "[currency] per cluster-hour rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Cluster-hour cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalclustercost",
+                  "label": "Cluster-hour cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "MSKServerlessClusterCost",
+                  "referLabel": "[currency] (Cluster-hour cost)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "multiplication",
+                  "id": "MSKServerlessPartitionCost",
+                  "variablename": "MSK Serverless Partition Cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of partitions (leader partition only)",
+                      "variableId": "totalPartitions",
+                      "variableUnitLabel": "partitions",
+                      "required": true
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    },
+                    {
+                      "variableLabel": "price per retention hour",
+                      "variableId": "MSKServerlessPartitionHourCharge",
+                      "variableUnitLabel": "[currency] per partition-hour rate",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Partition-hour cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalpartitioncost",
+                  "label": "Partition-hour cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "MSKServerlessPartitionCost",
+                  "referLabel": "[currency] (Partition-hour cost)"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalstorageused_MB",
+                  "operation": "multiplication",
+                  "variableName": "Total Storage Used- MB",
+                  "operands": [
+                    {
+                      "variableLabel": "Average monthly ingress throughput",
+                      "variableId": "averageDataIngressed",
+                      "variableUnitLabel": "MBps",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds"
+                    },
+                    {
+                      "variableLabel": "Data retention period",
+                      "variableId": "MSK_Serverless_dataretention",
+                      "variableUnitLabel": "hours",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "MiB (Storage used- MiB-month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "totalstorageused_GB",
+                  "operation": "division",
+                  "variableName": "Total storage used- GB",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Storage Used- MB",
+                      "variableId": "totalstorageused_MB",
+                      "variableUnitLabel": "MiB",
+                      "required": true
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "(MiB in a GiB)"
+                    }
+                  ],
+                  "outputUnitLabel": "GiB (Storage used- GiB-month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "storageCost",
+                  "variableName": "Total Storage Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total storage used- GB",
+                      "variableId": "totalstorageused_GB",
+                      "variableUnitLabel": "GiB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for storage",
+                      "variableId": "serverless_StoragePrice",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (per GiB-month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalstoragecostvar",
+                  "label": "Storage cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "storageCost",
+                  "referLabel": "Total Storage Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyingressthrougput_MB",
+                  "operation": "multiplication",
+                  "variableName": "Total Monthly Ingress Throughput- MB",
+                  "operands": [
+                    {
+                      "variableLabel": "Average monthly ingress throughput",
+                      "variableId": "averageDataIngressed",
+                      "variableUnitLabel": "MBps",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "MiB (Data in volume per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyingressthrougput_GB",
+                  "operation": "division",
+                  "variableName": "Total Monthly Ingress Throughput- GB",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Monthly Ingress Throughput- MB",
+                      "variableId": "monthlyingressthrougput_MB",
+                      "variableUnitLabel": "MiB per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "(MiB in a GiB)"
+                    }
+                  ],
+                  "outputUnitLabel": "GiB (Data in volume per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "ingressthroughputTotalCost",
+                  "operation": "multiplication",
+                  "variableName": "Ingress Throughput Total Cost",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Monthly Ingress Throughput- GB",
+                      "variableId": "monthlyingressthrougput_GB",
+                      "variableUnitLabel": "GiB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "pricing for MSK Serverless Ingress Throughput",
+                      "variableId": "pricingServerlessIngressThroughput",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data in cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "ingressthroughputTotalCost_var",
+                  "label": "Data in cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "ingressthroughputTotalCost",
+                  "referLabel": "Ingress Throughput Total Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyegressthrougput_MB",
+                  "operation": "multiplication",
+                  "variableName": "Total Monthly Egress Throughput- MB",
+                  "operands": [
+                    {
+                      "variableLabel": "Average monthly egress throughput",
+                      "variableId": "averageDataEgressed",
+                      "variableUnitLabel": "MBps",
+                      "required": true
+                    },
+                    {
+                      "constant": 3600,
+                      "constantUnitLabel": "seconds"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": "hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "MiB (Data out volume per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "monthlyegressthrougput_GB",
+                  "operation": "division",
+                  "variableName": "Total Monthly Egress Throughput- GB",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Monthly Egress Throughput- MB",
+                      "variableId": "monthlyegressthrougput_MB",
+                      "variableUnitLabel": "MiB per month",
+                      "required": true
+                    },
+                    {
+                      "constant": 1024,
+                      "constantUnitLabel": "(MiB in a GiB)"
+                    }
+                  ],
+                  "outputUnitLabel": "GB (Data out volume per month)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "egressthroughputTotalCost",
+                  "variableName": "Egress Throughput Total Cost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Total Monthly Egress Throughput- GB",
+                      "variableId": "monthlyegressthrougput_GB",
+                      "variableUnitLabel": "GiB",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "pricing for MSK Serverless Egress Throughput",
+                      "variableId": "pricingServerlessEgressThroughput",
+                      "variableUnitLabel": "[currency] per month",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Data out cost)",
+                  "decimalPlaces": 2
+                },
+                {
+                  "type": "maths",
+                  "subType": "variable",
+                  "id": "totalegressthroughputcost",
+                  "label": "Data out cost",
+                  "displayInCalculationString": true,
+                  "useCurrency": true,
+                  "refer": "egressthroughputTotalCost",
+                  "referLabel": "Egress Throughput Total Cost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "operation": "addition",
+                  "operands": [
+                    {
+                      "variableLabel": "[currency] (Cluster-hour cost)",
+                      "variableUnitLabel": "[currency] (Cluster-hour cost)",
+                      "variableId": "MSKServerlessClusterCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "[currency] (Partition-hour cost)",
+                      "variableUnitLabel": "[currency] (Partition-hour cost)",
+                      "variableId": "MSKServerlessPartitionCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Total Storage Cost",
+                      "variableUnitLabel": "[currency] (Storage cost)",
+                      "variableId": "storageCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Ingress Throughput Total Cost",
+                      "variableUnitLabel": "[currency] (Data in cost)",
+                      "variableId": "ingressthroughputTotalCost",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "Egress Throughput Total Cost",
+                      "variableUnitLabel": "[currency] (Data out cost)",
+                      "variableId": "egressthroughputTotalCost",
+                      "required": true
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (Amazon MSK Serverless cost)",
+                  "decimalPlaces": 2,
+                  "id": "totalserverlessCost"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "MSKServerlessClusterCost",
+                    "totalclustercost",
+                    "MSKServerlessPartitionCost",
+                    "totalpartitioncost",
+                    "totalstorageused_MB",
+                    "totalstorageused_GB",
+                    "storageCost",
+                    "totalstoragecostvar",
+                    "monthlyingressthrougput_MB",
+                    "monthlyingressthrougput_GB",
+                    "ingressthroughputTotalCost",
+                    "ingressthroughputTotalCost_var",
+                    "monthlyegressthrougput_MB",
+                    "monthlyegressthrougput_GB",
+                    "egressthroughputTotalCost",
+                    "totalegressthroughputcost",
+                    "totalserverlessCost"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MSK Serverless cost",
+                  "decimalPlaces": 2,
+                  "id": "severless_total_cost",
+                  "subTotalRefer": "totalserverlessCost"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "MSK Connect",
+      "description": "",
+      "id": "awsMSKConnect",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/msk/pricing/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "msk",
+              "meteredUnit": "0Hn4vlnWIWXxLkJowQI9Ep0N7ocOeVJMs6xe_EsVhYA"
+            }
+          },
+          "title": "MSK Connect",
+          "helpText": "When you setup a Kafka Connect connector with Amazon MSK Connect, you pay for the time your connector runs and standard data transfer fees for data in and out of your connector.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/msk/pricing/"
+            }
+          },
+          "cardType": "",
+          "inputSection": {
+            "components": [
+              {
+                "displayIf": {
+                  "exists": {
+                    "type": "meteredUnit",
+                    "mappingDefinitionName": "msk",
+                    "meteredUnit": "0Hn4vlnWIWXxLkJowQI9Ep0N7ocOeVJMs6xe_EsVhYA"
+                  }
+                },
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of MSK Connect Units (MCUs)",
+                "id": "Number_of_MCUs",
+                "validations": {
+                  "required": true,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 10000000000000000
+                },
+                "displayInConfigSummary": true,
+                "placeholder": "Enter amount",
+                "description": ""
+              },
+              {
+                "type": "pricing",
+                "label": "price for connect",
+                "id": "msk_ConnectPrice",
+                "subType": "singlePricePoint",
+                "mappingDefinitionName": "msk",
+                "meteredUnit": {
+                  "allRegions": "0Hn4vlnWIWXxLkJowQI9Ep0N7ocOeVJMs6xe_EsVhYA"
+                },
+                "backwardCompatibility": {
+                  "hideCardWhenMissing": false
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions",
+                  "id": "msk_unitConvert_c",
+                  "refer": [
+                    "Number_of_MCUs",
+                    "msk_ConnectPrice"
+                  ],
+                  "subTotalRefer": "totalserverlessCost"
+                },
+                {
+                  "type": "maths",
+                  "subType": "basicMaths",
+                  "id": "msk_ConnectCost",
+                  "operation": "multiplication",
+                  "operands": [
+                    {
+                      "variableLabel": "Number of MSK Connect Units (MCUs)",
+                      "variableId": "Number_of_MCUs",
+                      "variableUnitLabel": "MCUs",
+                      "required": true
+                    },
+                    {
+                      "variableLabel": "price for connect",
+                      "variableUnitLabel": "[currency] hourly",
+                      "required": true,
+                      "variableId": "msk_ConnectPrice"
+                    },
+                    {
+                      "constant": 730,
+                      "constantUnitLabel": " hours in a month"
+                    }
+                  ],
+                  "outputUnitLabel": "[currency] (MSK Connect cost)",
+                  "decimalPlaces": 4
+                },
+                {
+                  "type": "display",
+                  "id": "msk_connectPriceDisplay",
+                  "refer": [
+                    "msk_ConnectCost"
+                  ],
+                  "subTotalRefer": "msk_ConnectCost",
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "MSK Connect cost",
+                  "decimalPlaces": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "slug": "MSK",
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "version": "0.0.8",
+  "serviceName": "Just-in-time node access",
+  "serviceCode": "justInTimeNodeAccess",
+  "type": "AWSService",
+  "subType": "subService",
+  "displayAutomation": true,
+  "regions": [],
+  "searchKeywords": [
+    "System Manager",
+    "JustInTimeNodeAccess"
+  ],
+  "serviceDescription": {
+    "aws": "AWS Systems Manager Just-in-time node access feature",
+    "aws-cn": "Amazon Systems Manager Just-in-time node access feature"
+  },
+  "linkUrl": {
+    "$LINK": {
+      "type": "pricing",
+      "path": "/systems-manager/"
+    }
+  },
+  "hasDataTransfer": false,
+  "mappingDefinitions": [
+    {
+      "mappingDefinitionName": "systemsmanager",
+      "mappingDefinitionURL": "pricing/2.0/meteredUnitMaps/systemsmanager/[currency]/current/systemsmanager.json"
+    }
+  ],
+  "costType": [
+    "Monthly"
+  ],
+  "layout": "simple",
+  "templates": [
+    {
+      "title": {
+        "aws": "AWS Systems Manager Just-in-time node access feature",
+        "aws-cn": "Amazon Systems Manager Just-in-time node access feature"
+      },
+      "id": "smJustInTimeNodeAccess",
+      "description": "",
+      "helpUrl": {
+        "$LINK": {
+          "type": "pricing",
+          "path": "/systems-manager/"
+        }
+      },
+      "cards": [
+        {
+          "displayIf": {
+            "exists": {
+              "type": "meteredUnit",
+              "mappingDefinitionName": "systemsmanager",
+              "meteredUnit": "3Rzr5VNbuKVJrfwy-ggebmj8PJTEg9WczIogretkpRI"
+            }
+          },
+          "title": "Just-in-time node access",
+          "helpText": "Just-in-time node access provides secure, temporary access to your EC2 instances and on-premises servers. You are charged based on the number of Just-in-time node access sessions initiated and the total duration of these sessions. This pricing applies to all managed nodes (on-premises, other cloud providers, or Amazon EC2) that use the JustInTimeNodeAccess feature. Charges are calculated based on the number of sessions initiated and the duration of each session, measured in minutes.",
+          "helpUrl": {
+            "$LINK": {
+              "type": "pricing",
+              "path": "/systems-manager/pricing/"
+            }
+          },
+          "inputSection": {
+            "components": [
+              {
+                "type": "input",
+                "subType": "bodyText",
+                "text": "",
+                "id": "justInTime_Text"
+              },
+              {
+                "type": "input",
+                "subType": "numericInput",
+                "label": "Number of System Manager managed node hours",
+                "id": "justInTime_numberOfhours",
+                "placeholder": "Enter number of hours",
+                "displayInConfigSummary": true,
+                "validations": {
+                  "required": false,
+                  "allowDecimals": false,
+                  "minValue": 1,
+                  "maxValue": 100000000
+                }
+              },
+              {
+                "type": "pricing",
+                "subType": "tieredPricing",
+                "label": "Price per System Manager Managed Node",
+                "id": "tierPrice",
+                "mappingDefinitionName": "systemsmanager",
+                "tiers": {
+                  "allRegions": [
+                    {
+                      "startOfTier": 0,
+                      "endOfTier": 72000,
+                      "meteredUnit": "3Rzr5VNbuKVJrfwy-ggebmj8PJTEg9WczIogretkpRI"
+                    },
+                    {
+                      "startOfTier": 72001,
+                      "endOfTier": 720000,
+                      "meteredUnit": "zO-lJnDYDqIklZQ6J0dSN0pQaYlfD6k7HF49mqnNm1Q"
+                    },
+                    {
+                      "startOfTier": 720001,
+                      "endOfTier": 7200000,
+                      "meteredUnit": "OXhRDHYuNmhJ7Kfs4afETXj-YdcWQb9x5bqEVTZVftk"
+                    },
+                    {
+                      "startOfTier": 7200001,
+                      "endOfTier": -1,
+                      "meteredUnit": "4i5C3snx8V9moKK2RUmkmnzRhY0UOk5TsD-agCh0Fpc"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "mathsSection": [
+            {
+              "components": [
+                {
+                  "type": "display",
+                  "subType": "conversionDisplay",
+                  "label": "Unit conversions for Just-in-time node access",
+                  "refer": [
+                    "justInTime_Text",
+                    "justInTime_numberOfhours",
+                    "tierPrice"
+                  ],
+                  "id": "justInTime_unitConvert",
+                  "decimalPlaces": 2,
+                  "subTotalRefer": ""
+                },
+                {
+                  "type": "maths",
+                  "subType": "tieredPricingMath",
+                  "tieredPricingReferLabel": "Price per System Manager Managed Node",
+                  "tieredPricingRefer": "tierPrice",
+                  "inputReferLabel": "Number of System Manager managed node hours",
+                  "inputRefer": "justInTime_numberOfhours",
+                  "inputUnitLabel": "billable node hours",
+                  "decimalPlaces": 4,
+                  "outputUnitLabel": "[currency]",
+                  "id": "tieredMath"
+                },
+                {
+                  "type": "display",
+                  "refer": [
+                    "tieredMath"
+                  ],
+                  "subType": "priceDisplay",
+                  "costType": "Monthly",
+                  "label": "Just-in-time node access cost",
+                  "decimalPlaces": 2,
+                  "id": "justInTime_totalPrice",
+                  "subTotalRefer": "tieredMath"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "partitions": [
+    "aws",
+    "aws-cn",
+    "aws-us-gov"
+  ]
+}
